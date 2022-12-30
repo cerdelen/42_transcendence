@@ -106,7 +106,7 @@ dist
 #the following part was created by "nest new"
 # compiled output
 /dist
-/node_modules
+# /node_modules
 
 # Logs
 logs

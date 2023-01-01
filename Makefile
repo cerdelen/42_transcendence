@@ -1,4 +1,8 @@
-dependency:
-	sh dependencyScript.sh
+all:
+	npm install
 
-all: $(dependency)
+run: all
+	npm run start
+
+dev: all
+	npm run start:dev

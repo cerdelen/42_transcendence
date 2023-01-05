@@ -4,11 +4,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class AuthService {
 	constructor(private prisma: PrismaService) {}
-	signupLocal() {}
-
-	signinLocal() {}
-
-	logout() {}
-
-	refreshTokens() {}
+	signup() {
+		return {msg: 'i have signed up'}
+	}
+	signin() {
+		return {msg: 'i have signed in'}
+	}
 }

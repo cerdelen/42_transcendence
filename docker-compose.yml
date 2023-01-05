@@ -1,6 +1,6 @@
 version: '3.9'
 services:
-  database:
+  db:
     image: postgres:13
     ports: 
       - 5434:5432

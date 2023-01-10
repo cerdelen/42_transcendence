@@ -10,7 +10,7 @@ export class Auth42Guard extends AuthGuard('42') implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    // const req = context.switchToHttp().getRequest();
+    const req = context.switchToHttp().getRequest();
   //   const devmode: string | null = req.query['devmode'];
   //   const id: string | null = req.query['id'];
   //   if (devmode && id && devmode === "devmode")
@@ -24,6 +24,8 @@ export class Auth42Guard extends AuthGuard('42') implements CanActivate {
   // }
   // return super.canActivate(context);
 
+    console.log("inside auth42guard");
+    // console.log(req);
 
   return true;
 

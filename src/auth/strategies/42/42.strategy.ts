@@ -20,6 +20,7 @@ export class strategy42 extends PassportStrategy(Strategy, '42'){
 		profile: any,
 		done: VerifyCallback): Promise<void> {
 			
+			console.log("inside validate 42 funciton");
 			const user: Auth42Dto = {
 				id: +profile.id,
 				email: profile.emails[0].value,
@@ -33,6 +34,7 @@ export class strategy42 extends PassportStrategy(Strategy, '42'){
 				// coalition: profile.coalition,
 				// twoFAEnable: false,
 			};
+			console.log(user.id);
 			done(null, { ...user, accessToken });
 	}
 }

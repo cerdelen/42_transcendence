@@ -10,17 +10,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// model User {
+// 	id			Int			@id @default(autoincrement())
+// 	createdAt	DateTime	@default(now())
+// 	updatedAt	DateTime	@updatedAt
+
+
+// 	email		String		@unique
+// 	hash		String
+// 	hashedRt	String?
+	
+	
+// 	name		String?
+// 	@@map("users")
+// }
 model User {
-	id			Int			@id @default(autoincrement())
+	id			Int			@id @unique
 	createdAt	DateTime	@default(now())
 	updatedAt	DateTime	@updatedAt
 
+	email		String
+	intra		String
+	firstname	String
+	lastname	String
+	username	String
+	accessToken	String
 
-	email		String		@unique
-	hash		String
-	hashedRt	String?
+	// hash		String
+	// hashedRt	String?
 	
 	
-	name		String?
+	// name		String?
 	@@map("users")
 }

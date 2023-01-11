@@ -5,11 +5,12 @@ import {
 	Req,	
 } from '@nestjs/common';
 import { Auth42Guard } from '../guards/auth42.guard'
+import { PrismaService } from 'src/prisma/prisma.service';
 
 
 @Controller('auth42')
 export class Auth42Controller {
-	constructor() {}
+	constructor(private prisma: PrismaService) {}
 
 	@Get('login')
 	@UseGuards(Auth42Guard)
@@ -17,11 +18,37 @@ export class Auth42Controller {
 		return ;
 	}
 
-
 	@Get('callback')
 	@UseGuards(Auth42Guard)
 	async callback(@Req() req: any){
 		console.log("hi from inside callback")
-		console.log(req);
+		const user = req.user;
+		const found = await this.prisma.user.findUnique({
+			where: {
+				id: user.id,
+			}
+		})
+		if (!found)
+		{
+			this.createUser(user);
+			console.log("created user");
+		}
+		else
+			console.log("user already exists");
+	}
+	
+	
+	async	createUser(user: any) {
+		await this.prisma.user.create({
+			data: {
+				id: user.id,
+				email: user.email,
+				intra: user.intra,
+				firstname: user.firstname,
+				lastname: user.lastname,
+				username: user.username,
+				accessToken: user.accessToken,
+			}
+		})
 	}
 }

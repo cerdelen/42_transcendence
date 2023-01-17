@@ -10,7 +10,7 @@ export class strategy42 extends PassportStrategy(Strategy, '42'){
 		super({
 			clientID: "u-s4t2ud-ebe5af0f2962dca5114adf05b60c69a7cbbb6ec31e4cd146812b74d954feb284",
 			clientSecret: "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",
-			callbackURL: "http://localhost:3333/auth42/callback", /// idkkkkkkk
+			callbackURL: "http://localhost:3333/auth42/callback",
 		})
 	}
 

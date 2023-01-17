@@ -23,11 +23,7 @@ export class Auth42Controller {
 	async callback(@Req() req: any){
 		console.log("hi from inside callback")
 		const user = req.user;
-		const found = await this.prisma.user.findUnique({
-			where: {
-				id: user.id,
-			}
-		})
+		const found = await this.prisma.user.findUnique({where: {id: user.id,}})
 		if (!found)
 		{
 			this.createUser(user);
@@ -38,17 +34,7 @@ export class Auth42Controller {
 	}
 	
 	
-	async	createUser(user: any) {
-		await this.prisma.user.create({
-			data: {
-				id: user.id,
-				email: user.email,
-				intra: user.intra,
-				firstname: user.firstname,
-				lastname: user.lastname,
-				username: user.username,
-				accessToken: user.accessToken,
-			}
-		})
+	async	createUser(data: any) {
+		await this.prisma.user.create({data})
 	}
 }

@@ -7,19 +7,17 @@ run: all
 dev: all
 	npm run start:dev
 
-setup:
-#	sh eaccess_script.sh
-	npm install -g npm@9.2.0
-	npm install
-	npm add -D prisma@latest
-	npm install @prisma/client
-	npm add bcrypt
-	npm add -D @types/bcrypt
-	npm add @nestjs/jwt passport-jwt
-	npm add -D @types/passport-jwt
-	npm add @nestjs/passport passport
+#setup:
+#	npm install -g npm@9.2.0
+#	npm install
+#	npm add -D prisma@latest
+#	npm install @prisma/client
+#	npm add bcrypt
+#	npm add -D @types/bcrypt
+#	npm add @nestjs/jwt passport-jwt
+#	npm add -D @types/passport-jwt
+#	npm add @nestjs/passport passport
 #	npx prisma generate
-#	docker-compose up -d
 
 migrate:
 	npx prisma migrate dev --create-only

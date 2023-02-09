@@ -1,15 +1,19 @@
-version: '3.9'
-services:
-  db:
-    image: postgres:13
-    ports: 
-      - 5434:5432
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: transcDB
-    networks:
-      - transcendence
+version: '3.0'
 
-networks:
-  transcendence:
+services:
+	nest:
+		container_name: nest
+		build:
+			context: ./backend
+		env_file: ./backend/.env
+		depends_on: 
+			- backend_database
+
+	postgres:
+		container_name:	backend_database
+		image: postgres
+		env_file: .env
+		ports: 
+			- 5432:5432
+		# volumes:
+		# - postgres-data:/var/lib/postgresql/data

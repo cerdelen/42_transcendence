@@ -1,10 +1,10 @@
 all:
 	docker-compose up -d
 
-run: all
+run: #all
 	npm run start
 
-dev: all
+dev: #all
 	npm run start:dev
 
 #setup:

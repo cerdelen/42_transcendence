@@ -1,3 +1,0 @@
-Too install prisma:
-	npm add -D prisma    // adding it to as a developer library
-	npm add @prisma/client

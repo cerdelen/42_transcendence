@@ -10,10 +10,31 @@ export class AuthService
 
 	async adduser(username: string)
 	{
-		await this.prisma.user.create({
-			data: {
-				name: username
+		const User = await this.prisma.user.findUnique({
+				where: {
+					name: username,
+				}
+			});
+		if (!User)
+		{
+			await this.prisma.user.create({
+				data: {
+					name: username,
+				}
+			});
+		}
+		else
+		{
+			console.log("this is the else!!!");
+		}
+	}
+
+	async deleteuser(username: string)
+	{
+		await this.prisma.user.delete({
+			where: {
+				name: username,
 			}
-		})
+		});
 	}
 }

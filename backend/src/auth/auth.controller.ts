@@ -8,8 +8,16 @@ export class AuthController
 	constructor(private authService: AuthService) {}
 
 	@Get('login')
-	getSmth(): string {
+	login(): string 
+	{
 		this.authService.adduser("usernameveryintuitive");
-		return "worked";
+		return "Login worked";
 	}
+	@Get('logout')
+	logout(): string 
+	{
+		this.authService.deleteuser("usernameveryintuitive");
+		return "Logout worked";
+	}
+
 }

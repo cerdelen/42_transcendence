@@ -1,0 +1,75 @@
+/* GENERAL */
+body {
+  /* background: linear-gradient(to bottom right, rgb(56, 14, 104), rgb(0, 0, 0)); */
+  background: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(56, 14, 104));
+  block-size: 100vh;
+  /* color: rgb(111, 35, 174); */
+  color:white;
+  margin: 0 auto;
+  text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF;
+  /* text-shadow: 0 0 10px rgb(119, 0, 255), 0 0 20px rgb(119, 0, 255), 0 0 30px rgb(119, 0, 255); */
+}
+header,
+footer {
+  border: 2px solid rgb(119, 0, 255);
+}
+/* HEADER */
+header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+  margin-top: 0;
+}
+
+header nav ul {
+  display: flex;
+  /* gap: 1rem; */
+  justify-content:space-between;
+  list-style-type: none;
+  padding: 0;
+}
+
+header li {
+  margin: 0 1rem;
+}
+
+/* FOOTER */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+footer ul {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  list-style-type: none;
+  padding: 0;
+}
+/* LOGIN PAGE */
+.login-page {
+  align-items: center;
+  display: flex;
+  gap: 3rem;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: center;
+}
+
+
+.login-page h1{
+  color: rgb(111, 35, 174);
+  text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF, 0 0 40px #FFF, 0 0 50px #FFF, 0 0 60px #FFF, 0 0 70px #FFF;
+  font-size: 7rem;
+}
+
+.login-page a {
+  text-transform: uppercase;
+  text-decoration: none;
+  font-size: 5rem;
+  text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF, 0 0 40px #FFF, 0 0 50px #FFF, 0 0 60px #FFF, 0 0 70px #FFF;
+  color: rgb(111, 35, 174);
+}
+

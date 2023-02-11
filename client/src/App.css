@@ -6,11 +6,14 @@ body {
   /* color: rgb(111, 35, 174); */
   color:white;
   margin: 0 auto;
+  min-inline-size: 995px;
+  min-block-size: 400px;
   text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF;
   /* text-shadow: 0 0 10px rgb(119, 0, 255), 0 0 20px rgb(119, 0, 255), 0 0 30px rgb(119, 0, 255); */
 }
 header,
-footer {
+footer,
+main {
   border: 2px solid rgb(119, 0, 255);
 }
 /* HEADER */
@@ -24,8 +27,7 @@ header {
 
 header nav ul {
   display: flex;
-  /* gap: 1rem; */
-  justify-content:space-between;
+  justify-content:space-around;
   list-style-type: none;
   padding: 0;
 }
@@ -34,13 +36,44 @@ header li {
   margin: 0 1rem;
 }
 
-/* FOOTER */
-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+/* MAIN */
+.game-page {
+  display: grid;
+  grid-template-rows: .5fr 8fr .5fr;
+  border: 4px solide lime;
+  height: 100vh;
 }
+
+main {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 4.5fr 1fr;
+}
+
+.players-online {
+  grid-column: 1;
+}
+
+.game-area {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border: 2px solid lime;
+}
+
+canvas {
+  inline-size: 100%;
+  height: 80%;
+  border: 2px solid red;
+
+}
+.live-games {
+  grid-column: 3;
+}
+/* FOOTER */
+
 footer ul {
   display: flex;
   justify-content: space-evenly;

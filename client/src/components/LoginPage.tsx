@@ -1,16 +1,8 @@
-import React from 'react'
 
+// type Props = {
+// }
 
-const LoginButton = () => {
-    return (
-      <button type='submit'> Login with 42</button>
-    )
-}
-
-type Props = {
-}
-
-const LoginPage = (props: Props) => {
+const LoginPage = () => {
 
 
 
@@ -19,8 +11,6 @@ const LoginPage = (props: Props) => {
 
       <h1> CatPong </h1>
       <a href="#login">Login</a>
-      {/* <button type='submit'> Login with 42</button> */}
-
     </div>
     
   )

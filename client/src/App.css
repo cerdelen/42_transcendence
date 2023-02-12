@@ -44,7 +44,6 @@ header li {
 
 main {
   display: grid;
-  gap: 1rem;
   grid-template-columns: 1fr 4.5fr 1fr;
 }
 
@@ -113,14 +112,27 @@ footer ul {
 
 
 /* GAME-PAGE-PLAYERS-Online */
+h2{
+  color: red;
+  /* font-size: 40px; */
+}
 .players-online {
-  /* display: flex;
+  display: flex;
   flex-direction: column;
-  align-items: center; */
+  align-items: center;
+  /* overflow-x: scroll; */
+  /* flex-wrap: wrap; */
 }
 .game-page-players-online-ul {
   list-style-type: none;
   padding: 0;
+  max-height: 80vh;
+  overflow: scroll;
+  width: 90%;
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* flex-wrap: wrap; */
+  /* overflow: scroll; */
 }
 
 .player-card-li {
@@ -129,6 +141,7 @@ footer ul {
   border-radius: 5px;
   display: flex;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .player-card-li img{
@@ -148,7 +161,7 @@ footer ul {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 100px; /* set a maximum width */
+  max-width: 9rem; /* set a maximum width */
 }
 
 #in-a-game {

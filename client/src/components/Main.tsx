@@ -1,22 +1,25 @@
-import React from 'react'
-import catFlowersImg from '../images/cat-flowers.jpg' //surrently 100 x 150
 import {IoLogoGameControllerA} from 'react-icons/io'
 import {MdOutlineVideogameAssetOff} from 'react-icons/md'
+import {players} from './temp-players'
 
-const PlayerOnlineCard = () => {
 
-	const playing: boolean = true;
-	const status: ( JSX.Element) = playing ? <span>In a game</span> : <button>Challenge</button>;
+interface PlayerProps {
+	username: string;
+	photo: string;
+	playing: boolean;
+	status: JSX.Element;
+	
+}
 
-	console.log(status);
+const PlayerOnlineCard = ({username, photo, playing, status}: PlayerProps) => {
 
 	return (
 		<li className='player-card-li'>
-			<img src={catFlowersImg} alt="" />
+			<img src={photo} alt="" />
 			<div className='player-availability'>
-				<span id='user-name'> SvenSvenSvenSvenSvenSvenSvenSven</span>
+				<span id='user-name' title={username}> {username} </span>
 				<span className='icon'> {playing ? <MdOutlineVideogameAssetOff/> : <IoLogoGameControllerA />} </span>
-				{playing ? <span id='in-a-game'>In a game</span> : <button>Challenge</button>}
+				{status}
 			</div>
 
 		</li>
@@ -26,18 +29,24 @@ const PlayerOnlineCard = () => {
 const ListPlayersOnline = () => {
 	return (
 		<ul className='game-page-players-online-ul'>
-			<PlayerOnlineCard />
+			{players.map((player, idx) => (
+				<PlayerOnlineCard 
+					key={idx} //kill me father for I am about to sin and destroy this pc
+					username={player.name} 
+					photo={player.photo}
+					playing={player.playing}
+					status={player.status}
+				/>
+			))}
 		</ul>
 	)
 }
-
-// type Props = {}
 
 const Main = () => {
   return (
 	<main>
 		<div className='players-online'>
-			<div>PLAYERS ONLINE</div>
+			<h2>PLAYERS ONLINE</h2>
 			<input type="text" placeholder='SEARCH'/>
 			<ListPlayersOnline />
 		</div>

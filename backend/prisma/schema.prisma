@@ -9,6 +9,14 @@ datasource backend_database {
 
 
 model User {
-	id			Int			@id @default(autoincrement())
+	id			Int			@unique
 	name		String		@unique
+	mail		String
 }
+
+
+//  id: Number(id),
+//         ecole42Id: Number(id),
+//         name: username,
+//         achievementsId: 1,
+//         mail: email,

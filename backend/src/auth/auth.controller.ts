@@ -10,8 +10,9 @@ export class AuthController
 	@Get('login')
 	login(): string 
 	{
-		this.authService.adduser("usernameveryintuitive");
-		return "Login worked";
+		// this.authService.adduser("usernameveryintuitive");
+		// return "Login worked";
+		return "this url does nothing right now";
 	}
 	@Get('logout')
 	logout(): string 
@@ -19,5 +20,4 @@ export class AuthController
 		this.authService.deleteuser("usernameveryintuitive");
 		return "Logout worked";
 	}
-
 }

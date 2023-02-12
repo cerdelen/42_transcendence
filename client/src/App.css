@@ -1,16 +1,14 @@
 /* GENERAL */
 body {
-  /* background: linear-gradient(to bottom right, rgb(56, 14, 104), rgb(0, 0, 0)); */
   background: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(56, 14, 104));
   block-size: 100vh;
-  /* color: rgb(111, 35, 174); */
   color:white;
   margin: 0 auto;
   min-inline-size: 995px;
   min-block-size: 400px;
   text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF;
-  /* text-shadow: 0 0 10px rgb(119, 0, 255), 0 0 20px rgb(119, 0, 255), 0 0 30px rgb(119, 0, 255); */
 }
+
 header,
 footer,
 main {
@@ -106,3 +104,54 @@ footer ul {
   color: rgb(111, 35, 174);
 }
 
+/* ICONS */
+
+.icon {
+  color: white;
+  font-size: 2rem;
+}
+
+
+/* GAME-PAGE-PLAYERS-Online */
+.players-online {
+  /* display: flex;
+  flex-direction: column;
+  align-items: center; */
+}
+.game-page-players-online-ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.player-card-li {
+  background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140));
+  border: 1px solid pink;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.player-card-li img{
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.player-availability {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#user-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100px; /* set a maximum width */
+}
+
+#in-a-game {
+  width: max-content;
+  margin: 0 1rem;
+}

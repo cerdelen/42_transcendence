@@ -1,6 +1,6 @@
 import './App.css';
 import LoginPage from './components/LoginPage';
-import TestPage from './components/TestPage';
+import GamePage from './components/GamePage';
 
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
   const loggedIn: boolean = true;
   return (
         <>
-          {loggedIn ? <TestPage /> : <LoginPage/>}
+          {loggedIn ? <GamePage /> : <LoginPage/>}
         </>
   );
 }

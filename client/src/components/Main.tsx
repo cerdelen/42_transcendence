@@ -2,7 +2,8 @@ import {IoLogoGameControllerA} from 'react-icons/io'
 import {MdOutlineVideogameAssetOff} from 'react-icons/md'
 import {players} from './temp-players'
 
-
+import catYellowImg from '../images/cat-yellow.jpg'
+import catLyingImg from '../images/cat-lying.jpg'
 interface PlayerProps {
 	username: string;
 	photo: string;
@@ -42,6 +43,28 @@ const ListPlayersOnline = () => {
 	)
 }
 
+const GameOnlineCard = () => {
+	return (
+		<li className='game-card-li'>
+
+			<img src={catLyingImg} alt="" />
+			<span>VS</span>
+			<img src={catYellowImg} alt="" />
+
+
+		</li>
+	)
+}
+
+const ListLiveGames = () => {
+	return (
+		<ul className='game-page-games-online-ul'>
+			{players.map((player, idx) => (
+				<GameOnlineCard/>
+			))}
+		</ul>
+	)
+}
 const Main = () => {
   return (
 	<main>
@@ -57,7 +80,10 @@ const Main = () => {
 
 		</div>
 		<div className='live-games'>
-			2
+			<h2>LIVE GAMES</h2>
+			<input type="text" placeholder='SEARCH'/>
+			<ListLiveGames />
+			
 		</div>
 	</main>
   )

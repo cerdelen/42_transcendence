@@ -115,9 +115,7 @@ footer ul {
 
 
 /* GAME-PAGE-PLAYERS-Online */
-h2{
-  color: red;
-}
+
 .players-online,
 .live-games {
   display: flex;
@@ -149,6 +147,9 @@ h2{
 .player-card-li img{
   border-top-left-radius: 25px;
   border-bottom-left-radius: 25px;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
 }
 
 .player-availability {
@@ -160,10 +161,11 @@ h2{
 }
 
 #user-name {
-  overflow: hidden;
+  /* overflow: hidden; */
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 9rem; /* set a maximum width */
+  /* border: 1px solid yellow; */
+  max-width: 9rem;
 }
 
 #in-a-game {
@@ -171,14 +173,7 @@ h2{
   margin: 0 1rem;
 }
 
-.game-card-li img {
-  /* height: 89px; */
-  /* overflow: hidden; */
-  /* width: 64px; */
-  border-radius: 25px;
-  /* width: 100%; */
-}
-
+/* GAME CARD */
 .game-card-li {
   display: flex;
   align-items: center;
@@ -187,9 +182,49 @@ h2{
   border-radius: 25px;
   margin-bottom: .6rem;
   height: 100px;
+  background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140));
 }
+
+.game-card-li div {
+  position: relative;
+}
+
+.game-card-li div span{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 1rem;
+  pointer-events: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* border: 1px solid yellow; */
+  max-width: 5rem;
+  
+}
+
+.game-card-li img {
+  border-radius: 25px;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+.game-card-li:hover {
+  box-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF;
+  cursor: pointer;
+}
+
 
 .game-card-li span {
   font-size: 10px;
   font-weight: bold;
+}
+
+
+.game-card-li .vertical-word {
+  writing-mode: vertical-rl;
+  font-size: 1.2rem;
 }

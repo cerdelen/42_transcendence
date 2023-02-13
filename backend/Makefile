@@ -15,6 +15,7 @@ setup:
 # npm add -D @types/bcrypt
 # npm add @nestjs/jwt passport-jwt
 # npm add -D @types/passport-jwt
+# npm install passport-42
 # npm add @nestjs/passport passport
 # npx prisma generate
 	npm install

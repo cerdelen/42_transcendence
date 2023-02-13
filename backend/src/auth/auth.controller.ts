@@ -13,7 +13,7 @@ export class AuthController
 	@Get('test42')
 	weirdo()
 	{
-		console.log("hello from inside");
+		console.log("hello from inside test42");
 		return "Hello";
 	}
 
@@ -21,7 +21,7 @@ export class AuthController
 	@Get('testjwt')
 	weirdos()
 	{
-		console.log("hello from inside");
+		console.log("hello from inside testjwt");
 		return "Hello";
 	}
 
@@ -31,12 +31,4 @@ export class AuthController
 	{
 		await this.authService.login(req, res);
 	}
-
-
-	// @Get('logout')
-	// logout(): string 
-	// {
-	// 	this.authService.deleteuser("usernameveryintuitive");
-	// 	return "Logout worked";
-	// }
 }

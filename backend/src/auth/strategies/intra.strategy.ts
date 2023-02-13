@@ -22,15 +22,12 @@ export class Intra42Strategy extends PassportStrategy(Strategy, '42'){
 		done: VerifyCallback,
 	) : Promise<User | undefined>
 	{
-		// console.log(accessToken);
+		console.log(accessToken);
 		// console.log(refreshToken);
 		// console.log(profile.username);
 		// console.log(profile.id);
 		// console.log(profile.emails[0]);
-		const user = await this.authService.validateUser(profile.id, profile.username, profile.emails[0].value);
+		const user = await this.authService.validate_intra_user(profile.id, profile.username, profile.emails[0].value);
 		return (user);
 	}
-
-
-
 }

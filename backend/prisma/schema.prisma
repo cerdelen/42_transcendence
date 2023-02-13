@@ -7,11 +7,17 @@ datasource backend_database {
 	url			= env("DATABASE_URL")
 }
 
+// ? means a field is optional
 
 model User {
-	id			Int			@unique
-	name		String		@unique
-	mail		String
+	// User stuff
+	id				Int			@unique
+	name			String		@unique
+	mail			String
+
+	// 2_FA_stuff
+	two_FA_enabled	Boolean    @default(false)
+	two_FA_secret	String?
 }
 
 

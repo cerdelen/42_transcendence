@@ -1,49 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req, Res } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService 
 {
 	constructor(
-			private prisma: PrismaService,
-			private userService: UserService
+			// private prisma: PrismaService,
+			private userService: UserService,
+			private jwtService: JwtService
 	) {}
 
-	// async adduser(username: string)
-	// {
-		// const User = await this.prisma.user.findUnique({
-		// 		where: {
-		// 			name: username,
-		// 		}
-		// 	});
-		// if (!User)
-		// {
-		// 	await this.prisma.user.create({
-		// 		data: {
-		// 			name: username,
-		// 		}
-		// 	});
-		// }
-		// else
-		// {
-		// 	console.log("this is the else!!!");
-		// }
-	// }
 
-	async deleteuser(username: string)
+	async	login(@Req() req: any, @Res() res: any) : Promise<any> 
 	{
-		await this.prisma.user.delete({
-			where: {
-				name: username,
-			}
-		});
+		var user = await this.userService.findUserById(req.user.id);
+		// i guess if 2 factor here
+
+		const jwt_payload = {
+			username: req.user.name,
+			sub: req.user.id,
+			mail: req.user.mail
+		}
+		const token = this.jwtService.sign(jwt_payload);
+		res.cookie('accessToken', token);
+		return res.redirect('http://localhost:3000/');
 	}
+
 
 	async validateUser(id: number, username : string, email : string): Promise<User>
 	{
+		console.log(email);
 		const user = await this.userService.findUserById(id);
-		return ;
+		if (user)
+			return (user);
+		else
+		{
+
+			const user = this.userService.createUser({
+				id: Number(id),
+				name: username,
+				mail: email
+			});
+			return (user);
+		}
 	}
 }

@@ -1,23 +1,42 @@
-import { Controller, Get } from '@nestjs/common';
-import { workerData } from 'worker_threads';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { Intra_42_Guard } from './guards/intra_42.guard';
+import { Jwt_Auth_Guard } from './guards/jwt_auth.guard';
 
 @Controller('auth')
 export class AuthController 
 {
 	constructor(private authService: AuthService) {}
 
+
+	@UseGuards(Intra_42_Guard)
+	@Get('test42')
+	weirdo()
+	{
+		console.log("hello from inside");
+		return "Hello";
+	}
+
+	@UseGuards(Jwt_Auth_Guard)
+	@Get('testjwt')
+	weirdos()
+	{
+		console.log("hello from inside");
+		return "Hello";
+	}
+
+	@UseGuards(Intra_42_Guard)
 	@Get('login')
-	login(): string 
+	async	intra_login(@Req() req: any, @Res() res: any): Promise<any>
 	{
-		// this.authService.adduser("usernameveryintuitive");
-		// return "Login worked";
-		return "this url does nothing right now";
+		await this.authService.login(req, res);
 	}
-	@Get('logout')
-	logout(): string 
-	{
-		this.authService.deleteuser("usernameveryintuitive");
-		return "Logout worked";
-	}
+
+
+	// @Get('logout')
+	// logout(): string 
+	// {
+	// 	this.authService.deleteuser("usernameveryintuitive");
+	// 	return "Logout worked";
+	// }
 }

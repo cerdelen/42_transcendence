@@ -18,6 +18,8 @@ setup:
 # npm add @nestjs/passport passport
 # npx prisma generate
 	npm install
+#	npm install --save @nestjs/passport passport passport-local
+#	npm install --save-dev @types/passport-local
 
 migrate:
 	npx prisma migrate dev --create-only

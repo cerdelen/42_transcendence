@@ -19,8 +19,14 @@ setup:
 # npm add @nestjs/passport passport
 # npx prisma generate
 	npm install
+
+# stuff for authentication
 #	npm install --save @nestjs/passport passport passport-local
 #	npm install --save-dev @types/passport-local
+#	npm install --save @nestjs/passport passport passport-google-oauth20 dotenv
+#	npm install -D @types/passport-google-oauth20
+#	npm install otplib
+
 
 migrate:
 	npx prisma migrate dev --create-only

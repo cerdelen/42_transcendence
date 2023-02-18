@@ -63,18 +63,4 @@ export class UserService {
 			});
 		}
 	}
-
-
-	// async	findUserById(id: number): Promise<User | undefined>
-	// {
-	// 	return ;
-	// }
-	// async	findUserById(id: number): Promise<User | undefined>
-	// {
-	// 	return ;
-	// }
-	// async	findUserById(id: number): Promise<User | undefined>
-	// {
-	// 	return ;
-	// }
 }

@@ -19,18 +19,22 @@ export class AuthService
 		var user = await this.userService.findUserById(_req.user.id);
 		if(user.two_FA_enabled)
 		{
+			console.log("2fa enabled, redirecting to 2fa");
 			return _res.redirect('http://localhost:3000/?2-fa=' + String(_req.user.id));
 		}
-		const jwt_payload = {
-			username: _req.user.name,
-			sub: _req.user.id,
-			mail: _req.user.mail
-		}
-		const token = this.jwtService.sign(jwt_payload, {secret: "jwtSecret"});
-		_res.cookie('accessToken', token);
-		return _res.redirect('http://localhost:3000/');
+		console.log("2fa NOT enabled signing token");
+		return (this.sign_jwt_token(user.id, _res));
 	}
 
+	async	sign_jwt_token(user_id: number, res: any, is_two_FAed = false)
+	{
+		const	user	= await this.userService.findUserById(user_id);
+		const	payload	= { name: user.name, sub: user.id, mail: user.mail, is_two_FAed: is_two_FAed };
+		const	token	= this.jwtService.sign(payload, {secret: "generic secret"});
+		res.cookie('accessToken', token);
+		console.log(token);
+		return (res.redirect('http://localhost:3000/'));
+	}
 
 	async validate_intra_user(id: number, username : string, email : string): Promise<User>
 	{

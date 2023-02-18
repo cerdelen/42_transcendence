@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { Intra42Strategy } from './strategies/intra.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { Two_FA_Strategy } from 'src/two_fa/strategy/two_fa.strategy';
 
 @Module({
   imports: [PrismaModule, UserModule, JwtModule.register({
@@ -14,6 +15,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     signOptions: { expiresIn: '7d' },
   })],
   controllers: [AuthController],
-  providers: [AuthService, Intra42Strategy, JwtStrategy]
+  providers: [AuthService, Intra42Strategy, JwtStrategy, Two_FA_Strategy]
 })
 export class AuthModule {}

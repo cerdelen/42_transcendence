@@ -25,7 +25,6 @@ export class TwoFaService {
 				"Transcatdence",
 				secret
 			);
-
 		return (otpauthUrl);
 	}
 
@@ -34,7 +33,6 @@ export class TwoFaService {
 		const	dataUrl = await toDataURL(otpauthUrl);
 		return	dataUrl;
 	}
-
 
 	async	verifyCode(user_id: number, code: string) : Promise <any>
 	{
@@ -49,19 +47,11 @@ export class TwoFaService {
 	{
 		this.userService.turn_off_2FA(user_id);
 	}
-	
+
 	async	turn_on(user_id: number)
 	{
 		this.userService.turn_on_2FA(user_id);
 	}
 
-	async	sign_jtw_token(user_id: number, res: any)
-	{
-		const	user	= await this.userService.findUserById(user_id);
-		const	payload	= { username: user.name, sub: user.id, mail: user.mail };
-		const	token	= this.jwtService.sign(payload, {secret: "jwtSecret"});
-		res.cookie('accessToken', token);
-		return (res.redirect('http://localhost:3000/'));
-	}
-
+	
 }

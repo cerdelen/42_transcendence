@@ -1,10 +1,4 @@
-
-// type Props = {
-// }
-
 const LoginPage = () => {
-
-
 
   return (
     <div className='login-page'>

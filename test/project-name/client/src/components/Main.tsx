@@ -1,6 +1,6 @@
 import {IoLogoGameControllerA} from 'react-icons/io'
 import {MdOutlineVideogameAssetOff} from 'react-icons/md'
-import {players} from './temp-players'
+import {players} from '../models/temp-players'
 import { useState } from 'react'
 
 interface PlayerProps {

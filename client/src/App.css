@@ -24,13 +24,23 @@ header {
   margin-top: 0;
 }
 
-header img {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 50%;
+
+header nav ul {
+  display: flex;
+  justify-content:space-around;
+  list-style-type: none;
+  padding: 0;
 }
 
+header li {
+  margin: 0 1rem;
+}
+/* Logo */
+
+#logo {
+  min-width: 220px;
+}
+/* Profile */
 .profile {
   display: flex;
   align-items: center;
@@ -42,51 +52,41 @@ header img {
   position: relative;
 }
 
-header span {
-  /* border: 2px solid black; */
-
+header span:hover {
+  /* padding: 0 1em; */
+  /* border: 2px solid white; */
+  border-radius: 5px;
+  background-color: blueviolet;
+  /* color: black; */
 }
 
-header span:hover {
-  padding: 0 1em;
-  border: 2px solid white;
-  border-radius: 5px;
+.profile img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  border-radius: 50%;
 }
 
 #user-dropdown {
-  /* display: none; */
   position: absolute;
   z-index: 1;
-  /* width: 200px;
-  height: 200px; */
+  min-width: 200px;
+  /* height: 200px; */
   border: 2px solid lime;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   background: linear-gradient(to bottom right, rgb(20, 20, 20), rgb(76, 34, 104));
   background-color: #FFF;
-  /* top: 65px; */
-  /* right: 10px; */
+  display: flex;
+  flex-direction: column;
 }
 
 #user-dropdown * {
-  color: red;
   border: 2px solid lime;
-  width: 35px;
-  height: 5px;
   background-color: black;
   margin: 6px 0;
-
-}
-header nav ul {
-  display: flex;
-  justify-content:space-around;
-  list-style-type: none;
-  padding: 0;
 }
 
-header li {
-  margin: 0 1rem;
-}
 
 /* MAIN */
 .game-page {

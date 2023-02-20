@@ -27,14 +27,14 @@ const Header = (props: Props) => {
 	const username: String = 'Catlin';
   return (
 	<header>
-		<div>Logo</div>
+		<div id='logo'>Logo</div>
 		<nav>
 			<ul>
 				<li>
-					Game
+					<a href="#Game">Game</a>
 				</li>
 				<li>
-					Community
+					<a href="#Community">Community</a>
 				</li>
 			</ul>
 		</nav>
@@ -48,16 +48,24 @@ const Header = (props: Props) => {
 			<div ref={secondElementRef} 
 					id="user-dropdown"
 					style={{ display: isDropdownOpen ? 'block' : 'none' }}>
-				<img src={expertLevel} alt="" />
-				<span>{username}</span>
-				<span>{availability ? 'online' : 'offline'}</span>
-				<span>Games won {gamesWon} </span>
-				<div>
-					<span>Achievements</span>
-					<img src={themeAchievement} alt="" />
-					<img src={halfGamesAchievement} alt="" />
-					<img src={threeWinsAchievement} alt="" />
+
+				<div id='profile-picture-username'>
+					<img src={expertLevel} alt="" />
+					<span>{username}</span>
 				</div>
+				<div id='status-games-wom'>
+					<span>{availability ? 'online' : 'offline'}</span>
+					<span>Games won {gamesWon} </span>
+				</div>
+				<section id='achievements'>
+					<h3>Achievements</h3>
+					<div>
+						<img src={themeAchievement} alt="" />
+						<img src={halfGamesAchievement} alt="" />
+						<img src={threeWinsAchievement} alt="" />
+
+					</div>
+				</section>
 				<button>Logout</button>
 			</div>
 		}

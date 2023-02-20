@@ -26,7 +26,7 @@ export let players: Player[] = [];
 players.push(new Player('Cedric', catFlowersImg, true));
 players.push(new Player('Jakub', catSternImg, false));
 players.push(new Player('Wolfito', catGrassImg, false));
-players.push(new Player('Zoe', catYellowImg, true));
+players.push(new Player('Roni', catYellowImg, true));
 players.push(new Player('Krisi', catLyingImg, true));
 players.push(new Player('Jakuldfjhvjhgdsfjghdfsjghds vgddgvdlsvl sllhgvlgsdfb', catSternImg, false));
 players.push(new Player('Cedric', catFlowersImg, true));

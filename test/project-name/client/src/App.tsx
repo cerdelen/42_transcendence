@@ -1,12 +1,15 @@
-import React from 'react'
-
 import './App.css';
+import LoginPage from './components/LoginPage';
+import GamePage from './components/GamePage';
+
 
 function App() {
+
+  const loggedIn: boolean = true;
   return (
-    <>
-    <h1>Siemanko</h1>
-    </>
+        <>
+          {loggedIn ? <GamePage /> : <LoginPage/>}
+        </>
   );
 }
 

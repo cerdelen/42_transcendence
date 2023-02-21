@@ -26,7 +26,7 @@ const PlayerOnlineCard = ({username, photo, playing, status}: PlayerProps) => {
 	)
 }
 
-const ListPlayersOnline = () => {
+export const ListPlayersOnline = () => {
 	return (
 		<ul className='game-page-players-online-ul'>
 			{players.map((player, idx) => (
@@ -96,7 +96,8 @@ const ListLiveGames = () => {
 		</ul>
 	)
 }
-const Main = () => {
+
+const Game = () => {
   return (
 	<main>
 		<div className='players-online'>
@@ -120,4 +121,4 @@ const Main = () => {
   )
 }
 
-export default Main
+export default Game

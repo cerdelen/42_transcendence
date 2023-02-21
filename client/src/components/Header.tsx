@@ -3,13 +3,17 @@ import React, { useRef, useState } from 'react'
 
 import ProfileCard from './ProfileCard'
 
+type Props = {
+	gamePage: boolean;
+	setGamePage: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
+const Header = ({gamePage, setGamePage}: Props) => {
 
-const Header = () => {
-
-
-
-
+	function handleCLick() {
+		setGamePage(!gamePage);
+		// alert("I'm here");
+	}
 
   return (
 	<header>
@@ -17,10 +21,10 @@ const Header = () => {
 		<nav>
 			<ul>
 				<li>
-					<a href="#Game">Game</a>
+					<a href="#Game" onClick={handleCLick}>Game</a>
 				</li>
 				<li>
-					<a href="#Community">Community</a>
+					<a href="#Community" onClick={handleCLick} >Community</a>
 				</li>
 			</ul>
 		</nav>

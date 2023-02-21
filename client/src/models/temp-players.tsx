@@ -32,7 +32,7 @@ players.push(new Player('Jakub', catSternImg, false, false));
 players.push(new Player('Wolfito', catGrassImg, false, true));
 players.push(new Player('Roni', catYellowImg, true, true));
 players.push(new Player('Krisi', catLyingImg, true, true));
-players.push(new Player('Jakuldfjhvjhgdsfjghdfsjghds vgddgvdlsvl sllhgvlgsdfb', catSternImg, false, true));
+players.push(new Player('RRRJakuldfjhvjhgdsfjghdfsjghds vgddgvdlsvl sllhgvlgsdfb', catSternImg, false, true));
 players.push(new Player('Cedric', catFlowersImg, true, true));
 players.push(new Player('Jakub', catSternImg, false, true));
 players.push(new Player('Cedric', catFlowersImg, true, true));

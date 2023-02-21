@@ -1,14 +1,19 @@
 import './App.css';
 import LoginPage from './components/LoginPage';
-import GamePage from './components/GamePage';
+import HomePage from './components/HomePage';
+// import { useState } from 'react';
 
 
 function App() {
 
   const loggedIn: boolean = true;
+
+
+
   return (
         <>
-          {loggedIn ? <GamePage /> : <LoginPage/>}
+          {loggedIn ? <HomePage /> : <LoginPage/>}
+          {/* {communityPage ? <> } */}
         </>
   );
 }

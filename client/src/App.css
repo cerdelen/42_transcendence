@@ -169,6 +169,7 @@ main {
   grid-template-columns: 1fr 4.5fr 1fr;
 }
 
+
 .players-online {
   grid-column: 1;
 }
@@ -252,7 +253,7 @@ footer ul {
   padding: 0;
   max-height: 80vh;
   overflow-x: auto;
-  overflow-block:inherit;
+  /* overflow-block:inherit; */
   width: 90%;
   flex-shrink: 0;
   /* border: 2px solid blue; */
@@ -299,9 +300,9 @@ footer ul {
 /* GAME CARD */
 .game-card-li {
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   justify-content: space-between;
-  border: 1px solid pink;
+  /* border: 1px solid pink; */
   border-radius: 25px;
   margin-bottom: .6rem;
   height: 100px;
@@ -350,4 +351,37 @@ footer ul {
 .game-card-li .vertical-word {
   writing-mode: vertical-rl;
   font-size: 1.2rem;
+}
+
+/* Community */
+
+#community {
+  display: grid;
+  grid-template-columns: 2fr 4.5fr 2fr;
+  gap: 1rem;
+  
+}
+
+#community * {
+  border: 2px solid red;
+}
+
+/* CHAT AREA */
+
+#chat-area {
+  display: grid;
+  grid-template-rows: .5fr 4.5fr 2fr;
+}
+
+.com-areas {
+  background-color: lightblue;
+  overflow: scroll;
+}
+
+#friends-area,
+#lobby-area
+ {
+  display: flex;
+  flex-direction: column;
+  
 }

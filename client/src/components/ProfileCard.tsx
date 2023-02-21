@@ -11,7 +11,7 @@ const player: Player = players[0];
 type Props = {};
 
 const ProfileCard = (props: Props) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const firstElementRef = useRef<HTMLDivElement>(null);
   const secondElementRef = useRef<HTMLDivElement>(null);
 

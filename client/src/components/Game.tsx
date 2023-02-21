@@ -98,12 +98,14 @@ const ListLiveGames = () => {
 }
 
 const Game = () => {
+
+	///use state for players joining the online queue
   return (
 	<main>
 		<div className='players-online'>
 			<h2>PLAYERS ONLINE</h2>
 			<input type="text" placeholder='SEARCH'/>
-			<ListPlayersOnline />
+			{players.length === 0 ? <div>No one is online </div> : <ListPlayersOnline />}
 		</div>
 		<div className='game-area'>
 			<canvas>

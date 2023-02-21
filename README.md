@@ -19,6 +19,6 @@ to start prisma studio:
 
         4. (if you made changes to database run "npx prisma db push --accept-data-loss")
 
-        5. run npx prisma studio
+        5. run "npx prisma studio"
 
         6. go to browser and open "localhost:5555" (first time you open it it will sefault, repeat from step 5)

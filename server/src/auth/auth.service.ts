@@ -45,7 +45,7 @@ export class AuthService
 		else
 		{
 
-			const user = this.userService.createUser({
+			const user = await this.userService.createUser({
 				id: Number(id),
 				name: username,
 				mail: email
@@ -56,12 +56,12 @@ export class AuthService
 	async validate_user(payload: any): Promise<User>
 	{
 		const id = payload.sub;
-
+		
 		try 
 		{
 			const user = await this.userService.findUserById(Number(id));
 			if(!user)
-				return (null);
+			return (null);
 			return (user);
 		}
 		catch (error)
@@ -69,4 +69,14 @@ export class AuthService
 			return (null);
 		}
 	}
+	
+	async test_db()
+	{
+		const user = await this.userService.createUser({
+			id: Number(322),
+			name: 'testinguser',
+			mail: 'testinguser@email.com'
+		});
+	}
+
 }

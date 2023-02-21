@@ -26,8 +26,10 @@ services:
       - database
     ports:
       - 5500:5500
-# for coding purposes, delete later
+# for coding purposes, might delete later
       - 3003:3003
+# for prisma studio (visualizing database), might delete later
+      - 5555:5555
     environment:
       - SECRET="¯\_(ツ)_/¯"
     volumes:

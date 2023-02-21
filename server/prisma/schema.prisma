@@ -1,6 +1,6 @@
 generator client {
 	provider = "prisma-client-js"
-	binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+	binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource backend_database {
@@ -15,6 +15,10 @@ model User {
 	id				Int			@unique
 	name			String		@unique
 	mail			String
+	lol				String?
+	lfol				String?
+	dlfol				String?
+	salfol				String?
 
 	// 2_FA_stuff
 	two_FA_enabled	Boolean    @default(false)

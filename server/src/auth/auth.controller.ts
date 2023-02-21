@@ -41,4 +41,12 @@ export class AuthController
 		console.log("hello from inside test all")
 		return ("hello");
 	}
+
+
+	@Get('test_db')
+	test_db()
+	{
+		this.authService.test_db();
+		return ("successfully tested db");
+	}
 }

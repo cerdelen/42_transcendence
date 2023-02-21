@@ -1,0 +1,33 @@
+generator client {
+	provider = "prisma-client-js"
+	binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource backend_database {
+	provider	= "postgresql"
+	url			= env("DATABASE_URL")
+}
+
+// ? means a field is optional
+
+model User {
+	// User stuff
+	id				Int			@unique
+	name			String		@unique
+	mail			String
+	lol				String?
+	lfol				String?
+	dlfol				String?
+	salfol				String?
+
+	// 2_FA_stuff
+	two_FA_enabled	Boolean    @default(false)
+	two_FA_secret	String?
+}
+
+
+//  id: Number(id),
+//         ecole42Id: Number(id),
+//         name: username,
+//         achievementsId: 1,
+//         mail: email,

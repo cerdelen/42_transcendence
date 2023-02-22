@@ -3,6 +3,8 @@ import {MdOutlineVideogameAssetOff} from 'react-icons/md'
 import {players} from '../models/temp-players'
 import { useState } from 'react'
 import React from 'react'
+import Canvas from './Canvas'
+import Pong from './Pong'
 
 interface PlayerProps {
 	username: string;
@@ -109,10 +111,7 @@ const Game = () => {
 			{players.length === 0 ? <div>No one is online </div> : <ListPlayersOnline />}
 		</div>
 		<div className='game-area'>
-			<canvas>
-
-			</canvas>
-
+			<Canvas draw={Pong} />
 		</div>
 		<div className='live-games'>
 			<h2>LIVE GAMES</h2>

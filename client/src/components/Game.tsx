@@ -2,6 +2,7 @@ import {IoLogoGameControllerA} from 'react-icons/io'
 import {MdOutlineVideogameAssetOff} from 'react-icons/md'
 import {players} from '../models/temp-players'
 import { useState } from 'react'
+import React from 'react'
 
 interface PlayerProps {
 	username: string;

@@ -4,6 +4,7 @@ import catGrassImg from '../images/cat-grass.jpg'
 import catYellowImg from '../images/cat-yellow.jpg'
 import catLyingImg from '../images/cat-lying.jpg'
 import catWhiteImg from '../images/cat-white.jpg'
+import React from 'react'
 
 export class Player {
 

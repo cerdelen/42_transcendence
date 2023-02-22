@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { useRef, useState } from "react";
 import { players, Player } from "../models/temp-players";
 import profile from "../images/cat-grass.jpg";

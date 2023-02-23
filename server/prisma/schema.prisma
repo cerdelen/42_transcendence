@@ -15,7 +15,7 @@ model User {
 	id				Int			@unique
 	name			String		@unique
 	mail			String
-	picture			String?
+	// picture			String?
 
 	// 2_FA_stuff
 	two_FA_enabled	Boolean    @default(false)

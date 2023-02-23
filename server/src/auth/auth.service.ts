@@ -32,6 +32,7 @@ export class AuthService
 		const	payload	= { name: user.name, sub: user.id, mail: user.mail, is_two_FAed: is_two_FAed };
 		const	token	= this.jwtService.sign(payload, {secret: "generic secret"});
 		res.cookie('accessToken', token);
+		console.log('this is signed accessToken');
 		console.log(token);
 		return (res.redirect('http://localhost:3000/'));
 	}
@@ -53,6 +54,7 @@ export class AuthService
 			return (user);
 		}
 	}
+
 	async validate_user(payload: any): Promise<User>
 	{
 		const id = payload.sub;

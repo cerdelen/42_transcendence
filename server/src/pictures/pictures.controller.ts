@@ -12,7 +12,6 @@ export class PicturesController
 {
 	constructor(
 		private readonly	userService:	UserService,
-		private				prisma:			PrismaService,
 		private readonly	pictureService:	PicturesService,
 		) {}
 
@@ -61,12 +60,11 @@ export class PicturesController
 	}
 	
 	@UseGuards(Jwt_Auth_Guard)
-    @Get('me')
+    @Get(':userId')
 	async	get_my_picture_by_id(@Param('userId') userId, @Res() _res: any) : Promise<any>
 	{
 		const picture = await (await this.userService.findUserById(userId)).picture;
 		_res.sendfile(picture, {root: './uploads/profile_pictures'});
-
 	}
 
 }

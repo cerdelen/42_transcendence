@@ -17,7 +17,7 @@ export class AuthController
 		console.log("hello from inside test42");
 		return ("hello");
 	}
-	
+
 	@UseGuards(Jwt_Auth_Guard)
 	@Get('testjwt')
 	weirdos()
@@ -30,9 +30,10 @@ export class AuthController
 	@Get('login')
 	async	intra_login(@Req() req: any, @Res() res: any): Promise<any>
 	{
+		console.log("hello from inside auth/login");
 		await this.authService.login(req, res);
 	}
-	
+
 	@Get('test-all')
 	@UseGuards(Jwt_Auth_Guard)
 	@UseGuards(Two_FA_Guard)
@@ -41,11 +42,11 @@ export class AuthController
 		console.log("hello from inside test all")
 		return ("hello");
 	}
-
-
+	
 	@Get('test_db')
 	test_db()
 	{
+		console.log("hello from inside test_db")
 		this.authService.test_db();
 		return ("successfully tested db");
 	}

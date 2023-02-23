@@ -8,6 +8,4 @@ RUN npm install -g nodemon --silent
 RUN npm install --silent
 RUN apk add --no-cache bash
 
-RUN ["chmod", "+x", "./migrating_prisma.sh"]
-
 EXPOSE 5500

@@ -4,28 +4,24 @@ import { Jwt_Auth_Guard } from 'src/auth/guards/jwt_auth.guard';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { UserService } from 'src/user/user.service';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { PicturesService } from './pictures.service';
+
+import * as fs from 'fs'
 
 @Controller('pictures')
 export class PicturesController
 {
-	constructor(
-		private readonly	userService:	UserService,
-		private readonly	pictureService:	PicturesService,
-		) {}
-
-
-
 	@UseGuards(Jwt_Auth_Guard)
 	@Post('upload')
 	@UseInterceptors(FileInterceptor('file',
 		{
 			storage: diskStorage({
-				destination: './uploads/profile_pictures', // obv this wont work
-				filename: (req, file, cb) => {
-					const random_name = Array(32).fill(null).map(()=> (Math.round(Math.random() * 16)).toString(16)).join('')
-					return cb(null, `${random_name}${extname(file.originalname)}`)
+				destination: './uploads/profile_pictures',
+				filename: (req: any, file, cb) => {
+					const file_name = req.user.id;
+					return cb(null, `${file_name}${extname(file.originalname)}`)
+					// const random_name = Array(32).fill(null).map(()=> (Math.round(Math.random() * 16)).toString(16)).join('')
+					// return cb(null, `${random_name}${extname(file.originalname)}`)
 				}
 			})
 		}
@@ -35,36 +31,48 @@ export class PicturesController
 		new ParseFilePipe({
 			validators: [
 				new MaxFileSizeValidator({ maxSize: 300000 }),
-				new FileTypeValidator({ fileType: '.(png|jpeg|jpg)'})
+				new FileTypeValidator({ fileType: '.(jpeg)'})
 			],
 		}),
 	) file, @Req() _req: any)
 	{
-		console.log("hello inside upload picture");
 		if(file != undefined)
 		{
-			console.log("picture is not undefined");
-			await	this.pictureService.upload_picture({
-				where: {id: _req.user.id},
-				data: {picture: `${file.filename}`}
-			});
+			console.log("Uploading picture was successful");
+			return ;
 		}
+		console.log("Uploading picture was unsuccessful");
 	}
 
 	@UseGuards(Jwt_Auth_Guard)
     @Get('me')
 	async	get_my_picture(@Res() _res, @Req() _req: any) : Promise<any>
 	{
-		const picture = await (await this.userService.findUserById(_req.user.id)).picture;
-		_res.sendfile(picture, {root: './uploads/profile_pictures'});
+		const picture = `./uploads/profile_pictures/${_req.user.id}.jpeg`;
+		console.log(picture);
+		await fs.access(picture, (error) => {
+			if (error) 
+			{
+			//   console.log("file does not exist");
+				return _res.sendFile("default_picture.jpeg", {root: './uploads/profile_pictures'});
+			}
+			_res.sendFile(picture, {root: '.'});
+			// console.log("File Exists!");
+		});
 	}
 	
 	@UseGuards(Jwt_Auth_Guard)
     @Get(':userId')
 	async	get_my_picture_by_id(@Param('userId') userId, @Res() _res: any) : Promise<any>
 	{
-		const picture = await (await this.userService.findUserById(userId)).picture;
-		_res.sendfile(picture, {root: './uploads/profile_pictures'});
+		const picture = `./uploads/profile_pictures/${userId}.jpeg`;
+		console.log(picture);
+		await fs.access(picture, (error) => {
+			if (error) 
+			{
+				return _res.sendFile("default_picture.jpeg", {root: './uploads/profile_pictures'});
+			}
+			_res.sendFile(picture, {root: '.'});
+		});
 	}
-
 }

@@ -15,12 +15,45 @@ model User {
 	id				Int			@unique
 	name			String		@unique
 	mail			String
+
 	// picture			String?
 
 	// 2_FA_stuff
 	two_FA_enabled	Boolean    @default(false)
 	two_FA_secret	String?
 }
+
+model Chat {
+	// User stuff
+	id				Int			@unique  @id @default(autoincrement()) 
+	chat_name		String?		
+	chat_msg		Message[]
+
+	//something to consider later after creating chat
+	is_public		Boolean		@default(true)
+	pass_protected	Boolean		@default(false)
+	password		String?		
+
+	chat_members	Int[]
+	chat_owner		Int
+	chat_admins		Int[] 
+	black_list		Int[]
+	mute_list		Int[]
+}
+
+model Message {
+	// User stuff
+	msg_id				Int			@unique  @id @default(autoincrement()) 
+	user_id				Int			@default(0) 
+	user_name			String		@default("default_name")
+	text				String
+	created_at			DateTime	@default(now())
+
+	//necessary fro array of messages in Chat model
+	chat_id				Int?			
+	chat				Chat?		@relation(fields: [chat_id], references: [id])
+}
+
 
 
 //  id: Number(id),

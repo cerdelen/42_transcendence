@@ -1,4 +1,6 @@
 import { Body, Controller, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { authenticator } from 'otplib';
+import { connected } from 'process';
 import { AuthService } from 'src/auth/auth.service';
 import { Jwt_Auth_Guard } from 'src/auth/guards/jwt_auth.guard';
 import { TwoFaService } from './two_fa.service';
@@ -21,7 +23,7 @@ export class TwoFaController {
 
 	@Post('turn-on')
 	@UseGuards(Jwt_Auth_Guard)
-	async	turn_on_2fa(@Req() req: any, @Body('two_FA_code') code : string)
+	async	turn_on_2fa(@Req() req: any, @Body('two_FA_code') code : string, @Res({passthrough: true}) res: any) : Promise<any>
 	{
 		const	valid_code = await this.two_FA_Service.verifyCode(req.user.id, code);
 		if(!valid_code)
@@ -30,40 +32,52 @@ export class TwoFaController {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
 		// console.log("valid 2fa code");
-		return	this.two_FA_Service.turn_on(req.user.id);
+		await	this.two_FA_Service.turn_on(req.user.id);
+		return (this.authService.sign_jwt_token(req.user.id, res, true));
 	}
 
 	@Post('turn-off')
 	@UseGuards(Jwt_Auth_Guard)
-	async	turn_off_2fa(@Req() req: any, @Body('two_FA_code') code : string)
+	async	turn_off_2fa(@Req() req: any, @Res({passthrough: true}) res: any) : Promise<any>
 	{
-		const	valid_code = await this.two_FA_Service.verifyCode(req.user.id, code);
-		if(!valid_code)
-		{
-			// console.log("invalid 2fa code");
-			throw new UnauthorizedException('Wrong authentication code');
-		}
-		// console.log("valid 2fa code");
-		return	this.two_FA_Service.turn_off(req.user.id);
+		await this.two_FA_Service.turn_off(req.user.id);
+		return this.authService.sign_jwt_token(req.user.id, res);
 	}
 
-	@Post('authenticate')
-	@UseGuards(Jwt_Auth_Guard)
-	async	authenticate(@Req() req: any, @Body('two_FA_code') code : string, @Res({passthrough: true}) res: any) : Promise<any>
-	{
-		const	valid_code = await this.two_FA_Service.verifyCode(req.user.id, code);
-		if(!valid_code)
-		{
-			// console.log("invalid 2fa code");
-			throw new UnauthorizedException('Wrong authentication code');
-		}
-		return (this.authService.sign_jwt_token(req.user.id, res, true));
-	}
+	// @Post('turn-off')
+	// @UseGuards(Jwt_Auth_Guard)
+	// async	turn_off_2fa(@Req() req: any, @Body('two_FA_code') code : string)
+	// {
+	// 	const	valid_code = await this.two_FA_Service.verifyCode(req.user.id, code);
+	// 	if(!valid_code)
+	// 	{
+	// 		// console.log("invalid 2fa code");
+	// 		throw new UnauthorizedException('Wrong authentication code');
+	// 	}
+	// 	// console.log("valid 2fa code");
+	// 	return	this.two_FA_Service.turn_off(req.user.id);
+	// }
 
 
-
-
-
-
-
+	// @Post('authenticate')
+	// @UseGuards(Jwt_Auth_Guard)
+	// async	authenticate(@Req() req: any, @Body('two_FA_code') code : string, @Res({passthrough: true}) res: any) : Promise<any>
+	// {
+	// 	const	valid_code = await this.two_FA_Service.verifyCode(req.user.id, code);
+	// 	if(!valid_code)
+	// 	{
+	// 		// console.log("invalid 2fa code");
+	// 		throw new UnauthorizedException('Wrong authentication code');
+	// 	}
+	// 	return (this.authService.sign_jwt_token(req.user.id, res, true));
+	// }
 }
+
+
+
+// how to use:
+
+// 	- first use generate to generate a qr connected
+// 	- scan it and get the authenticator
+// 	- Post request to 'authenticate' with code in body(raw/json)
+// 	- then 'turn-on'

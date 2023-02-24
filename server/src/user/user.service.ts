@@ -52,6 +52,7 @@ export class UserService {
 			});
 		}
 	}
+
 	async	turn_off_2FA(user_id: number)
 	{
 		var	user = await this.findUserById(user_id);

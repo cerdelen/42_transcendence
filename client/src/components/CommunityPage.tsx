@@ -14,17 +14,9 @@ const GameOnlineCard = ({username1, photo1, username2, photo2}: LiveGameProps) =
 	
 	const [showText, setShowText] = useState(false);
 
-	const handleMouseOver = () => {
-	  setShowText(true);
-	};
-  
-	const handleMouseOut = () => {
-	  setShowText(false);
-	};
-
-	const handleOnClick = () => {
-		alert("A message to ask if you are sure you want to leave the current screen to go watch the game")
-	}
+	const handleMouseOver = () => {setShowText(true);};
+	const handleMouseOut = () => {setShowText(false);};
+	const handleOnClick = () => {alert("What do here?");}
 	
 	return (
 		<li className='game-card-li' onClick={handleOnClick} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
@@ -44,6 +36,33 @@ const GameOnlineCard = ({username1, photo1, username2, photo2}: LiveGameProps) =
 	)
 }
 
+interface OpenChatProps {
+	username: string;
+	photo: string;
+}
+
+const OpenChat = ({username, photo}: OpenChatProps) => {
+
+	return (
+		<li id='open-chat-card'>
+			<span id='user-name' title={username}> {username} </span>
+			<img src={photo} alt="" />
+		</li>
+	)
+}
+
+const ListOpenChats = () => {
+    return (
+        <ul className='scrollable-list open-chats' >
+            {players.map((player, idx) => (
+				<OpenChat
+					username={players[2].name}
+					photo={players[2].photo}
+				/>
+			))}
+        </ul>
+    )
+}
 const ListLiveGames = () => {
 	return (
 		<ul className='game-page-games-online-ul'>
@@ -88,6 +107,9 @@ const Community = (props: Props) => {
 			<h2>LIVE GAMES</h2>
 			<input type="text" placeholder='SEARCH'/>
 			<ListLiveGames />
+            <h2>CHATS</h2>
+			<ListOpenChats />
+            
 			
 		</div>
     </main>

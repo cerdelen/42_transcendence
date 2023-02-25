@@ -1,0 +1,45 @@
+#displayed-messages {
+    margin-bottom: 2rem;
+    background-color: bisque;
+    background: linear-gradient(to bottom right, rgb(134, 73, 127), rgb(129, 103, 146));
+    border: 1rem ridge ;
+  }
+  
+  #chat-input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding-right: 40px; 
+    padding-left: 10px;
+    border: 1px solid white;
+    border-radius: 9px;
+    font-size: 19px;
+    line-height: 1.5;
+    overflow-y: auto;
+    white-space: pre-wrap; 
+    background: linear-gradient(to bottom right, rgb(129, 103, 146), rgb(134, 73, 127));
+    position: relative;
+  }
+  
+  #chat-area button {
+    position: absolute;
+    /* left: 90%; */
+    right: 0;
+    height: 100%;
+    width: 50px; /* adjust as needed */
+    border: none;
+    /* border-radius: 0 25px 25px 0; */
+    border-radius: 9px;
+    font-size: 16px;
+    line-height: 1.5;
+    /* background-color: blue; */
+    color: rgb(134, 73, 127);
+  }
+  
+  #chat-area form {
+    position: relative;
+    width: 100%;
+    height: 50px;
+  }
+  
+  

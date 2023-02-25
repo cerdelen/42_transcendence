@@ -45,47 +45,6 @@ export const ListPlayersOnline = () => {
 	)
 }
 
-interface LiveGameProps {
-	username1: string;
-	photo1: string;
-	username2: string;
-	photo2: string;
-}
-const GameOnlineCard = ({username1, photo1, username2, photo2}: LiveGameProps) => {
-	
-	const [showText, setShowText] = useState(false);
-
-	const handleMouseOver = () => {
-	  setShowText(true);
-	};
-  
-	const handleMouseOut = () => {
-	  setShowText(false);
-	};
-
-	const handleOnClick = () => {
-		alert("A message to ask if you are sure you want to leave the current screen to go watch the game")
-	}
-	
-	return (
-		<li className='game-card-li' onClick={handleOnClick} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
-			<div>
-				<img  src={photo1} alt="" />
-				{showText && <span className='game-card-user-name'>{username1}</span>}
-			</div>
-			
-			{!showText ? <span>VS</span> : <span className="vertical-word">Watch</span> }
-
-			<div>
-				<img src={photo2} alt=""/>
-				{showText && <span className='game-card-user-name'>{username2}</span>}
-			</div>
-			
-		</li>
-	)
-}
-
-
 
 const Game = () => {
 

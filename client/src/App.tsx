@@ -7,23 +7,25 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
 
-  useEffect(() => {
-    const myCookieValue = document.cookie
-      .split('; ')
-      .find(cookie => cookie.startsWith('accessToken='))
-      ?.split('=')[1];
-    if (myCookieValue !== undefined) {
-      setLoggedIn(true);
-    }
-    console.log(myCookieValue);
-  }, []);
+  // useEffect(() => {
+  //   const myCookieValue = document.cookie
+  //     .split('; ')
+  //     .find(cookie => cookie.startsWith('accessToken='))
+  //     ?.split('=')[1];
+  //   if (myCookieValue !== undefined) {
+  //     setLoggedIn(true);
+  //   }
+  //   console.log(myCookieValue);
+  // }, []);
   return (
     <MyProvider>
-      {loggedIn ? 
+      <HomePage />
+
+      {/* {loggedIn ? 
         <HomePage />
       : 
         <LoginPage />
-      }
+      } */}
       
       {/* {communityPage ? <> } */}
     </MyProvider>

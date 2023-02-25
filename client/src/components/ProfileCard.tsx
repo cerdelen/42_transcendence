@@ -13,7 +13,7 @@ const player: Player = players[0];
 type Props = {};
 
 const ProfileCard = (props: Props) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(true);
   const firstElementRef = useRef<HTMLDivElement>(null);
   const secondElementRef = useRef<HTMLDivElement>(null);
   const { loggedIn, setLoggedIn } = useMyContext();

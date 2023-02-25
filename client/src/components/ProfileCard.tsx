@@ -7,6 +7,7 @@ import themeAchievement from "../images/changed-theme-achievement.png";
 import threeWinsAchievement from "../images/three-wins-achievement.png";
 import halfGamesAchievement from "../images/won-half-of-your-games-achievement.png";
 import expertLevel from "../images/expert-level.jpeg";
+import LoginPage from "./LoginPage";
 
 const player: Player = players[0];
 
@@ -28,13 +29,12 @@ const ProfileCard = (props: Props) => {
     }
   }
 
-  async function logOut() {
+   function logOut() {
     console.log("pressed");
 
-    const response = await fetch('http://localhost:3003/testKwisi', {method: 'GET'});
-    console.log(response.body);
-    // document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-    // setLoggedIn(loggedIn);
+    document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+    setLoggedIn(false);
+    window.location.replace('http://localhost:3000');
   }
   return (
     <div id="profile-box" ref={firstElementRef}>

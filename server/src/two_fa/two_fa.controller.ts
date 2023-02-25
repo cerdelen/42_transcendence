@@ -25,13 +25,14 @@ export class TwoFaController {
 	@UseGuards(Jwt_Auth_Guard)
 	async	turn_on_2fa(@Req() req: any, @Body('two_FA_code') code : string, @Res({passthrough: true}) res: any) : Promise<any>
 	{
+		console.log("inside 2fa turn on")
 		const	valid_code = await this.two_FA_Service.verifyCode(req.user.id, code);
 		if(!valid_code)
 		{
 			// console.log("invalid 2fa code");
 			throw new UnauthorizedException('Wrong authentication code');
 		}
-		// console.log("valid 2fa code");
+		console.log("valid 2fa code");
 		await	this.two_FA_Service.turn_on(req.user.id);
 		return (this.authService.sign_jwt_token(req.user.id, res, true));
 	}
@@ -59,18 +60,18 @@ export class TwoFaController {
 	// }
 
 
-	// @Post('authenticate')
-	// @UseGuards(Jwt_Auth_Guard)
-	// async	authenticate(@Req() req: any, @Body('two_FA_code') code : string, @Res({passthrough: true}) res: any) : Promise<any>
-	// {
-	// 	const	valid_code = await this.two_FA_Service.verifyCode(req.user.id, code);
-	// 	if(!valid_code)
-	// 	{
-	// 		// console.log("invalid 2fa code");
-	// 		throw new UnauthorizedException('Wrong authentication code');
-	// 	}
-	// 	return (this.authService.sign_jwt_token(req.user.id, res, true));
-	// }
+	@Post('authenticate')
+	@UseGuards(Jwt_Auth_Guard)
+	async	authenticate(@Req() req: any, @Body('two_FA_code') code : string, @Res({passthrough: true}) res: any) : Promise<any>
+	{
+		const	valid_code = await this.two_FA_Service.verifyCode(req.user.id, code);
+		if(!valid_code)
+		{
+			// console.log("invalid 2fa code");
+			throw new UnauthorizedException('Wrong authentication code');
+		}
+		return (this.authService.sign_jwt_token(req.user.id, res, true));
+	}
 }
 
 

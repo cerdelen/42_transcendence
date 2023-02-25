@@ -9,7 +9,7 @@ type Props = {}
 
 const HomePage = (props: Props) => {
 	// const game: boolean = false;
-	const [gamePage, setGamePage] = useState(false);
+	const [gamePage, setGamePage] = useState(true);
 
   return (
 	<div className='game-page'>

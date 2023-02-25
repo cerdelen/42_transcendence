@@ -1,5 +1,5 @@
-import React from 'react'
-
+import React, { useContext } from "react";
+import { useMyContext } from "./AppContext";
 import { useRef, useState } from "react";
 import { players, Player } from "../models/temp-players";
 import profile from "../images/cat-grass.jpg";
@@ -16,6 +16,7 @@ const ProfileCard = (props: Props) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const firstElementRef = useRef<HTMLDivElement>(null);
   const secondElementRef = useRef<HTMLDivElement>(null);
+  const { loggedIn, setLoggedIn } = useMyContext();
 
   function handleProfileClick() {
     setIsDropdownOpen(!isDropdownOpen);
@@ -25,6 +26,15 @@ const ProfileCard = (props: Props) => {
         firstElementRef.current.getBoundingClientRect().bottom
       }px`;
     }
+  }
+
+  async function logOut() {
+    console.log("pressed");
+
+    const response = await fetch('http://localhost:3003/testKwisi', {method: 'GET'});
+    console.log(response.body);
+    // document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+    // setLoggedIn(loggedIn);
   }
   return (
     <div id="profile-box" ref={firstElementRef}>
@@ -41,11 +51,14 @@ const ProfileCard = (props: Props) => {
           <span>{player.name}</span>
         </div>
         <div id="status-games-won">
-          <span id="status-dot" style={{ backgroundColor: player.availability ? "purple" : "gray" }}></span>
+          <span
+            id="status-dot"
+            style={{ backgroundColor: player.availability ? "purple" : "gray" }}
+          ></span>
           <span id="availability">
             {player.availability ? "ONLINE" : "OFFLINE"}
           </span>
-          <span style={{ fontWeight: 'bolder' }}>WINS {player.gamesWon} </span>
+          <span style={{ fontWeight: "bolder" }}>WINS {player.gamesWon} </span>
         </div>
         <section id="achievements-box">
           <h3>Achievements</h3>
@@ -57,7 +70,8 @@ const ProfileCard = (props: Props) => {
             <img src={threeWinsAchievement} alt="" />
           </div>
         </section>
-        <button>Logout</button>
+        <button>TwoFactor</button>
+        <button onClick={logOut}>Logout</button>
       </div>
     </div>
   );

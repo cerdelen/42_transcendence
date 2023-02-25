@@ -10,4 +10,10 @@ export class AppController
   getHello(): string {
     return "this is the default one that returns for every url";
   }
+
+  @Get('testkwisi')
+  testkwisi()
+  {
+    return (1234);
+  }
 }

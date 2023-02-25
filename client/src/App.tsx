@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import LoginPage from "./components/LoginPage";
 import HomePage from "./components/HomePage";
-
+import { MyProvider } from "./components/AppContext";
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -15,17 +15,18 @@ function App() {
     if (myCookieValue !== undefined) {
       setLoggedIn(true);
     }
+    console.log(myCookieValue);
   }, []);
-  
   return (
-    <>
+    <MyProvider>
       {loggedIn ? 
         <HomePage />
       : 
-        <LoginPage loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+        <LoginPage />
       }
+      
       {/* {communityPage ? <> } */}
-    </>
+    </MyProvider>
   );
 }
 

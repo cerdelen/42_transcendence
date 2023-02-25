@@ -1,6 +1,4 @@
-import React, { useRef, useState } from 'react'
-
-
+import React from 'react'
 import ProfileCard from './ProfileCard'
 
 type Props = {
@@ -10,10 +8,9 @@ type Props = {
 
 const Header = ({gamePage, setGamePage}: Props) => {
 
-	// function handleCLick() {
-	// 	setGamePage(!gamePage);
-	// 	// alert("I'm here");
-	// }
+	function handleCLick() {
+		setGamePage(!gamePage);
+	}
 
   return (
 	<header>
@@ -21,10 +18,10 @@ const Header = ({gamePage, setGamePage}: Props) => {
 		<nav>
 			<ul>
 				<li>
-					<span onClick={() => setGamePage(!gamePage)}>Game</span>
+					<span onClick={handleCLick}>Game</span>
 				</li>
 				<li>
-					<span onClick={() => setGamePage(!gamePage)} >Community</span>
+					<span onClick={handleCLick} >Community</span>
 				</li>
 			</ul>
 		</nav>

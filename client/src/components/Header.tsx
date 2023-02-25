@@ -1,6 +1,6 @@
 import React from 'react'
 import ProfileCard from './ProfileCard'
-
+import logo from "../images/logo.png";
 type Props = {
 	gamePage: boolean;
 	setGamePage: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,14 +14,17 @@ const Header = ({gamePage, setGamePage}: Props) => {
 
   return (
 	<header>
-		<div id='logo'>Logo</div>
+		<div >
+			<img src={logo} alt="" id='logo' />
+		</div>
+
 		<nav>
 			<ul>
 				<li>
-					<span onClick={handleCLick}>Game</span>
+					<span className='basic' onClick={() => setGamePage(true)}>Game</span>
 				</li>
 				<li>
-					<span onClick={handleCLick} >Community</span>
+					<span className='basic' onClick={() => setGamePage(false)} >Community</span>
 				</li>
 			</ul>
 		</nav>

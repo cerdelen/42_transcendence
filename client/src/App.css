@@ -1,18 +1,18 @@
 /* GENERAL */
 body {
-  background: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(56, 14, 104));
+  background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.83), rgb(56, 14, 104));
   block-size: 100vh;
   color:white;
   margin: 0 auto;
   min-inline-size: 995px;
   min-block-size: 400px;
-  text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF;
+  /* text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF; */
 }
 
 header,
 footer,
 main {
-  border: 2px solid rgb(119, 0, 255);
+  /* border: 2px solid rgb(119, 0, 255); */
 }
 
 /* HEADER */
@@ -22,6 +22,7 @@ header {
   justify-content: space-between;
   padding: 0 1rem;
   margin-top: 0;
+  border-bottom: 1px solid rgb(148, 15, 172);
 }
 
 
@@ -35,10 +36,17 @@ header nav ul {
 header li {
   margin: 0 1rem;
 }
+
+.basic {
+  font-size: 2.3rem;
+  padding: 1rem;
+}
 /* Logo */
 
 #logo {
-  min-width: 220px;
+  max-width: 150px;
+  max-height: 120px;
+  object-fit: cover;
 }
 /* Profile */
 #profile-box {
@@ -55,9 +63,11 @@ header li {
 header span:hover {
   /* padding: 0 1em; */
   /* border: 2px solid white; */
-  border-radius: 5px;
-  background-color: blueviolet;
+  border-radius: 15px;
+  /* background-color: blueviolet; */
   /* color: black; */
+  box-shadow: inset 0 0 10px #FFF, 0 0 20px #FFF;
+  cursor: pointer;
 }
 
 #profile-box img {
@@ -81,7 +91,9 @@ header span:hover {
   align-items: center;
   top: 70px;
 
-  box-shadow: 0px 0px 10px rgba(61, 6, 89, 0.9);
+  /* box-shadow: 0px 0px 10px rgba(61, 6, 89, 0.9); */
+  box-shadow: inset 10px 0 20px -10px rgba(0, 0, 0, 0.5),
+              inset -10px 0 20px -10px rgba(0, 0, 0, 0.5);
 }
 
 #level-username {
@@ -166,16 +178,9 @@ header span:hover {
 
 main {
   display: grid;
-  grid-template-columns: 1fr 4.5fr 1fr;
-}
-
-
-.players-online {
-  grid-column: 1;
 }
 
 .game-area {
-  grid-column: 2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -190,10 +195,7 @@ canvas {
 
 }
 
-.live-games {
-  grid-column: 3;
-  min-width: 250px;
-}
+
 /* FOOTER */
 
 footer ul {
@@ -202,6 +204,10 @@ footer ul {
   align-items: center;
   list-style-type: none;
   padding: 0;
+}
+
+footer {
+  border-top: 1px solid rgb(148, 15, 172);
 }
 /* LOGIN PAGE */
 .login-page {
@@ -216,7 +222,7 @@ footer ul {
 
 .login-page h1{
   color: rgb(111, 35, 174);
-  text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF, 0 0 40px #FFF, 0 0 50px #FFF, 0 0 60px #FFF, 0 0 70px #FFF;
+  /* text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF, 0 0 40px #FFF, 0 0 50px #FFF, 0 0 60px #FFF, 0 0 70px #FFF; */
   font-size: 7rem;
 }
 
@@ -224,7 +230,7 @@ footer ul {
   text-transform: uppercase;
   text-decoration: none;
   font-size: 5rem;
-  text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF, 0 0 40px #FFF, 0 0 50px #FFF, 0 0 60px #FFF, 0 0 70px #FFF;
+  /* text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF, 0 0 40px #FFF, 0 0 50px #FFF, 0 0 60px #FFF, 0 0 70px #FFF; */
   color: rgb(111, 35, 174);
 }
 
@@ -240,7 +246,13 @@ footer ul {
 
 /* GAME-PAGE-PLAYERS-Online */
 
-.players-online,
+.players-online {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+
 .live-games {
   display: flex;
   flex-direction: column;
@@ -256,12 +268,13 @@ footer ul {
   /* overflow-block:inherit; */
   width: 90%;
   flex-shrink: 0;
-  /* border: 2px solid blue; */
+  /* box-shadow:  10px 0 20px -10px rgba(0, 0, 0, 1),
+              -10px 0 20px -10px rgba(0, 0, 0, 1); */
 }
 
 .player-card-li{
   background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140));
-  border: 1px solid pink;
+  /* border: 1px solid pink; */
   border-radius: 25px;
   display: flex;
   align-items: center;
@@ -363,14 +376,23 @@ footer ul {
 }
 
 #community * {
-  border: 2px solid red;
+  /* border: 2px solid red; */
 }
 
 /* CHAT AREA */
 
 #chat-area {
   display: grid;
-  grid-template-rows: .5fr 4.5fr 2fr;
+  grid-template-rows: .5fr 4.5fr .5fr;
+  box-shadow:  10px 0 20px -10px rgba(0, 0, 0, 0.9),
+              -10px 0 20px -10px rgba(0, 0, 0, 0.9);
+  overflow-x: hidden;
+}
+
+#chat-area h2{
+  /* border: 2px solid red; */
+  /* align-self: stretch; */
+  margin-left: 1rem;
 }
 
 .com-areas {
@@ -383,5 +405,56 @@ footer ul {
  {
   display: flex;
   flex-direction: column;
-  
+  /* box-shadow: 0 0 20px rgba(0, 0, 0, 1); */
+  box-shadow:  10px 0 20px -10px rgba(0, 0, 0, 0.5),
+               -10px 0 20px -10px rgba(0, 0, 0, 0.5);
+
 }
+
+#displayed-messages {
+  margin-bottom: 2rem;
+  background-color: bisque;
+  background: linear-gradient(to bottom right, rgb(134, 73, 127), rgb(129, 103, 146));
+  border: 1rem ridge ;
+}
+
+#chat-input {
+  box-sizing: border-box;
+  /* width: calc(100% - 40px);  */
+  width: 100%;
+  height: 100%;
+  padding-right: 40px; 
+  padding-left: 10px;
+  border: 1px solid white;
+  border-radius: 9px;
+  font-size: 19px;
+  line-height: 1.5;
+  overflow-y: auto;
+  white-space: pre-wrap; 
+  
+  background: linear-gradient(to bottom right, rgb(129, 103, 146), rgb(134, 73, 127));
+  /* color: #333; */
+  position: relative;
+}
+
+#chat-area button {
+  position: absolute;
+  /* left: 90%; */
+  right: 0;
+  height: 100%;
+  width: 50px; /* adjust as needed */
+  border: none;
+  /* border-radius: 0 25px 25px 0; */
+  border-radius: 9px;
+  font-size: 16px;
+  line-height: 1.5;
+  /* background-color: blue; */
+  color: rgb(134, 73, 127);
+}
+
+#chat-area form {
+  position: relative;
+  width: 100%;
+  height: 50px;
+}
+

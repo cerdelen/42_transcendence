@@ -38,7 +38,7 @@ const ProfileCard = (props: Props) => {
   }
   return (
     <div id="profile-box" ref={firstElementRef}>
-      <span onClick={handleProfileClick}>Profile</span>
+      <span className="basic" onClick={handleProfileClick}>Profile</span>
       <img src={profile} alt="" />
 
       <div

@@ -85,40 +85,27 @@ const GameOnlineCard = ({username1, photo1, username2, photo2}: LiveGameProps) =
 	)
 }
 
-const ListLiveGames = () => {
-	return (
-		<ul className='game-page-games-online-ul'>
-			{players.map((player, idx) => (
-				<GameOnlineCard
-					username1={players[9].name}
-					photo1={players[9].photo}
-					username2={players[5].name}
-					photo2={players[5].photo}
-				/>
-			))}
-		</ul>
-	)
-}
+
 
 const Game = () => {
 
 	///use state for players joining the online queue
   return (
 	<main>
-		<div className='players-online'>
+		{/* <div className='players-online'>
 			<h2>PLAYERS ONLINE</h2>
 			<input type="text" placeholder='SEARCH'/>
 			{players.length === 0 ? <div>No one is online </div> : <ListPlayersOnline />}
-		</div>
+		</div> */}
 		<div className='game-area'>
 			<Canvas draw={Pong} />
 		</div>
-		<div className='live-games'>
+		{/* <div className='live-games'>
 			<h2>LIVE GAMES</h2>
 			<input type="text" placeholder='SEARCH'/>
 			<ListLiveGames />
 			
-		</div>
+		</div> */}
 	</main>
   )
 }

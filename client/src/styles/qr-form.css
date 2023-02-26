@@ -3,8 +3,8 @@
     height: initial;
     object-fit: none;
     border-radius: 0%;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+    /* border-bottom-left-radius: 20px; */
+    /* border-bottom-right-radius: 20px; */
 }
 
 #qr-form form {

@@ -7,8 +7,6 @@ import themeAchievement from "../images/changed-theme-achievement.png";
 import threeWinsAchievement from "../images/three-wins-achievement.png";
 import halfGamesAchievement from "../images/won-half-of-your-games-achievement.png";
 import expertLevel from "../images/expert-level.jpeg";
-import LoginPage from "./LoginPage";
-import QRCode from 'qrcode.react';
 import SecondFactorQR from "./SecondFactorQR";
 
 const player: Player = players[0];
@@ -20,6 +18,7 @@ const ProfileCard = (props: Props) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
   const firstElementRef = useRef<HTMLDivElement>(null);
   const secondElementRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { loggedIn, setLoggedIn } = useMyContext();
 
   function handleProfileClick() {
@@ -40,20 +39,16 @@ const ProfileCard = (props: Props) => {
     window.location.replace('http://localhost:3000');
   }
 
-  // let checked: boolean = false;
   const [base64String, setBase64String] = useState('');
   const [checked, setChecked] = useState(true);
-  // const []
   async function handleCheckboxChange() {
-    // checked = !checked;
     console.log(checked);
     setChecked(!checked);
     if (checked)
     {
       // const response = await fetch('/2-fa/generate', {method: "POST",});
       // console.log(response);
-      setBase64String("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");
-      // console.log(base64String);
+      setBase64String("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");
     }
     else {
       setBase64String('');
@@ -69,42 +64,16 @@ const ProfileCard = (props: Props) => {
         id="user-dropdown"
         style={{ display: isDropdownOpen ? "flex" : "none" }}
       >
-        <div id="level-username">
-          <img src={expertLevel} alt="" />
-          <span>{player.name}</span>
-        </div>
-        <div id="status-games-won">
-          <span
-            id="status-dot"
-            style={{ backgroundColor: player.availability ? "purple" : "gray" }}
-          ></span>
-          <span id="availability">
-            {player.availability ? "ONLINE" : "OFFLINE"}
-          </span>
-          <span style={{ fontWeight: "bolder" }}>WINS {player.gamesWon} </span>
-        </div>
-        <section id="achievements-box">
-          <h3>Achievements</h3>
-          <div id="achievements">
-            <img src={themeAchievement} alt="" />
-            <img src={halfGamesAchievement} alt="" />
-            <img src={threeWinsAchievement} alt="" />
-            <img src={threeWinsAchievement} alt="" />
-            <img src={threeWinsAchievement} alt="" />
-          </div>
-        </section>
-        <label className="switch">
-          <span className="label-text">2FA</span>
-          <input type="checkbox" onChange={handleCheckboxChange}/>
-          <span className="slider round"></span>
-        </label>
+        {levelAndUsername()}
+        {statusAndGamesWon()}
+        {achievements()}
+        {toggleBox(handleCheckboxChange)}
         <button onClick={logOut}>Logout</button>
         {(base64String !== '' && ENABLED_AT_BACKEND)
         ?
         <SecondFactorQR qrString={base64String}/>
         :
         <div></div>
-        // <QRCodeImage base64String={'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'} /> : <div></div>
         }
       </div>
     </div>
@@ -112,3 +81,44 @@ const ProfileCard = (props: Props) => {
 };
 
 export default ProfileCard;
+function achievements() {
+  return <section id="achievements-box">
+    <h3>Achievements</h3>
+    <div id="achievements">
+      <img src={themeAchievement} alt="" />
+      <img src={halfGamesAchievement} alt="" />
+      <img src={threeWinsAchievement} alt="" />
+      <img src={threeWinsAchievement} alt="" />
+      <img src={threeWinsAchievement} alt="" />
+    </div>
+  </section>;
+}
+
+function statusAndGamesWon() {
+  return <div id="status-games-won">
+    <span
+      id="status-dot"
+      style={{ backgroundColor: player.availability ? "purple" : "gray" }}
+    ></span>
+    <span id="availability">
+      {player.availability ? "ONLINE" : "OFFLINE"}
+    </span>
+    <span style={{ fontWeight: "bolder" }}>WINS {player.gamesWon} </span>
+  </div>;
+}
+
+function levelAndUsername() {
+  return <div id="level-username">
+    <img src={expertLevel} alt="" />
+    <span>{player.name}</span>
+  </div>;
+}
+
+function toggleBox(handleCheckboxChange: () => Promise<void>) {
+  return <label className="switch">
+    <span className="label-text">2FA</span>
+    <input type="checkbox" onChange={handleCheckboxChange} />
+    <span className="slider round"></span>
+  </label>;
+}
+

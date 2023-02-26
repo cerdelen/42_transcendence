@@ -1,0 +1,25 @@
+#qr-form #qr-code {
+    width: initial;
+    height: initial;
+    object-fit: none;
+    border-radius: 0%;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+#qr-form form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#qr-form label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+  
+#qr-form label input {
+    margin-left: 0.5rem;
+}

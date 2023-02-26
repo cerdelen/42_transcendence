@@ -10,8 +10,13 @@ const MyContext = createContext<MyContextType>({
   setLoggedIn: () => {},
 });
 
-export const MyProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
-  const [loggedIn, setLoggedIn] = React.useState(false);
+
+export interface MyProviderProps {
+  loggedIn: boolean;
+  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const MyProvider: React.FC<PropsWithChildren<MyProviderProps>> = ({ children, loggedIn, setLoggedIn }) => {
 
   return (
     <MyContext.Provider value={{ loggedIn, setLoggedIn }}>

@@ -36,6 +36,15 @@ const ProfileCard = (props: Props) => {
     setLoggedIn(false);
     window.location.replace('http://localhost:3000');
   }
+
+  const [isChecked, setIsChecked] = useState(false);
+  let checked: boolean = false;
+  function handleCheckboxChange() {
+    // setIsChecked(true);
+    checked = !checked;
+    if (checked)
+      alert('hey');
+  }
   return (
     <div id="profile-box" ref={firstElementRef}>
       <span className="basic" onClick={handleProfileClick}>Profile</span>
@@ -70,7 +79,12 @@ const ProfileCard = (props: Props) => {
             <img src={threeWinsAchievement} alt="" />
           </div>
         </section>
-        <button>TwoFactor</button>
+        {/* <button>TwoFactor</button> */}
+        <label className="switch">
+          <span className="label-text">2FA</span>
+          <input type="checkbox" onChange={handleCheckboxChange}/>
+          <span className="slider round"></span>
+        </label>
         <button onClick={logOut}>Logout</button>
       </div>
     </div>

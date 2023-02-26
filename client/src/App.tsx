@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import "./styles/chat.css"
 import "./styles/open-chat-card.css"
+import "./styles/toggle-button.css"
 import LoginPage from "./components/LoginPage";
 import HomePage from "./components/HomePage";
 import { MyProvider } from "./components/AppContext";

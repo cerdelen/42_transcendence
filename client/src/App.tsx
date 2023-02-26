@@ -4,9 +4,11 @@ import "./styles/chat.css"
 import "./styles/open-chat-card.css"
 import "./styles/toggle-button.css"
 import "./styles/qr-form.css"
+import "./styles/second-factor-page.css"
 import LoginPage from "./components/LoginPage";
 import HomePage from "./components/HomePage";
 import { MyProvider } from "./components/AppContext";
+import SecondFactorPage from "./components/SecondFactorPage";
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -23,12 +25,10 @@ function App() {
   }, []);
   return (
     <MyProvider>
-
-      {loggedIn ? 
-        <HomePage />
-      : 
-        <LoginPage />
-      }
+      <SecondFactorPage/>
+      {/* {loggedIn && <HomePage />}
+      
+      {!loggedIn && <LoginPage /> } */}
       
       {/* {communityPage ? <> } */}
     </MyProvider>

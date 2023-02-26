@@ -1,0 +1,47 @@
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+#second-factor-page *,
+#second-factor-page label
+{
+    padding-bottom: 2rem;
+}
+#second-factor-page label {
+    display: block;
+    width: 100%;
+    font-size: 4rem;
+    text-align: center;
+}
+  
+#second-factor-page input {
+    display: block;
+    padding: 10px;
+    font-size: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    text-align: center;
+    border: 2px solid rgb(129, 11, 214);
+    margin: 0 auto;
+}
+  
+#second-factor-page button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: rgb(129, 11, 214);
+    color: #fff;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+  
+#second-factor-page button:hover {
+    background-color: white;
+    color: rgb(129, 11, 214);
+}

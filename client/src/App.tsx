@@ -25,10 +25,10 @@ function App() {
   }, []);
   return (
     <MyProvider>
-      <SecondFactorPage/>
-      {/* {loggedIn && <HomePage />}
+      {/* <SecondFactorPage/> */}
+      {loggedIn && <HomePage />}
       
-      {!loggedIn && <LoginPage /> } */}
+      {!loggedIn && <LoginPage /> }
       
       {/* {communityPage ? <> } */}
     </MyProvider>

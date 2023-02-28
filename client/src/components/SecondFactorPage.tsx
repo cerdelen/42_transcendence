@@ -1,24 +1,24 @@
 import { useState } from "react";
+import JSCookies from 'js-cookie'
 
 const SecondFactorPage = () => {
 
 const [code, setCode] = useState('');
   
-// const handleCodeChange = (event: any) => {
-//   const inputValue = event.target.value.replace(/\D/g, '').slice(0, 6);
-//   setCode(inputValue);
-// };
+const handleCodeChange = (event: any) => {
+  const inputValue = event.target.value.replace(/\D/g, '').slice(0, 6);
+  setCode(inputValue);
+};
 
 const handleSubmit = (event: any) => {
   event.preventDefault();
+  console.log("hey");
   if (code.length === 6) {
-    const myCookieValue = document.cookie
-    .split('; ')
-    .find(cookie => cookie.startsWith('accessToken='))
-    ?.split('=')[1];
-    console.log(myCookieValue);
-    console.log(code);
-    fetch('http://localhost:3003/2-fa/turn-on', {
+    const myCookieValue = JSCookies.get('accessToken');
+    console.log(`Here is my cookie = ${myCookieValue}`);
+    // console.log(myCookieValue);
+    // console.log(code);
+    fetch('http://localhost:3003/2-fa/authenticate', {
       method: 'POST',
       body: JSON.stringify({ "two_FA_code": code }),
       headers: {
@@ -34,6 +34,7 @@ const handleSubmit = (event: any) => {
       })
       .catch(error => {
         // Handle error
+        console.log(error);
       });
   }
 }
@@ -52,7 +53,7 @@ const handleSubmit = (event: any) => {
       />
     </label> */}
     <label htmlFor="code">Enter 6-digit code:</label>
-  <input type="text" id="code" name="code" pattern="[0-9]{6}" required></input>
+  <input type="text" id="code" name="code" pattern="[0-9]{6}" onChange={handleCodeChange} required></input>
     <button type="submit">Submit</button>
 </form>
   );

@@ -11,7 +11,31 @@ export class UserService {
 
 	async	createUser(data: Prisma.UserCreateInput) : Promise<User>
 	{
-		return this.prisma.user.create({data,});
+		// return this.prisma.user.create({
+		// 	data: {
+				
+		// 		stats: {
+		// 			create:{}
+		// 		}
+		// 	},
+		// })
+		const _user = await this.prisma.user.create({data,})
+		// const user_id = user.id;
+		const _stats = await this.prisma.stats.create({
+			data: {
+				stat_id: data.id,
+			}
+		});
+		// this.prisma.user.update({
+		// 	where: {
+		// 		id: user.id,
+		// 	},
+		// 	data: {
+		// 		stats: _stats
+		// 	}
+		// })
+		return _user;
+		// return this.prisma.user.create({data,});
 	}
 
 	async	deleteUser(where: Prisma.UserCreateInput)

@@ -18,7 +18,6 @@ const ProfileCard = (props: Props) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
   const firstElementRef = useRef<HTMLDivElement>(null);
   const secondElementRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { loggedIn, setLoggedIn } = useMyContext();
 
   function handleProfileClick() {

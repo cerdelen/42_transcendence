@@ -1,4 +1,3 @@
-// import React, { useContext } from "react";
 import { useMyContext } from "./AppContext";
 import { useRef, useState } from "react";
 import { players, Player } from "../models/temp-players";
@@ -7,23 +6,22 @@ import themeAchievement from "../images/changed-theme-achievement.png";
 import threeWinsAchievement from "../images/three-wins-achievement.png";
 import halfGamesAchievement from "../images/won-half-of-your-games-achievement.png";
 import expertLevel from "../images/expert-level.jpeg";
-import SecondFactorQR from "./SecondFactorQR";
+import SecondFactorQR from "./second_factor_authentication/SecondFactorQR";
+import JSCookies from 'js-cookie'
 
 const player: Player = players[0];
 
-type Props = {};
-
-const ProfileCard = (props: Props) => {
-  const ENABLED_AT_BACKEND: boolean = true; /////NEED TO GET THIS
+const ProfileCard = () => {
+  const [base64String, setBase64String] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
-  const firstElementRef = useRef<HTMLDivElement>(null);
-  const secondElementRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { loggedIn, setLoggedIn } = useMyContext();
-
+  
+  // dynamically calculating where the drowdown should start
+  const firstElementRef = useRef<HTMLDivElement>(null);
+  const secondElementRef = useRef<HTMLDivElement>(null);
   function handleProfileClick() {
     setIsDropdownOpen(!isDropdownOpen);
-
     if (firstElementRef.current && secondElementRef.current) {
       secondElementRef.current.style.top = `${
         firstElementRef.current.getBoundingClientRect().bottom
@@ -32,42 +30,15 @@ const ProfileCard = (props: Props) => {
   }
 
   function logOut() {
-    console.log("pressed");
-
-    document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+    //remove the cookie
+    JSCookies.remove('accessToken');
+    //change the state to logged out 
     setLoggedIn(false);
+    //redirect to the main screen
     window.location.replace("http://localhost:3000");
   }
 
-  const [base64String, setBase64String] = useState("");
-  const [checked, setChecked] = useState(true);
-  async function handleCheckboxChange() {
-    console.log(checked);
-    setChecked(!checked);
-    if (checked) {
-
-      const myCookieValue = document.cookie
-      .split('; ')
-      .find(cookie => cookie.startsWith('accessToken='))
-      ?.split('=')[1];
-
-      console.log(myCookieValue);
-      const response = await fetch("http://localhost:3003/2-fa/generate", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${myCookieValue}`
-        },
-      });
-      const dataBlob = await response.blob();
-      const text = await dataBlob.text();
-      console.log(text);
-      setBase64String(text);
-    } else {
-      setBase64String("");
-    }
-  }
+  
   return (
     <div id="profile-box" ref={firstElementRef}>
       <span className="basic" onClick={handleProfileClick}>
@@ -83,19 +54,19 @@ const ProfileCard = (props: Props) => {
         {levelAndUsername()}
         {statusAndGamesWon()}
         {achievements()}
-        {toggleBox(handleCheckboxChange)}
+        <ToggleBox setBase64String={setBase64String}/>
+        {/* {toggleBox(setBase64String)} */}
         <button onClick={logOut}>Logout</button>
-        {base64String !== "" && ENABLED_AT_BACKEND ? (
-          <SecondFactorQR qrString={base64String} />
-        ) : (
-          <div></div>
-        )}
+
+        {/* if 2fa is disabled or it has been previously enabled, do not show the QR code */}
+        {base64String !== ""
+        ? ( <SecondFactorQR qrString={base64String} />)
+        : ( <div></div> )}
       </div>
     </div>
   );
 };
 
-export default ProfileCard;
 function achievements() {
   return (
     <section id="achievements-box">
@@ -135,12 +106,69 @@ function levelAndUsername() {
   );
 }
 
-function toggleBox(handleCheckboxChange: () => Promise<void>) {
+interface Props {
+  setBase64String: React.Dispatch<React.SetStateAction<string>>;
+  // comingFromBackend: boolean;
+}
+const ToggleBox: React.FC<Props> = ({ setBase64String }) => {
+  const COMING_FROM_BACKEND: boolean = false; 
+  const [checked, setChecked] = useState<boolean>(COMING_FROM_BACKEND);
+
+  async function handleCheckboxChange() {
+    setChecked((prevChecked) => !prevChecked);
+
+    //if the user went from unchecked to checked
+    if (!checked) {
+      console.log(`In here again.. ${checked}`);
+      const myCookieValue = JSCookies.get("accessToken");
+      //request a Base64String to create a QR code
+      const response = await fetch("http://localhost:3003/2-fa/generate", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${myCookieValue}`,
+        },
+      },
+      );
+
+      //get the data as a string
+      const dataBlob = await response.blob();
+      const text = await dataBlob.text();
+
+      //update the value so that a QR code is generated below
+      setBase64String(text);
+    } 
+    else //from checked to uncheked
+    {
+      //update the value so that NO QR code is generated below
+      setBase64String("");
+      //disable 2f at backend
+      // const myCookieValue = JSCookies.get("accessToken");
+      // console.log(`Cookiee: ${myCookieValue}`);
+      // const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+      //   const [name, value] = cookie.trim().split('=');
+      //   return { ...acc, [name]: value };
+      // }, {});
+      // console.log(cookies);
+      // await fetch('http://localhost:3003/2-fa/turn-off', {
+      //   method: 'POST',
+      //   headers: {
+      //               // Accept: "application/json",
+      //               "Content-Type": "application/json",
+      //               Authorization: `Bearer ${myCookieValue}`,
+      //   },
+      // });
+    }
+  }
+
   return (
     <label className="switch">
       <span className="label-text">2FA</span>
-      <input type="checkbox" onChange={handleCheckboxChange} />
+      <input type="checkbox" checked={checked} onChange={handleCheckboxChange} />
       <span className="slider round"></span>
     </label>
   );
-}
+};
+
+export default ProfileCard;

@@ -41,6 +41,8 @@ const ListLiveGames = () => {
 		<ul className='game-page-games-online-ul'>
 			{players.map((player, idx) => (
 				<GameOnlineCard
+					///we need a way to assign a unique key, something from the database I presume
+					key={Math.floor(Math.random() * 9000000000)} 
 					username1={players[9].name}
 					photo1={players[9].photo}
 					username2={players[5].name}

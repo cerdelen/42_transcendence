@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Footer from './Footer'
 import Header from './Header'
 import Game from './Game'
-import Community from './CommunityPage'
+import Community from './community/CommunityPage'
 
 
 type Props = {}

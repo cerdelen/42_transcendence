@@ -24,7 +24,7 @@ function App() {
     console.log(myCookieValue);
   }, []);
   return (
-    <MyProvider>
+    <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
       {/* <SecondFactorPage/> */}
       {loggedIn && <HomePage />}
       

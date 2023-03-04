@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import JSCookies from 'js-cookie'
 
 type Props = {
     qrString: string;
@@ -15,10 +16,8 @@ const SecondFactorQR = ({qrString}: Props) => {
     const handleSubmit = (event: any) => {
       event.preventDefault();
       if (code.length === 6) {
-        const myCookieValue = document.cookie
-        .split('; ')
-        .find(cookie => cookie.startsWith('accessToken='))
-        ?.split('=')[1];
+        const myCookieValue = JSCookies.get('accessToken');
+        console.log(`Here is my cookie = ${myCookieValue}`);
         console.log(myCookieValue);
         console.log(code);
         fetch('http://localhost:3003/2-fa/turn-on', {

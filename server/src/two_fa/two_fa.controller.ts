@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UnauthorizedException, UseGuards, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { authenticator } from 'otplib';
 import { connected } from 'process';
 import { AuthService } from 'src/auth/auth.service';
@@ -59,20 +59,26 @@ export class TwoFaController {
 	// }
 
 
-	// @Post('authenticate')
-	// @UseGuards(Jwt_Auth_Guard)
-	// async	authenticate(@Req() req: any, @Body('two_FA_code') code : string, @Res({passthrough: true}) res: any) : Promise<any>
-	// {
-	// 	const	valid_code = await this.two_FA_Service.verifyCode(req.user.id, code);
-	// 	if(!valid_code)
-	// 	{
-	// 		// console.log("invalid 2fa code");
-	// 		throw new UnauthorizedException('Wrong authentication code');
-	// 	}
-	// 	return (this.authService.sign_jwt_token(req.user.id, res, true));
-	// }
-}
+	@Post('authenticate')
+	async	authenticate(@Body('userId') _userId: number, @Body('two_FA_code') code : string, @Res({passthrough: true}) res: any) : Promise<any>
+	{	
+		console.log(_userId);
+		const	valid_code = await this.two_FA_Service.verifyCode(_userId, code);
+		if(!valid_code)
+		{
+			// console.log("invalid 2fa code");
+			throw new UnauthorizedException('Wrong authentication code');
+		}
+		return (this.authService.sign_jwt_token(_userId, res, true));
+	}
 
+
+	@Get('dead')
+	async	dead(@Res({passthrough: true}) res: any) : Promise<any>
+	{
+		await this.two_FA_Service.turn_off(98450);
+	}
+}
 
 
 // how to use:

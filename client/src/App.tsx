@@ -14,21 +14,28 @@ import SecondFactorPage from "./components/SecondFactorPage";
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [isTwoFactor, setTwoFactor] = useState(false);
+  const [userId, setUserId] = useState("");
   
   
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    setTwoFactor(urlParams.has('2-fa'));
-
     const myCookie = JSCookies.get('accessToken');
     if (myCookie !== undefined || myCookie === '') {
       setLoggedIn(true);
     }
+    const urlParams = new URLSearchParams(window.location.search);
+    setTwoFactor(urlParams.has('2-fa'));
+    if (isTwoFactor){
+      console.log("front userid");
+      setUserId(urlParams.get('2-fa') as string);
+    }
+
     // console.log(myCookie);
   }, []);
+
   return (
     <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
-      {isTwoFactor &&  <SecondFactorPage/>}
+      {isTwoFactor && !loggedIn && <HomePage/>}
+      {isTwoFactor &&  <SecondFactorPage userID={userId} isTwoFactor={isTwoFactor} setTwoFactor={setTwoFactor}/>}
       {loggedIn && <HomePage />}
       {!loggedIn && <LoginPage /> }
       

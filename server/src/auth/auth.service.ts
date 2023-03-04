@@ -17,6 +17,7 @@ export class AuthService
 	async	login(@Req() _req: any, @Res() _res: any) : Promise<any> 
 	{
 		var user = await this.userService.findUserById(_req.user.id);
+		console.log(user.id);
 		if(user.two_FA_enabled)
 		{
 			console.log("2fa enabled, redirecting to 2fa");

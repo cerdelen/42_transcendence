@@ -1,7 +1,13 @@
 import { useState } from "react";
 import JSCookies from 'js-cookie'
 
-const SecondFactorPage = () => {
+
+type Props = {
+  userID: string;
+  isTwoFactor: boolean;
+	setTwoFactor: React.Dispatch<React.SetStateAction<boolean>>;
+}
+const SecondFactorPage = ({userID, isTwoFactor, setTwoFactor}: Props) => {
 
 const [code, setCode] = useState('');
   
@@ -17,10 +23,10 @@ const handleSubmit = (event: any) => {
     const myCookieValue = JSCookies.get('accessToken');
     console.log(`Here is my cookie = ${myCookieValue}`);
     // console.log(myCookieValue);
-    // console.log(code);
+    console.log(userID);
     fetch('http://localhost:3003/2-fa/authenticate', {
       method: 'POST',
-      body: JSON.stringify({ "two_FA_code": code }),
+      body: JSON.stringify({ "two_FA_code": code, "userId": '98450'}),
       headers: {
                   // Accept: "application/json",
                   "Content-Type": "application/json",
@@ -31,6 +37,8 @@ const handleSubmit = (event: any) => {
       .then(response => {
         // Handle success or error response
         console.log(response);
+        // setTwoFactor(false);
+        // window.location.assign('http://localhost:3000');
       })
       .catch(error => {
         // Handle error

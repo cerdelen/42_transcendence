@@ -1,38 +1,36 @@
-import { useEffect, useState } from "react";
 import "./App.css";
-import "./styles/chat.css"
-import "./styles/open-chat-card.css"
-import "./styles/toggle-button.css"
-import "./styles/qr-form.css"
-import "./styles/second-factor-page.css"
+import { useEffect, useState } from "react";
+import JSCookies from 'js-cookie'
 import LoginPage from "./components/LoginPage";
 import HomePage from "./components/HomePage";
 import { MyProvider } from "./components/AppContext";
 import SecondFactorPage from "./components/SecondFactorPage";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-
-
+  
   useEffect(() => {
-    const myCookieValue = document.cookie
-      .split('; ')
-      .find(cookie => cookie.startsWith('accessToken='))
-      ?.split('=')[1];
-    if (myCookieValue !== undefined || myCookieValue === '') {
+    const myCookie = JSCookies.get('accessToken');
+    if (myCookie !== undefined) {
+      console.log('Set logged in to true');
       setLoggedIn(true);
     }
-    console.log(myCookieValue);
+  
   }, []);
+
   return (
-    <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
-      {/* <SecondFactorPage/> */}
-      {loggedIn && <HomePage />}
+    // <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={loggedIn ? <HomePage/> : <LoginPage/>}/>
+        <Route path="/auth" element={<SecondFactorPage/>}/>
+        <Route path="/home" element={<HomePage/>}/>
+      </Routes>
+    </BrowserRouter>
       
-      {!loggedIn && <LoginPage /> }
-      
-      {/* {communityPage ? <> } */}
-    </MyProvider>
+    // </MyProvider>
   );
 }
 
-export default App;
+export default App

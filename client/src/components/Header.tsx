@@ -2,22 +2,14 @@ import React from 'react'
 import ProfileCard from './ProfileCard'
 import logo from "../images/logo.png";
 type Props = {
-	gamePage: boolean;
 	setGamePage: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Header = ({gamePage, setGamePage}: Props) => {
-
-	function handleCLick() {
-		setGamePage(!gamePage);
-	}
+const Header = ({setGamePage}: Props) => {
 
   return (
 	<header>
-		<div >
-			<img src={logo} alt="" id='logo' />
-		</div>
-
+		<img src={logo} alt="" id='logo' />
 		<nav>
 			<ul>
 				<li>

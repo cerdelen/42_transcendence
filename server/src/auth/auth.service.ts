@@ -17,10 +17,11 @@ export class AuthService
 	async	login(@Req() _req: any, @Res() _res: any) : Promise<any> 
 	{
 		var user = await this.userService.findUserById(_req.user.id);
+		console.log(user.id);
 		if(user.two_FA_enabled)
 		{
 			console.log("2fa enabled, redirecting to 2fa");
-			return _res.redirect('http://localhost:3000/?2-fa=' + String(_req.user.id));
+			return _res.redirect('http://localhost:3000/auth?2fa=' + String(_req.user.id));
 		}
 		console.log("2fa NOT enabled signing token");
 		return (this.sign_jwt_token(user.id, _res));

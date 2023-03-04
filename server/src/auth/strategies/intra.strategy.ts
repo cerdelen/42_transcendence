@@ -11,7 +11,7 @@ export class Intra42Strategy extends PassportStrategy(Strategy, '42'){
 		super
 		({
 			clientID: "u-s4t2ud-ebe5af0f2962dca5114adf05b60c69a7cbbb6ec31e4cd146812b74d954feb284",
-			clientSecret: "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",
+			clientSecret: "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",
 			callbackURL: "http://localhost:3003/auth/login",
 		});
 	}

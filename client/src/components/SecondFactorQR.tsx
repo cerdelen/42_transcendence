@@ -17,9 +17,6 @@ const SecondFactorQR = ({qrString}: Props) => {
       event.preventDefault();
       if (code.length === 6) {
         const myCookieValue = JSCookies.get('accessToken');
-        console.log(`Here is my cookie = ${myCookieValue}`);
-        console.log(myCookieValue);
-        console.log(code);
         fetch('http://localhost:3003/2-fa/turn-on', {
           method: 'POST',
           body: JSON.stringify({ "two_FA_code": code }),
@@ -28,21 +25,18 @@ const SecondFactorQR = ({qrString}: Props) => {
                       "Content-Type": "application/json",
                       Authorization: `Bearer ${myCookieValue}`,
           },
-          // credentials: 'include',
         })
           .then(response => {
-            // Handle success or error response
             console.log(response);
           })
           .catch(error => {
-            // Handle error
+            console.log(error);
           });
       }
     }
   
   return (
     <div id='qr-form'>
-      {/* <img id="qr-code" src={`data:image/png;base64,${qrString}`} alt=""/> */}
       <img id="qr-code" src={qrString} alt=""/>
       <form onSubmit={handleSubmit}>
         <label>

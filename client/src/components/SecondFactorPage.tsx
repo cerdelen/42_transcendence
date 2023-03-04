@@ -1,77 +1,55 @@
 import { useState } from "react";
-import JSCookies from 'js-cookie'
+import JSCookies from "js-cookie";
 
-
-type Props = {
-  userID: string;
-  isTwoFactor: boolean;
-	setTwoFactor: React.Dispatch<React.SetStateAction<boolean>>;
-}
-const SecondFactorPage = ({userID, isTwoFactor, setTwoFactor}: Props) => {
-
-const [code, setCode] = useState('');
+const SecondFactorPage = () => {
+  //gets the user id from the url
+  const userId = new URLSearchParams(window.location.search).get("2fa");
   
-const handleCodeChange = (event: any) => {
-  const inputValue = event.target.value.replace(/\D/g, '').slice(0, 6);
-  setCode(inputValue);
-};
+  //gets the string from the input
+  const [code, setCode] = useState("");
+  const handleCodeChange = (event: any) => {
+    const inputValue = event.target.value.replace(/\D/g, "").slice(0, 6);
+    setCode(inputValue);
+  };
 
-const handleSubmit = (event: any) => {
-  event.preventDefault();
-  console.log("hey");
-  if (code.length === 6) {
-    const myCookieValue = JSCookies.get('accessToken');
-    console.log(`Here is my cookie = ${myCookieValue}`);
-    // console.log(myCookieValue);
-    console.log(userID);
-    fetch('http://localhost:3003/2-fa/authenticate', {
-      method: 'POST',
-      body: JSON.stringify({ "two_FA_code": code, "userId": '98450'}),
-      headers: {
-                  // Accept: "application/json",
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${myCookieValue}`,
-      },
-      // credentials: 'include',
-    })
-      .then(response => {
-        // Handle success or error response
-        console.log(response);
-        // setTwoFactor(false);
-        // window.location.assign('http://localhost:3000');
+  //post request to the backend with the 6digit code and the userid
+  const handleSubmit = (event: any) => {
+    event.preventDefault();
+    if (code.length === 6) {
+
+      const myCookieValue = JSCookies.get("accessToken");
+      fetch("http://localhost:3003/2-fa/authenticate", {
+        method: "POST",
+        body: JSON.stringify({ two_FA_code: code, userId: userId }),
+        headers: {
+          // Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${myCookieValue}`,
+        },
       })
-      .catch(error => {
-        // Handle error
-        console.log(error);
-      });
-  }
-}
+        .then((response) => {
+          if (response.ok) window.location.assign("http://localhost:3000/home");
+        })
+        .catch((error) => {
+          console.log(`Logging the error: ${error}`);
+        });
+    }
+  };
 
   return (
     <form id="second-factor-page" onSubmit={handleSubmit}>
-    {/* <label>
-      Enter 6-digit code:
+      <label htmlFor="code">Enter 6-digit code:</label>
       <input
         type="text"
-        maxLength={6}
+        id="code"
+        name="code"
         pattern="[0-9]{6}"
-        value={code}
         onChange={handleCodeChange}
         required
-      />
-    </label> */}
-    <label htmlFor="code">Enter 6-digit code:</label>
-  <input type="text" id="code" name="code" pattern="[0-9]{6}" onChange={handleCodeChange} required></input>
-    <button type="submit">Submit</button>
-</form>
+      ></input>
+      <button type="submit">Submit</button>
+    </form>
   );
 };
 
 export default SecondFactorPage;
-// form {
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-//   min-height: 100vh;
-// }

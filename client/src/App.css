@@ -1,3 +1,9 @@
+@import "./styles/chat.css";
+@import "./styles/open-chat-card.css";
+@import "./styles/toggle-button.css";
+@import "./styles/qr-form.css";
+@import "./styles/second-factor-page.css";
+
 /* GENERAL */
 body {
   background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.83), rgb(56, 14, 104));

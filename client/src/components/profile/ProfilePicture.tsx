@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import defaultPicture from "../images/default-picture.jpeg";
-import profilePicture from "../images/expert-level.jpeg";
+import defaultPicture from "../../images/default-picture.jpeg";
+import profilePicture from "../../images/expert-level.jpeg";
 import JSCookies from "js-cookie";
 
 const ProfilePicture = () => {

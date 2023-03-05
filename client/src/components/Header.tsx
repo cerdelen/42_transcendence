@@ -1,5 +1,5 @@
 import React from 'react'
-import ProfileCard from './ProfileCard'
+import ProfileCard from './profile/ProfileCard'
 import logo from "../images/logo.png";
 type Props = {
 	setGamePage: React.Dispatch<React.SetStateAction<boolean>>;

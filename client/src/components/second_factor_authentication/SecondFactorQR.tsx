@@ -32,6 +32,8 @@ const SecondFactorQR = ({qrString}: Props) => {
           console.log(response);
           if (response.ok)
           {
+            response.text().then(data => console.log(data));
+
             setSuccess(true);
             alert("2 Factor authentication has been Enabled.");
           }

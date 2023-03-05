@@ -1,5 +1,5 @@
 import { useMyContext } from "./AppContext";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { players, Player } from "../models/temp-players";
 import profile from "../images/cat-grass.jpg";
 import themeAchievement from "../images/changed-theme-achievement.png";
@@ -16,7 +16,6 @@ const ProfileCard = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
 
   const { loggedIn, setLoggedIn } = useMyContext();
-  
   // dynamically calculating where the drowdown should start
   const firstElementRef = useRef<HTMLDivElement>(null);
   const secondElementRef = useRef<HTMLDivElement>(null);
@@ -29,17 +28,16 @@ const ProfileCard = () => {
     }
   }
 
-  // logginf the user out
+  // logging the user out
   function logOut() {
     //remove the cookie
     JSCookies.remove('accessToken');
-    //change the state to logged out 
+    //change the state to logged out
     setLoggedIn(false);
     //redirect to the main screen
     window.location.replace("http://localhost:3000");
   }
 
-  
   return (
     <div id="profile-box" ref={firstElementRef}>
       <span className="basic" onClick={handleProfileClick}>
@@ -55,14 +53,14 @@ const ProfileCard = () => {
         {levelAndUsername()}
         {statusAndGamesWon()}
         {achievements()}
-        <ToggleBox setBase64String={setBase64String}/>
-        {/* {toggleBox(setBase64String)} */}
-        <button onClick={logOut}>Logout</button>
+        <ToggleBox setBase64String={setBase64String} />
 
         {/* if 2fa is disabled or it has been previously enabled, do not show the QR code */}
         {base64String !== ""
-        ? ( <SecondFactorQR qrString={base64String} />)
-        : ( <div></div> )}
+        ? (<SecondFactorQR qrString={base64String} />) 
+        : (<div></div>)}
+
+        <button onClick={logOut}>Logout</button>
       </div>
     </div>
   );
@@ -112,8 +110,27 @@ interface Props {
   // comingFromBackend: boolean;
 }
 const ToggleBox: React.FC<Props> = ({ setBase64String }) => {
-  const COMING_FROM_BACKEND: boolean = true; 
-  const [checked, setChecked] = useState<boolean>(COMING_FROM_BACKEND);
+  const COMING_FROM_BACKEND: boolean = true;
+  const [checked, setChecked] = useState<boolean>(false);
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(
+          "http://localhost:3003/2-fa/status",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+            },
+          }
+        );
+      const data = await response.json();
+      setChecked(data['status']);
+      console.log(`Checked status: ${data['status']}`);
+    }
+
+    fetchData();
+  }, []);
 
   async function handleCheckboxChange() {
     setChecked((prevChecked) => !prevChecked);
@@ -130,34 +147,24 @@ const ToggleBox: React.FC<Props> = ({ setBase64String }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${myCookieValue}`,
         },
-      },
-      );
+      });
 
-      //get the data as a string
+      //get the data as a string and set it
       const dataBlob = await response.blob();
       const text = await dataBlob.text();
-
-      //update the value so that a QR code is generated below
       setBase64String(text);
     } 
     else //from checked to uncheked
     {
-      //update the value so that NO QR code is generated below
       setBase64String("");
       //disable 2f at backend
       const myCookieValue = JSCookies.get("accessToken");
-      console.log(`Cookiee: ${myCookieValue}`);
-      const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-        const [name, value] = cookie.trim().split('=');
-        return { ...acc, [name]: value };
-      }, {});
-      console.log(cookies);
-      const response = await fetch('http://localhost:3003/2-fa/turn-off', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3003/2-fa/turn-off", {
+        method: "POST",
         headers: {
-                    // Accept: "application/json",
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${myCookieValue}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${myCookieValue}`,
         },
       });
       const token = await response.text();

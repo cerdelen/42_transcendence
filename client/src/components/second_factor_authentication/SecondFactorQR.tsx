@@ -40,6 +40,7 @@ const SecondFactorQR = ({qrString}: Props) => {
         })
         .catch(error => {
           console.log(error);
+          alert("Something went wrong");
         });
     }
   }

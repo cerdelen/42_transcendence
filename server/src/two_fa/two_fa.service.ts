@@ -4,13 +4,21 @@ import { UserService } from 'src/user/user.service';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TwoFaService {
 	constructor(
 		private readonly userService: UserService,
-		private readonly jwtService: JwtService
+		private readonly jwtService: JwtService,
+		private readonly prisma: PrismaService
 	) {}
+
+	async	status(user_id: number): Promise<boolean>
+	{
+		const user = await this.prisma.user.findUnique({where: {id: user_id}});
+		return user.two_FA_enabled;
+	}
 
 	async	generate_secret(user: User)
 	{

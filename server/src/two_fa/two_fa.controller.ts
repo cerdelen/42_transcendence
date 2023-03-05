@@ -62,6 +62,8 @@ export class TwoFaController {
 	// }
 
 
+
+
 	@Post('authenticate')
 	async	authenticate(@Body('userId') _userId: number, @Body('two_FA_code') code : string, @Res({passthrough: true}) res: any) : Promise<any>
 	{
@@ -74,6 +76,18 @@ export class TwoFaController {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
 		return (this.authService.sign_jwt_token(_userId, res, true));
+	}
+
+	@Get('status')
+	@UseGuards(Jwt_Auth_Guard)
+	async	status(@Req() req: any) : Promise<any>
+	{
+		const status = this.two_FA_Service.status(req.user.id);
+		if (status)
+			return ("enabled");
+		else
+			return ("disabled")
+		// await this.two_FA_Service.turn_off(98455);
 	}
 
 	@Get('kill_cerd')

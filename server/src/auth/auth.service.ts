@@ -81,7 +81,7 @@ export class AuthService
 		{
 			const user = await this.userService.findUserById(Number(id));
 			if(!user)
-			return (null);
+				return (null);
 			return (user);
 		}
 		catch (error)

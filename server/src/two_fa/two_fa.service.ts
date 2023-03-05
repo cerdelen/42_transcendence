@@ -22,18 +22,34 @@ export class TwoFaService {
 
 	async	generate_secret(user: User)
 	{
-		const	secret = authenticator.generateSecret();
-		await	this.userService.updateUser({
-			where: { id: user.id }, 
-			data: { two_FA_secret: secret },
-		});
-
-		const	otpauthUrl = authenticator.keyuri(
+		const p_user = await this.prisma.user.findUnique({where: { id: user.id}});
+		// console.log((await p_user).two_FA_secret);
+		if (p_user.two_FA_secret)
+		{
+			const	otpauthUrl = authenticator.keyuri(
+				user.mail, 
+				"Transcatdence",
+				p_user.two_FA_secret
+			);
+			console.log("not creating new secret for 2-fa");
+			return (otpauthUrl);
+		}
+		else
+		{
+			const	secret = authenticator.generateSecret();
+			await	this.userService.updateUser({
+				where: { id: user.id }, 
+				data: { two_FA_secret: secret },
+			});
+			
+			const	otpauthUrl = authenticator.keyuri(
 				user.mail, 
 				"Transcatdence",
 				secret
-			);
-		return (otpauthUrl);
+				);
+			console.log("i DID create a new secret for 2-fa");
+			return (otpauthUrl);
+		}
 	}
 
 	async	pipeQrCodeStream(otpauthUrl: string)
@@ -59,6 +75,17 @@ export class TwoFaService {
 	async	turn_on(user_id: number)
 	{
 		this.userService.turn_on_2FA(user_id);
+	}
+
+	async	test(user_id: number)
+	{
+		console.log("hello");
+		const p_user = this.prisma.user.findUnique({where: { id: user_id}});
+		console.log((await p_user).two_FA_secret);
+		if((await p_user).two_FA_secret)
+			console.log("is there")
+		else
+			console.log("is NOTTTT there")
 	}
 
 	

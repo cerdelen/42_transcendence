@@ -47,23 +47,6 @@ export class TwoFaController {
 		return this.authService.sign_jwt_token(req.user.id, res);
 	}
 
-	// @Post('turn-off')
-	// @UseGuards(Jwt_Auth_Guard)
-	// async	turn_off_2fa(@Req() req: any, @Body('two_FA_code') code : string)
-	// {
-	// 	const	valid_code = await this.two_FA_Service.verifyCode(req.user.id, code);
-	// 	if(!valid_code)
-	// 	{
-	// 		// console.log("invalid 2fa code");
-	// 		throw new UnauthorizedException('Wrong authentication code');
-	// 	}
-	// 	// console.log("valid 2fa code");
-	// 	return	this.two_FA_Service.turn_off(req.user.id);
-	// }
-
-
-
-
 	@Post('authenticate')
 	async	authenticate(@Body('userId') _userId: number, @Body('two_FA_code') code : string, @Res({passthrough: true}) res: any) : Promise<any>
 	{
@@ -103,6 +86,16 @@ export class TwoFaController {
 	{
 		res.clearCookie('accessToken');
 	}
+	
+	@Get('test')
+	yesp(@Res({passthrough: true}) res: any)
+	{
+		this.two_FA_Service.test(98455);
+		// const p_user = this.prisma.user.findUnique({where: { id: user.id}});
+		// console.log((await p_user).two_FA_secret);
+		// res.clearCookie('accessToken');
+	}
+
 }
 
 

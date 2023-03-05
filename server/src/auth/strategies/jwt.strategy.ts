@@ -31,7 +31,10 @@ export class JwtStrategy extends PassportStrategy(Strategy)
 		// console.log(payload.is_two_FAed);
 		const user = await this.authService.validate_user(payload);
 		if(!user)
+		{
+			console.log("Jwt guard validate invalid token");
 			throw new HttpException('Invalid Token', HttpStatus.UNAUTHORIZED);
+		}
 		return (user);
 	}
 }

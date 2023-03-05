@@ -13,34 +13,37 @@ const SecondFactorPage = () => {
   };
 
   //post request to the backend with the 6digit code and the userid
-  const handleSubmit = (event: any) => {
+ const handleSubmit = async (event: any) => {
     event.preventDefault();
     if (code.length === 6) {
 
       const myCookieValue = JSCookies.get("accessToken");
-      fetch("http://localhost:3003/2-fa/authenticate", {
-        method: "POST",
-        body: JSON.stringify({ two_FA_code: code, userId: userId }),
-        headers: {
-          // Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${myCookieValue}`,
-        },
-      })
-        .then((response) => {
-          if (response.ok) 
-          {
-            // console.log(response);
-            // window.location.assign("http://localhost:3000/home");
-            // response.text().then(data => console.log(data));
-            // console.log();
-            // console.log("hello");
-            console.log(JSCookies.get("accessToken"));
-          }
-        })
-        .catch((error) => {
-          console.log(`Logging the error: ${error}`);
+      try {
+
+        const response = await fetch("http://localhost:3003/2-fa/authenticate", {
+          method: "POST",
+          body: JSON.stringify({ two_FA_code: code, userId: userId }),
+          headers: {
+            // Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${myCookieValue}`,
+          },
         });
+        
+        if (response.ok) {
+          console.log("hello");
+          console.log(response);
+          window.location.assign("http://localhost:3000/home");
+          console.log(JSCookies.get("accessToken"));
+          const token = await response.text();
+          JSCookies.set("accessToken", token);
+          // response.text().then(data => console.log(data));
+          // console.log();
+        }
+      } catch (error) {
+        console.log(`Logging the error: ${error}`);
+
+      }
     }
   };
 

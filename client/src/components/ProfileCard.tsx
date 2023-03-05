@@ -29,6 +29,7 @@ const ProfileCard = () => {
     }
   }
 
+  // logginf the user out
   function logOut() {
     //remove the cookie
     JSCookies.remove('accessToken');
@@ -111,7 +112,7 @@ interface Props {
   // comingFromBackend: boolean;
 }
 const ToggleBox: React.FC<Props> = ({ setBase64String }) => {
-  const COMING_FROM_BACKEND: boolean = false; 
+  const COMING_FROM_BACKEND: boolean = true; 
   const [checked, setChecked] = useState<boolean>(COMING_FROM_BACKEND);
 
   async function handleCheckboxChange() {
@@ -144,21 +145,23 @@ const ToggleBox: React.FC<Props> = ({ setBase64String }) => {
       //update the value so that NO QR code is generated below
       setBase64String("");
       //disable 2f at backend
-      // const myCookieValue = JSCookies.get("accessToken");
-      // console.log(`Cookiee: ${myCookieValue}`);
-      // const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-      //   const [name, value] = cookie.trim().split('=');
-      //   return { ...acc, [name]: value };
-      // }, {});
-      // console.log(cookies);
-      // await fetch('http://localhost:3003/2-fa/turn-off', {
-      //   method: 'POST',
-      //   headers: {
-      //               // Accept: "application/json",
-      //               "Content-Type": "application/json",
-      //               Authorization: `Bearer ${myCookieValue}`,
-      //   },
-      // });
+      const myCookieValue = JSCookies.get("accessToken");
+      console.log(`Cookiee: ${myCookieValue}`);
+      const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+        const [name, value] = cookie.trim().split('=');
+        return { ...acc, [name]: value };
+      }, {});
+      console.log(cookies);
+      const response = await fetch('http://localhost:3003/2-fa/turn-off', {
+        method: 'POST',
+        headers: {
+                    // Accept: "application/json",
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${myCookieValue}`,
+        },
+      });
+      const token = await response.text();
+      JSCookies.set("accessToken", token);
     }
   }
 

@@ -28,7 +28,15 @@ const SecondFactorPage = () => {
         },
       })
         .then((response) => {
-          if (response.ok) window.location.assign("http://localhost:3000/home");
+          if (response.ok) 
+          {
+            // console.log(response);
+            // window.location.assign("http://localhost:3000/home");
+            // response.text().then(data => console.log(data));
+            // console.log();
+            // console.log("hello");
+            console.log(JSCookies.get("accessToken"));
+          }
         })
         .catch((error) => {
           console.log(`Logging the error: ${error}`);

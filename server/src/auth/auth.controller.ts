@@ -31,7 +31,7 @@ export class AuthController
 	async	intra_login(@Req() req: any, @Res() res: any): Promise<any>
 	{
 		console.log("hello from inside auth/login");
-		await this.authService.login(req, res);
+		return (this.authService.login(req, res));
 	}
 
 	@Get('test-all')

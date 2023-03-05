@@ -13,7 +13,8 @@ const HomePage = (props: Props) => {
   return (
 	<div className='game-page'>
 		<Header setGamePage={setGamePage} />
-		{gamePage ? <Game /> : <Community />}
+		{/* {gamePage ? <Game /> : <Community />} */}
+		<Community />
 		
 		<Footer />
 	</div>

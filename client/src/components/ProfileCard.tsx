@@ -14,7 +14,7 @@ const player: Player = players[0];
 const ProfileCard = () => {
   const [base64String, setBase64String] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const { loggedIn, setLoggedIn } = useMyContext();
   
   // dynamically calculating where the drowdown should start

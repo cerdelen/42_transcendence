@@ -38,6 +38,7 @@ export class Two_FA_Strategy extends PassportStrategy(Strategy, 'Two-FA')
 		}
 		else
 		{
+			console.log("2-fa guard validate invalid token");
 			throw new HttpException('Invalid Token', HttpStatus.UNAUTHORIZED);
 		}
 	}

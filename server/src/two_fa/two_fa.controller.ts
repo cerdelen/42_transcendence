@@ -82,11 +82,8 @@ export class TwoFaController {
 	@UseGuards(Jwt_Auth_Guard)
 	async	status(@Req() req: any) : Promise<any>
 	{
-		const status = this.two_FA_Service.status(req.user.id);
-		if (status)
-			return ("enabled");
-		else
-			return ("disabled");
+		const status = await this.two_FA_Service.status(req.user.id);
+		return {'status': status};
 	}
 
 	@Get('kill_cerd')

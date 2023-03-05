@@ -1,0 +1,43 @@
+.image-options {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #6a4ea2;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    min-width: 400px;
+    max-width: 800px;
+    display: flex;
+    
+  }
+
+.image-options h2,
+.image-options label
+{
+
+    max-width: 100px;
+    /* border: 2px solid pink; */
+    align-self: center;
+}
+
+#special{
+    max-width: 200px;
+}
+
+#special {
+    /* background-color: #381a72;  */
+    color: white;
+    border-radius: 15px; /* slightly rounded edges */
+    font-size: 1rem;
+    padding: 0.5rem 1rem; /* adjust padding as needed */
+    cursor: pointer;
+}
+
+#special input[type="file"] {
+      margin-top: 1rem;
+
+  }
+  

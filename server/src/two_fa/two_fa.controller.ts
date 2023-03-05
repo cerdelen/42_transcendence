@@ -86,8 +86,7 @@ export class TwoFaController {
 		if (status)
 			return ("enabled");
 		else
-			return ("disabled")
-		// await this.two_FA_Service.turn_off(98455);
+			return ("disabled");
 	}
 
 	@Get('kill_cerd')

@@ -8,6 +8,7 @@ import halfGamesAchievement from "../images/won-half-of-your-games-achievement.p
 import expertLevel from "../images/expert-level.jpeg";
 import SecondFactorQR from "./second_factor_authentication/SecondFactorQR";
 import JSCookies from 'js-cookie'
+import ProfilePicture from "./ProfilePicture";
 
 const player: Player = players[0];
 
@@ -19,7 +20,7 @@ const ProfileCard = () => {
   // dynamically calculating where the drowdown should start
   const firstElementRef = useRef<HTMLDivElement>(null);
   const secondElementRef = useRef<HTMLDivElement>(null);
-  function handleProfileClick() {
+  function toggleDropDownMenu() {
     setIsDropdownOpen(!isDropdownOpen);
     if (firstElementRef.current && secondElementRef.current) {
       secondElementRef.current.style.top = `${
@@ -40,10 +41,11 @@ const ProfileCard = () => {
 
   return (
     <div id="profile-box" ref={firstElementRef}>
-      <span className="basic" onClick={handleProfileClick}>
+      <span className="basic" onClick={toggleDropDownMenu}>
         Profile
       </span>
-      <img src={profile} alt="" />
+      <ProfilePicture/>
+      {/* <img src={profile} alt="" /> */}
 
       <div
         ref={secondElementRef}

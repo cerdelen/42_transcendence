@@ -3,12 +3,13 @@ import ListLiveGames from './ListLiveGames';
 import ListOpenChats from './ListOpenChats';
 import ListPlayersOnline from './ListPLayersOnline';
 import { Socket } from 'socket.io';
-import { useState } from 'react';
+import io from 'socket.io-client';
+import { useEffect, useState } from 'react';
 
 
 interface message{
   name: string,
-  message: string,
+  text: string,
 }
 
 // const Message = (messages: message[]   ) =>
@@ -17,10 +18,16 @@ interface message{
 // };
 type Props = {}
 const Community = (props: Props) => {
-  let socket: Socket;
-  const [users, setUsers] = useState<message[]>([{name: "Vladimir", message: "Siemanko"}, {name: "Ruslan", message: "I guess "}]);
-
-
+  const [users, setUsers] = useState<message[]>([]);
+  const socket : any = io('http://localhost:3003');
+  const [input, setInput] = useState(""); 
+  useEffect(() => 
+  {
+    socket.emit('findAllMessages', {}, (response : any[]) =>
+    {
+      setUsers([...response]);
+    });
+  }, [])
     // again, I need a way to know if people are online 
     // const poepleAreOnline: boolean = false;
     // const friendsAreOnline: boolean = true;
@@ -36,7 +43,7 @@ const Community = (props: Props) => {
             <h2>Chat</h2>
             <div id='displayed-messages'>
               {
-                users.map((user : message) => <li>{user.name} {"\t"} {user.message} </li>)
+                users.map((user : message) => <li>{user.name} {"\t"} {user.text} </li>)
               }
             </div>
             <form onSubmit={() => {}}>
@@ -48,7 +55,11 @@ const Community = (props: Props) => {
         </div>
       	<div className='live-games'>
 			<h2>LIVE GAMES</h2>
-			<input type="text" placeholder='SEARCH'/>
+			<input type="text" value={input} onChange={(e) => {
+        e.preventDefault;
+        setInput(e.target.value);
+      }
+        } />
 			<ListLiveGames />
             <h2>CHATS</h2>
 			<ListOpenChats />

@@ -43,23 +43,21 @@ const Community = (props: Props) => {
             <h2>Chat</h2>
             <div id='displayed-messages'>
               {
-                users.map((user : message) => <li>{user.name} {"\t"} {user.text} </li>)
+                users.map((user : message) => <li> {"["}{user.name}{"]"} {"\t"} {user.text} </li>)
               }
             </div>
-            <form onSubmit={() => {}}>
-                <input id='chat-input' type="text"  onChange={() => {}} />
+            <form onSubmit={(e) => {  e.preventDefault}}>
+                <input id='chat-input' type="text"  value={input} onChange={(e) => {
+                setInput(e.target.value);
+                }} />
 
-                <button type="submit">Send</button>
+                <button type="submit" onSubmit={(e) => e.preventDefault}>Send</button>
             </form>
 
         </div>
       	<div className='live-games'>
 			<h2>LIVE GAMES</h2>
-			<input type="text" value={input} onChange={(e) => {
-        e.preventDefault;
-        setInput(e.target.value);
-      }
-        } />
+			<input type="text"/>
 			<ListLiveGames />
             <h2>CHATS</h2>
 			<ListOpenChats />

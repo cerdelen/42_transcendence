@@ -2,14 +2,24 @@ import { players } from '../../models/temp-players';
 import ListLiveGames from './ListLiveGames';
 import ListOpenChats from './ListOpenChats';
 import ListPlayersOnline from './ListPLayersOnline';
+import { Socket } from 'socket.io';
+import { useState } from 'react';
 
 
+interface message{
+  name: string,
+  message: string,
+}
 
-
-
-
+// const Message = (messages: message[]   ) =>
+// {
+//   return messages.map((message : message) => <li>{message.name} </li>);
+// };
 type Props = {}
 const Community = (props: Props) => {
+  let socket: Socket;
+  const [users, setUsers] = useState<message[]>([{name: "Vladimir", message: "Siemanko"}, {name: "Ruslan", message: "I guess "}]);
+
 
     // again, I need a way to know if people are online 
     // const poepleAreOnline: boolean = false;
@@ -24,7 +34,11 @@ const Community = (props: Props) => {
 		</div>
         <div id='chat-area' className='com-areas'>
             <h2>Chat</h2>
-            <div id='displayed-messages'>See messages</div>
+            <div id='displayed-messages'>
+              {
+                users.map((user : message) => <li>{user.name} {"\t"} {user.message} </li>)
+              }
+            </div>
             <form onSubmit={() => {}}>
                 <input id='chat-input' type="text"  onChange={() => {}} />
 

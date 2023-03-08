@@ -31,7 +31,13 @@ const Community = (props: Props) => {
     });
     socket.on('message', (message : message) => 
     {
-      setNewMessage(message);
+      let s : message[] = [...users];
+      s.push(message)
+      setUsers(s);
+      socket.emit('findAllMessages', {}, (response : any[]) =>
+      {
+        setUsers(response);
+      });
     }, () => {})
   }, [])
 

@@ -11,23 +11,40 @@ interface message{
   name: string,
   text: string,
 }
+function DisplayMessages({users} : {users: message[]})
+{
+  return <>{users.map((user : message) => (<li> {"["}{user.name}{"]"} {"\t"} {user.text} </li>))}</>;
+}
 
-// const Message = (messages: message[]   ) =>
-// {
-//   return messages.map((message : message) => <li>{message.name} </li>);
-// };
+
 type Props = {}
 const Community = (props: Props) => {
   const [users, setUsers] = useState<message[]>([]);
   const socket : any = io('http://localhost:3003');
   const [input, setInput] = useState(""); 
+  const [newMessage, setNewMessage] = useState<message>();
   useEffect(() => 
   {
     socket.emit('findAllMessages', {}, (response : any[]) =>
     {
-      setUsers([...response]);
+      setUsers(response);
     });
+    socket.on('message', (message : message) => 
+    {
+      setNewMessage(message);
+    }, () => {})
   }, [])
+
+  const sendMessage = () =>
+  {
+    socket.emit('createMessage', {name: "Mock user", text: input}, () => {
+      // let newInput : string = input;
+
+      setInput('');
+    })
+  }
+
+
     // again, I need a way to know if people are online 
     // const poepleAreOnline: boolean = false;
     // const friendsAreOnline: boolean = true;
@@ -42,16 +59,16 @@ const Community = (props: Props) => {
         <div id='chat-area' className='com-areas'>
             <h2>Chat</h2>
             <div id='displayed-messages'>
-              {
-                users.map((user : message) => <li> {"["}{user.name}{"]"} {"\t"} {user.text} </li>)
-              }
+            <DisplayMessages users={users} />
             </div>
-            <form onSubmit={(e) => {  e.preventDefault}}>
+            <form onSubmit={(e) => {  e.preventDefault() }}>
                 <input id='chat-input' type="text"  value={input} onChange={(e) => {
-                setInput(e.target.value);
+                  setInput(e.target.value);
                 }} />
-
-                <button type="submit" onSubmit={(e) => e.preventDefault}>Send</button>
+                <button type="submit" onClick={(e) => {
+                  if(input)
+                    sendMessage( );
+                }}>Send</button>
             </form>
 
         </div>

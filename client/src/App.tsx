@@ -6,6 +6,7 @@ import HomePage from "./components/HomePage";
 // import { MyProvider } from "./components/AppContext";
 import SecondFactorPage from "./components/second_factor_authentication/SecondFactorPage";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Pong from "./components/Pong";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);

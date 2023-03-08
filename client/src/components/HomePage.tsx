@@ -8,7 +8,7 @@ import Community from './community/CommunityPage'
 type Props = {}
 
 const HomePage = (props: Props) => {
-	const [gamePage, setGamePage] = useState(false);
+	const [gamePage, setGamePage] = useState(true);
 
   return (
 	<div className='game-page'>

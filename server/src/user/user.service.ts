@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { FindUserParams } from '../utils/types';
 
 @Injectable()
 export class UserService {
@@ -19,13 +20,15 @@ export class UserService {
 		return this.prisma.user.delete({where});
 	}
 
-	async	findUserById(id: number): Promise<User | undefined>
+	async	findUserById(findUserParams: FindUserParams): Promise<User | undefined>
 	{
+
 		const user = await this.prisma.user.findUnique({
 			where: {
-				id: Number(id),
-			}
-		})
+				id: 109351,
+			},
+			include: { ChatParticipant: true} 
+		},)
 		return user;
 	}
 
@@ -43,7 +46,7 @@ export class UserService {
 
 	async	turn_on_2FA(user_id: number)
 	{
-		var	user = await this.findUserById(user_id);
+		var	user = await this.findUserById({id: user_id});
 		if(!user.two_FA_enabled)
 		{
 			await this.updateUser({
@@ -55,7 +58,7 @@ export class UserService {
 
 	async	turn_off_2FA(user_id: number)
 	{
-		var	user = await this.findUserById(user_id);
+		var	user = await this.findUserById({id: user_id});
 		if(user.two_FA_enabled)
 		{
 			await this.updateUser({
@@ -65,3 +68,4 @@ export class UserService {
 		}
 	}
 }
+

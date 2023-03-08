@@ -1,6 +1,6 @@
 generator client {
 	provider = "prisma-client-js"
-	binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+	binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource backend_database {
@@ -15,6 +15,7 @@ model User {
 	id				Int			@unique
 	name			String		@unique
 	mail			String
+	ChatParticipant	ChatParticipants[]	
 
 	// picture			String?
 
@@ -25,9 +26,10 @@ model User {
 
 model Chat {
 	// User stuff
-	id				Int			@unique  @id @default(autoincrement()) 
-	chat_name		String?		
-	chat_msg		Message[]
+	id					Int					@unique  @id @default(autoincrement()) 
+	chat_name			String?		
+	// chat_msg			Message[]
+	chat_participants	ChatParticipants[]	
 
 	//something to consider later after creating chat
 	is_public		Boolean		@default(true)
@@ -41,6 +43,16 @@ model Chat {
 	mute_list		Int[]
 }
 
+model ChatParticipants {
+
+	ChatPartsId		Int				@unique @id @default(autoincrement())
+	chat			Chat			@relation(fields: [ChatPartsId], references: [id])
+	user 			User			@relation(fields: [userId], references: [id])
+	userId			Int				@unique
+
+	@@map(name: "chat_role")
+}
+
 model Message {
 	// User stuff
 	msg_id				Int			@unique  @id @default(autoincrement()) 
@@ -51,7 +63,7 @@ model Message {
 
 	//necessary fro array of messages in Chat model
 	chat_id				Int?			
-	chat				Chat?		@relation(fields: [chat_id], references: [id])
+	// chat				Chat?		@relation(fields: [chat_id], references: [id])
 }
 
 

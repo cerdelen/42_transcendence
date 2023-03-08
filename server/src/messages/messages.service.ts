@@ -8,7 +8,6 @@ import { Message } from './entities/message.entity';
 @Injectable()
 export class MessagesService {
 
-
   messages: Message[] = [{name: 'Ziomeczek', text: "Siemanko"}];
   clientToUser = {};
 

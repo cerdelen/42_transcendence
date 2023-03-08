@@ -1,12 +1,13 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, Inject } from '@nestjs/common';
 import { Jwt_Auth_Guard } from 'src/auth/guards/jwt_auth.guard';
 import { UserService } from './user.service';
+import { Routes, Services } from '../utils/consts';
 
-@Controller('user')
+@Controller(Routes.USERS)
 export class UserController
 {
 	constructor(
-		private userService: UserService
+		@Inject(Services.USERS) private readonly userService: UserService,
 	) {}
 
 	@Post('change_name')

@@ -30,7 +30,7 @@ export class AuthService
 	async	sign_42_jwt_token(user_id: number, res: any, is_two_FAed = false)
 	{
 		console.log('sign_jwt_token');
-		const	user	= await this.userService.findUserById(user_id);
+		const	user	= await this.userService.findUserById({id: user_id});
 		const	payload	= { name: user.name, sub: user.id, mail: user.mail, is_two_FAed: is_two_FAed };
 		const	token	= this.jwtService.sign(payload, {secret: "generic secret"});
 		res.cookie('accessToken', token);
@@ -41,7 +41,7 @@ export class AuthService
 	async	sign_jwt_token(user_id: number, res: any, is_two_FAed = false)
 	{
 		console.log('sign_jwt_token');
-		const	user	= await this.userService.findUserById(user_id);
+		const	user	= await this.userService.findUserById({id: user_id});
 		const	payload	= { name: user.name, sub: user.id, mail: user.mail, is_two_FAed: is_two_FAed };
 		const	token	= this.jwtService.sign(payload, {secret: "generic secret"});
 		// res.clearCookie('accessToken');
@@ -58,7 +58,7 @@ export class AuthService
 	async validate_intra_user(id: number, username : string, email : string): Promise<User>
 	{
 		console.log(email);
-		const user = await this.userService.findUserById(id);
+		const user = await this.userService.findUserById({id: id});
 		if (user)
 			return (user);
 		else
@@ -67,9 +67,9 @@ export class AuthService
 			const user = await this.userService.createUser({
 				id: Number(id),
 				name: username,
-				mail: email
+				mail: email,
 			});
-			return (user);
+			return (user); 
 		}
 	}
 
@@ -79,7 +79,7 @@ export class AuthService
 		
 		try 
 		{
-			const user = await this.userService.findUserById(Number(id));
+			const user = await this.userService.findUserById({id: id});
 			if(!user)
 				return (null);
 			return (user);

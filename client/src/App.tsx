@@ -7,6 +7,10 @@ import HomePage from "./components/HomePage";
 import SecondFactorPage from "./components/second_factor_authentication/SecondFactorPage";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Pong from "./components/Pong";
+import io, { Socket} from 'socket.io-client';
+
+
+const socket = io('localhost:3003');
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -22,16 +26,20 @@ function App() {
 
   return (
     // <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
+
     <BrowserRouter>
+
       <Routes>
-        <Route path="/" element={loggedIn ? <HomePage/> : <LoginPage/>}/>
+        <Route path="/" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/>
         <Route path="/auth" element={<SecondFactorPage/>}/>
-        <Route path="/home" element={<HomePage/>}/>
+        <Route path="/home" element={<HomePage socket={socket} />}  />
       </Routes>
+
     </BrowserRouter>
-      
+        
       
     // </MyProvider>
+    
   );
 }
 

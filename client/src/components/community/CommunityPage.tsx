@@ -2,15 +2,15 @@ import { players } from '../../models/temp-players';
 import ListLiveGames from './ListLiveGames';
 import ListOpenChats from './ListOpenChats';
 import ListPlayersOnline from './ListPLayersOnline';
-import { Socket } from 'socket.io';
-import io from 'socket.io-client';
-import { useEffect, useState } from 'react';
+import io, { Socket} from 'socket.io-client';
+import { useEffect, useMemo, useState } from 'react';
 
 
 interface message{
   name: string,
   text: string,
 }
+
 function DisplayMessages({users} : {users: message[]})
 {
   return <>{users.map((user : message) => (<li> {"["}{user.name}{"]"} {"\t"} {user.text} </li>))}</>;
@@ -18,13 +18,14 @@ function DisplayMessages({users} : {users: message[]})
 
 
 type Props = {}
-const Community = (props: Props) => {
+const Community = ({socket} : {socket: Socket}) => {
   const [users, setUsers] = useState<message[]>([]);
-  const socket : any = io('http://localhost:3003');
   const [input, setInput] = useState(""); 
   const [newMessage, setNewMessage] = useState<message>();
+
   useEffect(() => 
   {
+    // console.log(typeof socket);
     socket.emit('findAllMessages', {}, (response : any[]) =>
     {
       setUsers(response);
@@ -34,20 +35,23 @@ const Community = (props: Props) => {
       let s : message[] = [...users];
       s.push(message)
       setUsers(s);
-      socket.emit('findAllMessages', {}, (response : any[]) =>
+      if(socket)
+        socket.emit('findAllMessages', {}, (response : any[]) =>
       {
         setUsers(response);
       });
-    }, () => {})
+    })
   }, [])
 
-  const sendMessage = () =>
+  const sendMessage = (socket : Socket) =>
   {
-    socket.emit('createMessage', {name: "Mock user", text: input}, () => {
-      // let newInput : string = input;
+    // console.log("Kurwa " +   socket);
 
-      setInput('');
-    })
+        socket.emit('createMessage', {name: "Mock user", text: input}, () => {
+          setInput('');
+        })
+        console.log("Chuj");
+      // let newInput : string = input;
   }
 
 
@@ -73,8 +77,9 @@ const Community = (props: Props) => {
                 }} />
                 <button type="submit" onClick={(e) => {
                   if(input)
-                    sendMessage( );
-                }}>Send</button>
+                    sendMessage(socket);
+                }
+                  }>Send</button>
             </form>
 
         </div>

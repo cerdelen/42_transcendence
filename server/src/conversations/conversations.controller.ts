@@ -13,6 +13,7 @@ import { ConversationService } from './conversations.service';
 import { ConversationModule } from './conversations.module';
 import { userInfo } from 'os';
 import { request } from 'http';
+import { PrismaService } from '../prisma/prisma.service';
 
 
 
@@ -35,39 +36,39 @@ export class ConversationController {
 			public?: boolean;
 			password?: boolean;
 			request?: boolean;
-			participants: number[],
-		}) : Promise<Conversation>
+			participants: string[],
+		}) 
 		{
-			// console.log("NEW_CONVERSATION" + newConversation);
-			// try {
-				
-			let newConversation : Conversation = await this.conversationsService.createConversation({
-					// conversation_name: userContent.name,
-					// conversation: userContent.chat,
-					// conversation_password: userContent.password,
-					conversation_participant_arr: userContent.participants,
-					// conversation_owner_arr: [Number(req.user.id)],
-					// conversation_admin_arr: [Number(req.user.id)]
-				})
-
-			// }
-			// catch(error) {
-				// }
-			console.log(userContent.participants[0]);
-			console.log("NEW_CONVERSATION = " + newConversation);
-			
+			if (typeof userContent.participants === "undefined")
+				return null;
+			let array : number[] = [];
+			let user : User;
 			for (let i = 0; i < userContent.participants.length; ++i)
 			{
+				let chat_member: number = Number(userContent.participants[i])
+				user = await this.userService.findUserById(chat_member);
+				if(user)
+					array.push(chat_member);
+			}
+			
+			let newConversation : Conversation = await this.conversationsService.createConversation({
+				conversation_name: userContent.name,
+				conversation_participant_arr: array,
+				conversation_owner_arr: [Number(req.user.id)],
+				conversation_admin_arr: [Number(req.user.id)]
+			})
+			for (let i = 0; i < array.length; ++i)
+			{
+				user = await this.userService.findUserById(array[i]);
+				await user.conversation_id_arr.push(newConversation.conversation_id);
 				await this.userService.updateUser({
 					where: {
-						id: Number(userContent.participants[i])
+						id: array[i],
 					},
 					data: {
-						conversation_id_arr: {
-							push: Number(newConversation.conversation_id)
-						}
+						conversation_id_arr: user.conversation_id_arr,
 					}
-				})
+				})	
 			}
 			return newConversation;
 		}
@@ -110,7 +111,7 @@ export class ConversationController {
 		} 
 		
 
-		
+
 }
 
 

@@ -3,6 +3,10 @@ generator client {
 	binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
+generator erd {
+	provider = "prisma-erd-generator"
+}
+
 datasource backend_database {
 	provider	= "postgresql"
 	url			= env("DATABASE_URL")
@@ -15,7 +19,9 @@ model User {
 	id				Int			@unique
 	name			String		@unique
 	mail			String
-	ChatParticipant	ChatParticipants[]	
+	// chatParticipant	ChatParticipant?	@relation(fields: [chatPtsId], references: [ChatPartId])
+	chatId		Int?		@unique		
+
 
 	// picture			String?
 
@@ -26,32 +32,33 @@ model User {
 
 model Chat {
 	// User stuff
-	id					Int					@unique  @id @default(autoincrement()) 
+	chat_id					Int					@unique  @id @default(autoincrement()) 
 	chat_name			String?		
-	// chat_msg			Message[]
-	chat_participants	ChatParticipants[]	
+	chat_msg			Message[]
+	// chat_participants	ChatParticipant[]	
 
 	//something to consider later after creating chat
-	is_public		Boolean		@default(true)
-	pass_protected	Boolean		@default(false)
-	password		String?		
+	chat_is_public		Boolean		@default(true)
+	chat_pass_protected	Boolean		@default(false)
+	chat_password		String?		
 
 	chat_members	Int[]
 	chat_owner		Int
 	chat_admins		Int[] 
-	black_list		Int[]
-	mute_list		Int[]
+	chat_black_list		Int[]
+	chat_mute_list		Int[]
 }
 
-model ChatParticipants {
+// model ChatParticipant {
 
-	ChatPartsId		Int				@unique @id @default(autoincrement())
-	chat			Chat			@relation(fields: [ChatPartsId], references: [id])
-	user 			User			@relation(fields: [userId], references: [id])
-	userId			Int				@unique
+// 	ChatPartId		Int				@unique @id @default(autoincrement())
+// 	// chat			Chat			@relation(fields: [ChatPartId], references: [chat_id])
+// 	chat			Chat[]
+// 	// user			User?			@relation(fields: [userId], references: [id])
+// 	userId			User?			
 
-	@@map(name: "chat_role")
-}
+// 	// @@map(name: "chat_role")
+// }
 
 model Message {
 	// User stuff
@@ -63,7 +70,7 @@ model Message {
 
 	//necessary fro array of messages in Chat model
 	chat_id				Int?			
-	// chat				Chat?		@relation(fields: [chat_id], references: [id])
+	chat_relation		Chat?		@relation(fields: [chat_id], references: [chat_id])
 }
 
 

@@ -27,7 +27,7 @@ export class Two_FA_Strategy extends PassportStrategy(Strategy, 'Two-FA')
 	async	validate(payload: JwtPayload)
 	{
 		console.log("2-fa guard validate");
-		const user	= await this.userService.findUserById({id: payload.sub});
+		const user	= await this.userService.findUserById(payload.sub);
 		if (!user.two_FA_enabled)				// if 2-fa is disabled just return true
 		{
 			return (user);

@@ -1,4 +1,4 @@
-import { User, ChatParticipants } from '@prisma/client';
+import { User, ChatParticipant } from '@prisma/client';
 
 
 export type CreateConversationParams = {
@@ -20,15 +20,15 @@ export interface AuthenticatedRequest extends Request {
 
 export type FindUserParams = Partial<{
 	id: number;
-	email: string;
-	username: string;
+	mail: string;
+	
 }>
 
 export type CreateUserDetails = {
 	id: number,
-	name: string,
+	name: string, 
 	mail: string,
-	ChatParticipants: ChatParticipants,
+	chatPtsId: ChatParticipant,
 	two_FA_enabled: boolean,
 	two_FA_secret: 	string | null
 }

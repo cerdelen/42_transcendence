@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { IChatParticipantsService } from './participants';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ChatParticipants, PrismaClient } from '@prisma/client';
+import { ChatParticipant, PrismaClient, Chat, Prisma } from '@prisma/client';
 import { FindParticipantParams, CreateParticipantParams } from '../utils/types';
 import { userInfo } from "os";
 
@@ -12,17 +12,32 @@ export class ParticipantsService implements IChatParticipantsService {
 	constructor(
 		private prisma: PrismaService
 		) {}
-		async findParticipant(params: FindParticipantParams): Promise<ChatParticipants | null> {
-			return await this.prisma.chatParticipants.findUnique({
+		async findParticipant(params: FindParticipantParams): Promise<ChatParticipant | null> {
+			return await this.prisma.chatParticipant.findFirst({
 				where: {
-					ChatPartsId: 0,
+					ChatPartId: params.id
 				}
 			})
 		}
 
-		createParticipant(params: CreateParticipantParams): Promise<ChatParticipants> {
-			const participant = this.prisma.chatParticipants.create({data: {ChatPartsId: params.id, userId: params.id}})	
-			return this.prisma.chatParticipants.create(participant);
+		createParticipant(params: CreateParticipantParams): Promise<ChatParticipant> {
+			const participant = this.prisma.chatParticipant.create({
+				data: {
+					ChatPartId: Number(params.id),
+					userId: {
+						connect: {
+							id: Number(params.id)
+						}
+					}
+					// ChatPartId: params.id
+					// userId: {
+					// 	connect: {
+					// 		id: params.id
+					// 	}
+					// }
+				}
+			})	
+			return participant;
 		}
-
+ 
 }

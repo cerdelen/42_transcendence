@@ -17,12 +17,12 @@ import { UserService } from '../user/user.service';
 			useClass: ConversationsService,
 		}
 	],
-	exports: [
-		{
-			provide: Services.CONVERSATIONS,
-			useClass: ConversationsService
-		}
-	]
+	// exports: [
+	// 	{
+	// 		provide: Services.CONVERSATIONS,
+	// 		useClass: ConversationsService
+	// 	}
+	// ]
 })
 
 export class ConversationModule {}

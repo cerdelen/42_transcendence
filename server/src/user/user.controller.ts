@@ -18,5 +18,5 @@ export class UserController
 			where: { id: req.user.id }, 
 			data: { name: _name },
 		}));
-	}
+	} 
 }

@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client';
+import { User, Prisma, ChatParticipant } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FindUserParams } from '../utils/types';
+import { AuthUser } from '../utils/decorators';
+import { use } from 'passport';
+// import { FindUserParams } from 'src/utils/types';
 
 @Injectable()
 export class UserService {
@@ -20,17 +23,37 @@ export class UserService {
 		return this.prisma.user.delete({where});
 	}
 
-	async	findUserById(findUserParams: FindUserParams): Promise<User | undefined>
+	async	findUserById(id: number): Promise<User>
 	{
-
-		const user = await this.prisma.user.findUnique({
+		const user = await  this.prisma.user.findUnique({
 			where: {
-				id: 109351,
+				id: Number(id)
 			},
-			include: { ChatParticipant: true} 
-		},)
+			include: {
+				chatParticipant: true
+			}
+				// id: typeof id === "number" ? id : Number.parseInt(id),
+				// name: findParams.name,
+				// id: typeof findParams.id === "number" ? findParams.id : Number.parseInt(findParams.id)
+				// name: findParams.name, 
+				// chatPtsId: 2
+			// select: {
+			// 	id: true,
+			// 	name: true,
+			// 	mail: true,
+			// 	chatPtsId: true,
+			// 	two_FA_enabled: true,
+			// 	two_FA_secret: true,
+			// 	chatParticipant: {
+			// 		select: {
+			// 			userId: true,
+			// 		} 
+			// 	}
+			// },
+		});
+		console.log("user = " + user);
 		return user;
-	}
+	} 
 
 	async	updateUser(params:{
 		where: Prisma.UserWhereUniqueInput,
@@ -46,7 +69,7 @@ export class UserService {
 
 	async	turn_on_2FA(user_id: number)
 	{
-		var	user = await this.findUserById({id: user_id});
+		var	user = await this.findUserById(user_id);
 		if(!user.two_FA_enabled)
 		{
 			await this.updateUser({
@@ -58,7 +81,7 @@ export class UserService {
 
 	async	turn_off_2FA(user_id: number)
 	{
-		var	user = await this.findUserById({id: user_id});
+		var	user = await this.findUserById(user_id);
 		if(user.two_FA_enabled)
 		{
 			await this.updateUser({
@@ -67,5 +90,10 @@ export class UserService {
 			});
 		}
 	}
+	async saveUser(user: User) {
+		return user;
+	}
+
+
 }
 

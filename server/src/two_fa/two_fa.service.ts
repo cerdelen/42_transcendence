@@ -60,7 +60,7 @@ export class TwoFaService {
 
 	async	verifyCode(user_id: number, code: string) : Promise <any>
 	{
-		const	secret_2fa	= (await (this.userService.findUserById({id: user_id}))).two_FA_secret;
+		const	secret_2fa	= (await (this.userService.findUserById(user_id))).two_FA_secret;
 		return	authenticator.verify({
 			token: code,
 			secret: secret_2fa,

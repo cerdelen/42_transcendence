@@ -43,6 +43,15 @@ export class AuthController
 		return ("hello");
 	}
 	
+	@Get('all_online')
+	async yep(): Promise<any>
+	{
+		const smth = await this.authService.get_all_logged_in();
+		console.log("this is smth");
+		console.log(smth);
+		return (smth);
+	}
+
 	@Get('test_db')
 	test_db()
 	{

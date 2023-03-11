@@ -1,12 +1,13 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { Jwt_Auth_Guard } from 'src/auth/guards/jwt_auth.guard';
-import { UserService } from './user.service';
+import { UserService, UsersOnline } from './user.service';
 
 @Controller('user')
 export class UserController
 {
 	constructor(
-		private userService: UserService
+		private userService: UserService,
+		private usersOnline: UsersOnline
 	) {}
 
 	@Post('change_name')
@@ -17,5 +18,11 @@ export class UserController
 			where: { id: req.user.id }, 
 			data: { name: _name },
 		}));
+	}
+
+	@Get('all_online')
+	yep()
+	{
+		return this.usersOnline.get_all_logged_in();
 	}
 }

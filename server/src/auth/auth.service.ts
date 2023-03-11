@@ -1,8 +1,9 @@
 import { Injectable, Req, Res } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
+import { UserService, UsersOnline } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { timingSafeEqual } from 'crypto';
 
 @Injectable()
 export class AuthService 
@@ -10,7 +11,8 @@ export class AuthService
 	constructor(
 			// private prisma: PrismaService,
 			private userService: UserService,
-			private jwtService: JwtService
+			private jwtService: JwtService,
+			private userOnlne: UsersOnline,
 	) {}
 
 
@@ -36,6 +38,11 @@ export class AuthService
 		res.cookie('accessToken', token);
 		console.log('this is signed accessToken');
 		console.log(token);
+		this.userOnlne.add_user("smth", user_id);
+		if (this.userOnlne.isUserOnline(user_id))
+			console.log("is online");
+		else
+			console.log("is not online");
 		res.redirect('http://localhost:3000/');
 	}
 	async	sign_jwt_token(user_id: number, res: any, is_two_FAed = false)
@@ -52,6 +59,11 @@ export class AuthService
 		console.log('this is signed accessToken');
 		console.log(token);
 		// res.redirect('http://localhost:3000/');
+		this.userOnlne.add_user("smth", user_id);
+		if (this.userOnlne.isUserOnline(user_id))
+			console.log("is online");
+		else
+			console.log("is not online");
 		return(token);
 	}
 
@@ -97,6 +109,12 @@ export class AuthService
 			name: 'testinguser',
 			mail: 'testinguser@email.com'
 		});
+	}
+
+	async get_all_logged_in(): Promise<any>
+	{
+		const smth = await this.userOnlne.get_all_logged_in();
+		return smth;
 	}
 
 }

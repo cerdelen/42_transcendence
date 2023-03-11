@@ -3,6 +3,71 @@ import { User, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
+export class UsersOnline {
+	private loggedIn: Map<string, number>		// string socketId, nuber userId
+	constructor()
+	{
+		this.loggedIn = new Map<string, number>();
+	}
+
+	get_all_logged_in()
+	{
+        return this.loggedIn.values();
+    }
+	
+	add_user(socketID: string, userID: number)
+	{
+		this.loggedIn.set(socketID, userID);
+	}
+
+	update_user_id(socketID: string, userID: number)
+	{
+		this.loggedIn.set(socketID, userID);
+	}
+
+	get_user_id(socketID: string): number
+	{
+		return this.loggedIn.get(socketID);
+	}
+
+    delete_by_user_id(userID: number)
+	{
+        if (this.isUserOnline(userID))
+		{
+            let socketID: string;
+            for (let item of this.loggedIn.keys())
+			{
+                if (this.loggedIn[item] === userID)
+				{
+                    socketID = item;
+                    break;
+                }
+            }
+            this.delete_by_socket_id(socketID);
+        }
+    }
+
+    delete_by_socket_id(socketID: string)
+	{
+        this.loggedIn.delete(socketID);
+    }
+
+
+    isUserOnline(userID: number): boolean
+	{
+        for (let item of this.loggedIn.values())
+		{
+            if (item == userID)
+			{
+                return (true);
+            }
+        }
+        return (false);
+    }
+
+}
+
+@Injectable()
 export class UserService {
 	constructor(
 		private prisma: PrismaService

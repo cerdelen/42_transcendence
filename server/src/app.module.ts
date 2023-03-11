@@ -10,13 +10,16 @@ import { PicturesModule } from './pictures/pictures.module';
 import { MessagesModule } from './messages/messages.module';
 import { ConfigModule } from '@nestjs/config';
 import { ConversationModule } from './conversations/conversations.module';
-import { ParticipantsModule } from './participants/participants.module';
+// import { ParticipantsModule } from './participants/participants.module';
+import { ConversationService } from './conversations/conversations.service';
+import { ConversationGateway } from './conversations/conversation.gateway';
+import { UserService } from './user/user.service';
 
 
 @Module({
 	// imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, ChatModule],
-	imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, MessagesModule, ConversationModule, ParticipantsModule],
+	imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, MessagesModule, ConversationModule],
 	controllers: [AppController],
-	providers: [AppService],
+	providers: [AppService, ConversationGateway, UserService],
 })
 export class AppModule {}

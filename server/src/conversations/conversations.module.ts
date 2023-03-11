@@ -1,28 +1,25 @@
 import { Module } from '@nestjs/common'
 import { ConversationController } from './conversations.controller';
 import { Services } from 'src/utils/consts'
-import { ConversationsService } from './conversations.service';
+import { ConversationService } from './conversations.service';
 import { PrismaModule } from '../prisma/prisma.module';
-import { Chat } from '@prisma/client';
-import { ParticipantsModule } from '../participants/participants.module';
+// import { ParticipantsModule } from '../participants/participants.module';
 import { UserModule } from '../user/user.module';
 import { UserService } from '../user/user.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { ConversationGateway } from './conversation.gateway';
 
 @Module ({
-	imports: [PrismaModule, ParticipantsModule, UserModule],
+	imports: [PrismaModule, UserModule],
 	controllers: [ConversationController],
-	providers: [
-		{
-			provide: Services.CONVERSATIONS,
-			useClass: ConversationsService,
-		}
-	],
-	// exports: [
+	providers: [PrismaService, UserService, ConversationService],
+	exports: [ConversationService]
+	// providers: [
 	// 	{
 	// 		provide: Services.CONVERSATIONS,
-	// 		useClass: ConversationsService
+	// 		useClass: ConversationsService,
 	// 	}
-	// ]
+	// ],
 })
 
 export class ConversationModule {}

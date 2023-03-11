@@ -30,6 +30,7 @@ services:
       - 3003:3003
 # for prisma studio (visualizing database), might delete later
       - 5555:5555
+      - 3007:3007
     environment:
       - SECRET="¯\_(ツ)_/¯"
     volumes:
@@ -62,10 +63,13 @@ services:
     stdin_open: true
     restart: always
     container_name: client
+
 networks:
   webapp:
     driver: bridge
   database:
+    driver: bridge
+  web:
     driver: bridge
 
 volumes:

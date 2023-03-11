@@ -3,10 +3,6 @@ generator client {
 	binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
-generator erd {
-	provider = "prisma-erd-generator"
-}
-
 datasource backend_database {
 	provider	= "postgresql"
 	url			= env("DATABASE_URL")
@@ -16,11 +12,11 @@ datasource backend_database {
 
 model User {
 	// User stuff
-	id				Int			@unique
-	name			String		@unique
-	mail			String
+	id						Int			@unique
+	name					String		@unique
+	mail					String
 	// chatParticipant	ChatParticipant?	@relation(fields: [chatPtsId], references: [ChatPartId])
-	chatId		Int?		@unique		
+	conversation_id_arr	Int[]		
 
 
 	// picture			String?
@@ -30,23 +26,23 @@ model User {
 	two_FA_secret	String?
 }
 
-model Chat {
+model Conversation {
 	// User stuff
-	chat_id					Int					@unique  @id @default(autoincrement()) 
-	chat_name			String?		
-	chat_msg			Message[]
+	conversation_id				Int					@unique  @id @default(autoincrement()) 
+	conversation_name			String?		
+	conversation_msg_arr			Message[]
 	// chat_participants	ChatParticipant[]	
-
+	conversation				Boolean				@default(true)
 	//something to consider later after creating chat
-	chat_is_public		Boolean		@default(true)
-	chat_pass_protected	Boolean		@default(false)
-	chat_password		String?		
+	conversation_is_public		Boolean		@default(true)
+	conversation_pass_protected	Boolean		@default(false)
+	conversation_password		String?		
 
-	chat_members	Int[]
-	chat_owner		Int
-	chat_admins		Int[] 
-	chat_black_list		Int[]
-	chat_mute_list		Int[]
+	conversation_participant_arr	Int[]
+	conversation_owner_arr			Int[]
+	conversation_admin_arr			Int[] 
+	conversation_black_list_arr		Int[]
+	conversation_mute_list_arr		Int[]
 }
 
 // model ChatParticipant {
@@ -69,8 +65,8 @@ model Message {
 	created_at			DateTime	@default(now())
 
 	//necessary fro array of messages in Chat model
-	chat_id				Int?			
-	chat_relation		Chat?		@relation(fields: [chat_id], references: [chat_id])
+	conversation_id				Int?			
+	conversation_relation		Conversation?		@relation(fields: [conversation_id], references: [conversation_id])
 }
 
 

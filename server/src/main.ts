@@ -12,6 +12,7 @@ async function bootstrap() {
   try {
 
     await app.listen(3003);
+
     console.log("listening on port 3003");
   } catch(error) {
     console.log(error);

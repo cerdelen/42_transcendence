@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User, Prisma, ChatParticipant } from '@prisma/client';
+import { User, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FindUserParams } from '../utils/types';
 import { AuthUser } from '../utils/decorators';
@@ -29,9 +29,6 @@ export class UserService {
 			where: {
 				id: Number(id)
 			},
-			include: {
-				chatParticipant: true
-			}
 				// id: typeof id === "number" ? id : Number.parseInt(id),
 				// name: findParams.name,
 				// id: typeof findParams.id === "number" ? findParams.id : Number.parseInt(findParams.id)
@@ -51,7 +48,7 @@ export class UserService {
 			// 	}
 			// },
 		});
-		console.log("user = " + user);
+		// console.log("user = " + user);
 		return user;
 	} 
 

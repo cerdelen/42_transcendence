@@ -38,6 +38,7 @@ export class AuthService
 		console.log(token);
 		res.redirect('http://localhost:3000/');
 	}
+
 	async	sign_jwt_token(user_id: number, res: any, is_two_FAed = false)
 	{
 		console.log('sign_jwt_token');
@@ -89,7 +90,7 @@ export class AuthService
 			return (null);
 		}
 	}
-	
+
 	async test_db()
 	{
 		const user = await this.userService.createUser({
@@ -98,5 +99,4 @@ export class AuthService
 			mail: 'testinguser@email.com'
 		});
 	}
-
 }

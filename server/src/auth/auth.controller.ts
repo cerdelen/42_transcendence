@@ -25,7 +25,7 @@ export class AuthController
 		console.log("hello from inside testjwt");
 		return ("hello");
 	}
-	
+
 	@UseGuards(Intra_42_Guard)
 	@Get('login')
 	async	intra_login(@Req() req: any, @Res() res: any): Promise<any>
@@ -42,7 +42,15 @@ export class AuthController
 		console.log("hello from inside test all")
 		return ("hello");
 	}
-	
+
+	@Get('get_id')
+	@UseGuards(Jwt_Auth_Guard)
+	@UseGuards(Two_FA_Guard)
+	async get_id(@Req() req: any)
+	{
+		return (req.user.id);
+	}
+
 	@Get('test_db')
 	test_db()
 	{

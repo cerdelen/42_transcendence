@@ -30,12 +30,9 @@ model Stats {
 	wins			Int			@default(0)
 	loses			Int			@default(0)
 	mmr				Int			@default(1500)
-	achievement_0	Boolean		@default(false)
-	achievement_1	Boolean		@default(false)
-	achievement_2	Boolean		@default(false)
-	achievement_3	Boolean		@default(false)
-	achievement_4	Boolean		@default(false)
-	achievement_5	Boolean		@default(false)
+	achievement_0	Boolean		@default(false)										// win 3 games
+	achievement_1	Boolean		@default(false)										// reach 1700 mmr
+	achievement_2	Boolean		@default(false)										// win to zero
 }
 
 model Chat {
@@ -71,6 +68,7 @@ model Game {
 	player_one			Int
 	player_two			Int
 	winner				Int
+	loser				Int
 	score_one			Int
 	score_two			Int
 	finished			Boolean		@default(false)

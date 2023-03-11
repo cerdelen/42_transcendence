@@ -43,10 +43,14 @@ export class AuthController
 		return ("hello");
 	}
 
-	/**\
-	 * dewfwf
-	 * fewfewf
-	\**/
+	@Get('get_id')
+	@UseGuards(Jwt_Auth_Guard)
+	@UseGuards(Two_FA_Guard)
+	async get_id(@Req() req: any)
+	{
+		return (req.user.id);
+	}
+
 	@Get('test_db')
 	test_db()
 	{

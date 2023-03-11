@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { Jwt_Auth_Guard } from 'src/auth/guards/jwt_auth.guard';
 import { UserService } from './user.service';
 
@@ -18,7 +18,7 @@ export class UserController
 			this.userService.add_friend(req.user.id, Number(adding_you));
 		}
 	}
-	
+
 	@Put('remove_friend')
 	@UseGuards(Jwt_Auth_Guard)
 	async	removing_friend(@Req() req: any, @Body('removing_you') removing_you: string)
@@ -27,6 +27,20 @@ export class UserController
 		{	
 			this.userService.rmv_friend(req.user.id, Number(removing_you));
 		}
+	}
+
+	@Get('add_win')
+	@UseGuards(Jwt_Auth_Guard)
+	async	add_win(@Req() req: any)
+	{
+		this.userService.add_win(req.user.id);
+	}
+
+	@Get('add_achievement')
+	@UseGuards(Jwt_Auth_Guard)
+	async	add_achie(@Req() req: any)
+	{
+		this.userService.add_achievement(req.user.id, 1);
 	}
 
 	@Post('change_name')

@@ -7,11 +7,10 @@ import { UserModule } from './user/user.module';
 import { TwoFaModule } from './two_fa/two_fa.module';
 import { PicturesModule } from './pictures/pictures.module';
 // import { ChatModule } from './chat/chat.module';
-import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
 	// imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, ChatModule],
-	imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, GatewayModule],
+	imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule],
 	controllers: [AppController],
 	providers: [AppService],
 })

@@ -9,6 +9,8 @@ export class UserController
 		private userService: UserService
 	) {}
 
+	
+
 	@Post('add_friend')
 	@UseGuards(Jwt_Auth_Guard)
 	async	add_friend(@Req() req: any, @Body('adding_you') adding_you: string)
@@ -27,6 +29,13 @@ export class UserController
 		{	
 			this.userService.rmv_friend(req.user.id, Number(removing_you));
 		}
+	}
+
+	@Get('del')
+	// @UseGuards(Jwt_Auth_Guard)
+	async	del()
+	{
+		this.userService.deleteUser({id: 322});
 	}
 
 	@Get('add_win')

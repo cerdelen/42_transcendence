@@ -11,17 +11,26 @@ export class UserService {
 
 	async	createUser(data: Prisma.UserCreateInput) : Promise<User>
 	{
-		const user = await this.prisma.user.create({data,});
-		await this.prisma.stats.create({
-			data: { stat_id: data.id },
-		});
-		return (user);
+		const check = await this.prisma.user.findUnique({ where: { id: data.id }});
+		if (!check)
+		{
+			const user = await this.prisma.user.create({data,});
+			await this.prisma.stats.create({
+				data: { stat_id: data.id },
+			});
+			return (user);
+		}
+		return (check);
 	}
-
-	async	deleteUser(where: Prisma.UserCreateInput)
+	
+	async	deleteUser(where: Prisma.UserWhereUniqueInput)
 	{
-		await this.prisma.stats.delete({where: { stat_id: where.id}});
-		return this.prisma.user.delete({where});
+		const check = await this.prisma.user.findUnique({where});
+		if (check)
+		{
+			await this.prisma.stats.delete({where: { stat_id: where.id}});
+			return this.prisma.user.delete({where});
+		}
 	}
 
 	async	findUserById(id: number) : Promise<User | undefined>

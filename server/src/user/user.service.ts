@@ -19,7 +19,7 @@ export class UserService {
 		return this.prisma.user.delete({where});
 	}
 
-	async	findUserById(id: number): Promise<User | undefined>
+	async	findUserById(id: number) : Promise<User | undefined>
 	{
 		const user = await this.prisma.user.findUnique({
 			where: {
@@ -39,6 +39,34 @@ export class UserService {
 			data,
 			where,
 		});
+	}
+
+	async	add_friend(userId: number, friend: number)
+	{
+		const	user = await this.prisma.user.findUnique({ where : { id: userId }});
+		const	add_friend = await this.prisma.user.findUnique({ where : { id: friend }});
+		const	index = user.friendlist.findIndex(x => x == friend);
+		// console.log(index);
+
+		if(add_friend && user && index == -1)
+		{
+			await user.friendlist.push(friend);
+			await	this.prisma.user.update({where: { id: userId}, data: { friendlist: user.friendlist}});
+		}
+	}
+	
+	async	rmv_friend(userId: number, friend: number)
+	{
+		// console.log(friend);
+		const	user = await this.prisma.user.findUnique({ where : { id: userId }});
+		const	rmv_friend = await this.prisma.user.findUnique({ where : { id: friend }});
+		const	index = user.friendlist.findIndex(x => x == friend);
+		
+		if(rmv_friend && user && index != -1)
+		{
+			await user.friendlist.splice(index, 1);
+			await	this.prisma.user.update({where: { id: userId}, data: { friendlist: user.friendlist}});
+		}
 	}
 
 	async	turn_on_2FA(user_id: number)

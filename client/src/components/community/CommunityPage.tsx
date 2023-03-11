@@ -62,6 +62,7 @@ const Community = ({socket} : {socket: Socket}) => {
       let s : message[] = [...users];
       s.push(message)
       setUsers(s);
+
       if(socket)
     
         socket.emit('findAllMessages', {}, (response : any[]) =>
@@ -92,6 +93,7 @@ const Community = ({socket} : {socket: Socket}) => {
         socket.emit('createMessage', {name: "Mock user", text: input}, () => {
           setInput('');
         })
+        socket.emit('createGame', {});
   }
   let timeout : any;
   const emitTyping = () =>

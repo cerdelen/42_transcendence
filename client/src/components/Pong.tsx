@@ -222,18 +222,23 @@ function game(canvas: any, ctx: any, player: Player, computer: Player, net: Net,
 let framesPerSecond = 50;
 
 
-function Pong(canvas: any, ctx:any)
+function Pong(start: boolean, canvas: any, ctx:any)
 {
+    
     let ball : Ball = new Ball(canvas);
     let Player_1 : Player = new Player(canvas, 0, (canvas.height - 100) / 2);
     let Player_2 : Player = new Player(canvas, canvas.width - 10, (canvas.height - 100) / 2);
     let net : Net = new Net(canvas);
-    canvas.addEventListener("mousemove", (e : any) => 
+    if(start)
     {
-        getMousePos(e, canvas, Player_1)
-    } );
+        canvas.addEventListener("mousemove", (e : any) => 
+        {
+            getMousePos(e, canvas, Player_1)
+        } );
+        let loop = setInterval(() => game(canvas, ctx, Player_1, Player_2, net, ball), 1000 / framesPerSecond);
+    }
 
-    let loop = setInterval(() => game(canvas, ctx, Player_1, Player_2, net, ball), 1000 / framesPerSecond);
+
 }
 
 export default Pong

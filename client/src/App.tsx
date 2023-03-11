@@ -8,7 +8,7 @@ import SecondFactorPage from "./components/second_factor_authentication/SecondFa
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Pong from "./components/Pong";
 import io, { Socket} from 'socket.io-client';
-
+import Game from "./components/Game";
 
 const socket = io('localhost:3003');
 
@@ -30,7 +30,9 @@ function App() {
     <BrowserRouter>
 
       <Routes>
+
         <Route path="/" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/>
+        <Route path="/game" element={ <Game socket={socket} />}/>
         <Route path="/auth" element={<SecondFactorPage/>}/>
         <Route path="/home" element={<HomePage socket={socket} />}  />
       </Routes>

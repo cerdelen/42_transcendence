@@ -8,10 +8,11 @@ import { TwoFaModule } from './two_fa/two_fa.module';
 import { PicturesModule } from './pictures/pictures.module';
 // import { ChatModule } from './chat/chat.module';
 import { MessagesModule } from './messages/messages.module';
+import { GameModule } from './game/game.module';
 
 @Module({
 	// imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, ChatModule],
-	imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, MessagesModule],
+	imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, MessagesModule, GameModule],
 	controllers: [AppController],
 	providers: [AppService],
 })

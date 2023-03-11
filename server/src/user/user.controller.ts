@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { Jwt_Auth_Guard } from 'src/auth/guards/jwt_auth.guard';
+import { Two_FA_Guard } from 'src/two_fa/guard/two_fa.guard';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -61,4 +62,14 @@ export class UserController
 			data: { name: _name },
 		}));
 	}
+
+	@Get('get_id')
+    @UseGuards(Jwt_Auth_Guard)
+    @UseGuards(Two_FA_Guard)
+    async get_id(@Req() req: any)
+    {
+        return (req.user.id);
+    }
+
 }
+

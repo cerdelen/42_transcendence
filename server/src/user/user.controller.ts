@@ -17,7 +17,7 @@ export class UserController
 	async	add_friend(@Req() req: any, @Body('adding_you') adding_you: string)
 	{
 		if (!Number.isNaN(adding_you))
-		{	
+		{
 			this.userService.add_friend(req.user.id, Number(adding_you));
 		}
 	}
@@ -63,7 +63,7 @@ export class UserController
 		}));
 	}
 
-	@Get('get_id')
+	@Post('get_id')
     @UseGuards(Jwt_Auth_Guard)
     @UseGuards(Two_FA_Guard)
     async get_id(@Req() req: any)
@@ -76,15 +76,21 @@ export class UserController
 	@UseGuards(Two_FA_Guard)
 	async	get_user_data(@Body('user_id') user_id : string)
 	{
-		return (this.userService.get_user_data(Number(user_id)));
+		if(!Number.isNaN(user_id))
+		{
+			return (this.userService.get_user_data(Number(user_id)));
+		}
 	}
 	
-	@Get('user_stats')
+	@Post('user_stats')
 	@UseGuards(Jwt_Auth_Guard)
 	@UseGuards(Two_FA_Guard)
 	async	get_user_stats(@Body('user_id') user_id : string)
 	{
-		return (this.userService.get_user_stats(Number(user_id)));
+		if(!Number.isNaN(user_id))
+		{
+			return (this.userService.get_user_stats(Number(user_id)));
+		}
 	}
 
 }

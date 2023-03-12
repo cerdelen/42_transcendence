@@ -1,4 +1,4 @@
-import { useMyContext } from "../AppContext";
+
 import { useRef, useState } from "react";
 import SecondFactorQR from "../second_factor_authentication/SecondFactorQR";
 import JSCookies from "js-cookie";
@@ -12,8 +12,7 @@ const ProfileCard = () => {
   const [base64String, setBase64String] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
 
-  const { loggedIn, setLoggedIn } = useMyContext();
-  // dynamically calculating where the drowdown should start
+  // dynamically calculating where the dropdown should start
   const firstElementRef = useRef<HTMLDivElement>(null);
   const secondElementRef = useRef<HTMLDivElement>(null);
   function toggleDropDownMenu() {
@@ -30,7 +29,7 @@ const ProfileCard = () => {
     //remove the cookie
     JSCookies.remove("accessToken");
     //change the state to logged out
-    setLoggedIn(false);
+    // setLoggedIn(false);
     //redirect to the main screen
     window.location.replace("http://localhost:3000");
   }

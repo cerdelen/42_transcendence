@@ -207,4 +207,13 @@ export class UserService {
 		}
 	}
 
+	async	get_user_data(user_id: number) : Promise<User>
+	{
+		return (this.prisma.user.findUnique({where: { id: user_id }}));
+	}
+	
+	async	get_user_stats(user_id: number) : Promise<Stats>
+	{
+		return (this.prisma.stats.findUnique({where: { stat_id: user_id }}));
+	}
 }

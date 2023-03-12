@@ -4,7 +4,11 @@ import { useContext } from "react";
 import { UserContext } from "../../contexts/UserContext";
 
 const player: Player = players[0];
-const LevelImageAndUsername = () => {
+interface Props {
+  userName: string;
+}
+
+const LevelImageAndUsername = ({ userName }: Props) => {
   const {userId} = useContext(UserContext);
 
 
@@ -15,7 +19,7 @@ const LevelImageAndUsername = () => {
   return (
     <div id="level-username" onClick={goToUserPage}>
       <img src={expertLevel} alt="" />
-      <span>{player.name}</span>
+      <span>{userName}</span>
     </div>
   );
 };

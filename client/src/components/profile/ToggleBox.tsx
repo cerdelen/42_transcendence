@@ -4,27 +4,13 @@ export{}
 
 interface Props {
   setBase64String: React.Dispatch<React.SetStateAction<string>>;
-  // comingFromBackend: boolean;
+  status2FA: boolean;
 }
-const ToggleBox: React.FC<Props> = ({ setBase64String }) => {
-  const COMING_FROM_BACKEND: boolean = true;
+const ToggleBox: React.FC<Props> = ({ setBase64String, status2FA }) => {
   const [checked, setChecked] = useState<boolean>(false);
   useEffect(() => {
-    async function fetchData() {
-      const response = await fetch("http://localhost:3003/2-fa/status", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-        },
-      });
-      const data = await response.json();
-      setChecked(data["status"]);
-      console.log(`Checked status: ${data["status"]}`);
-    }
-
-    fetchData();
-  }, []);
+    setChecked(status2FA);
+  }, [status2FA]);
 
   async function handleCheckboxChange() {
     setChecked((prevChecked) => !prevChecked);

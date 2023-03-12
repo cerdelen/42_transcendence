@@ -24,7 +24,7 @@ function App() {
     try {
 
       let response = await fetch("http://localhost:3003/user/get_id", {
-        method: "Get",
+        method: "Post",
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${JSCookies.get("accessToken")}`,

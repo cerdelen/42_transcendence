@@ -71,7 +71,7 @@ export class UserController
 		return (req.user.id);
     }
 
-	@Get('user_data')
+	@Post('user_data')
 	@UseGuards(Jwt_Auth_Guard)
 	@UseGuards(Two_FA_Guard)
 	async	get_user_data(@Body('user_id') user_id : string)
@@ -79,7 +79,7 @@ export class UserController
 		return (this.userService.get_user_data(Number(user_id)));
 	}
 	
-	@Get('user_stats')
+	@Post('user_stats')
 	@UseGuards(Jwt_Auth_Guard)
 	@UseGuards(Two_FA_Guard)
 	async	get_user_stats(@Body('user_id') user_id : string)

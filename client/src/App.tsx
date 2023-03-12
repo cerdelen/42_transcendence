@@ -9,35 +9,60 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Pong from "./components/Pong";
 import io, { Socket} from 'socket.io-client';
 import Game from "./components/Game";
+import UserPage from "./components/UserPage";
+import { UserContext } from "./contexts/UserContext";
+
 
 const socket = io('localhost:3003');
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [userId, setUserId] = useState('');
+  const [userData, setUserData] = useState({});
   
+  async function getUser() {
+    try {
+
+      let response = await fetch("http://localhost:3003/user/get_id", {
+        method: "Get",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+        },
+      }
+      )
+      setUserId(await response.text());
+    } catch (error) {
+      console.error(error);
+    }
+  }
   useEffect(() => {
     const myCookie = JSCookies.get('accessToken');
     if (myCookie !== undefined) {
       console.log('Set logged in to true');
       setLoggedIn(true);
+      getUser();
     }
   
   }, []);
 
   return (
     // <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
+    <UserContext.Provider value={{userId: userId}}>
+      <BrowserRouter>
 
-    <BrowserRouter>
+        <Routes>
 
-      <Routes>
+          <Route path="/" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/>
+          {/* <Route path="/loggedin" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/> */}
+          <Route path="/game" element={ <Game socket={socket} />}/>
+          <Route path="/auth" element={<SecondFactorPage/>}/>
+          <Route path="/home" element={<HomePage socket={socket} />}  />
+          <Route path="/user" element={<UserPage/>}/>
+        </Routes>
 
-        <Route path="/" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/>
-        <Route path="/game" element={ <Game socket={socket} />}/>
-        <Route path="/auth" element={<SecondFactorPage/>}/>
-        <Route path="/home" element={<HomePage socket={socket} />}  />
-      </Routes>
-
-    </BrowserRouter>
+      </BrowserRouter>
+    </ UserContext.Provider>
         
       
     // </MyProvider>

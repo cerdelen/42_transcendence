@@ -7,6 +7,7 @@ import { Server, Socket as socket_io } from 'socket.io';
 import {getInitialState, gameLoop} from './make_game_state'
 let readyPlayerCount : number = 0;
 let roomNumber : number = 0;
+const state = getInitialState();
 
 function startGameInterval(client : Socket, state: any)
 {
@@ -41,7 +42,6 @@ export class GameGateway {
   connectToGameService(@MessageBody() data, 
   @ConnectedSocket() client : Socket)
   {
-    const state = getInitialState();
 
     startGameInterval(client, state);
   }
@@ -52,11 +52,19 @@ export class GameGateway {
     return this.gameService.create(createGameDto);
   }
 
-  @SubscribeMessage('ready')
-  ready(socket: Socket, roomId: string) {
-    
+  @SubscribeMessage('keydown')
+  handleKeyDown(@MessageBody() keyCode: number,
+  @ConnectedSocket() client : Socket) {
+    state.keysPressed[keyCode] = true;
   }
 
+  @SubscribeMessage('keyup')
+  handleKeyUp(@MessageBody() keyCode: number, 
+  @ConnectedSocket() client)
+  {
+    state.keysPressed[keyCode] = false;
+  }
+  
   @SubscribeMessage('PaddleUpdate')
   PaddleUpdate(@MessageBody() Paddle1Y) {
     console.log("Paddle is on", Paddle1Y);

@@ -85,11 +85,10 @@ enum KeyBindings{
 let CanvasHeight = 400;
 let CanvasWidth = 700;
 
-
 function paddle_update(paddle : Player, keysPressed : boolean[]){
     if( keysPressed[KeyBindings.UP] ){
         paddle.yVel = -1;
-    if(this.y <= 20){
+    if(paddle.y <= 20){
         paddle.yVel = 0
     }
     }else if(keysPressed[KeyBindings.DOWN]){
@@ -166,9 +165,6 @@ export function gameLoop(state: pong_properties) : number
         return 1;
     }
 }
-
-
-
 
 
 // class Game{

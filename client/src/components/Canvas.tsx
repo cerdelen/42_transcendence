@@ -81,15 +81,7 @@ const Canvas = ({socket} : CanvasPropTypes) =>
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     let ctx : any;
-    // useEffect( () => 
-    // {
-    //     if(canvasRef.current)
-    //     {
-    //         ctx =  canvasRef.current.getContext('2d');;
-    //         drawPong(socket, ctx, gameInfo);
 
-    //     }
-    // }, []);
     useEffect(() => 
     {
         socket.emit('connectToGameService', () =>{})
@@ -109,6 +101,15 @@ const Canvas = ({socket} : CanvasPropTypes) =>
             }
         })
     }, [gameInfo])
+
+    document.addEventListener('keydown', (e) => 
+    {
+        socket.emit('keydown', e.keyCode);
+    })
+    document.addEventListener('keyup', (e) =>
+    {
+        socket.emit('keyup', e.keyCode);
+    })
     return (
         <>
         <canvas 

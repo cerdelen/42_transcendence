@@ -8,6 +8,8 @@ import { UserModule } from '../user/user.module';
 import { UserService } from '../user/user.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConversationGateway } from './conversation.gateway';
+import { MsgModule } from '../msg/msg.module';
+import { MsgService } from '../msg/msg.service';
 
 @Module ({
 	imports: [PrismaModule, UserModule],

@@ -28,7 +28,7 @@ export class ConversationController {
 	@UseGuards(Jwt_Auth_Guard)
 	@Post('conversation/create')
 	async createConversation(
-		@Req() 
+		@Req()
 		req : any,
 		@Body() userContent: {
 			name?: string;
@@ -37,8 +37,11 @@ export class ConversationController {
 			password?: boolean;
 			request?: boolean;
 			participants: string[],
-		}) 
+			created_at?: Date
+		})
 		{
+			console.log("USERCONTENT" + userContent.participants);
+			
 			if (typeof userContent.participants === "undefined")
 				return null;
 			let array : number[] = [];
@@ -55,11 +58,13 @@ export class ConversationController {
 				conversation_name: userContent.name,
 				conversation_participant_arr: array,
 				conversation_owner_arr: [Number(req.user.id)],
-				conversation_admin_arr: [Number(req.user.id)]
+				conversation_admin_arr: [Number(req.user.id)],
 			})
+			
 			for (let i = 0; i < array.length; ++i)
 			{
 				user = await this.userService.findUserById(array[i]);
+				console.log("CONVERSATION_ID_ARR = " + user.conversation_id_arr);
 				await user.conversation_id_arr.push(newConversation.conversation_id);
 				await this.userService.updateUser({
 					where: {

@@ -1,4 +1,4 @@
-import { Inject, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Inject, HttpException, HttpStatus, Injectable, createParamDecorator } from '@nestjs/common';
 // import { IConversationsService } from './conversations';
 import { Conversation, User, PrismaClient, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -16,6 +16,7 @@ import { networkInterfaces } from "os";
 export class ConversationService {
 	constructor (
 		private prisma: PrismaService, 
+		private user: UserService
 	) {}
 
 	async createConversation(data: Prisma.ConversationCreateInput): Promise<Conversation> {
@@ -25,6 +26,20 @@ export class ConversationService {
 		})
 		return newConversation; 
 	}
+
+	// async createConversation(user: User, params: CreateConversationParams) {
+	// 	const userDB = await this.user.findUserById(user.id);
+	// 	const {authorId, recipientId} = params;
+	// 	const participants_arr: User[] = [];
+	// 	if (!userDB.conversation_id_arr) {
+	// 		const newParticipant = await this.prisma.conversation.create({
+	// 			data: {
+	// 				user_id_creator: userDB.id
+	// 				}
+	// 			}) 
+	// 		}
+	// 	}
+	// }
 
 	
 	async updateConversation(

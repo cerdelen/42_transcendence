@@ -14,11 +14,13 @@ import { ConversationModule } from './conversations/conversations.module';
 import { ConversationService } from './conversations/conversations.service';
 import { ConversationGateway } from './conversations/conversation.gateway';
 import { UserService } from './user/user.service';
+import { MsgModule } from './msg/msg.module';
+import { MsgService } from './msg/msg.service';
 
 
 @Module({
 	// imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, ChatModule],
-	imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, MessagesModule, ConversationModule],
+	imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, ConversationModule, MsgModule],
 	controllers: [AppController],
 	providers: [AppService, ConversationGateway, UserService],
 })

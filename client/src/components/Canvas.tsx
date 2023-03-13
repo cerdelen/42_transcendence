@@ -85,6 +85,11 @@ const Canvas = ({socket} : CanvasPropTypes) =>
     useEffect(() => 
     {
         socket.emit('connectToGameService', () =>{})
+
+        socket.on('gameOver', () => 
+        {
+            alert("You lose :( ");
+        })
     }, [])
 
     useEffect( () => 

@@ -80,24 +80,85 @@ const Canvas = ({socket} : CanvasPropTypes) =>
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+    const [inLobby, setInLobby] = useState(false);
+    const [gameActive, setGameActive] = useState(false);
+
+	const [gameCode, setGameCode] = useState("");
+
+	const [codeInput, setCodeInput] = useState("");
+
+    const [playerNumber, setPlayerNumber] = useState(0);
     let ctx : any;
 
+
+    function handleGameCode(data: string)
+    {
+        setGameCode(data);
+        console.log("Setting game")
+    }
+    function handleInit(code : number)
+    {
+        setPlayerNumber(code);
+    }
+    function reset() 
+    {
+        setPlayerNumber(0);
+        setCodeInput("");
+        setGameCode("");
+        setInLobby(false);
+
+    }
+    function init () 
+    {
+            setInLobby(true);
+    }
     useEffect(() => 
     {
-        socket.emit('connectToGameService', () =>{})
+        socket.emit('connectToGameService', () =>{
 
-        socket.on('gameOver', () => 
-        {
-            alert("You lose :( ");
         })
+
+        socket.on('gameOver', (data: any) => 
+        {
+            if(!gameActive)
+            {
+                return ;
+            }
+            data = JSON.parse(data);
+
+            if(data.winner === playerNumber)
+            {
+                alert("You win!");
+            }else{
+                alert("You lose :( ");
+            }
+            setGameActive(false);
+        })
+
+        socket.on('handleUnknownGame', () =>
+        {
+            reset();
+            alert("Unknown Game");
+        })
+
+        socket.on("handleTooManyPlayers", () =>
+        {
+            reset();
+            alert("This game has too many players");
+        })
+        socket.on('init', () => {
+            handleInit });
+        socket.on('gameCode', handleGameCode);
     }, [])
 
     useEffect( () => 
     {
-        
-
         socket.on('gameState', (gameState: string) => 
         {
+            if(!gameActive)
+            {
+                return ; 
+            }
             setGameInfo(JSON.parse(gameState));
             if(canvasRef.current)
             {
@@ -106,7 +167,7 @@ const Canvas = ({socket} : CanvasPropTypes) =>
             }
         })
     }, [gameInfo])
-
+   
     document.addEventListener('keydown', (e) => 
     {
         socket.emit('keydown', e.keyCode);
@@ -115,14 +176,39 @@ const Canvas = ({socket} : CanvasPropTypes) =>
     {
         socket.emit('keyup', e.keyCode);
     })
-    return (
-        <>
-        <canvas 
-        ref={canvasRef}
-        width={700}
-        height={400}/>
-        </>
-    )
+
+    
+		return (
+			<>
+                <center>
+				<h1> Welcome to Pong </h1>
+				
+				<br/>
+				<button onClick={() => {
+                    socket.emit('newGame');
+                    init();
+                }} > Create Game </button>
+				<br/>
+				<input placeholder='GAME CODE' onChange={(e) => 
+                {
+                    setCodeInput(e.target.value);
+                }} value={codeInput}></input>
+				<br/>
+				<button onClick={() => {
+                    if(!codeInput)
+                        return ;
+                    socket.emit("joinGame", codeInput);
+                    setCodeInput("");
+                    init();
+                }} > Join Game </button>
+			</center>
+                <h1>{gameCode}</h1>
+                <canvas 
+                ref={canvasRef}
+                width={700}
+                height={400}/>
+            </>
+        )
 }
 Canvas.propTypes = CanvasTypes;
 export default Canvas;

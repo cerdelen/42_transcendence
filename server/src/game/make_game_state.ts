@@ -22,7 +22,8 @@ interface Ball{
 
 interface pong_properties
 {
-    keysPressed: boolean[],
+    keysPressed_p1: boolean[],
+    keysPressed_p2: boolean[],
     player_1_score : number,
     player_2_score : number,
 
@@ -31,16 +32,6 @@ interface pong_properties
     Player2 : Player;
 }
 
-        
-//         this.player1 = new Paddle
-//(paddleWidth,paddleHeight,wallOffset,
-//this.gameCanvas.height / 2 - paddleHeight / 2); 
-//         this.computerPlayer = new ComputerPaddle
-//(paddleWidth,paddleHeight,this.gameCanvas.width
-// - (wallOffset + paddleWidth) ,this.gameCanvas.height / 2 - paddleHeight / 2);
-//this.ball = new Ball
-//(ballSize,ballSize,this.gameCanvas.width / 2 - ballSize / 2,
-// this.gameCanvas.height / 2 - ballSize / 2);    
 let paddleWidth:number = 20;
 let paddleHeight:number = 60;
 let ballSize:number = 10;
@@ -48,7 +39,8 @@ let wallOffset:number = 20;
 export function getInitialState()
 {
     let initial_state : pong_properties = {
-        keysPressed: [],
+        keysPressed_p1: [],
+        keysPressed_p2: [],
         player_1_score: 0,
         player_2_score: 0,
         Ball: {
@@ -166,8 +158,8 @@ export function gameLoop(state: pong_properties) : number
     {
         return 0;
     }
-    paddle_update(state.Player1, state.keysPressed);
-    paddle_update(state.Player2, state.keysPressed);
+    paddle_update(state.Player1, state.keysPressed_p1);
+    paddle_update(state.Player2, state.keysPressed_p2);
     ball_update(state.Ball,state.Player1, state.Player2 ,state);
     if(state.player_1_score === 5)
     {

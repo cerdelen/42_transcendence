@@ -31,6 +31,20 @@ interface pong_properties
     Player2 : Player;
 }
 
+        
+//         this.player1 = new Paddle
+//(paddleWidth,paddleHeight,wallOffset,
+//this.gameCanvas.height / 2 - paddleHeight / 2); 
+//         this.computerPlayer = new ComputerPaddle
+//(paddleWidth,paddleHeight,this.gameCanvas.width
+// - (wallOffset + paddleWidth) ,this.gameCanvas.height / 2 - paddleHeight / 2);
+//this.ball = new Ball
+//(ballSize,ballSize,this.gameCanvas.width / 2 - ballSize / 2,
+// this.gameCanvas.height / 2 - ballSize / 2);    
+let paddleWidth:number = 20;
+let paddleHeight:number = 60;
+let ballSize:number = 10;
+let wallOffset:number = 20;
 export function getInitialState()
 {
     let initial_state : pong_properties = {
@@ -41,27 +55,27 @@ export function getInitialState()
             speed: 5,
             x: 700 / 2 - 10 / 2,
             y: 400 / 2 - 10 / 2,
-            width: 50,
-            height: 50,
+            width: ballSize,
+            height: ballSize,
             xVel: 0,
             yVel: 0,
             direction: 0,
         },
         Player1: {
             speed: 10,
-            x: 20,
-            y: 400 / 2 - 60 / 2 ,
-            width: 20,
-            height: 60,
+            x: wallOffset,
+            y: 400 / 2 - paddleHeight / 2,
+            width: paddleWidth,
+            height: paddleHeight,
             xVel: 0,
             yVel: 0,
         },
         Player2: {
             speed: 10,
-            x: 700 - (20 + 20),
-            y: 400 / 2 - 60 / 2,
-            width: 20,
-            height: 60,
+            x: 700 - (wallOffset + paddleWidth),
+            y: 400 / 2 - paddleHeight / 2,
+            width: paddleWidth,
+            height: paddleHeight,
             xVel: 0,
             yVel: 0,
         }

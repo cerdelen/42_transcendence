@@ -64,7 +64,7 @@ export class GameGateway {
   {
     state.keysPressed[keyCode] = false;
   }
-  
+
   @SubscribeMessage('PaddleUpdate')
   PaddleUpdate(@MessageBody() Paddle1Y) {
     console.log("Paddle is on", Paddle1Y);

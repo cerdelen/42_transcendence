@@ -9,9 +9,9 @@ const Game = ({socket} : {socket: Socket}) => {
 
   return (
 	<main>
-		<div className='game-area'>
+		{/* <div className='game-area'> */}
 			    <Canvas socket={socket}/>
-		</div>
+		{/* </div> */}
 	</main>
   )
 }

@@ -88,6 +88,7 @@ const Canvas = ({socket} : CanvasPropTypes) =>
 	const [codeInput, setCodeInput] = useState("");
 
     const [playerNumber, setPlayerNumber] = useState(0);
+
     let ctx : any;
 
 
@@ -96,10 +97,7 @@ const Canvas = ({socket} : CanvasPropTypes) =>
         setGameCode(data);
         console.log("Setting game")
     }
-    function handleInit(code : number)
-    {
-        setPlayerNumber(code);
-    }
+ 
     function reset() 
     {
         setPlayerNumber(0);
@@ -146,10 +144,17 @@ const Canvas = ({socket} : CanvasPropTypes) =>
             reset();
             alert("This game has too many players");
         })
-        socket.on('init', () => {
-            handleInit });
+      
         socket.on('gameCode', handleGameCode);
     }, [])
+
+    useEffect(() =>
+    {
+          socket.on('init', (UserIndex_ : number) => {
+            let num : number = UserIndex_;
+            setPlayerNumber(num);
+          });
+    }, [playerNumber])
 
     useEffect( () => 
     {
@@ -166,15 +171,18 @@ const Canvas = ({socket} : CanvasPropTypes) =>
                 requestAnimationFrame(() => drawPong(socket, ctx, gameInfo));
             }
         })
-    }, [gameInfo])
-   
+    }, [gameInfo, gameActive])
+
+
     document.addEventListener('keydown', (e) => 
     {
-        socket.emit('keydown', e.keyCode);
+        let code : number = e.keyCode;
+        socket.emit('keydown', {code, playerNumber});
     })
     document.addEventListener('keyup', (e) =>
     {
-        socket.emit('keyup', e.keyCode);
+        let code : number = e.keyCode;
+        socket.emit('keyup', {code, playerNumber});
     })
 
     
@@ -187,6 +195,7 @@ const Canvas = ({socket} : CanvasPropTypes) =>
 				<button onClick={() => {
                     socket.emit('newGame');
                     init();
+                    setGameActive(true);
                 }} > Create Game </button>
 				<br/>
 				<input placeholder='GAME CODE' onChange={(e) => 
@@ -200,6 +209,7 @@ const Canvas = ({socket} : CanvasPropTypes) =>
                     socket.emit("joinGame", codeInput);
                     setCodeInput("");
                     init();
+                    setGameActive(true);
                 }} > Join Game </button>
 			</center>
                 <h1>{gameCode}</h1>

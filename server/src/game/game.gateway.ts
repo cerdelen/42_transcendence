@@ -25,7 +25,6 @@ function startGameInterval(roomName : string, state: any, server: Server)
   const intervalId = setInterval(() =>
   {
     const winner : number = gameLoop(state[roomName]);
-
     if(!winner)
     {
       emitGameState(roomName, state[roomName], server);
@@ -53,8 +52,12 @@ function handleNewGame(client: any, server: Server)
   client.emit('gameCode', roomName);
 
   state[roomName] = getInitialState();
+
   client.join(roomName);
-  client.emit('init');
+
+  client.emit('init', 1);
+  console.log("Game created ");
+  server.in(roomName).fetchSockets().then((e) => console.log(e.length))
 }
 
 @WebSocketGateway(
@@ -80,26 +83,30 @@ export class GameGateway {
   }
 
   @SubscribeMessage('joinGame')
-  joinGame(@MessageBody() gameCode : string,
+  async joinGame(@MessageBody() gameCode : string,
   @ConnectedSocket() client)
   {
-    let allUsers = this.server.in(gameCode).fetchSockets().then.length;
+    console.log("Code to " + gameCode );
+    const room = this.server.sockets.adapter.rooms[gameCode];
+    
+    let allUsers;
+
+    if(room)
+    {
+      allUsers = room.sockets;
+    }
 
     let numOfClients = 0;
-    if(allUsers)
-    {
-      console.log("All users ran"); 
-      numOfClients = Object.keys(allUsers).length;
-    }
+
+    const sockets = await this.server.in(gameCode).fetchSockets();
+    numOfClients = sockets.length;
 
     if(numOfClients === 0)
     {
-      console.log("Num of clients === 0");
       client.emit('unknownGame');
       return ;
     }else if(numOfClients > 1)
     {
-      console.log("Num of clients more than 1")
       client.emit('tooManyPlayers')
       return ;
     }
@@ -107,8 +114,9 @@ export class GameGateway {
     clientRooms[client.id] = gameCode;
 
     client.join(gameCode);
-    this.server.sockets[1].number = 2;
-    client.emit('init', 2 );
+
+    client.emit('init', 2);
+
     startGameInterval(gameCode, state, this.server);
   }
   @SubscribeMessage('createGame')
@@ -117,7 +125,7 @@ export class GameGateway {
   }
 
   @SubscribeMessage('keydown')
-  handleKeyDown(@MessageBody() keyCode: number,
+  handleKeyDown(@MessageBody() {keycode_, id_},
   @ConnectedSocket() client) 
   {
     const roomName = clientRooms[client.id];
@@ -125,17 +133,18 @@ export class GameGateway {
     {
       return ;
     }
-    if(client.number == 1)
+    console.log("Clicked " + id_);
+    if(id_ == 1)
     {
-      state[roomName].keysPressed_p1[keyCode] = false;
-    }else if(client.number == 2)
+      state[roomName].keysPressed_p1[keycode_] = true;
+    }else if(id_ == 2)
     {
-      state[roomName].keysPressed_p2[keyCode] = false;
+      state[roomName].keysPressed_p2[keycode_] = true;
     }
   }
 
   @SubscribeMessage('keyup')
-  handleKeyUp(@MessageBody() keyCode: number, 
+  handleKeyUp(@MessageBody() {keycode_, id_}, 
   @ConnectedSocket() client)
   {
     const roomName = clientRooms[client.id];
@@ -143,12 +152,14 @@ export class GameGateway {
     {
       return ;
     }
-    if(client.number == 1)
+    const keycode = keycode_;
+    const id = id_;
+    if(id == 1)
     {
-      state[roomName].keysPressed_p1[keyCode] = false;
-    }else if(client.number == 2)
+      state[roomName].keysPressed_p1[keycode] = false;
+    }else if(id == 2)
     {
-      state[roomName].keysPressed_p2[keyCode] = false;
+      state[roomName].keysPressed_p2[keycode] = false;
     }
   }
 

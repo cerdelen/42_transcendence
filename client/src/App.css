@@ -21,7 +21,11 @@ footer,
 main {
   /* border: 2px solid rgb(119, 0, 255); */
 }
-
+canvas{
+  display: block;
+  margin: 0px auto;
+  background: black;
+}
 /* HEADER */
 header {
   align-items: center;
@@ -204,7 +208,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  /* height: 100%; */
   border: 2px solid lime;
 }
 

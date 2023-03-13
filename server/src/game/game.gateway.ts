@@ -125,7 +125,7 @@ export class GameGateway {
   }
 
   @SubscribeMessage('keydown')
-  handleKeyDown(@MessageBody() {keycode_, id_},
+  handleKeyDown(@MessageBody() keyobj,
   @ConnectedSocket() client) 
   {
     const roomName = clientRooms[client.id];
@@ -133,33 +133,48 @@ export class GameGateway {
     {
       return ;
     }
-    console.log("Clicked " + id_);
-    if(id_ == 1)
+     interface KeyInfo
     {
-      state[roomName].keysPressed_p1[keycode_] = true;
-    }else if(id_ == 2)
+        key: number,
+        player_number: number;
+    }
+    keyobj = JSON.parse(keyobj);
+    console.log("Clicked " + keyobj.player_number);
+    if(keyobj.player_number == 1)
     {
-      state[roomName].keysPressed_p2[keycode_] = true;
+      if(state[roomName])
+        state[roomName].keysPressed_p1[keyobj.key] = true;
+    }else if(keyobj.player_number == 2)
+    {
+      if(state[roomName])
+        state[roomName].keysPressed_p2[keyobj.key] = true;
     }
   }
 
   @SubscribeMessage('keyup')
-  handleKeyUp(@MessageBody() {keycode_, id_}, 
+  handleKeyUp(@MessageBody() keyobj,
   @ConnectedSocket() client)
   {
+    interface KeyInfo
+    {
+        key: number,
+        player_number: number;
+    }
     const roomName = clientRooms[client.id];
     if(!roomName)
     {
       return ;
     }
-    const keycode = keycode_;
-    const id = id_;
-    if(id == 1)
+    keyobj = JSON.parse(keyobj);
+
+    if(keyobj.player_number == 1)
     {
-      state[roomName].keysPressed_p1[keycode] = false;
-    }else if(id == 2)
+      if(state[roomName])
+      state[roomName].keysPressed_p1[keyobj.key] = false;
+    }else if(keyobj.player_number == 2)
     {
-      state[roomName].keysPressed_p2[keycode] = false;
+      if(state[roomName])
+      state[roomName].keysPressed_p2[keyobj.key] = false;
     }
   }
 

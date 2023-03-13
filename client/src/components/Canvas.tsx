@@ -12,6 +12,12 @@ interface Player{
     yVel: number;
 }
 
+interface KeyInfo
+{
+    key: number,
+    player_number: number;
+}
+
 interface Ball{
     speed: number,
     x: number,
@@ -173,16 +179,33 @@ const Canvas = ({socket} : CanvasPropTypes) =>
         })
     }, [gameInfo, gameActive])
 
-
     document.addEventListener('keydown', (e) => 
     {
-        let code : number = e.keyCode;
-        socket.emit('keydown', {code, playerNumber});
+        if(!gameActive)
+        {
+            return ;
+        }
+        let obj : KeyInfo =
+        {
+            key: e.keyCode,
+            player_number: playerNumber
+        };
+        
+        socket.emit('keydown', JSON.stringify(obj));
     })
     document.addEventListener('keyup', (e) =>
     {
-        let code : number = e.keyCode;
-        socket.emit('keyup', {code, playerNumber});
+        if(!gameActive)
+        {
+            return ;
+        }
+        let obj : KeyInfo =
+        {
+            key: e.keyCode,
+            player_number: playerNumber
+        };
+        console.log(JSON.stringify(obj));
+        socket.emit('keyup', JSON.stringify(obj));
     })
 
     

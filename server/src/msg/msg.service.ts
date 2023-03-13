@@ -8,6 +8,7 @@ import { MsgUpdatePayload } from '../utils/types';
 import { ConversationService } from '../conversations/conversations.service';
 import { CreateMsgDto } from './CreateMsg.dto';
 import { UserService } from '../user/user.service';
+import { ConfigModule } from '@nestjs/config';
 
 
 
@@ -76,7 +77,7 @@ export class MsgService {
 					// 	throw new NotFoundException(`Couldn't find an item to delete`)
 
 		async createMsg(createMsgDto: CreateMsgDto) {
-			console.log("DATA.USER_ID = " + createMsgDto.user_id);
+			// console.log("DATA.USER_ID = " + createMsgDto.);
 			console.log("DATA.TEXT = " + createMsgDto.text);
 			// const conversat = await this.prisma.conversation.findUnique({
 			// 	where: {
@@ -95,17 +96,25 @@ export class MsgService {
 			if (!convers)
 				throw new HttpException("Conversation was not found", HttpStatus.FORBIDDEN);
 				console.log("CONVERSATION = " + convers.conversation_id);
-			const user = await this.user.findUserById(createMsgDto.user_id);
+			const user = await this.user.findUserById(createMsgDto.author);
 			if (!user)
 				throw new HttpException("User was not found", HttpStatus.FORBIDDEN);
-			console.log("USER = " + user.id);
+			// console.log("USER = " + user.id);
 			
 			const newMsg = await this.prisma.message.create({
 				data: {
 					text: createMsgDto.text,
-					user_id: createMsgDto.user_id,
-					conversation_id: createMsgDto.conversation_id,   
-				}  
+					conversation_id: createMsgDto.conversation_id,
+					author: createMsgDto.author
+					
+				},
+				include: {
+					user_relation: {
+						select: {
+							user_msg_arr: true,
+						}
+					}
+				}
 			})
 			// if (conversat.conversation_id !== user.id ) {
 			// 	throw new HttpException('cannot create msg', HttpStatus.FORBIDDEN);
@@ -128,10 +137,52 @@ export class MsgService {
 		// 		data,
 		// 	})
 		// }
-		async getMsg() : Promise<Message[]> {
-			return this.prisma.message.findMany();
+		// async Msgs(params: {
+		// 	skip?: number,
+		// 	take?: number,
+		// 	cursor?: Prisma.MessageWhereUniqueInput,
+		// 	where?: Prisma.MessageWhereInput
+		// }) : Promise<Message[]> {
+		// 	const {skip, take, cursor, where} = params;
+		// 	return this.prisma.message.findMany({
+		// 		skip,
+		// 		take,
+		// 		cursor,
+		// 		where
+		// 	});			
+			// const convers = this.conversation.findConversation(conversationId);
+			// return this.prisma.message.findUnique(convers);
+		// }
+		
+		async getMsgsByConversationID(conversationId: number) : Promise<Message[]> {
+			let Msg: Message[] = await this.prisma.message.findMany({
+				where: {
+					conversation_id: Number(conversationId)
+				},
+				orderBy: {
+					created_at: 'desc'
+				},
+				//in frontend i guess we will compare users id and logged in email for validation matter, if id is not the same, we know its not the user
+				include: {
+					user_relation: true
+						// select: {
+						// 	id: true
+						// }
+					// }
+				},
+			})
+			return Msg;
 		}
 
-		
-		
+		async getMsgByUser(user_id: number): Promise<Message[]> {
+			const existingUser = await this.user.findUserById(user_id);
+			if (!existingUser)
+				throw new HttpException("user was not found", HttpStatus.BAD_REQUEST);
+			const messages = await this.prisma.message.findMany({
+				where: {
+					author: +user_id,
+				}
+			})
+			return messages;
+		}
 }

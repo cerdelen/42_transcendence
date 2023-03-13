@@ -25,7 +25,7 @@ function App() {
       <Routes>
         <Route path="/" element={loggedIn ? <HomePage/> : <LoginPage/>}/>
         <Route path="/auth" element={<SecondFactorPage/>}/>
-        <Route path="/home" element={<HomePage/>}/>
+        <Route path="/home/:id" element={<HomePage/>}/>
       </Routes>
     </BrowserRouter>
       

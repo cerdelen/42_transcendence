@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString, IsNumber, IsDate, isNumber } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsDate, isNumber, IsOptional } from 'class-validator';
+import { User } from '@prisma/client';
 
 
 export class CreateMsgDto {
@@ -9,7 +10,7 @@ export class CreateMsgDto {
 
 	@IsNotEmpty()
 	@IsNumber()
-	user_id: number; 
+	author: number; 
 
 	@IsNotEmpty()
 	@IsNumber()
@@ -17,6 +18,7 @@ export class CreateMsgDto {
 
 	@IsNotEmpty()
 	@IsNumber()
+	@IsOptional()
 	created_at: number | Date
 }
 

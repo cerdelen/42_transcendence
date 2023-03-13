@@ -62,16 +62,16 @@ model Conversation {
 model Message {
 	// User stuff
 	msg_id				Int			@unique  @id @default(autoincrement()) 
-	user_id				Int			@default(0) 
+	author				Int?		
 	user_name			String		@default("default_name")
 	text				String
 	created_at			DateTime	@default(now())
 
 	//necessary fro array of messages in Chat model
 	conversation_id				Int?			
-	usr_id						Int?			
+	// usr_id						Int?			
 	conversation_relation		Conversation?		@relation(fields: [conversation_id], references: [conversation_id])
-	user_relation				User?				@relation(fields: [user_id], references: [id])		
+	user_relation				User?				@relation(fields: [author], references: [id])		
 }
 
 

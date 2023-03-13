@@ -3,13 +3,19 @@ import ListLiveGames from './ListLiveGames';
 import ListOpenChats from './ListOpenChats';
 import ListPlayersOnline from './ListPLayersOnline';
 import { Socket } from 'socket.io';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { getConversationMsgs } from '../../utils/apis';
+import { MessagesType } from '../../utils/types';
 
 
-interface message{
-  name: string,
-  message: string,
-}
+// interface message{
+//   name: string,
+//   message: string,
+// }
+
+
+
 
 // const Message = (messages: message[]   ) =>
 // {
@@ -17,8 +23,24 @@ interface message{
 // };
 type Props = {}
 const Community = (props: Props) => {
-  let socket: Socket;
-  const [users, setUsers] = useState<message[]>([{name: "Vladimir", message: "Siemanko"}, {name: "Ruslan", message: "I guess "}]);
+
+  const [messages, setMessages] = useState<MessagesType[]>([]);
+
+  const { id } = useParams();
+  useEffect(()  => {
+
+    const conversId = parseInt(id!);
+    getConversationMsgs(conversId)
+      .then(({ data }) => {
+
+        console.log(data);
+        setMessages(data);
+      })
+      .catch((err) => console.log(err))
+    console.log(id);
+  }, [id])
+  // let socket: Socket;
+  // const [users, setUsers] = useState<message[]>([{name: "Vladimir", message: "Siemanko"}, {name: "Ruslan", message: "I guess "}]);
 
 
     // again, I need a way to know if people are online 
@@ -36,7 +58,10 @@ const Community = (props: Props) => {
             <h2>Chat</h2>
             <div id='displayed-messages'>
               {
-                users.map((user : message) => <li>{user.name} {"\t"} {user.message} </li>)
+                // users.map((user : message) => <li>{user.name} {"\t"} {user.message} </li>)
+                messages.map((m) => (
+                  <div>{m.text}</div>
+                ))
               }
             </div>
             <form onSubmit={() => {}}>

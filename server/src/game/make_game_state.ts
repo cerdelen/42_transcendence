@@ -1,50 +1,175 @@
-import React from "react";
-import { Socket } from "socket.io-client";
-import { Player } from "../models/temp-players";
 
-
-function draw_rectangle(context : any, player: any, width: number, height: number){
-        context.fillStyle = "#fff";
-        context.fillRect(player.x,player.y,width,height);
+interface Player{
+    speed: number,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    xVel: number;
+    yVel: number;
 }
-function drawGame(ctx : any, gameInfo : any)
-{
 
-    // ctx.fillStyle = "#000";
-    // ctx.fillRect(0,0, 700, 400);    
-    
-    ctx.clearRect(0, 0, 700, 400);;
-    ctx.strokeStyle = "#fff"
-    ctx.lineWidth = 5;
-    ctx.strokeRect(10,10,700 - 20 ,400 - 20);
-        
-        //draw center lines
-    for (var i = 0; i + 30 < 700; i += 30) {
-        ctx.fillStyle = "#333";
-        ctx.fillRect(700/ 2 - 10, i + 10, 15, 20);
+interface Ball{
+    speed: number,
+    x: number,
+    y: number,
+    width: number;
+    height: number;
+    xVel: number;
+    yVel: number;
+    direction: number;
+}
+
+interface pong_properties
+{
+    keysPressed: boolean[],
+    player_1_score : number,
+    player_2_score : number,
+
+    Ball : Ball;
+    Player1 : Player;
+    Player2 : Player;
+}
+
+export function getInitialState()
+{
+    let initial_state : pong_properties = {
+        keysPressed: [],
+        player_1_score: 0,
+        player_2_score: 0,
+        Ball: {
+            speed: 5,
+            x: 700 / 2 - 10 / 2,
+            y: 400 / 2 - 10 / 2,
+            width: 50,
+            height: 50,
+            xVel: 0,
+            yVel: 0,
+            direction: 0,
+        },
+        Player1: {
+            speed: 10,
+            x: 20,
+            y: 400 / 2 - 60 / 2 ,
+            width: 20,
+            height: 60,
+            xVel: 0,
+            yVel: 0,
+        },
+        Player2: {
+            speed: 10,
+            x: 700 - (20 + 20),
+            y: 400 / 2 - 60 / 2,
+            width: 20,
+            height: 60,
+            xVel: 0,
+            yVel: 0,
+        }
     }
-    let paddleWidth:number = 20;
-    let paddleHeight:number = 60;
-    var ballSize:number = 10;
-    let wallOffset:number = 20;
-        //draw scores
-    ctx.fillText(gameInfo.player_1_score, 280, 50);
-    ctx.fillText(gameInfo.player_2_score, 390, 50);
-
-    draw_rectangle(ctx, gameInfo.Player1 ,paddleWidth, paddleHeight);
-    draw_rectangle(ctx, gameInfo.Player2, paddleWidth, paddleHeight);
-    draw_rectangle(ctx, gameInfo.Ball, ballSize, ballSize);
+    // var randomDirection = Math.floor(Math.random() * 2) + 1; 
+    // if(randomDirection % 2){
+        initial_state.Ball.xVel = 1;
+    // }
+    // else{
+        // initial_state.Ball.xVel = -1;
+    // }
+    
+    initial_state.Ball.yVel = 1;
+    return initial_state;
+}
+enum KeyBindings{
+    UP = 38,
+    DOWN = 40
 }
 
-function drawPong(socket: Socket, ctx: any, gameInfo: any)
+let CanvasHeight = 400;
+let CanvasWidth = 700;
+
+
+function paddle_update(paddle : Player, keysPressed : boolean[]){
+    if( keysPressed[KeyBindings.UP] ){
+        paddle.yVel = -1;
+    if(this.y <= 20){
+        paddle.yVel = 0
+    }
+    }else if(keysPressed[KeyBindings.DOWN]){
+        paddle.yVel = 1;
+    if(paddle.y + paddle.height >= CanvasHeight - 20){
+        paddle.yVel = 0;
+    }
+    }else{
+        paddle.yVel = 0;
+    }
+
+    paddle.y += paddle.yVel * paddle.speed;
+
+}
+
+function ball_update(ball: Ball,player_1 : Player, player_2 : Player,state: pong_properties){
+       
+            //check top canvas bounds
+            if(ball.y <= 10){
+                ball.yVel = 1;
+            }
+            
+            //check bottom canvas bounds
+            if(ball.y + ball.height >= CanvasHeight - 10){
+                ball.yVel = -1;
+            }
+            
+            //check left canvas bounds
+            if(ball.x <= 0){  
+                ball.x = CanvasWidth / 2 - ball.width / 2;
+                state.player_2_score += 1;
+            }
+            
+            //check right canvas bounds
+            if(ball.x + ball.width >= CanvasWidth){
+                ball.x = CanvasWidth / 2 - ball.width / 2;
+                state.player_1_score += 1;
+            }
+            
+            
+            //check player collision
+            if(ball.x <= player_1.x + player_1.width){
+                if(ball.y >= player_1.y && ball.y + ball.height <= player_1.y + player_1.height){
+                    ball.xVel = 1;
+                }
+            }
+            
+            //check computer collision
+            if(ball.x + ball.width >= player_2.x){
+                if(ball.y >= player_2.y && ball.y + ball.height <= player_2.y + player_2.height){
+                    ball.xVel = -1;
+                }
+            }
+           
+            ball.x += ball.xVel * ball.speed;
+            ball.y += ball.yVel * ball.speed;
+}
+export function gameLoop(state: pong_properties) : number
 {
-    drawGame(ctx,gameInfo);
+    if(!state)
+    {
+        return 0;
+    }
+    paddle_update(state.Player1, state.keysPressed);
+    paddle_update(state.Player2, state.keysPressed);
+    ball_update(state.Ball,state.Player1, state.Player2 ,state);
+    if(state.player_1_score === 5)
+    {
+        // console.log("Player 1 won")
+        return 2;
+    }else if(state.player_2_score === 5)
+    {
+        // console.log("Player 2 won")
+        return 1;
+    }
 }
 
-// enum KeyBindings{
-//     UP = 38,
-//     DOWN = 40
-// }
+
+
+
 
 // class Game{
 //     private gameCanvas;
@@ -93,11 +218,11 @@ function drawPong(socket: Socket, ctx: any, gameInfo: any)
 //         this.gameContext.fillText(Game.computerScore, 390, 50);
         
 //     }
-//     update(){
-//         this.player1.update(this.gameCanvas);
-//         this.computerPlayer.update(this.ball,this.gameCanvas);
-//         this.ball.update(this.player1,this.computerPlayer,this.gameCanvas);
-//     }
+    // update(){
+    //     this.player1.update(this.gameCanvas);
+    //     this.computerPlayer.update(this.ball,this.gameCanvas);
+    //     this.ball.update(this.player1,this.computerPlayer,this.gameCanvas);
+    // }
 //     draw(){
 //         this.gameContext.fillStyle = "#000";
 //         this.gameContext.fillRect(0,0,this.gameCanvas.width,this.gameCanvas.height);
@@ -107,11 +232,11 @@ function drawPong(socket: Socket, ctx: any, gameInfo: any)
 //         this.computerPlayer.draw(this.gameContext);
 //         this.ball.draw(this.gameContext);
 //     }
-//     gameLoop(){
-//         game.update();
-//         game.draw();
-//         requestAnimationFrame(game.gameLoop);
-//     }
+    // gameLoop(){
+    //     game.update();
+    //     game.draw();
+    //     requestAnimationFrame(game.gameLoop);
+    // }
 // }
 
 // class Entity{
@@ -141,24 +266,7 @@ function drawPong(socket: Socket, ctx: any, gameInfo: any)
 //         super(w,h,x,y);
 //     }
     
-//     update(canvas){
-//      if( Game.keysPressed[KeyBindings.UP] ){
-//         this.yVel = -1;
-//         if(this.y <= 20){
-//             this.yVel = 0
-//         }
-//      }else if(Game.keysPressed[KeyBindings.DOWN]){
-//          this.yVel = 1;
-//          if(this.y + this.height >= canvas.height - 20){
-//              this.yVel = 0;
-//          }
-//      }else{
-//          this.yVel = 0;
-//      }
-     
-//      this.y += this.yVel * this.speed;
-     
-//     }
+//
 // }
 
 // class ComputerPaddle extends Entity{
@@ -254,7 +362,3 @@ function drawPong(socket: Socket, ctx: any, gameInfo: any)
 //         this.y += this.yVel * this.speed;
 //     }
 // }
-
-// var game = new Game();
-// requestAnimationFrame(game.gameLoop);
-export default drawPong

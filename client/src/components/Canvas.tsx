@@ -1,36 +1,119 @@
-import React ,{ useRef, useEffect}from "react";
+import React ,{ useRef, useEffect, useState}from "react";
 import PropTypes, {InferProps} from 'prop-types'
+import drawPong from './Pong'
+
+interface Player{
+    speed: number,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    xVel: number;
+    yVel: number;
+}
+
+interface Ball{
+    speed: number,
+    x: number,
+    y: number,
+    width: number;
+    height: number;
+    xVel: number;
+    yVel: number;
+    direction: number;
+}
+
+interface pong_properties
+{
+    keysPressed: boolean[]
+    player_1_score : number,
+    player_2_score : number,
+
+    Ball : Ball;
+    Player1 : Player;
+    Player2 : Player;
+}
 
 const CanvasTypes = {
-    draw: PropTypes.any,
-    // height: PropTypes.number,
-    // width: PropTypes.number,
+    socket: PropTypes.any,
 };
 
 type CanvasPropTypes = InferProps<typeof CanvasTypes>;
 
-const Canvas = ({draw} : CanvasPropTypes) =>
+const Canvas = ({socket} : CanvasPropTypes) =>
 {
-    let canvasRef = useRef<HTMLCanvasElement | null>(null);
-    let canvasCtxRef = React.useRef<CanvasRenderingContext2D | null>(null);
-    // console.log("Chujnia")
+    let initial_state : pong_properties = {
+        keysPressed: [],
+        player_1_score: 0,
+        player_2_score: 0,
+        Ball: {
+            speed: 5,
+            x: 700 / 2 - 10 / 2,
+            y: 400 / 2 - 10 / 2,
+            width: 50,
+            height: 50,
+            xVel: 1,
+            yVel: 1,
+            direction: 0,
+        },
+        Player1: {
+            speed: 10,
+            x: 20,
+            y: 400 / 2 - 60 / 2 ,
+            width: 20,
+            height: 60,
+            xVel: 0,
+            yVel: 0,
+        },
+        Player2: {
+            speed: 10,
+            x: 700 - (20 + 20),
+            y: 400 / 2 - 60 / 2,
+            width: 20,
+            height: 60,
+            xVel: 0,
+            yVel: 0,
+        }
+    }
+    
+    const [gameInfo, setGameInfo] = useState<pong_properties>(initial_state);
+
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    let ctx : any;
+    // useEffect( () => 
+    // {
+    //     if(canvasRef.current)
+    //     {
+    //         ctx =  canvasRef.current.getContext('2d');;
+    //         drawPong(socket, ctx, gameInfo);
+
+    //     }
+    // }, []);
+    useEffect(() => 
+    {
+        socket.emit('connectToGameService', () =>{})
+    }, [])
+
     useEffect( () => 
     {
-        if(canvasRef.current)
-        {
-            
-            canvasCtxRef.current = canvasRef.current.getContext('2d');
-            let ctx =  canvasCtxRef.current;
-            draw(canvasRef.current, ctx)    
-            
-        }
-    }, []);
+        
 
+        socket.on('gameState', (gameState: string) => 
+        {
+            setGameInfo(JSON.parse(gameState));
+            if(canvasRef.current)
+            {
+                ctx =  canvasRef.current.getContext('2d');
+                requestAnimationFrame(() => drawPong(socket, ctx, gameInfo));
+            }
+        })
+    }, [gameInfo])
     return (
         <>
         <canvas 
         ref={canvasRef}
-        width={600}
+        width={700}
         height={400}/>
         </>
     )

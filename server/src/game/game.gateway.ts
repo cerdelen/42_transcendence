@@ -111,6 +111,12 @@ export class GameGateway {
       return ;
     }
 
+    if(sockets[0].id === client.id)
+    {
+      console.log("Same user wants to join the game as the one that craeted it");
+      client.emit('unknownGame');
+      return  ;
+    };
     clientRooms[client.id] = gameCode;
 
     client.join(gameCode);

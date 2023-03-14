@@ -6,7 +6,8 @@ import { Socket } from 'socket.io' //good
 import { Server, Socket as socket_io } from 'socket.io';
 import {getInitialState, gameLoop} from './make_game_state'
 let readyPlayerCount : number = 0;
-let roomNumber : number = 0;
+let roomNames : string[] = [];
+let roomName : string = "";
 const state = {};
 const clientRooms = {};
 
@@ -47,7 +48,7 @@ function makeid(length : number)
 }
 function handleNewGame(client: any, server: Server)
 {
-  let roomName = makeid(5);
+  roomName = makeid(5);
   clientRooms[client.id] = roomName;
   client.emit('gameCode', roomName);
 
@@ -56,8 +57,8 @@ function handleNewGame(client: any, server: Server)
   client.join(roomName);
 
   client.emit('init', 1);
+  roomNames.push(roomName);
   console.log("Game created ");
-  server.in(roomName).fetchSockets().then((e) => console.log(e.length))
 }
 
 @WebSocketGateway(
@@ -86,6 +87,12 @@ export class GameGateway {
   async joinGame(@MessageBody() gameCode : string,
   @ConnectedSocket() client)
   {
+    if(!roomNames[0])
+    {
+      handleNewGame(client, this.server);
+      return ;
+    }
+    gameCode = roomNames[0];
     console.log("Code to " + gameCode );
     const room = this.server.sockets.adapter.rooms[gameCode];
     
@@ -124,6 +131,7 @@ export class GameGateway {
     client.emit('init', 2);
 
     startGameInterval(gameCode, state, this.server);
+    roomNames.shift();
   }
   @SubscribeMessage('createGame')
   create(@MessageBody() createGameDto: CreateGameDto) {
@@ -176,11 +184,16 @@ export class GameGateway {
     if(keyobj.player_number == 1)
     {
       if(state[roomName])
-      state[roomName].keysPressed_p1[keyobj.key] = false;
+      {
+        state[roomName].keysPressed_p1[keyobj.key] = false;
+      }
     }else if(keyobj.player_number == 2)
     {
+      
       if(state[roomName])
-      state[roomName].keysPressed_p2[keyobj.key] = false;
+      {
+        state[roomName].keysPressed_p2[keyobj.key] = false;
+      }
     }
   }
 

@@ -81,7 +81,29 @@ const Canvas = ({socket} : CanvasPropTypes) =>
             yVel: 0,
         }
     }
+    function ButtonShow({socket, GameActive ,init, setGameActive, setCodeInput} : {socket : any, GameActive: boolean, init :any, setGameActive: any, setCodeInput : any}) 
+    {
+        if(!GameActive)
+        {
+            return (<button onClick={() => {
+                // if(!codeInput)
+                //     return ;
+                socket.emit("joinGame", codeInput);
+                setCodeInput("");
+                init();
+                setGameActive(true);
+            }} > Join Game </button>)
+        }else{
+            return (
+                <>
+                </>
+            )
+        }
+        
+    }
     
+
+
     const [gameInfo, setGameInfo] = useState<pong_properties>(initial_state);
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -152,7 +174,7 @@ const Canvas = ({socket} : CanvasPropTypes) =>
         })
       
         socket.on('gameCode', handleGameCode);
-    }, [])
+    }, [gameActive])
 
     useEffect(() =>
     {
@@ -215,27 +237,21 @@ const Canvas = ({socket} : CanvasPropTypes) =>
 				<h1> Welcome to Pong </h1>
 				
 				<br/>
-				<button onClick={() => {
+				{/* <button onClick={() => {
                     socket.emit('newGame');
                     init();
                     setGameActive(true);
                 }} > Create Game </button>
-				<br/>
-				<input placeholder='GAME CODE' onChange={(e) => 
+				<br/> */}
+				{/* <input placeholder='GAME CODE' onChange={(e) => 
                 {
                     setCodeInput(e.target.value);
-                }} value={codeInput}></input>
+                }} value={codeInput}></input> */}
 				<br/>
-				<button onClick={() => {
-                    if(!codeInput)
-                        return ;
-                    socket.emit("joinGame", codeInput);
-                    setCodeInput("");
-                    init();
-                    setGameActive(true);
-                }} > Join Game </button>
+                <ButtonShow socket={socket} GameActive={gameActive} init={init} setGameActive={setGameActive} setCodeInput={setCodeInput}/>
+				
 			</center>
-                <h1>{gameCode}</h1>
+                {/* <h1>{gameCode}</h1> */}
                 <canvas 
                 ref={canvasRef}
                 width={700}

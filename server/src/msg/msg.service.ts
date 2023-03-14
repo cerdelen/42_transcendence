@@ -9,6 +9,7 @@ import { ConversationService } from '../conversations/conversations.service';
 import { CreateMsgDto } from './CreateMsg.dto';
 import { UserService } from '../user/user.service';
 import { ConfigModule } from '@nestjs/config';
+import { use } from 'passport';
 
 
 
@@ -97,6 +98,8 @@ export class MsgService {
 				throw new HttpException("Conversation was not found", HttpStatus.FORBIDDEN);
 				console.log("CONVERSATION = " + convers.conversation_id);
 			const user = await this.user.findUserById(createMsgDto.author);
+			console.log("USER.NAME = " + user.name);
+			
 			if (!user)
 				throw new HttpException("User was not found", HttpStatus.FORBIDDEN);
 			// console.log("USER = " + user.id);
@@ -105,14 +108,15 @@ export class MsgService {
 				data: {
 					text: createMsgDto.text,
 					conversation_id: createMsgDto.conversation_id,
-					author: createMsgDto.author
-					
+					author: createMsgDto.author,
+					user_name: user.name
 				},
 				include: {
 					user_relation: {
 						select: {
 							user_msg_arr: true,
-						}
+							name: true 
+						}    
 					}
 				}
 			})
@@ -178,10 +182,18 @@ export class MsgService {
 			const existingUser = await this.user.findUserById(user_id);
 			if (!existingUser)
 				throw new HttpException("user was not found", HttpStatus.BAD_REQUEST);
+			console.log("existinguser.name = " + existingUser.name);
 			const messages = await this.prisma.message.findMany({
 				where: {
 					author: +user_id,
-				}
+					user_name: existingUser.name
+				},
+				// select: {
+				// 	author: true,
+				// 	user_name: true,
+					// author: +user_id,
+					// user_name: existingUser.name
+				// }
 			})
 			return messages;
 		}

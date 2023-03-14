@@ -63,7 +63,7 @@ model Message {
 	// User stuff
 	msg_id				Int			@unique  @id @default(autoincrement()) 
 	author				Int?		
-	user_name			String		@default("default_name")
+	user_name			String		
 	text				String
 	created_at			DateTime	@default(now())
 

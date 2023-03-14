@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { FindUserParams } from '../utils/types';
+import { FindUserParams, UserWhereUniqueInput } from '../utils/types';
 import { AuthUser } from '../utils/decorators';
 import { use } from 'passport';
 // import { FindUserParams } from 'src/utils/types';
@@ -89,6 +89,17 @@ export class UserService {
 	}
 	async saveUser(user: User) {
 		return user;
+	}
+
+	async findExistingUsers(user: UserWhereUniqueInput) : Promise<User[]> {
+		const existingUser = await this.prisma.user.findMany({
+			where: {
+				
+			}
+		})
+		console.log("findExisitngUSer = " + existingUser);
+		
+		return existingUser;
 	}
 
 

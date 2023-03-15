@@ -1,46 +1,6 @@
 import React ,{ useRef, useEffect, useState, useId}from "react";
-import PropTypes, {InferProps} from 'prop-types'
 import drawPong from './Pong'
-
-interface Player{
-    speed: number,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    xVel: number;
-    yVel: number;
-}
-
-interface KeyInfo
-{
-    key: number,
-    player_number: number;
-}
-
-interface Ball{
-    speed: number,
-    x: number,
-    y: number,
-    width: number;
-    height: number;
-    xVel: number;
-    yVel: number;
-    direction: number;
-}
-
-interface pong_properties
-{
-    keysPressed: boolean[]
-    player_1_score : number,
-    player_2_score : number,
-
-    Ball : Ball;
-    Player1 : Player;
-    Player2 : Player;
-}
-
-
+import {pong_properties, KeyInfo, Player} from './Pong_types'
 
 const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
 {
@@ -83,8 +43,6 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
         if(!GameActive)
         {
             return (<button onClick={() => {
-                // if(!codeInput)
-                //     return ;
                 if(!userId)
                 {
                     socket.emit("joinGame", "1");
@@ -102,29 +60,20 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
         }
         
     }
-    
-
 
     const [gameInfo, setGameInfo] = useState<pong_properties>(initial_state);
-
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
     const [inLobby, setInLobby] = useState(false);
     const [gameActive, setGameActive] = useState(false);
-
 	const [gameCode, setGameCode] = useState("");
-
 	const [codeInput, setCodeInput] = useState("");
-
     const [playerNumber, setPlayerNumber] = useState(0);
-
     let ctx : any;
 
 
     function handleGameCode(data: string)
     {
         setGameCode(data);
-        console.log("Setting game")
     }
  
     function reset() 
@@ -141,9 +90,6 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
     }
     useEffect(() => 
     {
-        socket.emit('connectToGameService', () =>{
-
-        })
 
         socket.on('sameUser', () =>
         {
@@ -166,7 +112,6 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
     {
           socket.on('init', (UserIndex_ : number) => {
             let num : number = UserIndex_;
-            console.log("What the shell ", num);
             setPlayerNumber(num);
           });
        
@@ -220,7 +165,6 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
             key: e.keyCode,
             player_number: playerNumber
         };
-        console.log(playerNumber);
         socket.emit('keydown', JSON.stringify(obj));
     })
     document.addEventListener('keyup', (e) =>
@@ -234,27 +178,23 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
             key: e.keyCode,
             player_number: playerNumber
         };
-        console.log(JSON.stringify(obj));
         socket.emit('keyup', JSON.stringify(obj));
     })
 
     
-		return (
-			<>
-                <center>
-				<h1> Welcome to Pong </h1>
-				
-				<br/>
-				<br/>
-                <ButtonShow socket={socket} userId={userId} GameActive={gameActive} init={init} setGameActive={setGameActive} setCodeInput={setCodeInput}/>
-				
-			</center>
-                {/* <h1>{gameCode}</h1> */}
-                <canvas 
-                ref={canvasRef}
-                width={700}
-                height={400}/>
-            </>
-        )
+    return (
+        <>
+            <center>
+            <h1> Welcome to Pong </h1>
+            <br/>
+            <br/>
+            <ButtonShow socket={socket} userId={userId} GameActive={gameActive} init={init} setGameActive={setGameActive} setCodeInput={setCodeInput}/>
+        </center>
+            <canvas 
+            ref={canvasRef}
+            width={700}
+            height={400}/>
+        </>
+    )
 }
 export default Canvas;

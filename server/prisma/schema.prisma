@@ -66,10 +66,10 @@ model Message {
 model Game {
 	id					Int @unique @id @default(autoincrement())
 	player_one			Int
-	player_two			Int
-	winner				Int
-	loser				Int
-	score_one			Int
-	score_two			Int
+	player_two			Int @default(0)
+	winner				Int	@default(0)
+	loser				Int @default(0)
+	score_one			Int @default(0)
+	score_two			Int @default(0)
 	finished			Boolean		@default(false)
 }

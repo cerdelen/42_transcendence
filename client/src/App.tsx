@@ -18,6 +18,7 @@ const socket = io('localhost:3003');
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [userId, setUserId] = useState('');
+  console.log( "User id" + userId);
   const [userData, setUserData] = useState({});
   
   async function getUser() {
@@ -31,7 +32,8 @@ function App() {
         },
       }
       )
-      setUserId(await response.text());
+      const id = await response.text();
+      setUserId(id);
     } catch (error) {
       console.error(error);
     }
@@ -46,6 +48,7 @@ function App() {
   
   }, []);
 
+  
   return (
     // <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
     <UserContext.Provider value={{userId: userId}}>
@@ -55,7 +58,7 @@ function App() {
 
           <Route path="/" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/>
           {/* <Route path="/loggedin" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/> */}
-          <Route path="/game" element={ <Game socket={socket} />}/>
+          <Route path="/game" element={ <Game socket={socket}  userId={userId}/>}/>
           <Route path="/auth" element={<SecondFactorPage/>}/>
           <Route path="/home" element={<HomePage socket={socket} />}  />
           <Route path="/user" element={<UserPage/>}/>

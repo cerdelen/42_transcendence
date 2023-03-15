@@ -1,4 +1,4 @@
-import React ,{ useRef, useEffect, useState}from "react";
+import React ,{ useRef, useEffect, useState, useId}from "react";
 import PropTypes, {InferProps} from 'prop-types'
 import drawPong from './Pong'
 
@@ -40,13 +40,9 @@ interface pong_properties
     Player2 : Player;
 }
 
-const CanvasTypes = {
-    socket: PropTypes.any,
-};
 
-type CanvasPropTypes = InferProps<typeof CanvasTypes>;
 
-const Canvas = ({socket} : CanvasPropTypes) =>
+const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
 {
     let initial_state : pong_properties = {
         keysPressed: [],
@@ -81,15 +77,20 @@ const Canvas = ({socket} : CanvasPropTypes) =>
             yVel: 0,
         }
     }
-    function ButtonShow({socket, GameActive ,init, setGameActive, setCodeInput} : {socket : any, GameActive: boolean, init :any, setGameActive: any, setCodeInput : any}) 
+    function ButtonShow({socket, userId, GameActive ,init, setGameActive, setCodeInput} : 
+        {socket : any, userId: string, GameActive: boolean, init :any, setGameActive: any, setCodeInput : any}) 
     {
         if(!GameActive)
         {
             return (<button onClick={() => {
                 // if(!codeInput)
                 //     return ;
-                socket.emit("joinGame", codeInput);
-                setCodeInput("");
+                if(!userId)
+                {
+                    socket.emit("joinGame", "1");
+                }else{
+                    socket.emit("joinGame", userId);
+                }
                 init();
                 setGameActive(true);
             }} > Join Game </button>)
@@ -144,32 +145,17 @@ const Canvas = ({socket} : CanvasPropTypes) =>
 
         })
 
-        socket.on('gameOver', (data: any) => 
-        {
-            if(!gameActive)
-            {
-                return ;
-            }
-            data = JSON.parse(data);
-
-            if(data.winner === playerNumber)
-            {
-                alert("You win!");
-            }else{
-                alert("You lose :( ");
-            }
-            setGameActive(false);
-        })
-
-        socket.on('handleUnknownGame', () =>
+        socket.on('sameUser', () =>
         {
             reset();
-            alert("Unknown Game");
+            setGameActive(false);
+            alert("Same user wanted to connect to one game");
         })
 
         socket.on("handleTooManyPlayers", () =>
         {
             reset();
+            setGameActive(false);
             alert("This game has too many players");
         })
       
@@ -180,10 +166,32 @@ const Canvas = ({socket} : CanvasPropTypes) =>
     {
           socket.on('init', (UserIndex_ : number) => {
             let num : number = UserIndex_;
+            console.log("What the shell ", num);
             setPlayerNumber(num);
           });
+       
     }, [playerNumber])
-
+    useEffect(() => 
+    {
+        socket.on('gameOver', (data: number) => 
+        {
+            if(!gameActive)
+            {
+                return ;
+            }
+            let num : number = data;
+            if(num == Number.parseInt(userId))
+            {
+              reset();
+                alert("You win!");
+            }else{
+              reset();
+                alert("You lose :( ");
+            }
+            setGameActive(false);
+        })
+    }, [gameActive])
+   
     useEffect( () => 
     {
         socket.on('gameState', (gameState: string) => 
@@ -212,7 +220,7 @@ const Canvas = ({socket} : CanvasPropTypes) =>
             key: e.keyCode,
             player_number: playerNumber
         };
-        
+        console.log(playerNumber);
         socket.emit('keydown', JSON.stringify(obj));
     })
     document.addEventListener('keyup', (e) =>
@@ -237,18 +245,8 @@ const Canvas = ({socket} : CanvasPropTypes) =>
 				<h1> Welcome to Pong </h1>
 				
 				<br/>
-				{/* <button onClick={() => {
-                    socket.emit('newGame');
-                    init();
-                    setGameActive(true);
-                }} > Create Game </button>
-				<br/> */}
-				{/* <input placeholder='GAME CODE' onChange={(e) => 
-                {
-                    setCodeInput(e.target.value);
-                }} value={codeInput}></input> */}
 				<br/>
-                <ButtonShow socket={socket} GameActive={gameActive} init={init} setGameActive={setGameActive} setCodeInput={setCodeInput}/>
+                <ButtonShow socket={socket} userId={userId} GameActive={gameActive} init={init} setGameActive={setGameActive} setCodeInput={setCodeInput}/>
 				
 			</center>
                 {/* <h1>{gameCode}</h1> */}
@@ -259,5 +257,4 @@ const Canvas = ({socket} : CanvasPropTypes) =>
             </>
         )
 }
-Canvas.propTypes = CanvasTypes;
 export default Canvas;

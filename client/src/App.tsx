@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import JSCookies from 'js-cookie'
 import LoginPage from "./components/LoginPage";
 import HomePage from "./components/HomePage";
-// import { MyProvider } from "./components/AppContext";
 import SecondFactorPage from "./components/second_factor_authentication/SecondFactorPage";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Pong from "./components/Pong";
@@ -18,7 +17,15 @@ const socket = io('localhost:3003');
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [userId, setUserId] = useState('');
-  const [userData, setUserData] = useState({});
+  const [name, setName] = useState('');
+  const [mail, setMail] = useState('');
+  const [two_FA_enabled, set2FA] = useState(false);
+  const [two_FA_secret, set2FASecret] = useState('');
+  const [friendlist, setFriendslist] = useState([]);
+  const [stats, setStats] = useState({});
+  const [games, setGames] = useState([]);
+  const [has_picture, setHasPicture] = useState(false);
+
   
   async function getUser() {
     try {
@@ -31,7 +38,33 @@ function App() {
         },
       }
       )
-      setUserId(await response.text());
+      const id = await response.text();
+      await setUserId(id);
+      getData(id);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
+  async function getData(userid: string) {
+    try {
+      let response = await fetch("http://localhost:3003/user/user_data", {
+        method: "Post",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+        },
+        body: JSON.stringify({ user_id: userid }),
+      })
+      const data = await response.json();
+      set2FA(data['two_FA_enabled']);
+      set2FASecret(data['two_FA_secret']);
+      setName(data['name']);
+      setMail(data['mail']);
+      setFriendslist(data['friendlist']);
+      setStats(data['stats']);
+      setGames(data['games']);
+      setHasPicture(data['has_picture']);
     } catch (error) {
       console.error(error);
     }
@@ -48,13 +81,12 @@ function App() {
 
   return (
     // <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
-    <UserContext.Provider value={{userId: userId}}>
+    <UserContext.Provider value={{userId: userId, friendlist: friendlist, games: games, has_picture: has_picture, mail: mail, name: name, stats: stats, two_FA_enabled: two_FA_enabled, two_FA_secret: two_FA_secret}}>
       <BrowserRouter>
 
         <Routes>
 
           <Route path="/" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/>
-          {/* <Route path="/loggedin" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/> */}
           <Route path="/game" element={ <Game socket={socket} />}/>
           <Route path="/auth" element={<SecondFactorPage/>}/>
           <Route path="/home" element={<HomePage socket={socket} />}  />

@@ -6,6 +6,7 @@ import { Socket } from 'socket.io' //good
 import { Server, Socket as socket_io } from 'socket.io';
 import {getInitialState, gameLoop} from './make_game_state'
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserService } from 'src/user/user.service';
 let readyPlayerCount : number = 0;
 let roomNames : {roomName: string, gameInstance: any}[] = [];
 
@@ -19,25 +20,30 @@ function emitGameState(roomName: string, state : any, server: Server)
 
 }
 
-function emitGameOver(prisma: any,roomName : string, winner: number, server: Server, game: any)
+function emitGameOver(userService: any,roomName : string, winner: number, server: Server, game: any)
 {
   // winner : 1
   // loser: 2
   if(winner == 1)
   {
     server.sockets.in(roomName).emit('gameOver', Number.parseInt(game.player_one));
+    game.winner = game.player_one;
+    game.loser = game.player_two;
   }else{
+
+    game.winner = game.player_two;
+    game.loser = game.player_one;
     server.sockets.in(roomName).emit('gameOver', Number.parseInt(game.player_two));
   }
   if(!game.score_one)
   {
     game.score_one = state[roomName].player_1_score;
     game.score_two = state[roomName].player_2_score;
-    // /async add_game_to_history(Number.parseInt(roomName));
+    userService.add_game_to_history(Number.parseInt(roomName));
   }
 
 }
-function startGameInterval(prisma: any, roomName : string, state: any, server: Server, game :any)
+function startGameInterval(userService: any, roomName : string, state: any, server: Server, game :any)
 {
   const intervalId = setInterval(() =>
   {
@@ -46,7 +52,7 @@ function startGameInterval(prisma: any, roomName : string, state: any, server: S
     {
       emitGameState(roomName, state[roomName], server);
     }else{
-      emitGameOver(prisma ,roomName, winner, server, game);
+      emitGameOver(userService ,roomName, winner, server, game);
       state[roomName] = null;
       clearInterval(intervalId);
     }
@@ -87,7 +93,7 @@ export class GameGateway {
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly gameService: GameService, private prisma : PrismaService) {  
+  constructor(private readonly gameService: GameService, private prisma : PrismaService, private userService : UserService) {  
   }
 
   // @SubscribeMessage('newGame')
@@ -169,7 +175,7 @@ export class GameGateway {
     console.log("Game started");
     this.prisma.game.update({where: {id: roomNames[0].gameInstance.id}, data: {player_two: Number.parseInt(userId)} });
     let gameInstance = roomNames[0].gameInstance;
-    startGameInterval(this.prisma ,gameCode, state, this.server, gameInstance);
+    startGameInterval(this.userService ,gameCode, state, this.server, gameInstance);
     roomNames.shift();
   }
   @SubscribeMessage('createGame')

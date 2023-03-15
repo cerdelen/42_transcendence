@@ -19,7 +19,7 @@ function emitGameState(roomName: string, state : any, server: Server)
 
 }
 
-function emitGameOver(roomName : string, winner: number, server: Server, game: any)
+function emitGameOver(prisma: any,roomName : string, winner: number, server: Server, game: any)
 {
   // winner : 1
   // loser: 2
@@ -29,8 +29,15 @@ function emitGameOver(roomName : string, winner: number, server: Server, game: a
   }else{
     server.sockets.in(roomName).emit('gameOver', Number.parseInt(game.player_two));
   }
+  if(!game.score_one)
+  {
+    game.score_one = state[roomName].player_1_score;
+    game.score_two = state[roomName].player_2_score;
+    // /async add_game_to_history(Number.parseInt(roomName));
+  }
+
 }
-function startGameInterval(roomName : string, state: any, server: Server, game :any)
+function startGameInterval(prisma: any, roomName : string, state: any, server: Server, game :any)
 {
   const intervalId = setInterval(() =>
   {
@@ -39,7 +46,7 @@ function startGameInterval(roomName : string, state: any, server: Server, game :
     {
       emitGameState(roomName, state[roomName], server);
     }else{
-      emitGameOver(roomName, winner, server, game);
+      emitGameOver(prisma ,roomName, winner, server, game);
       state[roomName] = null;
       clearInterval(intervalId);
     }
@@ -162,7 +169,7 @@ export class GameGateway {
     console.log("Game started");
     this.prisma.game.update({where: {id: roomNames[0].gameInstance.id}, data: {player_two: Number.parseInt(userId)} });
     let gameInstance = roomNames[0].gameInstance;
-    startGameInterval(gameCode, state, this.server, gameInstance);
+    startGameInterval(this.prisma ,gameCode, state, this.server, gameInstance);
     roomNames.shift();
   }
   @SubscribeMessage('createGame')

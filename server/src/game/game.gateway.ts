@@ -39,6 +39,7 @@ function emitGameOver(userService: any,roomName : string, winner: number, server
   {
     game.score_one = state[roomName].player_1_score;
     game.score_two = state[roomName].player_2_score;
+    game.finished = true;
     userService.add_game_to_history(Number.parseInt(roomName));
   }
 

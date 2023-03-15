@@ -10,6 +10,6 @@ export const UserContext = createContext({
 	friendlist: [],
 	stats: {},
 	games: [],				// ids of games??
-	has_picture: false,
+	show_default_image: false,
 });
 

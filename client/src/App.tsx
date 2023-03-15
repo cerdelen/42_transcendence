@@ -24,7 +24,7 @@ function App() {
   const [friendlist, setFriendslist] = useState([]);
   const [stats, setStats] = useState({});
   const [games, setGames] = useState([]);
-  const [has_picture, setHasPicture] = useState(false);
+  const [show_default_image, setHasPicture] = useState(false);
 
   
   async function getUser() {
@@ -64,7 +64,7 @@ function App() {
       setFriendslist(data['friendlist']);
       setStats(data['stats']);
       setGames(data['games']);
-      setHasPicture(data['has_picture']);
+      setHasPicture(data['show_default_image']);
     } catch (error) {
       console.error(error);
     }
@@ -81,7 +81,7 @@ function App() {
 
   return (
     // <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
-    <UserContext.Provider value={{userId: userId, friendlist: friendlist, games: games, has_picture: has_picture, mail: mail, name: name, stats: stats, two_FA_enabled: two_FA_enabled, two_FA_secret: two_FA_secret}}>
+    <UserContext.Provider value={{userId: userId, friendlist: friendlist, games: games, show_default_image: show_default_image, mail: mail, name: name, stats: stats, two_FA_enabled: two_FA_enabled, two_FA_secret: two_FA_secret}}>
       <BrowserRouter>
 
         <Routes>

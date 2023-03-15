@@ -1,19 +1,69 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import defaultPicture from "../../images/default-picture.jpeg";
-import profilePicture from "../../images/expert-level.jpeg";
 import JSCookies from "js-cookie";
 
-const ProfilePicture = () => {
-  const [useDefaultImage, setUseDefaultImage] = useState<boolean>(true);
-  const [showUploadButton, setShowUploadButton] = useState<boolean>(false);
-  const [showButtons, setShowButtons] = useState<boolean>(false);
 
-  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+const ProfilePicture = () => {
+  const [useDefaultImage, setUseDefaultImage] = useState<boolean>(false);
+  const [showUploadButton, setShowUploadButton] = useState<boolean>(false);
+  const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [profilePicture, setProfilePicture] = useState(defaultPicture);
+
+  useEffect(() => {
+      getUserPic();
+      getStatus();
+  }, [showMenu]);
+  
+  const handleRadioChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const useDefault = event.target.value === "default";
+    if (useDefault) {
+      await fetch("http://localhost:3003/pictures/turn_on_picture", {
+        method: "Get",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+        },
+      })
+    } else {
+      await fetch("http://localhost:3003/pictures/turn_off_picture", {
+        method: "Get",
+        headers: {
+            "Content-Type": "application/json",
+          Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+        },
+      })
+    }
     setUseDefaultImage(useDefault);
     setShowUploadButton(!useDefault);
   };
 
+  const getStatus = async () => {
+    const response = await fetch("http://localhost:3003/pictures/is-image-default", {
+      method: "Get",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+      },
+    })
+
+    const data = await response.json();
+    setUseDefaultImage(data['status']);
+  }
+
+  const getUserPic = async () => {
+    const response = await fetch("http://localhost:3003/pictures/me", {
+      method: "Get",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+      },
+    }) 
+    const path = await response.blob();
+    const url = URL.createObjectURL(path);
+    setProfilePicture(url);
+  }
+    
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -30,18 +80,16 @@ const ProfilePicture = () => {
         body: formData,
       });
       if (response.ok) {
-        console.log("here");
-        setShowButtons(false);
+        setShowMenu(false);
         alert('You uploaded your photo successfully');
     } else {
-        console.log(`Error log\n`);
         alert('SOmething went wrong');
       }
     }
   };
 
   const handleOnClick = () => {
-    setShowButtons(!showButtons);
+    setShowMenu(!showMenu);
   };
 
   return (
@@ -51,7 +99,7 @@ const ProfilePicture = () => {
         src={useDefaultImage ? defaultPicture : profilePicture}
         alt="Profile"
       />
-      {showButtons && (
+      {showMenu && (
         <div className="image-options">
           <h2>Photo options</h2>
           <label>

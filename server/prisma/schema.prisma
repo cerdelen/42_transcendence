@@ -12,16 +12,17 @@ datasource backend_database {
 
 model User {
 	// User stuff
-	id				Int			@unique
-	name			String		@unique
-	mail			String
-	// picture			String?
-	// 2_FA_stuff
-	two_FA_enabled	Boolean    @default(false)
-	two_FA_secret	String?
-	friendlist		Int[]
-	stats			Stats?
-	games			Int[]				// ids of games??
+	id						Int			@unique
+	name					String		@unique
+	mail					String
+	// picture					String?
+	// 2_FA_stuff		
+	two_FA_enabled			Boolean    @default(false)
+	two_FA_secret			String?
+	friendlist				Int[]
+	stats					Stats?
+	games					Int[]				// ids of games??
+	show_default_image		Boolean		@default(false)
 }
 
 model Stats {

@@ -27,6 +27,19 @@ export class AuthService
 		return (this.sign_42_jwt_token(user.id, _res));
 	}
 
+	async	login_test_user(test_user_id: number, @Res() _res: any) : Promise<any> 
+	{
+		var user = await this.userService.findUserById(test_user_id);
+		console.log(user.id);
+		if(user.two_FA_enabled)
+		{
+			console.log("2fa enabled, redirecting to 2fa");
+			return _res.redirect('http://localhost:3000/auth?2fa=' + String(test_user_id));
+		}
+		console.log("2fa NOT enabled signing token");
+		return (this.sign_42_jwt_token(user.id, _res));
+	}
+
 	async	sign_42_jwt_token(user_id: number, res: any, is_two_FAed = false)
 	{
 		console.log('sign_jwt_token');

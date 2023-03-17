@@ -4,7 +4,7 @@ import { CreateMsgDto } from "./CreateMsg.dto";
 import { User } from "@prisma/client";
 import { MsgService } from "./msg.service";
 import { Jwt_Auth_Guard } from "src/auth/guards/jwt_auth.guard";
-import { JwtPayload } from '../../dist/two_fa/strategy/two_fa.strategy';
+// import { JwtPayload } from '../../dist/two_fa/strategy/two_fa.strategy';
 
 import { EventEmitter2 } from "@nestjs/event-emitter";
 

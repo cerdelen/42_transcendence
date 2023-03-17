@@ -2,7 +2,26 @@ import { players } from '../../models/temp-players';
 import ListLiveGames from './ListLiveGames';
 import ListOpenChats from './ListOpenChats';
 import ListPlayersOnline from './ListPLayersOnline';
-import io, { Socket} from 'socket.io-client';
+import { Socket } from 'socket.io';
+import { useState, useEffect, Children } from 'react';
+import { useParams } from 'react-router-dom';
+import { getConversationMsgs } from '../../utils/apis';
+import { MessagesType } from '../../utils/types';
+import { ConversationType } from '../../utils/types';
+import { MessagePanel } from '../../messages/MessagePanel';
+// import { ConversationChannelPageStyle } from '../../utils/styles';
+import {useContext} from 'react';
+import { SocketContext } from '../../utils/context/SocketContext';
+
+
+// interface message{
+//   name: string,
+//   message: string,
+// }
+
+
+
+import  {io, Socket} from 'socket.io-client';
 import { useEffect, useMemo, useState } from 'react';
 
 
@@ -43,6 +62,30 @@ function DisplayMessages({users} : {users: message[]})
 
 
 type Props = {}
+// const Community = (props: Props) => {
+
+//   const [messages, setMessages] = useState<MessagesType[]>([]);
+//   const socket = useContext(SocketContext)
+
+//   const { id } = useParams();
+//   useEffect(()  => {
+
+//     const conversId = parseInt(id!);
+//     getConversationMsgs(conversId)
+//       .then(({ data }) => {
+
+//         console.log(data);
+//         setMessages(data);
+//       })
+//       .catch((err) => console.log(err))
+//     console.log(id);
+//   }, [id])
+
+//   useEffect(() => {
+//     socket.on('connect',)
+//   })
+//   // let socket: Socket;
+//   // const [users, setUsers] = useState<message[]>([{name: "Vladimir", message: "Siemanko"}, {name: "Ruslan", message: "I guess "}]);
 const Community = ({socket} : {socket: Socket}) => {
   const [users, setUsers] = useState<message[]>([]);
   const [input, setInput] = useState(""); 
@@ -121,6 +164,8 @@ const Community = ({socket} : {socket: Socket}) => {
       
         <div id='chat-area' className='com-areas'>
             <h2>Chat</h2>
+             
+         
             <div id='displayed-messagees'>
             <DisplayMessages users={users} />
             </div>
@@ -153,3 +198,25 @@ const Community = ({socket} : {socket: Socket}) => {
 }
 
 export default Community
+
+
+
+
+
+   /* //     <ConversationChannelPageStyle>
+                  
+                  
+                  
+            //     </ConversationChannelPageStyle> */
+            // <div id='displayed-messages'>
+            //   {/* {
+            //     // users.map((user : message) => <li>{user.name} {"\t"} {user.message} </li>)
+            //     messages.map((m) => (
+            //         <div>{m.text}</div>
+            //       ))
+            //     } */}
+            //     <MessagePanel messages={messages} />
+            // </div>
+            // <form onSubmit={() => {}}>
+            //     <input id='chat-input' type="text"  onChange={() => {}} />
+            //     <button type="submit">Send</button>

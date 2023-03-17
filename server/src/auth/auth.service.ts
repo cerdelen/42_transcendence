@@ -3,6 +3,7 @@ import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { userInfo } from 'os';
 
 @Injectable()
 export class AuthService 
@@ -16,6 +17,7 @@ export class AuthService
 
 	async	login(@Req() _req: any, @Res() _res: any) : Promise<any> 
 	{
+		console.log("fhiuewgjiorejofiewiojfwe" + _req.user.id);
 		var user = await this.userService.findUserById(_req.user.id);
 		console.log(user.id);
 		if(user.two_FA_enabled)
@@ -84,9 +86,9 @@ export class AuthService
 			const user = await this.userService.createUser({
 				id: Number(id),
 				name: username,
-				mail: email
+				mail: email,
 			});
-			return (user);
+			return (user); 
 		}
 	}
 
@@ -96,7 +98,7 @@ export class AuthService
 		
 		try 
 		{
-			const user = await this.userService.findUserById(Number(id));
+			const user = await this.userService.findUserById(id);
 			if(!user)
 				return (null);
 			return (user);

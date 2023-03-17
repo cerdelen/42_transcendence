@@ -1,13 +1,15 @@
+import { Body, Controller, Post, Req, UseGuards, Inject } from '@nestjs/common';
 import { Body, Controller, Get, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { Jwt_Auth_Guard } from 'src/auth/guards/jwt_auth.guard';
 import { Two_FA_Guard } from 'src/two_fa/guard/two_fa.guard';
 import { UserService } from './user.service';
+import { Routes, Services } from '../utils/consts';
 
-@Controller('user')
+@Controller(Routes.USERS)
 export class UserController
 {
 	constructor(
-		private userService: UserService
+		@Inject(Services.USERS) private readonly userService: UserService,
 	) {}
 
 	
@@ -92,6 +94,5 @@ export class UserController
 			return (this.userService.get_user_stats(Number(user_id)));
 		}
 	}
-
 }
 

@@ -51,11 +51,11 @@ export class AuthController
 		return (req.user.id);
 	}
 
-	@Get('test_db')
-	test_db()
+	@Get('create_test_user')
+	async create_test_user()
 	{
-		console.log("hello from inside test_db")
-		this.authService.test_db();
+		console.log("hello from inside create_test_user")
+		await this.authService.create_test_user();
 		return ("successfully tested db");
 	}
 

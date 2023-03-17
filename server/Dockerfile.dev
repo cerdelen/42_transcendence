@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . /app
 
 RUN npm install -g nodemon --silent
-RUN npm install --silent
+# RUN npm install --silent
 RUN apk add --no-cache bash
 
 EXPOSE 5500

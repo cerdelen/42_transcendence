@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy)
 		super
 		({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-			ignoreExpiration: false,
+			// ignoreExpiration: false,									// after testing enable again (disabled because testuser token hardcoded)
 			secretOrKey: "generic secret"
 		});
 	}
@@ -27,8 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy)
 	async	validate(payload: JwtPayload) : Promise <User>
 	{
 		console.log("validate jwt strategy")
-		// console.log(payload);
-		// console.log(payload.is_two_FAed);
+		
 		const user = await this.authService.validate_user(payload);
 		if(!user)
 		{

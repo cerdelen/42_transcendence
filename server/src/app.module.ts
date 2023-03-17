@@ -18,12 +18,13 @@ import { MsgModule } from './msg/msg.module';
 import { MsgService } from './msg/msg.service';
 import { GatewayModule } from './gateway/gateway.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { GameModule } from './game/game.module';
 
 
 
 @Module({
 	// imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, ChatModule],
-	imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, ConversationModule, MsgModule, GatewayModule, EventEmitterModule],
+	imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, ConversationModule, MsgModule, GatewayModule, EventEmitterModule, GameModule],
 	controllers: [AppController],
 	providers: [AppService, UserService],
 })

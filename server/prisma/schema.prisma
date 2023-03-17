@@ -22,10 +22,23 @@ model User {
 
 
 	// picture			String?
-
 	// 2_FA_stuff
 	two_FA_enabled	Boolean    @default(false)
 	two_FA_secret	String?
+	friendlist		Int[]
+	stats			Stats?
+	games			Int[]				// ids of games??
+}
+
+model Stats {
+	user			User		@relation(fields: [stat_id], references: [id])
+	stat_id			Int			@unique 
+	wins			Int			@default(0)
+	loses			Int			@default(0)
+	mmr				Int			@default(1500)
+	achievement_0	Boolean		@default(false)										// win 3 games
+	achievement_1	Boolean		@default(false)										// reach 1700 mmr
+	achievement_2	Boolean		@default(false)										// win to zero
 }
 
 model Conversation {
@@ -66,7 +79,6 @@ model Message {
 	user_name			String		
 	text				String
 	created_at			DateTime	@default(now())
-
 	//necessary fro array of messages in Chat model
 	conversation_id				Int?			
 	// usr_id						Int?			
@@ -74,10 +86,13 @@ model Message {
 	user_relation				User?				@relation(fields: [author], references: [id])		
 }
 
-
-
-//  id: Number(id),
-//         ecole42Id: Number(id),
-//         name: username,
-//         achievementsId: 1,
-//         mail: email,
+model Game {
+	id					Int @unique @id @default(autoincrement())
+	player_one			Int
+	player_two			Int @default(0)
+	winner				Int	@default(0)
+	loser				Int @default(0)
+	score_one			Int @default(0)
+	score_two			Int @default(0)
+	finished			Boolean		@default(false)
+}

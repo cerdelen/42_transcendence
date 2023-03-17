@@ -1,5 +1,5 @@
-import { useMyContext } from "../AppContext";
-import { useRef, useState } from "react";
+
+import { useContext, useEffect, useRef, useState } from "react";
 import SecondFactorQR from "../second_factor_authentication/SecondFactorQR";
 import JSCookies from "js-cookie";
 import ProfilePicture from "./ProfilePicture";
@@ -7,13 +7,13 @@ import Achievements from "./Achievements";
 import StatusAndGamesWon from "./StatusAndGamesWon";
 import LevelImageAndUsername from "./LevelImageAndUsername";
 import ToggleBox from "./ToggleBox";
+import { UserContext } from "../../contexts/UserContext";
 
 const ProfileCard = () => {
   const [base64String, setBase64String] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
 
-  const { loggedIn, setLoggedIn } = useMyContext();
-  // dynamically calculating where the drowdown should start
+  // dynamically calculating where the dropdown should start
   const firstElementRef = useRef<HTMLDivElement>(null);
   const secondElementRef = useRef<HTMLDivElement>(null);
   function toggleDropDownMenu() {
@@ -30,10 +30,33 @@ const ProfileCard = () => {
     //remove the cookie
     JSCookies.remove("accessToken");
     //change the state to logged out
-    setLoggedIn(false);
+    // setLoggedIn(false);
     //redirect to the main screen
     window.location.replace("http://localhost:3000");
   }
+  const { userId } = useContext(UserContext);
+  console.log(userId);
+  const [name, setName] = useState("");
+  const [statusTFA, setStatusTFA] = useState(false);
+
+  useEffect(() => {
+    const getData = async () => {
+      console.log("one more time");
+      const response = await fetch("http://localhost:3003/user/user_data", {
+        method: "Post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+        },
+        body: JSON.stringify({ user_id: userId }),
+      });
+      const data = await response.json();
+      setName(data["name"]);
+      setStatusTFA(data["two_FA_enabled"]);
+    };
+    if (userId)
+      getData();
+  }, [userId]);
 
   return (
     <div id="profile-box" ref={firstElementRef}>
@@ -42,10 +65,10 @@ const ProfileCard = () => {
       </span>
       <ProfilePicture />
       <div ref={secondElementRef} id="user-dropdown" style={{ display: isDropdownOpen ? "flex" : "none" }}>
-        <LevelImageAndUsername />
+        <LevelImageAndUsername userName={name}/>
         <StatusAndGamesWon />
         <Achievements />
-        <ToggleBox setBase64String={setBase64String} />
+        <ToggleBox setBase64String={setBase64String} status2FA={statusTFA}/>
 
         {base64String !== "" ? (
           <SecondFactorQR qrString={base64String} />

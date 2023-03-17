@@ -1,3 +1,5 @@
+import JSCookies from "js-cookie";
+
 const LoginPage = () => {
 
   const handleLoginClick = async() => {
@@ -9,10 +11,31 @@ const LoginPage = () => {
     }
   }
 
+  const fakeLogin = async() => {
+    try {
+      console.log('this is before fetch');
+        await fetch("http://localhost:3003/auth/create_test_user", {
+        method: "Get",
+      })
+      // console.log('this is after fetch');
+
+      
+      // const token = await response.text();
+      // console.log('this is teh tokebn' + token);
+      JSCookies.set("accessToken", 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdGluZ3VzZXIiLCJzdWIiOjMyMiwibWFpbCI6InRlc3Rpbmd1c2VyQGVtYWlsLmNvbSIsImlzX3R3b19GQWVkIjpmYWxzZSwiaWF0IjoxNjc5MDQ3MTI1LCJleHAiOjE2Nzk2NTE5MjV9.ydhUDpSpzLdZTL9Y2RQCh-XfaxtGcHAYCHTlMlAtOUI');
+      console.log('this is cookie' + JSCookies.get("accessToken"));
+      window.location.assign('http://localhost:3000/');
+    }
+    catch (error) {
+      alert('An error occurred durinlg dummy login');
+    }
+  }
+
   return (
     <div className="login-page">
       <h1> CatPong </h1>
       <button onClick={handleLoginClick}>Login with 42</button>
+      <button onClick={fakeLogin}>Dummy login</button>
     </div>
   );
 };

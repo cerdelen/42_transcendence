@@ -59,7 +59,6 @@ export class MessagesGateway {
     @ConnectedSocket() client: Socket)
     {
       const name  = await this.messagesService.getClientByName(client.id);
-
       client.broadcast.emit('typing', {name, isTyping});
     }
 }

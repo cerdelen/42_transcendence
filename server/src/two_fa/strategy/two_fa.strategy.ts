@@ -19,7 +19,7 @@ export class Two_FA_Strategy extends PassportStrategy(Strategy, 'Two-FA')
 	{
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-			ignoreExpiration: false,
+			// ignoreExpiration: false,									// after testing enable again (disabled because testuser token hardcoded)
 			secretOrKey: "generic secret"
 		});
 	}

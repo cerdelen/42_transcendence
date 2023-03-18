@@ -8,14 +8,16 @@ import { Socket } from 'socket.io-client'
 
 type Props = {}
 
-const HomePage = ({socket} : {socket: Socket}) => {
+
+
+const HomePage = () => {
 	const [gamePage, setGamePage] = useState(true);
 
   return (
 	<div className='game-page'>
 		<Header setGamePage={setGamePage} />
 		{/* {gamePage ? <Game /> : <Community />} */}
-		<Community socket={socket}/>
+		<Community />
 		
 		<Footer />
 	</div>

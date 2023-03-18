@@ -3,7 +3,8 @@ import ListLiveGames from './ListLiveGames';
 import ListOpenChats from './ListOpenChats';
 import ListPlayersOnline from './ListPLayersOnline';
 import { Socket } from 'socket.io';
-import { useState, useEffect, Children } from 'react';
+// import  {io, Socket} from 'socket.io-client';
+import { useState, useEffect, Children, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { getConversationMsgs } from '../../utils/apis';
 import { MessagesType } from '../../utils/types';
@@ -11,7 +12,7 @@ import { ConversationType } from '../../utils/types';
 import { MessagePanel } from '../../messages/MessagePanel';
 // import { ConversationChannelPageStyle } from '../../utils/styles';
 import {useContext} from 'react';
-import { SocketContext } from '../../utils/context/SocketContext';
+import { SocketContext, our_socket} from '../../utils/context/SocketContext';
 
 
 // interface message{
@@ -21,8 +22,6 @@ import { SocketContext } from '../../utils/context/SocketContext';
 
 
 
-import  {io, Socket} from 'socket.io-client';
-import { useEffect, useMemo, useState } from 'react';
 
 
 interface message{
@@ -86,7 +85,7 @@ type Props = {}
 //   })
 //   // let socket: Socket;
 //   // const [users, setUsers] = useState<message[]>([{name: "Vladimir", message: "Siemanko"}, {name: "Ruslan", message: "I guess "}]);
-const Community = ({socket} : {socket: Socket}) => {
+const Community = () => {
   const [users, setUsers] = useState<message[]>([]);
   const [input, setInput] = useState(""); 
   const [newMessage, setNewMessage] = useState<message>();
@@ -96,25 +95,25 @@ const Community = ({socket} : {socket: Socket}) => {
   // const [name_is_set, name_is_set_set] = useState(false);
   useEffect(() => 
   {
-    socket.emit('findAllMessages', {}, (response : any[]) =>
+    our_socket.emit('findAllMessages', {}, (response : any[]) =>
     {
       setUsers(response);
     });
-    socket.on('message', (message : message) => 
+    our_socket.on('message', (message : message) => 
     {
       let s : message[] = [...users];
       s.push(message)
       setUsers(s);
 
-      if(socket)
+      if(our_socket)
     
-        socket.emit('findAllMessages', {}, (response : any[]) =>
+      our_socket.emit('findAllMessages', {}, (response : any[]) =>
       {
         setUsers(response);
       });
     })
 
-    socket.on('typing', (typing: typing) =>
+    our_socket.on('typing', (typing: typing) =>
     {
       if(typing.isTyping)
       {
@@ -126,26 +125,26 @@ const Community = ({socket} : {socket: Socket}) => {
   }, [])
   const join = () =>
   {
-    socket.emit('join', {name: name}, () => 
+    our_socket.emit('join', {name: name}, () => 
     {
       setJoined(true);
     })
   }
-  const sendMessage = (socket : Socket) =>
+  const sendMessage = () =>
   {
-        socket.emit('createMessage', {name: "Mock user", text: input}, () => {
+        our_socket.emit('createMessage', {name: "Mock user", text: input}, () => {
           setInput('');
         })
-        socket.emit('createGame', {});
+        our_socket.emit('createGame', {});
   }
   let timeout : any;
   const emitTyping = () =>
   {
     console.log("Testing stuff ");
-    socket.emit('typing', {isTyping: true});
+    our_socket.emit('typing', {isTyping: true});
     timeout = setTimeout(() => 
     {
-      socket.emit('typing', {isTyping: false});
+      our_socket.emit('typing', {isTyping: false});
     }, 2000);
   }
 
@@ -176,10 +175,12 @@ const Community = ({socket} : {socket: Socket}) => {
                 }} />
 
                 <button type="submit" onClick={(e) => {
+                  console.log("i pressed the button");
+                  
                   if(input)
-                    sendMessage(socket);
+                    sendMessage();
                 }
-                  }>Send</button>
+                  }>Senddewfewg</button>
 
             </form>
 

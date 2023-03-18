@@ -5,14 +5,14 @@ import Canvas from './Canvas'
 
 
 
-const Game = ({socket, userId} : {socket: Socket, userId: string}) => {
+const Game = ({userId} : { userId: string}) => {
 
 
   return (
 	<main>
 		{/* <GameScreenManagment socket={socket} inLobby={inLobby} gameCode={gameCode}/> */}
 		{/* <div className='game-area'> */}
-			    <Canvas socket={socket} userId={userId}/>
+			    <Canvas userId={userId}/>
 		{/* </div> */}
 	</main>
   )

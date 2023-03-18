@@ -10,48 +10,41 @@ import { AuthContext, ConversationContextType } from './utils/context/AuthContex
 import { User } from './utils/types';
 import {PropsWithChildren} from 'react';
 // import { ValidationPipe } from '@nestjs/common';
-import { SocketContext, socket } from './utils/context/SocketContext';
-
-
-
-
-// export const ConversationContext = React.createContext<ConversationContextType[]>([]);
-
-// function App() {
-//   const [loggedIn, setLoggedIn] = useState(false);
-//   const [user, setUser] = useState<User>();
-//   const [conversations, setConversations] = useState([]);
-
-//   type Props = {
-//     user?: User;
-//     setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
-//   }
-  
-//   function AppWithProviders({
-//     children,
-//     user,
-//     setUser,
-//   }: PropsWithChildren & Props) {
-//     return <AuthContext.Provider value={{user, updateAuthUser: setUser}}>
-//       {children}
-//     </AuthContext.Provider>
-//   }
-
+import { SocketContext, our_socket } from './utils/context/SocketContext';
 import Pong from "./components/Pong";
-import io, { Socket} from 'socket.io-client';
+// import io, { Socket} from 'socket.io-client';
 import Game from "./components/Game";
 import UserPage from "./components/UserPage";
 import { UserContext } from "./contexts/UserContext";
 
 
-const socket = io('localhost:3003');
 
-function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [userId, setUserId] = useState('');
-  console.log( "User id" + userId);
-  const [userData, setUserData] = useState({});
-  
+
+// const socket = io('localhost:3003');
+export const ConversationContext = React.createContext<ConversationContextType[]>([]);
+
+  function App() {
+    const [loggedIn, setLoggedIn] = useState(false);
+    const [userId, setUserId] = useState('');
+    console.log( "User id" + userId);
+    const [userData, setUserData] = useState({});
+    const [conversations, setConversations] = useState([]);
+    
+  type Props = {
+    user?: User;
+    setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
+  }
+
+  function AppWithProviders({
+    children,
+    user,
+    setUser,
+  }: PropsWithChildren & Props) {
+    return <AuthContext.Provider value={{user, updateAuthUser: setUser}}>
+      {children}
+    </AuthContext.Provider>
+  }
+
   async function getUser() {
     try {
 
@@ -87,11 +80,11 @@ function App() {
 
         <Routes>
 
-          <Route path="/" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/>
+          <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage/>}/>
           {/* <Route path="/loggedin" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/> */}
-          <Route path="/game" element={ <Game socket={socket}  userId={userId}/>}/>
+          <Route path="/game" element={ <Game  userId={userId}/>}/>
           <Route path="/auth" element={<SecondFactorPage/>}/>
-          <Route path="/home" element={<HomePage socket={socket} />}  />
+          <Route path="/home" element={<HomePage />}  />
           <Route path="/user" element={<UserPage/>}/>
         </Routes>
 

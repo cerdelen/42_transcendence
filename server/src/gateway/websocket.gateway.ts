@@ -6,6 +6,7 @@ import { MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, W
 // import { AuthService } from '../auth/auth.service';
 // import { UserService } from '../user/user.service';
 import { Server } from 'socket.io';
+import { io_server } from 'src/utils/Server';
 
 // import { Server } from '@nestjs/platform-socket.io';
 
@@ -20,41 +21,55 @@ import { Server } from 'socket.io';
 //     id: number
 // };
 
-@WebSocketGateway()
+@WebSocketGateway((
+	{
+	  cors: {
+		origin: '*',
+	  },
+	}
+  ))
 export class MessagingGateway implements OnGatewayConnection {
 	handleConnection(client: any, ...args: any[]) {
-		console.log(client);
+		// console.log(client);
 		
 	}
-	// constructor (
-		// private readonly conversationService: ConversationService,
-		// private readonly authService: AuthService,
-		// private readonly userService: UserService) {}
+	constructor ()
+	{
+	}
 
 		@WebSocketServer()
-		server: Server;
+		server;
+		// io = new Server(server, { cors: { origin: '*' } });
 
-		// onModuleInit() {
-		// 	this.server.on('connection', (socket) => {
-		// 		console.log(socket.id);
-		// 		console.log("connected");
-				
-		// 	})
-		// }
+
+		// io_servss: io_server;
+
+		onModuleInit() {
+			console.log("constructed this shit");
+		}
 
 		@SubscribeMessage('message')
 		handleCreateMessage(
 			@MessageBody() data: any) {
 				console.log("here connect");
-				
+				// this.io_serv.io.emit();
 				// this.server.emit('message', message);
+
+
+				
+				// this.io_server.emit();
 		}
 
 		@OnEvent('create.message')
 		handleMessageCreateEvent(payload: any) {
 			console.log("hello");
 			console.log(payload);
-			this.server.emit('onMessage', payload)
-			
+			// this.io_server.emit();
+			// this.io_serv.emit();
+
+
+
+
+			// this.io_server.emit('onMessage', payload)
 		}
 } 

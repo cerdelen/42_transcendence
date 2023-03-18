@@ -161,7 +161,7 @@ export class UserService {
 			return (this.prisma.stats.update({
 				where: { stat_id: user_id},
 				data: {
-					wins: stats.wins - 1,
+					loses: stats.loses + 1,
 					mmr: stats.mmr - 15
 				}
 			}));
@@ -199,13 +199,28 @@ export class UserService {
 
 	async	add_game_to_history(game_id: number)
 	{
+		// console.log(game.player_one + " " + game.player_two);
+		
 		const	game		= await this.prisma.game.findUnique({ where: { id: game_id }});
 		const	user_one	= await this.prisma.user.findUnique({ where: { id: game.player_one } });
 		const	user_two	= await this.prisma.user.findUnique({ where: { id: game.player_two } });
+		console.log('this is game' + JSON.stringify(game));
 
-		const	index_one = user_one.games.findIndex(x => x == game.id);
-		const	index_two = user_two.games.findIndex(x => x == game.id);
-		if(user_two && user_one && index_one != -1 && index_two != -1)
+		let index_one;
+		let index_two;
+		if(!user_one.games == null)
+			index_one = user_one.games.findIndex(x => x == game.id);
+		else
+			index_one = -1;
+		if(!user_two.games == null)
+			index_two = user_two.games.findIndex(x => x == game.id);
+		else
+			index_two = -1;
+		console.log("this is user one" + JSON.stringify(user_one));
+		console.log("this is user two" + JSON.stringify(user_two));
+		console.log("this is index 1" + index_one);
+		console.log("this is index 2" + index_two);
+		if(user_two && user_one && index_one == -1 && index_two == -1)
 		{
 			await	this.add_loss(game.loser);
 			await	this.add_win(game.winner);
@@ -213,8 +228,8 @@ export class UserService {
 				this.add_achievement(game.winner, 2);
 			await	user_one.games.push(game.id);
 			await	user_two.games.push(game.id);
-			await	this.prisma.user.update({where: { id: user_one.id}, data: { friendlist: user_one.games}});
-			await	this.prisma.user.update({where: { id: user_two.id}, data: { friendlist: user_two.games}});
+			await	this.prisma.user.update({where: { id: user_one.id}, data: { games: user_one.games}});
+			await	this.prisma.user.update({where: { id: user_two.id}, data: { games: user_two.games}});
 		}
 	}
 

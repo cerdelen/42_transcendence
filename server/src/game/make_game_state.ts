@@ -147,6 +147,7 @@ function ball_update(ball: Ball,player_1 : Player, player_2 : Player,state: pong
 }
 export function gameLoop(state: pong_properties) : number
 {
+    const win_condition = 2;
     if(!state)
     {
         return 0;
@@ -154,11 +155,11 @@ export function gameLoop(state: pong_properties) : number
     paddle_update(state.Player1, state.keysPressed_p1);
     paddle_update(state.Player2, state.keysPressed_p2);
     ball_update(state.Ball,state.Player1, state.Player2 ,state);
-    if(state.player_1_score === 5)
+    if(state.player_1_score === win_condition)
     {
         console.log("Player 1 won")
         return 2;
-    }else if(state.player_2_score === 5)
+    }else if(state.player_2_score === win_condition)
     {
         console.log("Player 2 won")
         return 1;

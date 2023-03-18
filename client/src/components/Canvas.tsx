@@ -1,8 +1,10 @@
 import React ,{ useRef, useEffect, useState, useId}from "react";
 import drawPong from './Pong'
 import {pong_properties, KeyInfo, Player} from './Pong_types'
+import { SocketContext, our_socket } from '../utils/context/SocketContext';
 
-const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
+
+const Canvas = ({userId} : {userId: string}) =>
 {
     let initial_state : pong_properties = {
         keysPressed: [],
@@ -37,17 +39,18 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
             yVel: 0,
         }
     }
-    function ButtonShow({socket, userId, GameActive ,init, setGameActive, setCodeInput} : 
-        {socket : any, userId: string, GameActive: boolean, init :any, setGameActive: any, setCodeInput : any}) 
+    function ButtonShow({userId, GameActive ,init, setGameActive, setCodeInput} : 
+        { userId: string, GameActive: boolean, init :any, setGameActive: any, setCodeInput : any}) 
     {
         if(!GameActive)
         {
             return (<button onClick={() => {
                 if(!userId)
                 {
-                    socket.emit("joinGame", "1");
+                    our_socket.emit("joinGame", "1");
                 }else{
-                    socket.emit("joinGame", userId);
+                    console.log('this is joingame userid' + userId);
+                    our_socket.emit("joinGame", userId);
                 }
                 init();
                 setGameActive(true);
@@ -91,26 +94,26 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
     useEffect(() => 
     {
 
-        socket.on('sameUser', () =>
+        our_socket.on('sameUser', () =>
         {
             reset();
             setGameActive(false);
             alert("Same user wanted to connect to one game");
         })
 
-        socket.on("handleTooManyPlayers", () =>
+        our_socket.on("handleTooManyPlayers", () =>
         {
             reset();
             setGameActive(false);
             alert("This game has too many players");
         })
       
-        socket.on('gameCode', handleGameCode);
+        our_socket.on('gameCode', handleGameCode);
     }, [gameActive])
 
     useEffect(() =>
     {
-          socket.on('init', (UserIndex_ : number) => {
+        our_socket.on('init', (UserIndex_ : number) => {
             let num : number = UserIndex_;
             setPlayerNumber(num);
           });
@@ -118,7 +121,7 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
     }, [playerNumber])
     useEffect(() => 
     {
-        socket.on('gameOver', (data: number) => 
+        our_socket.on('gameOver', (data: number) => 
         {
             if(!gameActive)
             {
@@ -139,7 +142,7 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
    
     useEffect( () => 
     {
-        socket.on('gameState', (gameState: string) => 
+        our_socket.on('gameState', (gameState: string) => 
         {
             if(!gameActive)
             {
@@ -149,7 +152,7 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
             if(canvasRef.current)
             {
                 ctx =  canvasRef.current.getContext('2d');
-                requestAnimationFrame(() => drawPong(socket, ctx, gameInfo));
+                requestAnimationFrame(() => drawPong(our_socket, ctx, gameInfo));
             }
         })
     }, [gameInfo, gameActive])
@@ -165,7 +168,7 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
             key: e.keyCode,
             player_number: playerNumber
         };
-        socket.emit('keydown', JSON.stringify(obj));
+        our_socket.emit('keydown', JSON.stringify(obj));
     })
     document.addEventListener('keyup', (e) =>
     {
@@ -178,7 +181,7 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
             key: e.keyCode,
             player_number: playerNumber
         };
-        socket.emit('keyup', JSON.stringify(obj));
+        our_socket.emit('keyup', JSON.stringify(obj));
     })
 
     
@@ -188,7 +191,7 @@ const Canvas = ({socket, userId} : {socket: any, userId: string}) =>
             <h1> Welcome to Pong </h1>
             <br/>
             <br/>
-            <ButtonShow socket={socket} userId={userId} GameActive={gameActive} init={init} setGameActive={setGameActive} setCodeInput={setCodeInput}/>
+            <ButtonShow userId={userId} GameActive={gameActive} init={init} setGameActive={setGameActive} setCodeInput={setCodeInput}/>
         </center>
             <canvas 
             ref={canvasRef}

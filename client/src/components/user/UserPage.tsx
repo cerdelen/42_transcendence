@@ -7,7 +7,7 @@ import ListFriends from "./ListFriends";
 type Props = {};
 
 const UserPage = (props: Props) => {
-  const { userId, name, mail, two_FA_enabled, friendlist, games, socket } =
+  const { userId, name, mail, two_FA_enabled, friendlist, games } =
     useContext(UserContext);
 
   type Game = {

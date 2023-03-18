@@ -1,11 +1,10 @@
+DEPENDENIES = NPM
 
-build : 
-		cd server; npm i; cd ../client; npm i; cd ../
-		docker compose --file docker-compose-dev.yml up --build
-		
+all: $(DEPENDENIES)
+	docker compose --file docker-compose-dev.yml up
 
+build: $(DEPENDENIES)
+	docker compose --file docker-compose-dev.yml up --build
 
-
-all : 
-		cd server; npm i; cd ../client; npm i; cd ../
-		docker compose --file docker-compose-dev.yml up
+$(DEPENDENIES):
+	cd server; npm i; cd ../client; npm i; cd ../

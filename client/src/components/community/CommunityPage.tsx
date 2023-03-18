@@ -188,7 +188,7 @@ const Community = () => {
       	<div className='live-games'>
 			<h2>LIVE GAMES</h2>
 			<input type="text"/>
-			<ListLiveGames />
+			{/* <ListLiveGames /> */}
             <h2>CHATS</h2>
 			<ListOpenChats />
             

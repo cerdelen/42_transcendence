@@ -28,6 +28,7 @@ model User {
 	friendlist		Int[]
 	stats			Stats?
 	games			Int[]				// ids of games??
+	show_default_image		Boolean		@default(false)
 }
 
 model Stats {

@@ -268,5 +268,17 @@ export class UserService {
 	{
 		return (this.prisma.stats.findUnique({where: { stat_id: user_id }}));
 	}
+	
+	async	get_user_name(user_id: number) : Promise<String>
+	{
+		const user = await this.prisma.user.findUnique({where: {id: user_id}});
+		return user.name;
+	}
+
+	async	status_default_image(user_id: number): Promise<boolean>
+	{
+		const user = await this.prisma.user.findUnique({where: {id: user_id}});
+		return user.show_default_image;
+	}
 }
 

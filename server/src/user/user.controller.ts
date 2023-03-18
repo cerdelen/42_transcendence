@@ -92,6 +92,18 @@ export class UserController
 			return (this.userService.get_user_stats(Number(user_id)));
 		}
 	}
+	
+	@Post('user_name')
+	@UseGuards(Jwt_Auth_Guard)
+	@UseGuards(Two_FA_Guard)
+	async	get_user_name(@Body('user_id') user_id : string)
+	{
+		if(!Number.isNaN(user_id))
+		{
+			// const name = await this.userService.get_user_name(Number(user_id));
+			return this.userService.get_user_name(Number(user_id));
+		}
+	}
 
 }
 

@@ -8,7 +8,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Pong from "./components/Pong";
 import io, { Socket} from 'socket.io-client';
 import Game from "./components/Game";
-import UserPage from "./components/UserPage";
+import UserPage from "./components/user/UserPage";
 import { UserContext } from "./contexts/UserContext";
 
 
@@ -40,7 +40,7 @@ function App() {
       )
       const id = await response.text();
       await setUserId(id);
-      getData(id);
+      await getData(id);
     } catch (error) {
       console.error(error);
     }
@@ -57,14 +57,14 @@ function App() {
         body: JSON.stringify({ user_id: userid }),
       })
       const data = await response.json();
-      set2FA(data['two_FA_enabled']);
-      set2FASecret(data['two_FA_secret']);
-      setName(data['name']);
-      setMail(data['mail']);
-      setFriendslist(data['friendlist']);
-      setStats(data['stats']);
-      setGames(data['games']);
-      setHasPicture(data['show_default_image']);
+      await set2FA(data['two_FA_enabled']);
+      await set2FASecret(data['two_FA_secret']);
+      await setName(data['name']);
+      await setMail(data['mail']);
+      await setFriendslist(data['friendlist']);
+      await setStats(data['stats']);
+      await setGames(data['games']);
+      await setHasPicture(data['show_default_image']);
     } catch (error) {
       console.error(error);
     }
@@ -79,9 +79,17 @@ function App() {
   
   }, []);
 
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     await getData(userId);
+  //     // All state variables have been updated, you can now proceed with rendering the app.
+  //   }
+  //   fetchData();
+  // }, [userId]);
+
   return (
     // <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
-    <UserContext.Provider value={{userId: userId, friendlist: friendlist, games: games, show_default_image: show_default_image, mail: mail, name: name, stats: stats, two_FA_enabled: two_FA_enabled, two_FA_secret: two_FA_secret}}>
+    <UserContext.Provider value={{userId: userId, friendlist: friendlist, games: games, show_default_image: show_default_image, mail: mail, name: name, stats: stats, two_FA_enabled: two_FA_enabled, two_FA_secret: two_FA_secret, socket: socket}}>
       <BrowserRouter>
 
         <Routes>

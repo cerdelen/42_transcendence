@@ -4,6 +4,7 @@
 @import "./styles/qr-form.css";
 @import "./styles/second-factor-page.css";
 @import "./styles/profile-photo.css";
+@import "./styles/user-info-card.css";
 
 /* GENERAL */
 body {
@@ -406,6 +407,9 @@ footer {
 }
 
 /* CHAT AREA */
+
+.centered-element {
+}
 
 #chat-area {
   display: grid;

@@ -12,6 +12,8 @@ import { MessagePanel } from '../../messages/MessagePanel';
 // import { ConversationChannelPageStyle } from '../../utils/styles';
 import {useContext} from 'react';
 import { SocketContext, our_socket} from '../../utils/context/SocketContext';
+import UserPage from '../user/UserPage';
+import { useMyContext } from '../../contexts/InfoCardContext';
 
 
 // interface message{
@@ -150,6 +152,8 @@ const Community = () => {
     // again, I need a way to know if people are online 
     // const poepleAreOnline: boolean = false;
     // const friendsAreOnline: boolean = true;
+
+    const { showUserInfo, setShowUserInto } = useMyContext();
   return (
     <main id='community'>
 
@@ -190,6 +194,7 @@ const Community = () => {
 			{/* <ListLiveGames /> */}
             <h2>CHATS</h2>
 			<ListOpenChats />
+      {showUserInfo && <UserPage setShowUserInto={setShowUserInto}/>}
             
 			
 		</div>

@@ -18,6 +18,7 @@ import Pong from "./components/Pong";
 import Game from "./components/Game";
 import UserPage from "./components/user/UserPage";
 import { UserContext } from "./contexts/UserContext";
+import InfoCardProvider from "./contexts/InfoCardContext";
 
 // const socket = io('localhost:3003');
 export const ConversationContext = React.createContext<
@@ -109,31 +110,33 @@ function App() {
 
   return (
     // <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
-    <UserContext.Provider
-      value={{
-        userId: userId,
-        friendlist: friendlist,
-        games: games,
-        show_default_image: show_default_image,
-        mail: mail,
-        name: name,
-        stats: stats,
-        two_FA_enabled: two_FA_enabled,
-        two_FA_secret: two_FA_secret,
-        // socket: socket,
-      }}
-    >
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} />
-          {/* <Route path="/loggedin" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/> */}
-          <Route path="/game" element={<Game userId={userId} />} />
-          <Route path="/auth" element={<SecondFactorPage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/user" element={<UserPage />} />
-        </Routes>
-      </BrowserRouter>
-    </UserContext.Provider>
+    <InfoCardProvider>
+      <UserContext.Provider
+        value={{
+          userId: userId,
+          friendlist: friendlist,
+          games: games,
+          show_default_image: show_default_image,
+          mail: mail,
+          name: name,
+          stats: stats,
+          two_FA_enabled: two_FA_enabled,
+          two_FA_secret: two_FA_secret,
+          // socket: socket,
+        }}
+      >
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} />
+            {/* <Route path="/loggedin" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/> */}
+            <Route path="/game" element={<Game userId={userId} />} />
+            <Route path="/auth" element={<SecondFactorPage />} />
+            <Route path="/home" element={<HomePage />} />
+            {/* <Route path="/user" element={<UserPage />} /> */}
+          </Routes>
+        </BrowserRouter>
+      </UserContext.Provider>
+    </InfoCardProvider>
 
     // </MyProvider>
   );

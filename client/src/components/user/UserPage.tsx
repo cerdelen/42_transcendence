@@ -5,10 +5,12 @@ import { AiOutlineEdit } from "react-icons/ai";
 import ListFriends from "./ListFriends";
 import UserName from "./UserName";
 
-type Props = {};
+type Props = {
+  setShowUserInto: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-const UserPage = (props: Props) => {
-  const { userId, name, mail, two_FA_enabled, friendlist, games } =
+const UserPage = ({setShowUserInto}: Props) => {
+  const { userId, mail, two_FA_enabled, games } =
     useContext(UserContext);
 
   type Game = {
@@ -43,59 +45,19 @@ const UserPage = (props: Props) => {
     getUserPic();
   }, []);
 
-  const [names, setNames] = useState<string[]>([]);
-  useEffect(() => {
-    const fetchNames = async () => {
-      const newlist = await Promise.all(
-        friendlist.map(async (id) => {
-          const response = await fetch("http://localhost:3003/user/user_name", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-            },
-            body: JSON.stringify({ user_id: id }),
-          });
-          const name = await response.text();
-          return name;
-        })
-      );
-      setNames(newlist);
-    };
-
-    const fetchGames = async () => {
-      const newlist = await Promise.all(
-        friendlist.map(async (id) => {
-          const response = await fetch("http://localhost:3003/user/user_name", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-            },
-            body: JSON.stringify({ user_id: id }),
-          });
-          const name = await response.text();
-          return name;
-        })
-      );
-      setNames(newlist);
-    };
-    fetchNames();
-  }, [friendlist]);
 
   return (
-    <div>
+    <div id="userInfo">
       UserPage
       <img src={photoURL} />
       <div>{`This is ${userId}`}</div>
-        <UserName />
+      <UserName />
       <div>{`This is email: ${mail}`}</div>
       <div>{`This is 2FA enabled: ${two_FA_enabled}`}</div>
-      <ListFriends names={names} />
+      <ListFriends />
       {/* <div>{`This is your stats: ${sta}`}</div> */}
       <div>{`This is your games: ${games}`}</div>
     </div>
-
   );
 };
 

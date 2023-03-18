@@ -88,7 +88,7 @@ export class UserService {
 			data,
 			where,
 		});
-	}
+	}  
 
 	async	add_friend(userId: number, friend: number)
 	{

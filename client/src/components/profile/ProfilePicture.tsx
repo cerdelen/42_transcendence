@@ -2,7 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import defaultPicture from "../../images/default-picture.jpeg";
 import JSCookies from "js-cookie";
 
-
+function hasJpegExtension(filename: string): boolean {
+  return filename.endsWith('.jpeg');
+}
 
 const ProfilePicture = () => {
   const [useDefaultImage, setUseDefaultImage] = useState<boolean>(false);
@@ -69,6 +71,10 @@ const ProfilePicture = () => {
   ) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (!hasJpegExtension(file.name)){
+        alert('Required format is JPEG');
+        return;
+      }
       const formData = new FormData();
       formData.append("file", file);
       const response = await fetch("http://localhost:3003/pictures/upload", {

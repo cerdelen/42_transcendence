@@ -1,7 +1,6 @@
 import { players } from '../../models/temp-players';
 import { useState, useEffect } from 'react';
 import { ConversationType } from '../../utils/types';
-import { getConversations } from '../../utils/apis';
 import { setCommentRange } from 'typescript';
 import { ConversationSideBarContainer } from '../../utils/styles';
 import { ConversationSideBarUnit } from '../../utils/styles/index';
@@ -37,14 +36,7 @@ const ListOpenChats = () => {
 	const { user } = useContext(AuthContext);
 	const conversations = useContext(ConversationContext);
 
-	useEffect(() => {
-		getConversations()
-			.then(({ data }) => {
-				setConversations(data);
-			})
-			.catch((err) => console.log(err)
-			)
-	}, []);
+
 
     return (
         <ul className='scrollable-list open-chats' >

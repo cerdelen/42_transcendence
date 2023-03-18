@@ -6,7 +6,6 @@ import { Socket } from 'socket.io';
 // import  {io, Socket} from 'socket.io-client';
 import { useState, useEffect, Children, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { getConversationMsgs } from '../../utils/apis';
 import { MessagesType } from '../../utils/types';
 import { ConversationType } from '../../utils/types';
 import { MessagePanel } from '../../messages/MessagePanel';

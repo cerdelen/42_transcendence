@@ -12,6 +12,6 @@ export const UserContext = createContext({
 	stats: {},
 	games: [],				// ids of games??
 	show_default_image: false,
-	socket: io('localhost:3003')
+	// socket: io('localhost:3003')
 });
 

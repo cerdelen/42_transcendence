@@ -14,7 +14,6 @@ type Props = {
 const UserPage = ({}: Props) => {
   const { userId, mail, two_FA_enabled, games } =
     useContext(UserContext);
-    
     const { userIdCard, setUserIdCard } = useMyContext();
   type Game = {
     id: number;
@@ -63,7 +62,7 @@ const UserPage = ({}: Props) => {
           UserPage
           {/* <img src={photoURL} /> */}
           <UserPhoto />
-          <div>{`This is ${userId}`}</div>
+          <div>{`This is ${userIdCard}`}</div>
           <UserName />
           <div>{`This is email: ${mail}`}</div>
           <div>{`This is 2FA enabled: ${two_FA_enabled}`}</div>

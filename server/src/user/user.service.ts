@@ -280,5 +280,18 @@ export class UserService {
 		const user = await this.prisma.user.findUnique({where: {id: user_id}});
 		return user.show_default_image;
 	}
-}
 
+	async	change_name(user_id: number, _name: string) : Promise<boolean>
+	{
+		const	user = await this.prisma.user.findUnique({where: { name: _name }});
+		if (!user)
+		{
+			await	this.prisma.user.update({
+				where: { id: user_id }, 
+				data: { name: _name },
+			});
+			return (true);
+		}
+		return (false);
+	}
+}

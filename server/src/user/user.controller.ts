@@ -56,7 +56,7 @@ export class UserController
 
 	@Post('change_name')
 	@UseGuards(Jwt_Auth_Guard)
-	async	change_name(@Req() req: any, @Body('new_name') _name : string) : Promise<any>
+	async	change_name(@Req() req: any, @Body('new_name') _name : string) : Promise<boolean>
 	{
 		return (this.userService.change_name(req.user.id, _name));
 	}

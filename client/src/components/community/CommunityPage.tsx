@@ -194,7 +194,7 @@ const Community = () => {
 			{/* <ListLiveGames /> */}
             <h2>CHATS</h2>
 			<ListOpenChats />
-      {showUserInfo && <UserPage setShowUserInto={setShowUserInto}/>}
+      {showUserInfo && <UserPage />}
             
 			
 		</div>

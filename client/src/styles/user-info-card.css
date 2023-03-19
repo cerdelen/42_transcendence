@@ -4,13 +4,14 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 9999;
-    min-width: 200px;
+    min-width: 800px;
+    border: 1px solid purple;
     border-radius: 25px;
     background: linear-gradient(to bottom right, rgb(134, 73, 127), rgb(129, 103, 146));
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: inset 10px 0 20px -10px rgba(0, 0, 0, 0.5),
-              inset -10px 0 20px -10px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 10px 0 20px -10px rgba(107, 38, 154, 0.5),
+              inset -10px 0 20px -10px rgba(241, 32, 168, 0.5);
 }
   

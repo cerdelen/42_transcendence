@@ -64,19 +64,19 @@ header li {
 #profile-box {
   align-items: center;
   border-radius: 5px;
-  cursor: pointer;
+  /* cursor: pointer; */
   display: flex;
   justify-content: space-around;
   min-width: 220px;
   position: relative;
 }
 
-header span:hover {
-  /* padding: 0 1em; */
-  /* border: 2px solid white; */
+#profile-picture:hover {
+  cursor: pointer;
+}
+
+header .basic:hover {
   border-radius: 15px;
-  /* background-color: blueviolet; */
-  /* color: black; */
   box-shadow: inset 0 0 10px #FFF, 0 0 20px #FFF;
   cursor: pointer;
 }
@@ -119,6 +119,9 @@ header span:hover {
   margin-inline-start: .3rem;
   margin-inline-end: 1rem;
   border: 1mm ridge rgb(123, 89, 157);
+}
+#level-username span:hover {
+  cursor: pointer;
 }
 
 #level-username span {

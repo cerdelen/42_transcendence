@@ -65,7 +65,7 @@ const ProfileCard = () => {
       </span>
       <ProfilePicture />
       <div ref={secondElementRef} id="user-dropdown" style={{ display: isDropdownOpen ? "flex" : "none" }}>
-        <LevelImageAndUsername userName={name}/>
+        <LevelImageAndUsername userName={name} setIsDropdownOpen={setIsDropdownOpen} />
         <StatusAndGamesWon />
         <Achievements />
         <ToggleBox setBase64String={setBase64String} status2FA={statusTFA}/>

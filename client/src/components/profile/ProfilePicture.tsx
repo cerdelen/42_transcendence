@@ -100,7 +100,7 @@ const ProfilePicture = () => {
 
   return (
     <div>
-      <img
+      <img id="profile-picture"
         onClick={handleOnClick}
         src={useDefaultImage ? defaultPicture : profilePicture}
         alt="Profile"

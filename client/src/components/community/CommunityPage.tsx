@@ -5,7 +5,7 @@ import ListPlayersOnline from './ListPLayersOnline';
 import { Socket } from 'socket.io';
 // import  {io, Socket} from 'socket.io-client';
 import { useState, useEffect, Children, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { json, useParams } from 'react-router-dom';
 // import { getConversationMsgs } from '../../utils/apis';
 import { MessagesType } from '../../utils/types';
 import { ConversationType } from '../../utils/types';
@@ -17,6 +17,10 @@ import UserPage from '../user/UserPage';
 import { useMyContext } from '../../contexts/InfoCardContext';
 
 import Chat_cards from '../ChatPanel/chat_side_bar'
+import Open_group_cards from '../ChatPanel/open_group_chats_bar';
+import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
+import JSCookies from "js-cookie";
+import { UserContext } from "../../contexts/UserContext"
 
 // interface message{
 //   name: string,
@@ -25,10 +29,19 @@ import Chat_cards from '../ChatPanel/chat_side_bar'
 
 
 
+class display_message_info {
+  text: string;
+  author_id: number;
 
+  constructor(_text: string, _author_id: number)
+  {
+    this.text = _text;
+    this.author_id = _author_id;
+  }
+}
 
 interface message{
-  name: string,
+  author_id: string,
   text: string,
 }
 
@@ -42,9 +55,68 @@ function DisplayTyping({typingDisplay} : {typingDisplay: string})
   {typingDisplay}
   </>
 }
-function DisplayMessages({users} : {users: message[]})
+
+const Display_message_in_chat = ({ message }: { message: display_message_info }) =>
 {
-  return <>{users.map((user : message) => (<li> {"["}{user.name}{"]"} {"\t"} {user.text} </li>))}</>;
+  const { userId } = useContext(UserContext);
+  const is_me : boolean = (message.author_id == Number(userId));
+  console.log("this is isme " + is_me);
+  
+
+  return (
+    <>
+      <div className={is_me ? 'right_message' : 'left_message'}>
+        <div>{message.author_id}</div>
+        <div>{message.text}</div>
+      </div>
+    </>
+  );
+}
+
+function Display_full_chat({chat_id} : {chat_id : number})
+{
+  console.log("called display messages()");
+	const [messages, set_messages] = useState<Array<display_message_info>>([]);
+  useEffect(() => {
+    const get_messages = async(chat_id: number) =>
+    {
+      console.log("this is the get_nessages()");
+      if(chat_id == -1)
+      {
+        console.log("chat_id == -1 cleaning messages");
+        const messages : display_message_info[] = [];
+        set_messages(messages)
+        return ;
+      }
+      const response = await fetch(`http://localhost:3003/conversation/get_messages_from_conversation/${chat_id}`, {
+				method: "Get",
+				headers: {
+					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+				},
+			})
+      const data : [] = await response.json();
+
+      // console.log("this is the data i got " + await JSON.stringify(data));
+      
+      let messages : display_message_info[] = [];
+			for(let i = 0; i < data.length; i++)
+      {
+        messages.push(new display_message_info(data[i]["text"], data[i]["author"]));
+      }
+      set_messages(messages);
+    } 
+    get_messages(chat_id);
+  }, [chat_id]);
+
+  console.log("this is the messages"  + JSON.stringify(messages));
+  return (
+    <>
+      {messages.map((message, idx) => (
+        <Display_message_in_chat key={idx} message={message}/>
+      ))}
+    </>
+  )
+  // return <>{users.map((user : message) => (<li> {"["}{user.name}{"]"} {"\t"} {user.text} </li>))}</>;
 }
 // function NamePlace({setName, name_is_set} : {setName : any,name_is_set: any})
 // {
@@ -94,6 +166,7 @@ const Community = ({userId} : { userId: string}) => {
   const [newMessage, setNewMessage] = useState<message>();
   const [typingDisplay, setTypingDisplay] = useState('');
   const [joined, setJoined] = useState(false);
+  const { displayed_chat } = useMyDisplayedChatContext();
   // const [name, setName] = useState("");
   // const [name_is_set, name_is_set_set] = useState(false);
   useEffect(() => 
@@ -169,11 +242,11 @@ const Community = ({userId} : { userId: string}) => {
       {/* <NamePlace setName={setName} name_is_set={name_is_set}/> */}
       
         <div id='chat-area' className='com-areas'>
-            <h2>Chat</h2>
+            <h2>Chat  {displayed_chat}</h2>
              
          
             <div id='displayed-messagees'>
-            <DisplayMessages users={users} />
+              <Display_full_chat chat_id={displayed_chat} />
             </div>
             <form onSubmit={(e) => {  e.preventDefault() }}>
             <DisplayTyping typingDisplay={typingDisplay} />
@@ -192,11 +265,12 @@ const Community = ({userId} : { userId: string}) => {
 
         </div>
       	<div className='live-games'>
-			<h2>LIVE GAMES</h2>
-			<input type="text"/>
+			<h2>OPEN GROUP CHATS</h2>
+			<Open_group_cards />
+			{/* <input type="text"/> */}
 			{/* <ListLiveGames /> */}
-            <h2>CHATS</h2>
-			<ListOpenChats />
+            {/* <h2>CHATS</h2> */}
+			{/* <ListOpenChats /> */}
       {showUserInfo && <UserPage />}
             
 			
@@ -206,25 +280,3 @@ const Community = ({userId} : { userId: string}) => {
 }
 
 export default Community
-
-
-
-
-
-   /* //     <ConversationChannelPageStyle>
-                  
-                  
-                  
-            //     </ConversationChannelPageStyle> */
-            // <div id='displayed-messages'>
-            //   {/* {
-            //     // users.map((user : message) => <li>{user.name} {"\t"} {user.message} </li>)
-            //     messages.map((m) => (
-            //         <div>{m.text}</div>
-            //       ))
-            //     } */}
-            //     <MessagePanel messages={messages} />
-            // </div>
-            // <form onSubmit={() => {}}>
-            //     <input id='chat-input' type="text"  onChange={() => {}} />
-            //     <button type="submit">Send</button>

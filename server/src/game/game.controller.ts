@@ -11,26 +11,21 @@ export class GameController
 	) {}
 
 
-	// @UseGuards(Jwt_Auth_Guard)
+	@UseGuards(Jwt_Auth_Guard)
 	@Post('many_games_data')
 	async	get_may_games_data(@Body('game_ids') game_ids: number[])
 	{
 		return (this.gameService.get_many_games(game_ids));
 	}
 
-	// @UseGuards(Jwt_Auth_Guard)
+	@UseGuards(Jwt_Auth_Guard)
 	@Get('game_data/:game_id')
 	async	get_game_data(@Param('game_id') game_id)
 	{
-		console.log(game_id);
-		console.log(Number.isNaN(Number(game_id)));
 		if (!Number.isNaN(Number(game_id)))
-		{
-			console.log("i would do it");
-			
-			// return (this.gameService.get_one_game(Number(game_id)));
+		{	
+			return (this.gameService.get_one_game(Number(game_id)));
 		}
-		else
-			console.log("i would not do it");
+		return ({});
 	}
 }

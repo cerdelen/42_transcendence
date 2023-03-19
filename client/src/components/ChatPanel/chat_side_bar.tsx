@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import JSCookies from "js-cookie";
+import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 
 interface chat_props {
 	chat_id: number,
@@ -26,8 +27,15 @@ export class chat_card {
 
 
 const Chat_preview_card = ({chat_id, userId} : chat_props) => {
-	console.log('called chat preview window');
-	console.log(chat_id);
+	const { setDisplayed_chat } = useMyDisplayedChatContext();
+	// console.log('called chat preview window');
+	// console.log(chat_id);
+
+	const handleOnClick = () => 
+	{
+		setDisplayed_chat(chat_id);
+		// alert("What do here?" + chat_id);
+	}
 	
 	const [photo, setPhoto] = useState("");
 	const [conversation_name, setConversation_name] = useState("");
@@ -43,24 +51,24 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			}) 
 			const data = await response.json();
 			const participants = data["conversation_participant_arr"];
-			console.log("Hellooooooo this is data" + JSON.stringify(data));
+			// console.log("Hellooooooo this is data" + JSON.stringify(data));
 			set_group_chat(data["group_chat"]);
 			
 			if(data["group_chat"] == false)					// its chat between two
 			{
-				console.log("participants 0 and 1 " + participants[0] + " " + participants[1]);
-				console.log("my user id  " + userId);
+				// console.log("participants 0 and 1 " + participants[0] + " " + participants[1]);
+				// console.log("my user id  " + userId);
 				
 				if (Number(userId) == Number(participants[0]))
 				{
-					console.log("if 1 ");
+					// console.log("if 1 ");
 					
 					await getUserData(participants[1]);
 				}
 				else
 				{
-					console.log("if 2");
-					console.log("this is what i will pass " + participants[0]);
+					// console.log("if 2");
+					// console.log("this is what i will pass " + participants[0]);
 					
 					await getUserData(participants[0]);
 				}
@@ -70,16 +78,9 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 				setConversation_name(data["conversation_name"])
 				await get_default_group_chat_picture();
 			}
-
-			
-			// set_other_chatters(data["conversation_participant_arr"]);
-			// setStatusTFA(data["two_FA_enabled"]);
-			// const path = await response.blob();
-			// const url = URL.createObjectURL(path);
-			// setPhoto(url);
 		}
 		const getUserData = async (other_user_id : number) => {
-			console.log("in get user data id = " + other_user_id);
+			// console.log("in get user data id = " + other_user_id);
 			
 			const response = await fetch(`http://localhost:3003/pictures/${other_user_id}`, {
 				method: "Get",
@@ -125,14 +126,16 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 	// 	console.log("group chatt == true");
 	// else
 	// 	console.log("group chatt == false");
-	console.log("trying to do this here");
-	console.log(photo);
-	console.log(conversation_name);
-	console.log(group_chat);
+
+	
+	// console.log("trying to do this here");
+	// console.log(photo);
+	// console.log(conversation_name);
+	// console.log(group_chat);
 	
 	
 	return (
-		<li className='Chat_preview_cards'>
+		<li className='Chat_preview_cards'onClick={handleOnClick}>
 			<div className='player-availability'>
 				<img src={photo} alt="" />
 				<span id='user-name' title={"chat_name"} >{conversation_name}</span>

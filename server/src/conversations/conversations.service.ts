@@ -7,9 +7,9 @@ import { Services } from "src/utils/consts";
 // import { IChatParticipantsService } from '../participants/participants';
 import { CreateConversationParams } from '../utils/types';
 import { UserService } from '../user/user.service';
-import { Message } from '../messages/entities/message.entity';
+// import { Message } from '../messages/entities/message.entity';
 import { networkInterfaces } from "os";
-
+import { Message } from "@prisma/client"
 
 
 @Injectable()
@@ -81,7 +81,25 @@ export class ConversationService {
 			return [];
 	}
 
-
+	async getMsgsByConversationID(conversationId: number) : Promise<Message[]> {
+		let Msg: Message[] = await this.prisma.message.findMany({
+			where: {
+				conversation_id: Number(conversationId)
+			},
+			orderBy: {
+				created_at: 'desc'
+			},
+			//in frontend i guess we will compare users id and logged in email for validation matter, if id is not the same, we know its not the user
+			include: {
+				user_relation: true
+					// select: {
+					//     id: true
+					// }
+				// }
+			},
+		})
+		return Msg;
+	}
 }
 
 

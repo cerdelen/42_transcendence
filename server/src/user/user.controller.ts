@@ -102,6 +102,5 @@ export class UserController
 			return this.userService.get_user_name(Number(user_id));
 		}
 	}
-
 }
 

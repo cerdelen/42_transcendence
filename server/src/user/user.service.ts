@@ -43,26 +43,17 @@ export class UserService {
 			where: {
 				id: Number(id)
 			},
-				// id: typeof id === "number" ? id : Number.parseInt(id),
-				// name: findParams.name,
-				// id: typeof findParams.id === "number" ? findParams.id : Number.parseInt(findParams.id)
-				// name: findParams.name, 
-				// chatPtsId: 2
-			// select: {
-			// 	id: true,
-			// 	name: true,
-			// 	mail: true,
-			// 	chatPtsId: true,
-			// 	two_FA_enabled: true,
-			// 	two_FA_secret: true,
-			// 	chatParticipant: {
-			// 		select: {
-			// 			userId: true,
-			// 		} 
-			// 	}
-			// },
 		});
-		// console.log("user = " + user);
+		return user;
+	} 
+
+	async	findUserByName(_name: string) : Promise<User | undefined>
+	{
+		const user = await  this.prisma.user.findUnique({
+			where: {
+				name: _name
+			},
+		});
 		return user;
 	} 
 

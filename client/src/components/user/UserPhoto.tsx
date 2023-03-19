@@ -37,7 +37,7 @@ const UserPhoto = ({ userId }: Props) => {
       );
 
       const data = await response.json();
-      if (!data["status"]) getUserPic();
+      if (!data["status"] && userId) getUserPic();
     };
     displayPhoto();
   }, []);

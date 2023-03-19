@@ -77,7 +77,8 @@ const GameHistory = ({ gamesList }: Props) => {
   useEffect(() => {
     const fetchGames = async () => {
 
-      const gamesListy = await fetch(`http://localhost:3003/game/many_games_data`, {
+      try {
+           const gamesListy = await fetch(`http://localhost:3003/game/many_games_data`, {
         method: "Post",
         headers: {
           "Content-Type": "application/json",
@@ -92,6 +93,11 @@ const GameHistory = ({ gamesList }: Props) => {
         fetchNamesOponentTwo(allGames);
         getPicturePlayerOne(allGames);
         getPicturePlayerTwo(allGames);
+      } catch (error) {
+        console.error(`fetch games in GamesHistory failed: ${error}`);
+        
+      }
+   
     };
 
     const fetchNamesOponentOne = async (gamesListy: any) => {

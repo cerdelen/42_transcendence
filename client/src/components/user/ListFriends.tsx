@@ -30,6 +30,7 @@ const ListFriends = ({ friendsList }: Props) => {
   const [profilePictures, setProfilePictures] = useState<string[]>([]);
   useEffect(() => {
     const fetchNames = async () => {
+    try {
       const newlist = await Promise.all(
         friendsList.map(async (id) => {
           const response = await fetch("http://localhost:3003/user/user_name", {
@@ -45,10 +46,15 @@ const ListFriends = ({ friendsList }: Props) => {
         })
       );
       setNames(newlist);
+    } catch (error) {
+      console.error(`fetch Names in ListFriends failed: ${error}`);
+    }
+      
     };
 
     const getUserPic = async () => {
-      const newlist = await Promise.all(
+      try {
+        const newlist = await Promise.all(
         friendsList.map(async (id) => {
           const response = await fetch(`http://localhost:3003/pictures/${id}`, {
             method: "Get",
@@ -60,10 +66,13 @@ const ListFriends = ({ friendsList }: Props) => {
           const path = await response.blob();
           const url = URL.createObjectURL(path);
           return url;
-          // setProfilePicture(url);
         })
       );
       setProfilePictures(newlist);
+      } catch (error) {
+        console.error(`fetch getUserPic in ListFriends failed: ${error}`);
+      }
+      
     };
 
     fetchNames();

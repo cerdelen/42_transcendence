@@ -75,8 +75,8 @@ const UserPage = ({}: Props) => {
               <div>{`This is 2FA enabled: ${TFA}`}</div>
             </div>
             <div>{`This is your stats: ${0}`}</div>
-            <button onClick={toggleVisibility}>Close</button>
           </div>
+            {/* <button onClick={toggleVisibility}>X</button> */}
           <div id="lists">
             <ListFriends friendsList={friendsList} />
             <GameHistory gamesList={gamesList} />

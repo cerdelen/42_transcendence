@@ -84,3 +84,10 @@
 #userInfo #friend-card span{
     margin-right: 2rem;
 }
+
+#userInfo button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+}

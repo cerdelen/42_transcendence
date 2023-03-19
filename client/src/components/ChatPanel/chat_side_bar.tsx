@@ -48,12 +48,20 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			
 			if(data["group_chat"] == false)					// its chat between two
 			{
-				if (userId == participants[0])
+				console.log("participants 0 and 1 " + participants[0] + " " + participants[1]);
+				console.log("my user id  " + userId);
+				
+				if (Number(userId) == Number(participants[0]))
 				{
+					console.log("if 1 ");
+					
 					await getUserData(participants[1]);
 				}
 				else
 				{
+					console.log("if 2");
+					console.log("this is what i will pass " + participants[0]);
+					
 					await getUserData(participants[0]);
 				}
 			}
@@ -70,8 +78,10 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			// const url = URL.createObjectURL(path);
 			// setPhoto(url);
 		}
-		const getUserData = async (user_id : number) => {
-			const response = await fetch(`http://localhost:3003/pictures/${user_id}`, {
+		const getUserData = async (other_user_id : number) => {
+			console.log("in get user data id = " + other_user_id);
+			
+			const response = await fetch(`http://localhost:3003/pictures/${other_user_id}`, {
 				method: "Get",
 				headers: {
 					// "Content-Type": "application/json",
@@ -81,17 +91,17 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			const path = await response.blob();
 			const url = URL.createObjectURL(path);
 			setPhoto(url);
-			const response_two = await fetch("http://localhost:3003/user/user_data", {
+			const response_two = await fetch("http://localhost:3003/user/user_name", {
 				method: "Post",
 				headers: {
 					'Content-Type': 'application/json',
 					'Accept': 'application/json',
 				  Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
-				body: JSON.stringify({ user_id: userId }),
+				body: JSON.stringify({ user_id: other_user_id }),
 			  });
-			const data = await response_two.json();
-			setConversation_name(data["name"]);
+			const data = await response_two.text();
+			setConversation_name(data);
 		}
 		const get_default_group_chat_picture = async () => {
 			const response = await fetch(`http://localhost:3003/pictures/group_chat`, {

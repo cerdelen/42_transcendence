@@ -16,8 +16,8 @@ const HomePage = ({userId} : { userId: string}) => {
   return (
 	<div className='game-page'>
 		<Header setGamePage={setGamePage} />
-		{/* {gamePage ? <Game /> : <Community />} */}
-		<Community userId={userId}/>
+		{gamePage ? <Game userId={userId}/> : <Community userId={userId}/>}
+		{/* <Community userId={userId}/> */}
 		{/* <ChatPanel userId={userId}/> */}
 		
 		<Footer />

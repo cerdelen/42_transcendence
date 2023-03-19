@@ -1,12 +1,14 @@
 import { useContext } from "react";
 import { UserContext } from "../../contexts/UserContext";
 
-const UserName = () => {
-  const { name } = useContext(UserContext);
+interface Props {
+  userName: string;
+}
+
+const UserName = ({userName}: Props) => {
+
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
-      <div>{`USERNAME: ${name}`}</div>
-    </div>
+      <div>{`USERNAME: ${userName}`}</div>
   );
 };
 

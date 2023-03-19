@@ -3,14 +3,16 @@ import { UserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
 import defaultPicture from "../../images/default-picture.jpeg";
 
-const UserPhoto = () => {
-  const { name } = useContext(UserContext);
+interface Props {
+  userId: string;
+}
 
+const UserPhoto = ({ userId }: Props) => {
   const [photoURL, setPhotoURL] = useState<string>(defaultPicture);
 
   useEffect(() => {
     const getUserPic = async () => {
-      const response = await fetch("http://localhost:3003/pictures/me", {
+      const response = await fetch(`http://localhost:3003/pictures/${userId}`, {
         method: "Get",
         headers: {
           "Content-Type": "application/json",

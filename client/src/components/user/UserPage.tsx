@@ -12,67 +12,70 @@ type Props = {
 };
 
 const UserPage = ({}: Props) => {
-  const { userId, mail, two_FA_enabled, games } =
-    useContext(UserContext);
-    const { userIdCard, setUserIdCard } = useMyContext();
-  type Game = {
-    id: number;
-    player_one: number;
-    player_two: number;
-    winner: number;
-    loser: number;
-    score_one: number;
-    score_two: number;
-    finished: boolean;
+  const { two_FA_enabled, games } = useContext(UserContext);
+  const { userIdCard, setUserIdCard } = useMyContext();
+
+  const [isVisible, setIsVisible] = useState(true);
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [TFA, setTFA] = useState(false);
+  const { setShowUserInto } = useMyContext();
+  const [friendsList, setFriendsList] = useState([]);
+  // type Game = {
+  //   id: number;
+  //   player_one: number;
+  //   player_two: number;
+  //   winner: number;
+  //   loser: number;
+  //   score_one: number;
+  //   score_two: number;
+  //   finished: boolean;
+  // };
+
+  // const initialGames: Game[] = [];
+
+  // const [gamesHistory, setGamesHistory] = useState<Game[]>(initialGames);
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible);
+    setShowUserInto(false);
   };
-
-  const initialGames: Game[] = [];
-
-  const [gamesHistory, setGamesHistory] = useState<Game[]>(initialGames);
-  const [photoURL, setPhotoURL] = useState<string>("");
-
   useEffect(() => {
-    const getUserPic = async () => {
-      const response = await fetch(`http://localhost:3003/pictures/${userId}`, {
-        method: "Get",
+    const getData = async () => {
+      const response = await fetch("http://localhost:3003/user/user_data", {
+        method: "Post",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${JSCookies.get("accessToken")}`,
         },
+        body: JSON.stringify({ user_id: userIdCard }),
       });
-      const path = await response.blob();
-      const url = URL.createObjectURL(path);
-      setPhotoURL(url);
+      const data = await response.json();
+      setUserName(data["name"]);
+      setUserEmail(data["mail"]);
+      setTFA(data["two_FA_enabled"]);
+      setFriendsList(data["friendlist"]);
     };
-    getUserPic();
-  }, []);
-
-  const [isVisible, setIsVisible] = useState(true);
-  const { setShowUserInto } = useMyContext();
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
-    setShowUserInto(false);
-
-  };
+    if (userIdCard) getData();
+  }, [userIdCard]);
   return (
     <>
       {isVisible && (
         <div id="userInfo">
           <button onClick={toggleVisibility}>Close</button>
           UserPage
-          {/* <img src={photoURL} /> */}
-          <UserPhoto />
-          <div>{`This is ${userIdCard}`}</div>
-          <UserName />
-          <div>{`This is email: ${mail}`}</div>
-          <div>{`This is 2FA enabled: ${two_FA_enabled}`}</div>
-          <ListFriends />
+          <UserPhoto userId={userIdCard} />
+          {/* <div>{`This is ${userIdCard}`}</div> */}
+          {/* <UserName userName={userName} /> */}
+          <div>{`USERNAME: ${userName}`}</div>
+          <div>{`This is email: ${userEmail}`}</div>
+          <div>{`This is 2FA enabled: ${TFA}`}</div>
+          <ListFriends friendsList={friendsList}/>
           {/* <div>{`This is your stats: ${sta}`}</div> */}
           <div>{`This is your games: ${games}`}</div>
         </div>
       )}
     </>
   );
-}
+};
 
 export default UserPage;

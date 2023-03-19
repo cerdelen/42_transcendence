@@ -41,7 +41,6 @@ const ProfileCard = () => {
 
   useEffect(() => {
     const getData = async () => {
-      console.log("one more time");
       const response = await fetch("http://localhost:3003/user/user_data", {
         method: "Post",
         headers: {

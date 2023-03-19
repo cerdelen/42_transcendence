@@ -17,18 +17,18 @@ const NameComponent = ({ name, pic }: NameProps) => {
   );
 };
 
-// type Props = {
-//   friendsNames: string[];
-// };
+type Props = {
+  friendsList: string[];
+};
 
-const ListFriends = () => {
-  const { friendlist } = useContext(UserContext);
+const ListFriends = ({friendsList} : Props) => {
+  // const { friendlist } = useContext(UserContext);
   const [friendsNames, setNames] = useState<string[]>([]);
   const [profilePictures, setProfilePictures] = useState<string[]>([]);
   useEffect(() => {
     const fetchNames = async () => {
       const newlist = await Promise.all(
-        friendlist.map(async (id) => {
+        friendsList.map(async (id) => {
           const response = await fetch("http://localhost:3003/user/user_name", {
             method: "POST",
             headers: {
@@ -46,7 +46,7 @@ const ListFriends = () => {
 
     const getUserPic = async () => {
       const newlist = await Promise.all(
-        friendlist.map(async (id) => {
+        friendsList.map(async (id) => {
           const response = await fetch(`http://localhost:3003/pictures/${id}`, {
             method: "Get",
             headers: {
@@ -65,7 +65,7 @@ const ListFriends = () => {
 
     fetchNames();
     getUserPic();
-  }, [friendlist]);
+  }, [friendsList]);
 
   return (
     <ul>

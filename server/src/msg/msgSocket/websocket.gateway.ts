@@ -6,20 +6,11 @@ import { MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, W
 // import { AuthService } from '../auth/auth.service';
 // import { UserService } from '../user/user.service';
 import { Server } from 'socket.io';
+import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
+import { MsgService } from 'src/msg/msg.service';
 import { io_server } from 'src/utils/Server';
 
 // import { Server } from '@nestjs/platform-socket.io';
-
-
-
-
-// export type JwtPayload = {
-//     name: string;
-//     sub: string | Number;
-//     mail: string;
-//     is_two_FAed: boolean;
-//     id: number
-// };
 
 @WebSocketGateway((
 	{
@@ -33,17 +24,12 @@ export class MessagingGateway implements OnGatewayConnection {
 		// console.log(client);
 		
 	}
-	constructor ()
+	constructor (private msg: MsgService)
 	{
 	}
 
 		@WebSocketServer()
 		server;
-		// io = new Server(server, { cors: { origin: '*' } });
-
-
-		// io_servss: io_server;
-
 		onModuleInit() {
 			console.log("constructed this shit");
 		}
@@ -51,25 +37,15 @@ export class MessagingGateway implements OnGatewayConnection {
 		@SubscribeMessage('message')
 		handleCreateMessage(
 			@MessageBody() data: any) {
-				console.log("here connect");
-				// this.io_serv.io.emit();
-				// this.server.emit('message', message);
-
-
+				console.log("here is msg subscriber");
+				console.log(JSON.stringify(data));
 				
-				// this.io_server.emit();
+				this.msg.createMsg(data);
 		}
 
 		@OnEvent('create.message')
 		handleMessageCreateEvent(payload: any) {
 			console.log("hello");
 			console.log(payload);
-			// this.io_server.emit();
-			// this.io_serv.emit();
-
-
-
-
-			// this.io_server.emit('onMessage', payload)
 		}
 } 

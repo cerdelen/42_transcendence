@@ -325,6 +325,23 @@ footer {
   object-fit: cover;
 }
 
+.Chat_preview_cards{
+  background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140));
+  /* border: 1px solid pink; */
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  margin-bottom: .6rem;
+}
+
+.Chat_preview_cards img{
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
 .player-availability {
   width: 100%;
   display: flex;

@@ -36,3 +36,4 @@ lerna-debug.log*
 database
 /uploads/profile_pictures/*
 !/uploads/profile_pictures/default_picture.jpeg
+!/uploads/profile_pictures/group_chat_picture.jpeg

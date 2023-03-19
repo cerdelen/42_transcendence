@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { MsgController } from './msg.controller';
 import { MsgService } from './msg.service';
 import { ConversationModule } from '../conversations/conversations.module';
 import { PrismaModule } from '../prisma/prisma.module';
@@ -12,12 +11,11 @@ import { EventEmitterModule, EventEmitter2 } from '@nestjs/event-emitter';
 import { GatewayModule } from '../gateway/gateway.module';
 
 
-
 @Module({
-	imports: [ConversationModule, PrismaModule, UserModule, GatewayModule,],
-	controllers: [MsgController],
+	imports: [ConversationModule, PrismaModule, UserModule],
+	// controllers: [MsgController],
 	providers: [ PrismaService, MsgService, UserService, EventEmitter2],
-	// exports: [MsgService]
+	exports: [MsgService]
 })
 
 

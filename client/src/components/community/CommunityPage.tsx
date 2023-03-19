@@ -6,6 +6,7 @@ import { Socket } from 'socket.io';
 // import  {io, Socket} from 'socket.io-client';
 import { useState, useEffect, Children, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+// import { getConversationMsgs } from '../../utils/apis';
 import { MessagesType } from '../../utils/types';
 import { ConversationType } from '../../utils/types';
 import { MessagePanel } from '../../messages/MessagePanel';
@@ -15,6 +16,7 @@ import { SocketContext, our_socket} from '../../utils/context/SocketContext';
 import UserPage from '../user/UserPage';
 import { useMyContext } from '../../contexts/InfoCardContext';
 
+import Chat_cards from '../ChatPanel/chat_side_bar'
 
 // interface message{
 //   name: string,
@@ -86,7 +88,7 @@ type Props = {}
 //   })
 //   // let socket: Socket;
 //   // const [users, setUsers] = useState<message[]>([{name: "Vladimir", message: "Siemanko"}, {name: "Ruslan", message: "I guess "}]);
-const Community = () => {
+const Community = ({userId} : { userId: string}) => {
   const [users, setUsers] = useState<message[]>([]);
   const [input, setInput] = useState(""); 
   const [newMessage, setNewMessage] = useState<message>();
@@ -133,7 +135,9 @@ const Community = () => {
   }
   const sendMessage = () =>
   {
-        our_socket.emit('createMessage', {name: "Mock user", text: input}, () => {
+    console.log("sendMessage function beginning");
+    console.log(input);
+        our_socket.emit('message', {author: Number(userId), text: input, conversation_id: 1, created_at: Date.now()}, () => {
           setInput('');
         })
         our_socket.emit('createGame', {});
@@ -160,7 +164,7 @@ const Community = () => {
         <div className='players-online'>
 			<h2>PLAYERS ONLINE</h2>
 			<input type="text" placeholder='SEARCH'/>
-			{players.length === 0 ? <div>No one is online </div> : <ListPlayersOnline />}
+			{players.length === 0 ? <div>No one is online </div> : <Chat_cards userId={userId}/>}
 		</div>
       {/* <NamePlace setName={setName} name_is_set={name_is_set}/> */}
       
@@ -179,7 +183,6 @@ const Community = () => {
 
                 <button type="submit" onClick={(e) => {
                   console.log("i pressed the button");
-                  
                   if(input)
                     sendMessage();
                 }

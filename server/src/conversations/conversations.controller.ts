@@ -1,8 +1,7 @@
-import { UseGuards, Post, Inject, Body, UsePipes, ValidationPipe, Req, Get, Controller } from '@nestjs/common';
+import { UseGuards, Post, Inject, Body, UsePipes, ValidationPipe, Req, Get, Controller, Param } from '@nestjs/common';
 import { Routes, Services } from '../utils/consts';
 // import { AuthenticateGuard } from '../utils/Guards';
 // import { IConversationsService } from './conversations';
-import { CreateConversationDto } from './dto/CreateConversation.dto';
 import { AuthUser } from 'src/utils/decorators';
 import { User, Conversation } from '@prisma/client';
 // import { AuthGuard } from '@nestjs/passport';
@@ -18,7 +17,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 
 
-@Controller()
+@Controller('conversation')
 export class ConversationController {
 	constructor (
 		private readonly conversationsService: ConversationService,
@@ -26,7 +25,7 @@ export class ConversationController {
 
 
 	@UseGuards(Jwt_Auth_Guard)
-	@Post('conversation/create')
+	@Post('create')
 	async createConversation(
 		@Req()
 		req : any,
@@ -79,7 +78,7 @@ export class ConversationController {
 		}
 
 		@UseGuards(Jwt_Auth_Guard)
-		@Post('conversation/join')
+		@Post('join')
 		async joinConversation(
 			@Req() req: any,	
 			@Body() userContent: {
@@ -114,9 +113,26 @@ export class ConversationController {
 			})
 			return updatedUser
 		} 
-		
 
+		@UseGuards(Jwt_Auth_Guard)
+		@Get('getMyChats')
+		async getMyConversations(
+			@Req() req: any,
+		) {
+			console.log();
+			
+			return this.conversationsService.findAllConversationsByUser(req.user.id);
+		}
 
+		@UseGuards(Jwt_Auth_Guard)
+		@Get('getConversationById/:conversation_id')
+		async getConversation(
+			@Param('conversation_id') conversation_id
+		) {
+			console.log();
+			
+			return this.conversationsService.findConversation(conversation_id);
+		}
 }
 
 

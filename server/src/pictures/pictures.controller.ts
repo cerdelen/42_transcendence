@@ -66,7 +66,7 @@ export class PicturesController
 		});
 	}
 	
-	
+
 	@UseGuards(Jwt_Auth_Guard)
 	@Get('turn_on_picture')
 	async	turn_on_picture(@Req() _req: any)
@@ -89,6 +89,14 @@ export class PicturesController
 	{
 		const status = await this.userService.status_default_image(req.user.id);
 		return {'status': status};
+	}
+
+	// @UseGuards(Jwt_Auth_Guard)
+	@Get('group_chat')
+	async	get_group_chat(@Param('userId') userId, @Res() _res: any) : Promise<any>
+	{
+		return _res.sendFile("group_chat_picture.jpeg", {root: './uploads/profile_pictures'});
+
 	}
 
 	@UseGuards(Jwt_Auth_Guard)

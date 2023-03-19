@@ -268,7 +268,7 @@ export class UserService {
 	{
 		return (this.prisma.stats.findUnique({where: { stat_id: user_id }}));
 	}
-	
+
 	async	get_user_name(user_id: number) : Promise<String>
 	{
 		const user = await this.prisma.user.findUnique({where: {id: user_id}});

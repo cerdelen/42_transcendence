@@ -48,7 +48,7 @@ model Conversation {
 	conversation_name				String?		
 	conversation_msg_arr			Message[]
 	conversation_created_at			DateTime			@default(now())
-	// chat_participants	ChatParticipant[]	
+	// chat_participants	ChatParticipant[]
 	conversation					Boolean				@default(true)
 	//something to consider later after creating chat
 	conversation_is_public			Boolean		@default(true)
@@ -60,6 +60,9 @@ model Conversation {
 	conversation_admin_arr			Int[] 
 	conversation_black_list_arr		Int[]
 	conversation_mute_list_arr		Int[]
+
+	//sorry but i gotta do this
+	group_chat						Boolean		@default(false)
 }
 
 // model ChatParticipant {
@@ -77,7 +80,7 @@ model Message {
 	// User stuff
 	msg_id				Int			@unique  @id @default(autoincrement()) 
 	author				Int?		
-	user_name			String		
+	// user_name			String		
 	text				String
 	created_at			DateTime	@default(now())
 	//necessary fro array of messages in Chat model

@@ -24,7 +24,7 @@ import { GameModule } from './game/game.module';
 
 @Module({
 	// imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, ChatModule],
-	imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, ConversationModule, MsgModule, GatewayModule, EventEmitterModule, GameModule],
+	imports: [AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, MsgModule, ConversationModule, GatewayModule, EventEmitterModule, GameModule],
 	controllers: [AppController],
 	providers: [AppService, UserService],
 })

@@ -10,14 +10,15 @@ type Props = {}
 
 
 
-const HomePage = () => {
+const HomePage = ({userId} : { userId: string}) => {
 	const [gamePage, setGamePage] = useState(true);
 
   return (
 	<div className='game-page'>
 		<Header setGamePage={setGamePage} />
 		{/* {gamePage ? <Game /> : <Community />} */}
-		<Community />
+		<Community userId={userId}/>
+		{/* <ChatPanel userId={userId}/> */}
 		
 		<Footer />
 	</div>

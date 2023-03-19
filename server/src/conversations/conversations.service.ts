@@ -65,8 +65,21 @@ export class ConversationService {
 	async findConversation(id: number): Promise<Conversation | undefined> {
 		console.log("ID = " + id);
 		const foundConversation = await this.conversation({conversation_id: Number(id)});
+		console.log("ID = found" );
 		return foundConversation;
 	}	
+
+	async findAllConversationsByUser(user_id: number)  {
+		const existingUser = this.prisma.user.findUnique({
+			where : {
+				id: user_id,
+			}
+		})
+		if (existingUser)
+			return (await existingUser).conversation_id_arr;
+		else 
+			return [];
+	}
 
 
 }

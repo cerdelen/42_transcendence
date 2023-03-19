@@ -79,6 +79,8 @@ export class MsgService {
 
 		async createMsg(createMsgDto: CreateMsgDto) {
 			// console.log("DATA.USER_ID = " + createMsgDto.);
+			console.log("createMsg function");
+			
 			console.log("DATA.TEXT = " + createMsgDto.text);
 			// const conversat = await this.prisma.conversation.findUnique({
 			// 	where: {
@@ -98,24 +100,24 @@ export class MsgService {
 				throw new HttpException("Conversation was not found", HttpStatus.FORBIDDEN);
 				console.log("CONVERSATION = " + convers.conversation_id);
 			const user = await this.user.findUserById(createMsgDto.author);
-			console.log("USER.NAME = " + user.name);
+			// console.log("USER.NAME = " + user.name);
 			
 			if (!user)
 				throw new HttpException("User was not found", HttpStatus.FORBIDDEN);
 			// console.log("USER = " + user.id);
 			
 			const newMsg = await this.prisma.message.create({
-				data: {
+				data: { 
 					text: createMsgDto.text,
 					conversation_id: createMsgDto.conversation_id,
 					author: createMsgDto.author,
-					user_name: user.name
+					// user_name: user.name
 				},
 				include: {
 					user_relation: {
 						select: {
 							user_msg_arr: true,
-							name: true 
+							id: true
 						}    
 					}
 				}
@@ -182,11 +184,11 @@ export class MsgService {
 			const existingUser = await this.user.findUserById(user_id);
 			if (!existingUser)
 				throw new HttpException("user was not found", HttpStatus.BAD_REQUEST);
-			console.log("existinguser.name = " + existingUser.name);
+			// console.log("existinguser.name = " + existingUser.name);
 			const messages = await this.prisma.message.findMany({
 				where: {
 					author: +user_id,
-					user_name: existingUser.name
+					// user_name: existingUser.name
 				},
 				// select: {
 				// 	author: true,

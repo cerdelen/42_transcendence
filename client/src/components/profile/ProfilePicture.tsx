@@ -6,6 +6,7 @@ function hasJpegExtension(filename: string): boolean {
   return filename.endsWith('.jpeg');
 }
 
+
 const ProfilePicture = () => {
   const [useDefaultImage, setUseDefaultImage] = useState<boolean>(false);
   const [showUploadButton, setShowUploadButton] = useState<boolean>(false);
@@ -65,7 +66,7 @@ const ProfilePicture = () => {
     const url = URL.createObjectURL(path);
     setProfilePicture(url);
   }
-    
+
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {

@@ -127,11 +127,11 @@ function App() {
       >
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} />
+            <Route path="/" element={loggedIn ? <HomePage userId={userId}/> : <LoginPage />} />
             {/* <Route path="/loggedin" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/> */}
             <Route path="/game" element={<Game userId={userId} />} />
             <Route path="/auth" element={<SecondFactorPage />} />
-            <Route path="/home" element={<HomePage />} />
+            <Route path="/home" element={<HomePage userId={userId}/>} />
             {/* <Route path="/user" element={<UserPage />} /> */}
           </Routes>
         </BrowserRouter>

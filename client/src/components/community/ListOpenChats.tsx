@@ -37,6 +37,14 @@ const ListOpenChats = () => {
 	const conversations = useContext(ConversationContext);
 
 
+	// useEffect(() => {
+	// 	getConversations()
+	// 		.then(({ data }) => {
+	// 			setConversations(data);
+	// 		})
+	// 		.catch((err) => console.log(err)
+	// 		)
+	// }, []);
 
     return (
         <ul className='scrollable-list open-chats' >

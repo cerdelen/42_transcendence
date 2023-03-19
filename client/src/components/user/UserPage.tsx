@@ -7,13 +7,14 @@ import UserName from "./UserName";
 import UserPhoto from "./UserPhoto";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import GameHistory from "./GamesHistory";
+import UserStats from "./UserStatistics";
 
 type Props = {
   // setShowUserInto: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const UserPage = ({}: Props) => {
-  const { two_FA_enabled, games } = useContext(UserContext);
+  const { userId, games } = useContext(UserContext);
   const { userIdCard, setUserIdCard } = useMyContext();
 
   const [isVisible, setIsVisible] = useState(true);
@@ -69,14 +70,19 @@ const UserPage = ({}: Props) => {
               <UserPhoto userId={userIdCard} />
             </div>
 
-            <div>
-              <div>{`USERNAME: ${userName}`}</div>
-              <div>{`This is email: ${userEmail}`}</div>
-              <div>{`This is 2FA enabled: ${TFA}`}</div>
+            <div id="generic-info">
+              <span>{`Player: ${userName}`}</span>
+              <span>{`Email: ${userEmail}`}</span>
+              {
+                userId === userIdCard ? 
+              <span>{`2FA enabled: ${TFA}`}</span> : <span></span>
+              }
             </div>
-            <div>{`This is your stats: ${0}`}</div>
+            <UserStats userId={userIdCard}/>
+            {/* <div>{`This is your stats: ${0}`}</div> */}
+
           </div>
-            {/* <button onClick={toggleVisibility}>X</button> */}
+            <button id="exit-buttton" onClick={toggleVisibility}>X</button>
           <div id="lists">
             <ListFriends friendsList={friendsList} />
             <GameHistory gamesList={gamesList} />

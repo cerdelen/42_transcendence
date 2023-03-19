@@ -6,6 +6,7 @@
 @import "./styles/profile-photo.css";
 @import "./styles/user-info-card.css";
 @import "./styles/game-history.css";
+@import "./styles/user-stats.css";
 
 /* GENERAL */
 body {
@@ -188,7 +189,7 @@ header .basic:hover {
 /* #user-dropdown button {
   border: 2px solid red;
 } */
-button:not(#chat-area button) {
+button:not(#chat-area button, #userInfo button) {
   background-color: #381a72; /* light purple */
   color: white;
   border-radius: 15px; /* slightly rounded edges */
@@ -198,7 +199,7 @@ button:not(#chat-area button) {
   cursor: pointer;
 }
 
-button:hover {
+button:hover:not(#userInfo button) {
   box-shadow: 0 0 7px #d0cccc, 0 0 13px #d0cccc, 0 0 24px #d0cccc;;
 }
 

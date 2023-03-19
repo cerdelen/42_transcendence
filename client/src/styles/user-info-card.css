@@ -6,7 +6,7 @@
     transform: translate(-50%, -50%);
     min-width: 800px;
     min-height: 600px;
-    aspect-ratio: 4 / 4;
+    aspect-ratio: 4 / 3;
     width: 80%;
     height: 60%;
     max-width: calc(100vh * 4 / 3);
@@ -19,26 +19,23 @@
     box-shadow: inset 10px 0 20px -10px rgba(107, 38, 154, 0.5),
                 inset -10px 0 20px -10px rgba(241, 32, 168, 0.5);
 
-    /* organisation */
-    /* display: flex; */
-    /* flex-direction: column; */
-    /* align-items: center; */
-    /* justify-content: space-around; */
-
 }
 
 #userInfo #stats{
-
     border: 2px solid yellow;
     display: flex;
     flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
     height: 40%;
 }
 
 #userInfo #photo {
     width: 200px;
     height: 200px;
-    object-fit: contain;
+    /* object-fit: contain; */
+    border-radius: 5px;
+    border: 2px solid red;
 }
 
 #userInfo #lists{
@@ -49,10 +46,6 @@
     border: 2px solid red;
 }
 
-#userInfo * {
-    
-    /* border: 2px solid red; */
-}
 
 #userInfo .user-info-lists {
     border: 2px solid lime;
@@ -86,8 +79,23 @@
 }
 
 #userInfo button {
+    margin-top: 4px;
+    margin-right: 3px;
+    cursor: pointer;
     position: absolute;
     top: 0;
     right: 0;
     z-index: 1;
+    background-color: inherit;
+    border: none;
+    font-size: x-large;
+    /* padding: 0; */
+    color: rgb(22, 2, 34);
+      text-shadow: 0 0 20px #FFF, 0 0 30px #ffffff, 0 0 40px #FFF, 0 0 50px #FFF, 0 0 60px #FFF, 0 0 70px #FFF;
+}
+#userInfo #generic-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: flex-start;
 }

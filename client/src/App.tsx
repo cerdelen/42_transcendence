@@ -87,14 +87,14 @@ function App() {
         body: JSON.stringify({ user_id: userid }),
       });
       const data = await response.json();
-      await set2FA(data["two_FA_enabled"]);
-      await set2FASecret(data["two_FA_secret"]);
-      await setName(data["name"]);
-      await setMail(data["mail"]);
-      await setFriendslist(data["friendlist"]);
-      await setStats(data["stats"]);
-      await setGames(data["games"]);
-      await setHasPicture(data["show_default_image"]);
+      set2FA(data["two_FA_enabled"]);
+      set2FASecret(data["two_FA_secret"]);
+      setName(data["name"]);
+      setMail(data["mail"]);
+      setFriendslist(data["friendlist"]);
+      setStats(data["stats"]);
+      setGames(data["games"]);
+      setHasPicture(data["show_default_image"]);
     } catch (error) {
       console.error(error);
     }

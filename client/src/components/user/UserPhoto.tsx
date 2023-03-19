@@ -23,7 +23,7 @@ const UserPhoto = ({ userId }: Props) => {
       const url = URL.createObjectURL(path);
       setPhotoURL(url);
     };
-    let useDefaultImage = false;
+    // let useDefaultImage = false;
     const displayPhoto = async () => {
       const response = await fetch(
         "http://localhost:3003/pictures/is-image-default",
@@ -41,7 +41,7 @@ const UserPhoto = ({ userId }: Props) => {
     };
     displayPhoto();
   }, []);
-  return <img src={photoURL} style={{ maxWidth: "264px" }} />;
+  return <img id="photo" src={photoURL}/>;
 };
 
 export default UserPhoto;

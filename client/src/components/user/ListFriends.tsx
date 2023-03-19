@@ -9,10 +9,13 @@ interface NameProps {
 
 const NameComponent = ({ name, pic }: NameProps) => {
   return (
-    <li id='open-chat-card' style={{ maxWidth: "264px",}}>
-      {name}
-      <img src={pic} alt="userPhoto" style={{ width: "64px", height: "64px" }} />
-
+    <li id="friend-card">
+      <img
+        src={pic}
+        alt="userPhoto"
+        style={{ width: "64px", height: "64px" }}
+        />
+        <span>{name}</span>
     </li>
   );
 };
@@ -21,7 +24,7 @@ type Props = {
   friendsList: string[];
 };
 
-const ListFriends = ({friendsList} : Props) => {
+const ListFriends = ({ friendsList }: Props) => {
   // const { friendlist } = useContext(UserContext);
   const [friendsNames, setNames] = useState<string[]>([]);
   const [profilePictures, setProfilePictures] = useState<string[]>([]);
@@ -68,8 +71,9 @@ const ListFriends = ({friendsList} : Props) => {
   }, [friendsList]);
 
   return (
-    <ul>
-      Friends:
+    <ul className="user-info-lists">
+      <div>Friends:</div>
+      <br />
       {friendsNames.map((name, idx) => (
         <NameComponent key={name} name={name} pic={profilePictures[idx]} />
       ))}

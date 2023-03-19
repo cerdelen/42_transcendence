@@ -1,21 +1,18 @@
-#open-chat-card {
+/* #open-chat-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
     min-width: 220px;
-    /* border: 2px solid red; */
     margin-bottom: 0.6rem;
     border-radius: 25px;
     background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140));
 }
 
 #open-chat-card img{
-    /* border-radius: 25px; */
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
 }
 
 #open-chat-card span{
-    /* border: 2px solid green; */
     margin-left: 3rem;
-}
+} */

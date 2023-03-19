@@ -9,6 +9,7 @@ import { CreateConversationParams } from '../utils/types';
 import { UserService } from '../user/user.service';
 import { Message } from '../messages/entities/message.entity';
 import { networkInterfaces } from "os";
+import { skip } from 'rxjs';
 
 
 
@@ -81,7 +82,45 @@ export class ConversationService {
 			return [];
 	}
 
+	async getConversations(params: {
+		where?: Prisma.ConversationWhereInput;
+	}): Promise<Conversation[]> {
+		const {where} = params;
+		return this.prisma.conversation.findMany({
+			where,
+		},
+		)
+	}
 
+	async exclude (user, ...keys) {
+		for (let id of keys) {
+			delete user[id];
+		}
+		return user;
+	}
+
+	async getChatsUserNotPartOf(user_id :number) : Promise<number[]> {
+        const convs = await this.prisma.conversation.findMany({
+            where: {
+                NOT: {
+                    conversation_participant_arr: {
+                        has: user_id,
+                    },
+
+                },
+
+
+            }
+
+        })
+        let arr : number [] = [];
+        for(let i: number = 0; i < convs.length; i++)
+        {
+            if (convs[i].group_chat == true)
+                arr.push(convs[i].conversation_id);
+        }
+        return arr;
+    }
 }
 
 

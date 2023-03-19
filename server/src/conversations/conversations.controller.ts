@@ -133,6 +133,20 @@ export class ConversationController {
 			
 			return this.conversationsService.findConversation(conversation_id);
 		}
+
+		@UseGuards(Jwt_Auth_Guard)
+		@Get('getConversations')
+		async getConversations(): Promise<Conversation[]> {
+			return this.conversationsService.getConversations({});
+		}
+
+		@UseGuards(Jwt_Auth_Guard)
+		@Get('getAllChatsWithoutUser')
+		async getConversationsWithoutCurrUser(
+			@Req() req: any,
+		) {
+			return this.conversationsService.getChatsUserNotPartOf(req.user.id);
+		}
 }
 
 

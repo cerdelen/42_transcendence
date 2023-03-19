@@ -17,9 +17,6 @@ model User {
 	mail					String
 	// chatParticipant	ChatParticipant?	@relation(fields: [chatPtsId], references: [ChatPartId])
 	conversation_id_arr		Int[]
-	user_msg_arr			Message[]
-			
-
 
 	// picture			String?
 	// 2_FA_stuff

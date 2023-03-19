@@ -10,9 +10,9 @@ interface Props {
 }
 
 const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
-  // const { name } = useContext(UserContext);
+  const { userId } = useContext(UserContext);
   const [showInput, setShowInput] = useState<boolean>(false);
-  const { showUserInfo, setShowUserInto } = useMyContext();
+  const { showUserInfo, setShowUserInto, setUserIdCard } = useMyContext();
   const [newName, setNewName] = useState<string>("");
   useEffect(() => {
     setNewName(userName);
@@ -61,6 +61,7 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
         onClick={() => {
           setIsDropdownOpen(false);
           setShowUserInto(!showUserInfo);
+          setUserIdCard(userId);
         }}
         src={expertLevel}
         alt=""

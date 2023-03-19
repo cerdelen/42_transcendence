@@ -157,7 +157,7 @@ const Community = ({userId} : { userId: string}) => {
     // const poepleAreOnline: boolean = false;
     // const friendsAreOnline: boolean = true;
 
-    const { showUserInfo, setShowUserInto } = useMyContext();
+ 
   return (
     <main id='community'>
 
@@ -197,7 +197,7 @@ const Community = ({userId} : { userId: string}) => {
 			{/* <ListLiveGames /> */}
             <h2>CHATS</h2>
 			<ListOpenChats />
-      {showUserInfo && <UserPage />}
+
             
 			
 		</div>

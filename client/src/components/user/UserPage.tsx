@@ -23,16 +23,16 @@ const UserPage = ({}: Props) => {
   const { setShowUserInto } = useMyContext();
   const [friendsList, setFriendsList] = useState([]);
   const [gamesList, setGamesList] = useState([]);
-  // type Game = {
-  //   id: number;
-  //   player_one: number;
-  //   player_two: number;
-  //   winner: number;
-  //   loser: number;
-  //   score_one: number;
-  //   score_two: number;
-  //   finished: boolean;
-  // };
+  type Game = {
+    id: number;
+    player_one: number;
+    player_two: number;
+    winner: number;
+    loser: number;
+    score_one: number;
+    score_two: number;
+    finished: boolean;
+  };
 
   // const initialGames: Game[] = [];
 
@@ -74,8 +74,8 @@ const UserPage = ({}: Props) => {
               <div>{`This is email: ${userEmail}`}</div>
               <div>{`This is 2FA enabled: ${TFA}`}</div>
             </div>
-            {/* <button onClick={toggleVisibility}>Close</button> */}
-            {/* <div>{`This is your stats: ${sta}`}</div> */}
+            <div>{`This is your stats: ${0}`}</div>
+            <button onClick={toggleVisibility}>Close</button>
           </div>
           <div id="lists">
             <ListFriends friendsList={friendsList} />
@@ -88,3 +88,16 @@ const UserPage = ({}: Props) => {
 };
 
 export default UserPage;
+
+
+
+type Game = {
+  id: number;
+  player_one: number;
+  player_two: number;
+  winner: number;
+  loser: number;
+  score_one: number;
+  score_two: number;
+  finished: boolean;
+};

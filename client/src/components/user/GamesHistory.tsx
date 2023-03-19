@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
 import defaultPicture from "../../images/default-picture.jpeg";
+import pic from "../../images/cat-stern.jpeg";
+
 
 interface NameProps {
   playerOne: string;
@@ -11,6 +13,17 @@ interface NameProps {
   scoreOne: string;
   scoreTwo: string;
 }
+
+type Game = {
+  id: number;
+  player_one: number;
+  player_two: number;
+  winner: number;
+  loser: number;
+  score_one: number;
+  score_two: number;
+  finished: boolean;
+};
 
 const GameCard = ({
   photoOne,
@@ -29,7 +42,7 @@ const GameCard = ({
         className={leftOpponentWon ? "winner-left" : "loser-left"}
       >
         <img
-          src={defaultPicture}
+          src={photoOne}
           alt="user1"
         />
         <span> {playerOne}</span>
@@ -43,7 +56,7 @@ const GameCard = ({
         <span> {scoreTwo}</span>
         <span> {playerTwo}</span>
         <img
-          src={defaultPicture}
+          src={photoTwo}
           alt="user1"
         />
       </div>
@@ -56,45 +69,108 @@ type Props = {
 };
 
 const GameHistory = ({ gamesList }: Props) => {
-  const [friendsNames, setNames] = useState<string[]>([]);
-  //   const [profilePictures, setProfilePictures] = useState<string[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
+  const [playerOnes, setplayerOnes] = useState<string[]>([]);
+  const [playerTwos, setPlayerTwos] = useState<string[]>([]);
+  const [profilePicturesPlayerOne, setPicturesPlayerOne] = useState<string[]>([]);
+  const [profilePicturesPlayerTwo, setPicturesPlayerTwo] = useState<string[]>([]);
   useEffect(() => {
-    // const fetchNames = async () => {
-    //   const newlist = await Promise.all(
-    //     gamesList.map(async (id) => {
-    //       const response = await fetch("http://localhost:3003/user/user_name", {
-    //         method: "POST",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //           Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-    //         },
-    //         body: JSON.stringify({ user_id: id }),
-    //       });
-    //       const name = await response.text();
-    //       return name;
-    //     })
-    //   );
-    //   setNames(newlist);
-    // };
-    // const getUserPic = async () => {
-    //   const newlist = await Promise.all(
-    //     gamesList.map(async (id) => {
-    //       const response = await fetch(`http://localhost:3003/pictures/${id}`, {
-    //         method: "Get",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //           Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-    //         },
-    //       });
-    //       const path = await response.blob();
-    //       const url = URL.createObjectURL(path);
-    //       return url;
-    //       // setProfilePicture(url);
-    //     })
-    //   );
-    //   setProfilePictures(newlist);
-    // };
-    // fetchNames();
+    const fetchGames = async () => {
+
+      const gamesListy = await fetch(`http://localhost:3003/game/many_games_data`, {
+        method: "Post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+        },
+        body: JSON.stringify({ game_ids: gamesList}),
+      });
+      
+      const allGames = await gamesListy.json();
+        setGames(allGames);
+        fetchNamesOponentOne(allGames);
+        fetchNamesOponentTwo(allGames);
+        getPicturePlayerOne(allGames);
+        getPicturePlayerTwo(allGames);
+    };
+
+    const fetchNamesOponentOne = async (gamesListy: any) => {
+      const newlist = await Promise.all(
+        gamesListy.map(async (game: any) => {
+          const id = game['player_one'];
+          const response = await fetch(`http://localhost:3003/user/user_name`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+            },
+            body: JSON.stringify({ user_id: id }),
+          });
+          const name = await response.text();
+          return name;
+        })
+      );
+      setplayerOnes(newlist);
+    };
+    
+    const fetchNamesOponentTwo = async (gamesListy: any) => {
+      const newlist = await Promise.all(
+        gamesListy.map(async (game: any) => {
+          const id = game['player_two'];
+          const response = await fetch(`http://localhost:3003/user/user_name`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+            },
+            body: JSON.stringify({ user_id: id }),
+          });
+          const name = await response.text();
+          return name;
+        })
+        );
+        setPlayerTwos(newlist);
+      };
+      const getPicturePlayerOne = async (gamesListy: any) => {
+        const newlist = await Promise.all(
+          gamesListy.map(async (game: any) => {
+            const response = await fetch(`http://localhost:3003/pictures/${game['player_one']}`, {
+              method: "Get",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+              },
+            });
+            const path = await response.blob();
+            const url = URL.createObjectURL(path);
+            
+            return url;
+          })
+        );
+        setPicturesPlayerOne(newlist);
+      };
+
+      const getPicturePlayerTwo= async (gamesListy: any) => {
+        const newlist = await Promise.all(
+          gamesListy.map(async (game: any) => {
+            const response = await fetch(`http://localhost:3003/pictures/${game['player_two']}`, {
+              method: "Get",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+              },
+            });
+            const path = await response.blob();
+            const url = URL.createObjectURL(path);
+            
+            return url;
+          })
+        );
+        setPicturesPlayerTwo(newlist);
+      };
+
+    fetchGames();
+
     // getUserPic();
   }, [gamesList]);
 
@@ -102,15 +178,15 @@ const GameHistory = ({ gamesList }: Props) => {
     <ul className="user-info-lists">
       <div>Games:</div>
       <br />
-      {[1, 2, 3].map((name, idx) => (
+      {games.map((game, idx) => (
         <GameCard
-          key={idx}
-          photoOne={defaultPicture}
-          photoTwo={defaultPicture}
-          playerOne={"Player1"}
-          playerTwo={"Player2"}
-          scoreOne="3"
-          scoreTwo="1"
+          key={game['id']}
+          photoOne={profilePicturesPlayerOne[idx]}
+          photoTwo={profilePicturesPlayerTwo[idx]}
+          playerOne={playerOnes[idx]}
+          playerTwo={playerTwos[idx]}
+          scoreOne={game["score_one"].toString()}
+          scoreTwo={game["score_two"].toString()}
         />
       ))}
     </ul>

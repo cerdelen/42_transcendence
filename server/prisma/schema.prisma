@@ -55,7 +55,7 @@ model Conversation {
 	conversation_pass_protected		Boolean		@default(false)
 	conversation_password			String?		
 
-	conversation_participant_arr	Int[]
+	conversation_participant_arr	Int[]		@default([])
 	conversation_owner_arr			Int[]
 	conversation_admin_arr			Int[] 
 	conversation_black_list_arr		Int[]
@@ -75,11 +75,11 @@ model Conversation {
 
 // 	// @@map(name: "chat_role")
 // }
-
+ 
 model Message {
 	// User stuff
 	msg_id				Int			@unique  @id @default(autoincrement()) 
-	author				Int?		
+	author				Int		
 	// user_name			String		
 	text				String
 	created_at			DateTime	@default(now())

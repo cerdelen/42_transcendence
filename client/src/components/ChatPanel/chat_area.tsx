@@ -17,7 +17,7 @@ import { SocketContext, our_socket} from '../../utils/context/SocketContext';
 import UserPage from '../user/UserPage';
 import { useMyContext } from '../../contexts/InfoCardContext';
 
-import Chat_cards from '../ChatPanel/chat_side_bar'
+import Chat_cards from './Community_left_collumn'
 import Open_group_cards from '../ChatPanel/open_group_chats_bar';
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 import JSCookies from "js-cookie";
@@ -43,88 +43,12 @@ interface typing{
 }
 
 
-
-
-// const Community = ({userId} : { userId: string}) => {
-//   const [users, setUsers] = useState<message[]>([]);
-//   const [newMessage, setNewMessage] = useState<message>();
-//   const [joined, setJoined] = useState(false);
-//   const { displayed_chat } = useMyDisplayedChatContext();
-//   // const [name, setName] = useState("");
-//   // const [name_is_set, name_is_set_set] = useState(false);
-//   useEffect(() => 
-//   {
-//     our_socket.emit('findAllMessages', {}, (response : any[]) =>
-//     {
-//       setUsers(response);
-//     });
-//     our_socket.on('message', (message : message) => 
-//     {
-//       let s : message[] = [...users];
-//       s.push(message)
-//       setUsers(s);
-
-//       if(our_socket)
-    
-//       our_socket.emit('findAllMessages', {}, (response : any[]) =>
-//       {
-//         setUsers(response);
-//       });
-//     })
-
-//     our_socket.on('typing', (typing: typing) =>
-//     {
-//       if(typing.isTyping)
-//       {
-//         setTypingDisplay(`${typing.name} is typing ...`);
-//       }else{
-//         setTypingDisplay("");
-//       }
-//     })
-//   }, [])
-//   const join = () =>
-//   {
-//     our_socket.emit('join', {name: name}, () => 
-//     {
-//       setJoined(true);
-//     })
-//   }
-//   const sendMessage = () =>
-//   {
-//     console.log("sendMessage function beginning");
-//     console.log("this is message text = " + input);
-//     console.log("this is author = " + Number(userId));
-//     console.log("this is chat_id = " + displayed_chat);
-//     our_socket.emit('message', {author: Number(userId), text: input, conversation_id: displayed_chat, created_at: Date.now()}, () => {
-//       setInput('');
-//     })
-//     our_socket.emit('createGame', {});
-//   }
-//   let timeout : any;
-//   const emitTyping = () =>
-//   {
-//     console.log("Testing stuff ");
-//     our_socket.emit('typing', {isTyping: true});
-//     timeout = setTimeout(() => 
-//     {
-//       our_socket.emit('typing', {isTyping: false});
-//     }, 2000);
-//   }
-// }
-
 const Chat_input_filed_and_send_button = () =>
 {
 	const [input, setInput] = useState(""); 
 	const { displayed_chat } = useMyDisplayedChatContext();
 	const { userId } = useContext(UserContext);
 
-	// const join = () =>
-	// {
-	//   our_socket.emit('join', {name: name}, () => 
-	//   {
-	// 	setJoined(true);
-	//   })
-	// }
 	const sendMessage = () =>
 	{
 	  console.log("sendMessage function beginning");
@@ -134,7 +58,6 @@ const Chat_input_filed_and_send_button = () =>
 	  our_socket.emit('message', {author: Number(userId), text: input, conversation_id: displayed_chat, created_at: Date.now()}, () => {
 		setInput('');
 	  })
-	  our_socket.emit('createGame', {});
 	}
 	let timeout : any;
 	const emitTyping = () =>

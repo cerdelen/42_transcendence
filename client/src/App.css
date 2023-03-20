@@ -301,9 +301,9 @@ footer {
 }
 .game-page-players-online-ul,
 .game-page-games-online-ul,
-.scrollable-list
-.game-page-games-online-ul
-  {
+.scrollable-list,
+.all_open_group_chats-ul
+{
   list-style-type: none;
   padding: 0;
   max-height: 77vh;
@@ -315,15 +315,21 @@ footer {
               -10px 0 20px -10px rgba(0, 0, 0, 1); */
 }
 
+
 .open-chats {
   max-height: 37vh;
 }
 .open_group_chats-ul {
   max-height: 32.5vh;
 }
-.game-page-games-online-ul {
+.game-page-games-online-ul,
+.all_open_group_chats-ul,
+.Chat_details
+{
   max-height: 32.5vh;
 }
+
+
 .player-card-li{
   background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140));
   /* border: 1px solid pink; */

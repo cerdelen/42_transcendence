@@ -16,7 +16,7 @@ import { SocketContext, our_socket} from '../../utils/context/SocketContext';
 import UserPage from '../user/UserPage';
 import { useMyContext } from '../../contexts/InfoCardContext';
 
-import Chat_cards from '../ChatPanel/chat_side_bar'
+import Community_left_collumn from '../ChatPanel/Community_left_collumn'
 import Open_group_cards from '../ChatPanel/open_group_chats_bar';
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 import JSCookies from "js-cookie";
@@ -136,64 +136,66 @@ const Community = ({userId} : { userId: string}) => {
   // const { my_chats_ids, setmy_chats_ids } = useMyChats_user_is_part_of_context();
   // const [name, setName] = useState("");
   // const [name_is_set, name_is_set_set] = useState(false);
-  useEffect(() => 
-  {
-    our_socket.emit('findAllMessages', {}, (response : any[]) =>
-    {
-      setUsers(response);
-    });
-    our_socket.on('message', (message : message) => 
-    {
-      let s : message[] = [...users];
-      s.push(message)
-      setUsers(s);
 
-      if(our_socket)
+  
+  // useEffect(() => 
+  // {
+  //   our_socket.emit('findAllMessages', {}, (response : any[]) =>
+  //   {
+  //     setUsers(response);
+  //   });
+  //   our_socket.on('message', (message : message) => 
+  //   {
+  //     let s : message[] = [...users];
+  //     s.push(message)
+  //     setUsers(s);
+
+  //     if(our_socket)
     
-      our_socket.emit('findAllMessages', {}, (response : any[]) =>
-      {
-        setUsers(response);
-      });
-    })
+  //     our_socket.emit('findAllMessages', {}, (response : any[]) =>
+  //     {
+  //       setUsers(response);
+  //     });
+  //   })
 
-    our_socket.on('typing', (typing: typing) =>
-    {
-      if(typing.isTyping)
-      {
-        setTypingDisplay(`${typing.name} is typing ...`);
-      }else{
-        setTypingDisplay("");
-      }
-    })
-  }, [])
-  const join = () =>
-  {
-    our_socket.emit('join', {name: name}, () => 
-    {
-      setJoined(true);
-    })
-  }
-  const sendMessage = () =>
-  {
-    console.log("sendMessage function beginning");
-    console.log("this is message text = " + input);
-    console.log("this is author = " + Number(userId));
-    console.log("this is chat_id = " + displayed_chat);
-    our_socket.emit('message', {author: Number(userId), text: input, conversation_id: displayed_chat, created_at: Date.now()}, () => {
-      setInput('');
-    })
-    our_socket.emit('createGame', {});
-  }
-  let timeout : any;
-  const emitTyping = () =>
-  {
-    console.log("Testing stuff ");
-    our_socket.emit('typing', {isTyping: true});
-    timeout = setTimeout(() => 
-    {
-      our_socket.emit('typing', {isTyping: false});
-    }, 2000);
-  }
+  //   our_socket.on('typing', (typing: typing) =>
+  //   {
+  //     if(typing.isTyping)
+  //     {
+  //       setTypingDisplay(`${typing.name} is typing ...`);
+  //     }else{
+  //       setTypingDisplay("");
+  //     }
+  //   })
+  // }, [])
+  // const join = () =>
+  // {
+  //   our_socket.emit('join', {name: name}, () => 
+  //   {
+  //     setJoined(true);
+  //   })
+  // }
+  // const sendMessage = () =>
+  // {
+  //   console.log("sendMessage function beginning");
+  //   console.log("this is message text = " + input);
+  //   console.log("this is author = " + Number(userId));
+  //   console.log("this is chat_id = " + displayed_chat);
+  //   our_socket.emit('message', {author: Number(userId), text: input, conversation_id: displayed_chat, created_at: Date.now()}, () => {
+  //     setInput('');
+  //   })
+  //   our_socket.emit('createGame', {});
+  // }
+  // let timeout : any;
+  // const emitTyping = () =>
+  // {
+  //   console.log("Testing stuff ");
+  //   our_socket.emit('typing', {isTyping: true});
+  //   timeout = setTimeout(() => 
+  //   {
+  //     our_socket.emit('typing', {isTyping: false});
+  //   }, 2000);
+  // }
 
     // again, I need a way to know if people are online 
     // const poepleAreOnline: boolean = false;
@@ -202,7 +204,7 @@ const Community = ({userId} : { userId: string}) => {
   const [my_chats_ids, setmy_chats_ids] = useState<number[]>([]);
   return (
     <main id='community'>
-      <Chat_cards userId={userId} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids}/>
+      <Community_left_collumn userId={userId} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids}/>
       <Chat_area /> 
 			<Open_group_cards not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
     </main>

@@ -45,6 +45,8 @@ const ListOpenChats = () => {
 	// 		.catch((err) => console.log(err)
 	// 		)
 	// }, []);
+	console.log("KOSEGGESKOPFESOPFKOPSEGPKOESPOKGSEPOKGPSEOKFPOEPODLPWQLFPWEOPGKWPOKFPOWEKFPOEW");
+		
 
     return (
         <ul className='scrollable-list open-chats' >
@@ -54,7 +56,7 @@ const ListOpenChats = () => {
 					{conversations.map((convers) => (
 						<ConversationSideBarUnit 
 							onClick={() => navigate(`/conversation/${convers.id}`)}>
-							console.log(user.id);
+							{/* console.log(user.id); */}
 							{user?.id}
 							{/* { <OpenChat */}
 								{/* username={convers.name} */}

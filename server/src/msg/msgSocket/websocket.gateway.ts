@@ -43,6 +43,16 @@ export class MessagingGateway implements OnGatewayConnection {
 				this.msg.createMsg(data);
 		}
 
+		@SubscribeMessage('typing')
+		handle_is_typing(
+			@MessageBody() data: any) {
+				console.log("here is handle_is_typing subscriber");
+				console.log(JSON.stringify(data));
+				
+				this.server.emit('typing', {isTyping: data.isTyping, name: data.userId})
+				// this.msg.createMsg(data);
+		}
+
 		@OnEvent('create.message')
 		handleMessageCreateEvent(payload: any) {
 			console.log("hello");

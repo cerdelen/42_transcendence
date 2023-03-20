@@ -13,8 +13,10 @@ type Props = {}
 
 
 const HomePage = ({userId} : { userId: string}) => {
-	const [gamePage, setGamePage] = useState(true);
+
 	const { showUserInfo } = useMyContext();
+	const [gamePage, setGamePage] = useState(false);
+
   return (
 	<div className='game-page'>
 		<Header setGamePage={setGamePage} />

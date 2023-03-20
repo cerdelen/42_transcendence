@@ -11,7 +11,7 @@ import { UserContext } from "../../contexts/UserContext";
 
 const ProfileCard = () => {
   const [base64String, setBase64String] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // dynamically calculating where the dropdown should start
   const firstElementRef = useRef<HTMLDivElement>(null);
@@ -35,12 +35,14 @@ const ProfileCard = () => {
     window.location.replace("http://localhost:3000");
   }
   const { userId } = useContext(UserContext);
-  console.log(userId);
+  // console.log(userId);
   const [name, setName] = useState("");
   const [statusTFA, setStatusTFA] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
+
+      // console.log("one more time");
       const response = await fetch("http://localhost:3003/user/user_data", {
         method: "Post",
         headers: {

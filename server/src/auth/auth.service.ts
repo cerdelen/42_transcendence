@@ -82,7 +82,12 @@ export class AuthService
 			return (user);
 		else
 		{
-
+			let user_2 = await this.userService.findUserByName(username);
+			while(user_2)
+			{
+				user_2 = await this.userService.findUserByName(username);
+				username = username + " ";
+			}
 			const user = await this.userService.createUser({
 				id: Number(id),
 				name: username,

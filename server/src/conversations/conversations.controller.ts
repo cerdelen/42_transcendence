@@ -78,7 +78,7 @@ export class ConversationController {
 		}
 
 		@UseGuards(Jwt_Auth_Guard)
-		@Post('join')
+		@Post('join_group_chat/:chat_id')
 		async joinConversation(
 			@Req() req: any,	
 			@Body() userContent: {
@@ -89,8 +89,9 @@ export class ConversationController {
 			console.log(userContent);
 			const conversationId = userContent.conversation_id_arr;
 			const existingConversation = await this.conversationsService.findConversation(userContent.conversation_id_arr)
-			const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);
-			if (userIdx < 0) return null;
+			if (!existingConversation) return null;
+			const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);		//is he already part of the chat
+			if (userIdx > 0) return null;				// this means he is already part of the chat and i dont want to add him again
 			await this.conversationsService.updateConversation({
 				where: {
 					conversation_id: Number(userContent.conversation_id_arr)
@@ -123,6 +124,14 @@ export class ConversationController {
 			
 			return this.conversationsService.findAllConversationsByUser(req.user.id);
 		}
+
+		@UseGuards(Jwt_Auth_Guard)
+    	@Get('/get_messages_from_conversation/:conversationID')
+    	getMsgsFromConversation(@AuthUser() user: User, @Param('conversationID') conversationId: number,)
+		{
+    	    return this.conversationsService.getMsgsByConversationID(conversationId)
+		}
+
 
 		@UseGuards(Jwt_Auth_Guard)
 		@Get('getConversationById/:conversation_id')

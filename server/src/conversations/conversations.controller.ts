@@ -1,9 +1,9 @@
-import { UseGuards, Post, Inject, Body, UsePipes, ValidationPipe, Req, Get, Controller, Param } from '@nestjs/common';
+import { UseGuards, Post, Inject, Body, UsePipes, ValidationPipe, Req, Get, Controller, Param, Put, ParseIntPipe } from '@nestjs/common';
 import { Routes, Services } from '../utils/consts';
 // import { AuthenticateGuard } from '../utils/Guards';
 // import { IConversationsService } from './conversations';
 import { AuthUser } from 'src/utils/decorators';
-import { User, Conversation } from '@prisma/client';
+import { User, Conversation, Prisma } from '@prisma/client';
 // import { AuthGuard } from '@nestjs/passport';
 import { UserService } from '../user/user.service';
 import { IsNumber } from 'class-validator';
@@ -78,43 +78,116 @@ export class ConversationController {
 		}
 
 		@UseGuards(Jwt_Auth_Guard)
-		@Post('join_group_chat/:chat_id')
+		@Get('join_group_chat/:chat_id')
 		async joinConversation(
 			@Req() req: any,	
-			@Body() userContent: {
-				conversation_id_arr: number,
-				password: string
-			}
-		): Promise<User> {
-			console.log(userContent);
-			const conversationId = userContent.conversation_id_arr;
-			const existingConversation = await this.conversationsService.findConversation(userContent.conversation_id_arr)
-			if (!existingConversation) return null;
+			@Param('chat_id') chat_id: number
+			
+		) {
+			console.log("CHAT_ID " + chat_id);
+			// const conversationId = chat_id;
+			const existingConversation = await this.conversationsService.findConversation(chat_id)
+			
+			// if (!existingConversation) return null;
+			// if (!existingConversation.group_chat)
+			// 	return null;
+				//TODO
+				//banlist
 			const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);		//is he already part of the chat
-			if (userIdx > 0) return null;				// this means he is already part of the chat and i dont want to add him again
+			if (userIdx > -1) return null;				// this means he is already part of the chat and i dont want to add him again
 			await this.conversationsService.updateConversation({
 				where: {
-					conversation_id: Number(userContent.conversation_id_arr)
+					conversation_id: Number(chat_id)
 				},
 				data: {
 					conversation_participant_arr: {
 						push: Number(req.user.id)
 					}
 				}
-			}) 
-			const updatedUser = await this.userService.updateUser({
-				where: {
-					id : Number(req.user.id)
-				},
-				data: {         
-					conversation_id_arr: {
-						push: Number(userContent.conversation_id_arr)
-					}
-				}
 			})
-			return updatedUser
+			this.conversationsService.updateConversationIdInUser(req.user.id, chat_id);
+			// 	where: {
+			// 		id : Number(req.user.id)
+			// 	},
+			// 	data: {         
+			// 		conversation_id_arr: {
+			// 			push: Number(chat_id)
+			// 		}
+			// 	}
+			// })
+			// return updatedUser
 		} 
 
+		@UseGuards(Jwt_Auth_Guard)
+		@Get('join_dialogue/:other_user_id')
+		async joinDialogue(
+			@Req() req: any,
+			@Param('other_user_id') anotherUserId: string
+			) {
+				const check = await this.conversationsService.findDialogue(Number(req.user.id), Number(anotherUserId));
+				if (check)
+					return check;
+				const arr: number[] = [Number(anotherUserId), Number(req.user.id)];
+				
+				const new_dialogue = await this.conversationsService.createConversation({
+					conversation_participant_arr: arr,
+				})
+				console.log("NEW_DIALOGUE + " + new_dialogue.conversation_id);
+
+				this.conversationsService.updateConversationIdInUser(Number(anotherUserId), new_dialogue.conversation_id);
+				this.conversationsService.updateConversationIdInUser(Number(req.user.id), new_dialogue.conversation_id);
+				return new_dialogue;
+				// let conversation: Conversation;
+				// conversation.conversation_participant_arr.push(req.user.id);
+				// console.log("after push " + conversation.conversation_participant_arr);
+				 
+				
+				// if (!existingConversation) return null;
+				// const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);		//is he already part of the chat
+				// if (userIdx > 0) return null;				// this means he is already part of the chat and i dont want to add him again
+				// await this.conversationsService.updateConversation({
+				// 	where: {
+				// 		conversation_id: Number(userContent.conversation_id_arr)
+				// 	},
+				// 	data: {
+				// 		conversation_participant_arr: {
+				// 			push: Number(req.user.id)
+				// 		}
+				// 	}
+				// }) 
+				// const updatedUser = await this.userService.updateUser({
+				// 	where: {
+				// 		id : Number(req.user.id)
+				// 	},
+				// 	data: {         
+				// 		conversation_id_arr: {
+				// 			push: Number(userContent.conversation_id_arr)
+				// 		}
+				// 	}
+				// })
+				// return updatedUser
+			
+			
+			// const currUser = await this.userService.findUserById();
+			// console.log("convParticipant: " + convParticipant);
+			
+			// let existingConversation: Conversation;
+			// console.log(existingConversation.conversation_id);
+			
+			// existingConversation = await this.conversationsService.findConversation(existingConversation.conversation_id);
+			// console.log("existingChatID " + existingConversation.conversation_id);
+			
+			// console.log("existingChatID " + existingConversation.conversation_id);
+			
+			// if (!existingConversation) return null;
+			// // const arr = new Array<number>(2);
+			// existingConversation.conversation_participant_arr.push(req.user.id);
+			// existingConversation.conversation_participant_arr.push(anotherUserId);
+			// if (existingConversation.conversation_participant_arr.length > 2)
+			// 	throw new Error("Dialogue cannot have more than 2 users!");
+			
+		}
+ 
 		@UseGuards(Jwt_Auth_Guard)
 		@Get('getMyChats')
 		async getMyConversations(
@@ -155,6 +228,17 @@ export class ConversationController {
 			@Req() req: any,
 		) {
 			return this.conversationsService.getChatsUserNotPartOf(req.user.id);
+		}
+
+		//update an existing resource
+		@UseGuards(Jwt_Auth_Guard)
+		@Put('conversation/:conversationId/setAdmin/:adminId')
+		async setAdmin(
+			@Req() req: any,
+			@Param('conversationId', new ParseIntPipe()) conversId: number,
+			@Param('adminId', new ParseIntPipe()) admId: number
+		) : Promise<Conversation> {
+			return this.conversationsService.setAdministratorOfConversation(conversId, admId);
 		}
 }
 

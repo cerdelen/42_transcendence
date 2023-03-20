@@ -1,6 +1,8 @@
 import { useContext, useState, useEffect } from "react"
 import { UserContext } from "../../contexts/UserContext"
 import JSCookies from "js-cookie";
+import Chats_user_is_part_of_context from "../../contexts/Chats_user_is_part_of_context";
+import Not_joined_group_chats_context from "../../contexts/Not_joined_group_chats_context";
 // import { Chat_preview_card } from "./chat_side_bar";
 
 // this is how to use it
@@ -16,20 +18,27 @@ const Group_chat_preview_card = ({chat_id} : chat_props) => {
 	// console.log(chat_id);
 	const [photo, setPhoto] = useState("");
 	const [conversation_name, setConversation_name] = useState("");
+	const { my_chats_ids, setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
 	
 	const handleOnClick = async () => 
 	{
 		console.log("handleOnClick of group chat card for chat id " + chat_id);
 		// useEffect ==>
-		const response = await fetch(`http://localhost:3003/conversation/join_group_chat/${chat_id}`, {
-				method: "Get",
-				headers: {
-					// "Content-Type": "application/json",
-					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-				},
-			})
-		console.log(response);
-		
+		// const response = await fetch(`http://localhost:3003/conversation/join_group_chat/${chat_id}`, {
+		// 		method: "Get",
+		// 		headers: {
+		// 			// "Content-Type": "application/json",
+		// 			Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+		// 		},
+		// 	})
+		// console.log(response);
+		let new_arr : number [] = my_chats_ids;
+		console.log(my_chats_ids);
+		console.log(new_arr);
+		new_arr.push(chat_id)
+		console.log(new_arr);
+		setmy_chats_ids(new_arr);
+		// setNot_joined_chats_ids(not_joined_chats_ids.push());
 		// setDisplayed_chat(chat_id);
 		// alert("What do here?" + chat_id);
 	}
@@ -78,11 +87,12 @@ const Group_chat_preview_card = ({chat_id} : chat_props) => {
 
 const	Get_all_open_group_chats = () =>
 {
-	const [chat_ids, setchat_ids] = useState<Array<number>>([]);
+	// const { not_joined_chats_ids, setNot_joined_chats_ids } = useContext(Not_joined_group_chats_context);
+	const [not_joined_chats_ids, setNot_joined_chats_ids] = useState<Array<number>>([]);
 	useEffect(() => {
 		async function get_ids(){
 			// const response = await fetch("http://localhost:3003/conversation/GETALLTHEOTHERCHATSIMNOTPARTOF", {
-			const response = await fetch("http://localhost:3003/conversation/GetMyChats", {
+			const response = await fetch("http://localhost:3003/conversation/getAllChatsWithoutUser", {
 				method: "Get",
 				headers: {
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
@@ -91,7 +101,7 @@ const	Get_all_open_group_chats = () =>
 			if (response.ok)
 			{
 				const data : number[] = await response.json();
-				setchat_ids(data);
+				setNot_joined_chats_ids(data);
 			}
 		}
 		get_ids();
@@ -99,7 +109,7 @@ const	Get_all_open_group_chats = () =>
 
 	  return (
 		<ul className="game-page-games-online-ul">
-			{chat_ids.map((chat_id, idx) => (
+			{not_joined_chats_ids.map((chat_id, idx) => (
 					<Group_chat_preview_card key={idx} chat_id={chat_id}/>
 				))}
 		</ul>

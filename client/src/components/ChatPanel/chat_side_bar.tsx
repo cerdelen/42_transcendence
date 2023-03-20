@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import JSCookies from "js-cookie";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
+import Chats_user_is_part_of_context from "../../contexts/Chats_user_is_part_of_context";
 
 interface chat_props {
 	chat_id: number,
@@ -146,8 +147,8 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 
 const Get_all_my_chats = ({userId} : { userId: string}) =>
 {
-	const [cards, setchat_card] = useState<Array<chat_card>>([]);
-	const [chat_ids, setchat_ids] = useState<Array<number>>([]);
+	const { my_chats_ids, setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
+	console.log("Get_all_my_chats is rendered");
 	useEffect(() => {
 		async function get_ids(){
 			const response = await fetch("http://localhost:3003/conversation/GetMyChats", {
@@ -160,7 +161,7 @@ const Get_all_my_chats = ({userId} : { userId: string}) =>
 			{
 				// console.log('response === okay');
 				const data : number[] = await response.json();
-				setchat_ids(data);
+				setmy_chats_ids(data);
 			}
 			// const card_array : chat_card [] = [];
 			// for(let i = 0; i < chat_ids.length; i++)
@@ -185,7 +186,7 @@ const Get_all_my_chats = ({userId} : { userId: string}) =>
 			
 			<div className='player-availability'>
 				<div>smth inside</div>
-				{chat_ids.map((chat_id, idx) => (
+				{my_chats_ids.map((chat_id, idx) => (
 					<Chat_preview_card key={idx} chat_id={chat_id} userId={userId} />
 				))}
 			</div>
@@ -196,6 +197,8 @@ const Get_all_my_chats = ({userId} : { userId: string}) =>
 }
 
 const Chat_cards = ({userId} : { userId: string}) => {
+	console.log("rendering chat_cards");
+	
 	return (
 			<Get_all_my_chats userId={userId}/>
 	)

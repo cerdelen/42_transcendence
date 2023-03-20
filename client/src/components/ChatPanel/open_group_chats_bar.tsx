@@ -1,8 +1,8 @@
 import { useContext, useState, useEffect } from "react"
 import { UserContext } from "../../contexts/UserContext"
 import JSCookies from "js-cookie";
-import Chats_user_is_part_of_context from "../../contexts/Chats_user_is_part_of_context";
-import Not_joined_group_chats_context from "../../contexts/Not_joined_group_chats_context";
+// import Chats_user_is_part_of_context from "../../contexts/Chats_user_is_part_of_context";
+// import Not_joined_group_chats_context from "../../contexts/Not_joined_group_chats_context";
 // import { Chat_preview_card } from "./chat_side_bar";
 
 // this is how to use it
@@ -10,15 +10,17 @@ import Not_joined_group_chats_context from "../../contexts/Not_joined_group_chat
 // useContext(UserContext);
 
 interface chat_props {
-	chat_id: number
+	chat_id: number,
+	onTestChange: any,
 }
 
-const Group_chat_preview_card = ({chat_id} : chat_props) => {
+const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { chat_id: number, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) => {
+	// {not_joined_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { chat_id: number, not_joined_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}
 	// console.log('called chat preview window');
 	// console.log(chat_id);
 	const [photo, setPhoto] = useState("");
 	const [conversation_name, setConversation_name] = useState("");
-	const { my_chats_ids, setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
+	// const { my_chats_ids } = useContext(Chats_user_is_part_of_context)
 	
 	const handleOnClick = async () => 
 	{
@@ -32,15 +34,26 @@ const Group_chat_preview_card = ({chat_id} : chat_props) => {
 		// 		},
 		// 	})
 		// console.log(response);
-		let new_arr : number [] = my_chats_ids;
-		console.log(my_chats_ids);
-		console.log(new_arr);
-		new_arr.push(chat_id)
-		console.log(new_arr);
-		setmy_chats_ids(new_arr);
-		// setNot_joined_chats_ids(not_joined_chats_ids.push());
-		// setDisplayed_chat(chat_id);
-		// alert("What do here?" + chat_id);
+		// console.log("old array " + my_chats_ids);
+		// let new_arr : number [] = my_chats_ids;
+		// new_arr.push(chat_id)
+		// console.log("new array " + new_arr);
+		let arr : number [] = []
+		for(let i = 0; i < my_chats_ids.length; i++)
+		{
+			arr.push(my_chats_ids[i]);
+		}
+		arr.push(chat_id);
+		setmy_chats_ids(arr);
+		let arr_2 : number [] = []
+		for(let i = 0; i < not_joined_chats_ids.length; i++)
+		{
+			if(chat_id != not_joined_chats_ids[i])
+				arr_2.push(not_joined_chats_ids[i]);
+		}
+		console.log("new arr2 " + arr_2);
+		
+		setNot_joined_chats_ids(arr_2);
 	}
 
 	useEffect(() => {
@@ -85,10 +98,11 @@ const Group_chat_preview_card = ({chat_id} : chat_props) => {
 	)
 }
 
-const	Get_all_open_group_chats = () =>
+const	Get_all_open_group_chats = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) =>
 {
+	console.log("Get_all_open_group_chats is rendered");
 	// const { not_joined_chats_ids, setNot_joined_chats_ids } = useContext(Not_joined_group_chats_context);
-	const [not_joined_chats_ids, setNot_joined_chats_ids] = useState<Array<number>>([]);
+	// const [not_joined_chats_ids, setNot_joined_chats_ids] = useState<Array<number>>([]);
 	useEffect(() => {
 		async function get_ids(){
 			// const response = await fetch("http://localhost:3003/conversation/GETALLTHEOTHERCHATSIMNOTPARTOF", {
@@ -110,16 +124,21 @@ const	Get_all_open_group_chats = () =>
 	  return (
 		<ul className="game-page-games-online-ul">
 			{not_joined_chats_ids.map((chat_id, idx) => (
-					<Group_chat_preview_card key={idx} chat_id={chat_id}/>
+					<Group_chat_preview_card key={idx} chat_id={chat_id} not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
 				))}
 		</ul>
 	  )
 
 }
 
-const	Open_group_cards = () => {
+const	Open_group_cards = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) => 
+{
+	console.log("rendering Open_group_cards");
 	return (
-		<Get_all_open_group_chats />
+		<div className='live-games'>
+		<h2>OPEN GROUP CHATS</h2>
+		<Get_all_open_group_chats not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
+		</div>
 	)
 }
 

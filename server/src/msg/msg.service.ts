@@ -95,6 +95,8 @@ export class MsgService {
 			// 	throw new HttpException('Conversat not found', HttpStatus.BAD_REQUEST);
 
 			const convers = await this.conversation.findConversation(createMsgDto.conversation_id);
+			if(!convers)
+				return ;
 			console.log(convers.conversation_id);
 			if (!convers)
 				throw new HttpException("Conversation was not found", HttpStatus.FORBIDDEN);

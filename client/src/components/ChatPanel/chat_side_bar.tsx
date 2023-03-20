@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import JSCookies from "js-cookie";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
-import Chats_user_is_part_of_context from "../../contexts/Chats_user_is_part_of_context";
+import { useRevalidator } from "react-router-dom";
+// import Chats_user_is_part_of_context from "../../contexts/Chats_user_is_part_of_context";
 
 interface chat_props {
 	chat_id: number,
@@ -122,19 +123,7 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 
 		
 		}, []);
-	
-	// if(group_chat == true)
-	// 	console.log("group chatt == true");
-	// else
-	// 	console.log("group chatt == false");
 
-	
-	// console.log("trying to do this here");
-	// console.log(photo);
-	// console.log(conversation_name);
-	// console.log(group_chat);
-	
-	
 	return (
 		<li className='Chat_preview_cards'onClick={handleOnClick}>
 			<div className='player-availability'>
@@ -145,9 +134,9 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 	)
 }
 
-const Get_all_my_chats = ({userId} : { userId: string}) =>
+const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: string, my_chats_ids: number[], setmy_chats_ids:any}) =>
 {
-	const { my_chats_ids, setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
+	// const { setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
 	console.log("Get_all_my_chats is rendered");
 	useEffect(() => {
 		async function get_ids(){
@@ -159,48 +148,55 @@ const Get_all_my_chats = ({userId} : { userId: string}) =>
 			})
 			if (response.ok)
 			{
-				// console.log('response === okay');
 				const data : number[] = await response.json();
+				console.log("response from getmychats fetch " + JSON.stringify(data));
+				
 				setmy_chats_ids(data);
 			}
-			// const card_array : chat_card [] = [];
-			// for(let i = 0; i < chat_ids.length; i++)
-			// {
-			// 	console.log('pushin smth');
-			// 	const smth = new chat_card(chat_ids[i]);
-			// 	card_array.push(smth);
-			// }
-			// setchat_card(card_array);
-			// console.log('this is cards at the end of useeffect');
-			// console.log(JSON.stringify(cards));
 		}
 		get_ids();
 	  }, []);
-	//   console.log("this is chat_ids " + JSON.stringify(chat_ids));
-	  
-		// console.log('this is cards nefore return');
-		// console.log(JSON.stringify(cards));
+	//   if(!arr)
+	//   {
+	// 	return (
+	// 		<h1>My chats id's empty </h1>
+	// 	)
+	//   }
 	return (
 		<ul className='game-page-games-online-ul'>
 			{/* <img src={photo} alt="" /> */}
 			
 			<div className='player-availability'>
 				<div>smth inside</div>
-				{my_chats_ids.map((chat_id, idx) => (
-					<Chat_preview_card key={idx} chat_id={chat_id} userId={userId} />
-				))}
+				{
+					my_chats_ids.map((chat_id, idx) => (
+						<Chat_preview_card key={idx} chat_id={chat_id} userId={userId} />
+					))}
+					
 			</div>
+
 
 			</ul>
 	)
 	
 }
 
-const Chat_cards = ({userId} : { userId: string}) => {
+const Chat_cards = ({userId, my_chats_ids, setmy_chats_ids} : { userId: string, my_chats_ids: number[], setmy_chats_ids:any}) => {
 	console.log("rendering chat_cards");
+	// console.log(test);
+	// const { my_chats_ids, setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
+
+	console.log("log1");
+	my_chats_ids.map(() => {});
+	console.log("log2");
 	
 	return (
-			<Get_all_my_chats userId={userId}/>
+		<div className='players-online'>
+			<h2>My Chats</h2>
+		{/* <input type="text" placeholder='SEARCH'/> */}
+			<Get_all_my_chats userId={userId} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids}/>
+		{/* {players.length === 0 ? <div>No one is online </div> : <Chat_cards userId={userId}/>} */}
+		</div>
 	)
 }
 

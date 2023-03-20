@@ -22,7 +22,7 @@ import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context
 import JSCookies from "js-cookie";
 import { UserContext } from "../../contexts/UserContext"
 import Chat_area from '../ChatPanel/chat_area';
-import { useMyChats_user_is_part_of_context } from '../../contexts/Chats_user_is_part_of_context';
+// import { useMyChats_user_is_part_of_context } from '../../contexts/Chats_user_is_part_of_context';
 
 
 // interface message{
@@ -133,7 +133,7 @@ const Community = ({userId} : { userId: string}) => {
   const [typingDisplay, setTypingDisplay] = useState('');
   const [joined, setJoined] = useState(false);
   const { displayed_chat } = useMyDisplayedChatContext();
-  const { my_chats_ids, setmy_chats_ids } = useMyChats_user_is_part_of_context();
+  // const { my_chats_ids, setmy_chats_ids } = useMyChats_user_is_part_of_context();
   // const [name, setName] = useState("");
   // const [name_is_set, name_is_set_set] = useState(false);
   useEffect(() => 
@@ -198,30 +198,13 @@ const Community = ({userId} : { userId: string}) => {
     // again, I need a way to know if people are online 
     // const poepleAreOnline: boolean = false;
     // const friendsAreOnline: boolean = true;
-
- 
+	const [not_joined_chats_ids, setNot_joined_chats_ids] = useState<number[]>([]);
+  const [my_chats_ids, setmy_chats_ids] = useState<number[]>([]);
   return (
     <main id='community'>
-
-        <div className='players-online'>
-          <h2>My Chats</h2>
-          {/* <input type="text" placeholder='SEARCH'/> */}
-          {players.length === 0 ? <div>No one is online </div> : <Chat_cards userId={userId}/>}
-		    </div>
-       {/* <NamePlace setName={setName} name_is_set={name_is_set}/> */}
-        <Chat_area /> 
-      	<div className='live-games'>
-			<h2>OPEN GROUP CHATS</h2>
-			<Open_group_cards />
-			{/* <input type="text"/> */}
-			{/* <ListLiveGames /> */}
-
-            {/* <h2>CHATS</h2> */}
-			{/* <ListOpenChats /> */}
-      {/* {showUserInfo && <UserPage />} */}
-            
-			
-		</div>
+      <Chat_cards userId={userId} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids}/>
+      <Chat_area /> 
+			<Open_group_cards not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
     </main>
   )
 }

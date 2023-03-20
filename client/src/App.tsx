@@ -20,7 +20,7 @@ import UserPage from "./components/user/UserPage";
 import { UserContext } from "./contexts/UserContext";
 import InfoCardProvider from "./contexts/InfoCardContext";
 import Displayed_Chat_Provider from "./contexts/Displayed_Chat_Context"
-import { Chats_user_is_part_ofProvider } from "./contexts/Chats_user_is_part_of_context";
+// import { Chats_user_is_part_ofProvider } from "./contexts/Chats_user_is_part_of_context";
 
 // const socket = io('localhost:3003');
 export const ConversationContext = React.createContext<
@@ -114,7 +114,7 @@ function App() {
     // <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
     <InfoCardProvider>
       <Displayed_Chat_Provider>
-        <Chats_user_is_part_ofProvider>
+
           <UserContext.Provider
             value={{
               userId: userId,
@@ -140,7 +140,7 @@ function App() {
               </Routes>
             </BrowserRouter>
           </UserContext.Provider>
-        </Chats_user_is_part_ofProvider>
+
       </Displayed_Chat_Provider>
     </InfoCardProvider>
 
@@ -149,3 +149,4 @@ function App() {
 }
 
 export default App;
+

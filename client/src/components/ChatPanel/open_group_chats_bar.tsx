@@ -16,6 +16,24 @@ const Group_chat_preview_card = ({chat_id} : chat_props) => {
 	// console.log(chat_id);
 	const [photo, setPhoto] = useState("");
 	const [conversation_name, setConversation_name] = useState("");
+	
+	const handleOnClick = async () => 
+	{
+		console.log("handleOnClick of group chat card for chat id " + chat_id);
+		// useEffect ==>
+		const response = await fetch(`http://localhost:3003/conversation/join_group_chat/${chat_id}`, {
+				method: "Get",
+				headers: {
+					// "Content-Type": "application/json",
+					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+				},
+			})
+		console.log(response);
+		
+		// setDisplayed_chat(chat_id);
+		// alert("What do here?" + chat_id);
+	}
+
 	useEffect(() => {
 			const get_conversation = async (conversation_id : number) => {
 				const response = await fetch(`http://localhost:3003/conversation/getConversationById/${conversation_id}`, {
@@ -49,7 +67,7 @@ const Group_chat_preview_card = ({chat_id} : chat_props) => {
 	// console.log(photo);
 	// console.log(conversation_name);
 	return (
-		<li className='Chat_preview_cards'>
+		<li className='Chat_preview_cards'  onClick={handleOnClick}>
 			<div className='player-availability'>
 				<img src={photo} alt="" />
 				<span id='user-name' title={"chat_name"} >{conversation_name}</span>
@@ -82,7 +100,7 @@ const	Get_all_open_group_chats = () =>
 	  return (
 		<ul className="game-page-games-online-ul">
 			{chat_ids.map((chat_id, idx) => (
-					<Group_chat_preview_card key={idx} chat_id={chat_id} />
+					<Group_chat_preview_card key={idx} chat_id={chat_id}/>
 				))}
 		</ul>
 	  )

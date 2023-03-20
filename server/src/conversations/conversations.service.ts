@@ -8,8 +8,8 @@ import { Services } from "src/utils/consts";
 import { CreateConversationParams } from '../utils/types';
 import { UserService } from '../user/user.service';
 // import { Message } from '../messages/entities/message.entity';
-import { networkInterfaces } from "os";
-import { skip } from 'rxjs';
+import { networkInterfaces, userInfo } from 'os';
+import { skip, identity } from 'rxjs';
 
 
 import { Message } from "@prisma/client"
@@ -28,6 +28,24 @@ export class ConversationService {
 			data,
 		})
 		return newConversation; 
+	}
+
+	async findDialogue(user_id1: number, user_id2: number) {
+		const arr: number[] = [user_id1, user_id2];
+		const checkDialogue = await this.prisma.conversation.findMany({
+
+			where: {
+				group_chat: false,
+				conversation_participant_arr: {
+					has: user_id1,
+				}
+		}})
+		for (let i = 0; i < checkDialogue.length; i++) {
+			if (checkDialogue[i].conversation_participant_arr.includes(user_id2)) {
+				return checkDialogue[i];
+			}
+		}
+		
 	}
 
 	// async createConversation(user: User, params: CreateConversationParams) {
@@ -143,6 +161,51 @@ export class ConversationService {
 			},
 		})
 		return Msg;
+	}
+
+	
+
+	async setAdministratorOfConversation(conversId: number, adminId: number): Promise<Conversation> {
+		let conversation : Conversation;
+		let user : User;
+		conversation = await this.findConversation(conversId);
+		const index_of_user = conversation.conversation_admin_arr.findIndex(element => element === user.id);
+		if (!index_of_user) throw new Error("no user with:\t" + index_of_user);
+		const index_of_admin = conversation.conversation_admin_arr.findIndex(element => element === adminId);
+		if (index_of_admin == -1)  throw new Error("current [" + user.name + "] is not an administrator");
+		else {
+			conversation.conversation_admin_arr.splice(index_of_admin, 1);
+			const update_conversation_admin_arr = this.prisma.conversation.update({
+				where: {
+					conversation_id: Number(conversId),
+				},
+				data: {
+					conversation_admin_arr: {
+						push: Number(adminId)
+					}
+				}
+			})
+			return update_conversation_admin_arr;
+		}
+	}
+
+	async updateConversationIdInUser(user_id: number, conversationId: number): Promise<User> {
+		// console.log("HEEEEY");
+		
+		const conversation = await this.findConversation(conversationId);
+		// console.log("CONVERSATION " + conversation.conversation_id);
+		
+		const updatedUser = this.user.updateUser({
+			where: {
+				id: user_id
+			},
+			data: {
+				conversation_id_arr: {
+					push: conversation.conversation_id
+				}
+			}
+		})	
+		return updatedUser;
 	}
 
 }

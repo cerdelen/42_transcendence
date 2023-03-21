@@ -322,11 +322,21 @@ footer {
 .open_group_chats-ul {
   max-height: 32.5vh;
 }
-.game-page-games-online-ul,
+/* .game-page-games-online-ul, */
 .all_open_group_chats-ul,
 .Chat_details
 {
+  padding: 0;
+  overflow-x: auto;
   max-height: 32.5vh;
+  min-height: 32.5vh;
+}
+
+.game-page-games-online-ul
+{
+  overflow-x: auto;
+  max-height: 65vh;
+  min-height: 65vh;
 }
 
 

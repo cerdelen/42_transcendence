@@ -126,6 +126,21 @@ const	Get_all_open_group_chats = ({not_joined_chats_ids, my_chats_ids, setmy_cha
 
 	  return (
 		<ul className="all_open_group_chats-ul">
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
 			{not_joined_chats_ids.map((chat_id, idx) => (
 					<Group_chat_preview_card key={idx} chat_id={chat_id} not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
 				))}
@@ -139,6 +154,28 @@ const	Chat_details = () =>
 	return (
 		<ul className="Chat_details">
 			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
+			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
 		</ul>
 	)
 }
@@ -151,6 +188,7 @@ const	Open_group_cards = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, 
 		<div className='live-games'>
 		<h2>OPEN GROUP CHATS</h2>
 		<Get_all_open_group_chats not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
+		<h2>CHAT DETAILS</h2>
 		<Chat_details />
 		</div>
 	)

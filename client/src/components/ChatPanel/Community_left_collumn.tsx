@@ -14,10 +14,6 @@ const Community_left_collumn = ({userId, my_chats_ids, setmy_chats_ids} : { user
 	const [show_chats, set_Show_chats] = useState(false);
 	// console.log(test);
 	// const { my_chats_ids, setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
-
-	console.log("log1");
-	my_chats_ids.map(() => {});
-	console.log("log2");
 	
 	return (
 		<div className='players-online'>

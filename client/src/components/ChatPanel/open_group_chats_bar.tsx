@@ -143,7 +143,7 @@ const	Open_group_cards = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, 
 		<h3>JOIN GROUP CHATS</h3>
 		<Get_all_open_group_chats not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
 		<h3>CHAT DETAILS</h3>
-		<Chat_details />
+		<Chat_details not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
 		</div>
 	)
 }

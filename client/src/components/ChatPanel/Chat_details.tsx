@@ -7,18 +7,29 @@ import { our_socket } from "../../utils/context/SocketContext";
 
 
 // const handleLeaveChat = () =>
-const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<number>>, userId:string) =>
+const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<number>>, userId:string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any) =>
 {
-
 	console.log("handleLeaveChat ");
-	
 	our_socket.emit('leave_group_chat', {chat_id: chat_id, userId: userId});
-	// setDisplayed_chat(-1);
-	// alert("this is an alert");
+	setDisplayed_chat(-1);
+	let arr : number [] = []
+	for(let i = 0; i < my_chats_ids.length; i++)
+	{
+		if(chat_id != my_chats_ids[i])
+			arr.push(my_chats_ids[i]);
+	}
+	setmy_chats_ids(arr);
+	let arr_2 : number [] = []
+	for(let i = 0; i < not_joined_chats_ids.length; i++)
+	{
+		arr_2.push(not_joined_chats_ids[i]);
+	}
+	arr_2.push(chat_id);
+	setNot_joined_chats_ids(arr_2);
 }
 
 
-const	Chat_details = () =>
+const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) =>
 {
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 	const { userId } = useContext(UserContext);
@@ -39,7 +50,7 @@ const	Chat_details = () =>
 				<li className="User_for_list_in_chat_details">User 10</li>
 				{/* Add more users as needed */}
 			</ul>
-			<button onClick={() => handleLeaveChat(displayed_chat, setDisplayed_chat, userId)}>Leave Chat</button>
+			<button onClick={() => handleLeaveChat(displayed_chat, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids)}>Leave Chat</button>
 			{/* <button onClick={handleLeaveChat}>Leave Chat</button> */}
 		</div>
 

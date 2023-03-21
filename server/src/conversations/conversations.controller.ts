@@ -238,7 +238,10 @@ export class ConversationController {
 			@Param('conversationId', new ParseIntPipe()) conversId: number,
 			@Param('adminId', new ParseIntPipe()) admId: number
 		) : Promise<Conversation> {
-			return this.conversationsService.setAdministratorOfConversation(conversId, admId);
+			console.log("ADMIN_ID = " + admId);
+			console.log("User_ID = " + req.user.id);
+			
+			return this.conversationsService.setAdministratorOfConversation(conversId, admId, req.user.id);
 		}
 }
 

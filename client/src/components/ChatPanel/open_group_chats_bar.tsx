@@ -2,6 +2,7 @@ import { useContext, useState, useEffect } from "react"
 import { UserContext } from "../../contexts/UserContext"
 import JSCookies from "js-cookie";
 import group_picture from "../../images/group_chat_picture.jpeg"
+import Chat_details from "./Chat_details";
 // import Chats_user_is_part_of_context from "../../contexts/Chats_user_is_part_of_context";
 // import Not_joined_group_chats_context from "../../contexts/Not_joined_group_chats_context";
 // import { Chat_preview_card } from "./chat_side_bar";
@@ -126,21 +127,6 @@ const	Get_all_open_group_chats = ({not_joined_chats_ids, my_chats_ids, setmy_cha
 
 	  return (
 		<ul className="all_open_group_chats-ul">
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
 			{not_joined_chats_ids.map((chat_id, idx) => (
 					<Group_chat_preview_card key={idx} chat_id={chat_id} not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
 				))}
@@ -149,46 +135,14 @@ const	Get_all_open_group_chats = ({not_joined_chats_ids, my_chats_ids, setmy_cha
 
 }
 
-const	Chat_details = () =>
-{
-	return (
-		<ul className="Chat_details">
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-			<>Here i will put chat details and buttons to do like bans and mutes i guess</>
-		</ul>
-	)
-}
-
-
 const	Open_group_cards = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) => 
 {
 	console.log("rendering Open_group_cards");
 	return (
 		<div className='live-games'>
-		<h2>OPEN GROUP CHATS</h2>
+		<h3>JOIN GROUP CHATS</h3>
 		<Get_all_open_group_chats not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
-		<h2>CHAT DETAILS</h2>
+		<h3>CHAT DETAILS</h3>
 		<Chat_details />
 		</div>
 	)

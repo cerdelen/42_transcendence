@@ -7,7 +7,7 @@ type MyContextType = {
 };
 
 const Displayed_Chat_Context = createContext<MyContextType>({
-    displayed_chat: -1,
+  displayed_chat: -1,
 	setDisplayed_chat: () => {},
 });
 

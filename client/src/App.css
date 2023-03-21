@@ -323,7 +323,14 @@ footer {
   max-height: 32.5vh;
 }
 /* .game-page-games-online-ul, */
-.all_open_group_chats-ul,
+.all_open_group_chats-ul
+{
+  padding: 0;
+  overflow-x: auto;
+  max-height: 32.5vh;
+  min-height: 32.5vh;
+}
+
 .Chat_details
 {
   padding: 0;
@@ -545,3 +552,31 @@ footer {
 
 }
 
+
+
+.Chat_details {
+  padding: 0;
+  overflow-x: none;
+  max-height: 32.5vh;
+  min-height: 32.5vh;
+}
+
+.Chat_name_for_chat_details {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.User_list_in_chat_detals {
+  max-height: calc(32.5vh - 10vh);
+  overflow-y: auto;
+  list-style: none; /* Remove the default bullet points */
+  margin: 0;
+  padding: 0;
+  display: flex; /* Display the list items in a column layout */
+  flex-direction: column;
+}
+
+.User_for_list_in_chat_details {
+  margin-bottom: 0.5rem;
+}

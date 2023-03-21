@@ -99,8 +99,7 @@ const Chat_area = () =>
               <Display_full_chat chat_id={displayed_chat} />
             </div>
             <form onSubmit={(e) => {  e.preventDefault() }}>
-			<Chat_input_filed_and_send_button />
-
+				<Chat_input_filed_and_send_button />
             </form>
 
         </div>

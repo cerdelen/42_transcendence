@@ -206,6 +206,21 @@ export class ConversationController {
     	    return this.conversationsService.getMsgsByConversationID(conversationId)
 		}
 
+		@UseGuards(Jwt_Auth_Guard)
+		@Get('getConversationNameById/:conversation_id')
+		async getConversationName(
+			@Param('conversation_id') conversation_id
+		) {
+			console.log("getconversation name "+ JSON.stringify(conversation_id));
+			const conv = await this.conversationsService.findConversation(conversation_id);
+			if(conv)
+			{
+				console.log("i will be returning this "+ conv.conversation_name);
+				return (conv.conversation_name);
+			}
+			else
+				return ("");
+		}
 
 		@UseGuards(Jwt_Auth_Guard)
 		@Get('getConversationById/:conversation_id')

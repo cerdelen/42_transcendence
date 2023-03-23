@@ -1,7 +1,8 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 import { UserContext } from "../../contexts/UserContext";
 import { our_socket } from "../../utils/context/SocketContext";
+import JSCookies from "js-cookie";
 
 
 
@@ -28,15 +29,69 @@ const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<Reac
 	setNot_joined_chats_ids(arr_2);
 }
 
+const	Chat_details_chat_name = (displayed_chat: {displayed_chat: number}) =>
+{
+	const [chat_name, set_name] = useState("");
+
+	console.log("GIOEWJIFEWOPKFPEOWKDFP{EWKOFE{PWOFKPEKWPFEWKP{FDLEW{PFLP{EW{PFLEWLP      " + displayed_chat.displayed_chat);
+	
+
+	useEffect(() => {
+		async function get_name(){
+			const response = await fetch(`http://localhost:3003/conversation/getConversationNameById/${displayed_chat.displayed_chat}`, {
+				method: "Get",
+				headers: {
+					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+				},
+			})
+			if (response.ok)
+			{
+				const data : string = await response.json();
+				set_name(data);
+			}
+		}
+		get_name();
+	  }, []);
+
+	  console.log(chat_name + " this is the chat name i foudn for details");
+	  
+
+	  return (
+		<div className="Chat_name_for_chat_details">{chat_name}</div>
+	  )
+}
 
 const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) =>
 {
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 	const { userId } = useContext(UserContext);
 
+	// const [chat_name, set_name] = useState("");
+
+	// useEffect(() => {
+	// 	async function get_name(){
+	// 		const response = await fetch(`http://localhost:3003/conversation/getConversationNameById/${displayed_chat}`, {
+	// 			method: "Get",
+	// 			headers: {
+	// 				Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+	// 			},
+	// 		})
+	// 		if (response.ok)
+	// 		{
+	// 			const data : string = await response.json();
+	// 			set_name(data);
+	// 		}
+	// 	}
+	// 	get_name();
+	//   }, []);
+
+
+
 	return (
 		<div className="Chat_details">
-			<div className="Chat_name_for_chat_details">Chat Name</div>
+			<Chat_details_chat_name displayed_chat={displayed_chat}/>
+			{/* <div className="Chat_name_for_chat_details">chat_name</div> */}
+			{/* <div className="Chat_name_for_chat_details">{chat_name}</div> */}
 			<ul className="User_list_in_chat_detals">
 				<li className="User_for_list_in_chat_details">User 1</li>
 				<li className="User_for_list_in_chat_details">User 2</li>

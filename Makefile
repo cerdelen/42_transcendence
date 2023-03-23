@@ -6,7 +6,7 @@ all: $(DEPENDENIES)
 build: $(DEPENDENIES)
 	docker compose --file docker-compose-dev.yml up --build
 
-down: $(DEPENDENIES)
+down:
 	docker compose --file docker-compose-dev.yml down
 
 $(DEPENDENIES):

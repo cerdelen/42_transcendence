@@ -86,6 +86,8 @@ export class ConversationService {
 
 	async findConversation(id: number): Promise<Conversation | undefined> {
 		console.log("ID = " + id);
+		if(Number.isNaN(Number(id)))
+			return null;
 		const foundConversation = await this.conversation({conversation_id: Number(id)});
 		console.log("ID = found" );
 		return foundConversation;

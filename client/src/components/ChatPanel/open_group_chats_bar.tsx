@@ -3,24 +3,14 @@ import { UserContext } from "../../contexts/UserContext"
 import JSCookies from "js-cookie";
 import group_picture from "../../images/group_chat_picture.jpeg"
 import Chat_details from "./Chat_details";
-// import Chats_user_is_part_of_context from "../../contexts/Chats_user_is_part_of_context";
-// import Not_joined_group_chats_context from "../../contexts/Not_joined_group_chats_context";
-// import { Chat_preview_card } from "./chat_side_bar";
-
-// this is how to use it
-// const { userId } =
-// useContext(UserContext);
 
 interface chat_props {
 	chat_id: number,
 	onTestChange: any,
 }
 
-const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { chat_id: number, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) => {
-	// {not_joined_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { chat_id: number, not_joined_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}
-	// console.log('called chat preview window');
-	// console.log(chat_id);
-	const [photo, setPhoto] = useState("");
+const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { chat_id: number, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) => 
+{
 	const [conversation_name, setConversation_name] = useState("");
 	// const { my_chats_ids } = useContext(Chats_user_is_part_of_context)
 	

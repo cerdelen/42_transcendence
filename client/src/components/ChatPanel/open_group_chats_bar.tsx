@@ -9,8 +9,31 @@ interface chat_props {
 	onTestChange: any,
 }
 
-const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { chat_id: number, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) => 
+
+const handleCreateGroupChat = async (my_chats_ids: number[], setmy_chats_ids:any, userId: string)  =>
 {
+
+	console.log("handleCreateGroupChat");
+
+	const response = await fetch("http://localhost:3003/conversation/create",{
+			method: "Post",
+			headers: {
+				// "Content-Type": "application/json",
+				Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+			},
+			body: JSON.stringify({ participants: [userId] }),
+		})
+	// const data = await response.json();
+	console.log(JSON.stringify( response));
+	
+}
+
+const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { chat_id: number, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) =>
+{
+	// {not_joined_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { chat_id: number, not_joined_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}
+	// console.log('called chat preview window');
+	// console.log(chat_id);
+	const [photo, setPhoto] = useState("");
 	const [conversation_name, setConversation_name] = useState("");
 	// const { my_chats_ids } = useContext(Chats_user_is_part_of_context)
 	
@@ -128,10 +151,12 @@ const	Get_all_open_group_chats = ({not_joined_chats_ids, my_chats_ids, setmy_cha
 const	Open_group_cards = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) => 
 {
 	console.log("rendering Open_group_cards");
+	const { userId } = useContext(UserContext);
 	return (
 		<div className='live-games'>
 		<h3>JOIN GROUP CHATS</h3>
 		<Get_all_open_group_chats not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
+		<button onClick={() => handleCreateGroupChat(my_chats_ids, setmy_chats_ids, userId)} >CEATE GROUP CHAT</button>
 		<h3>CHAT DETAILS</h3>
 		<Chat_details not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
 		</div>

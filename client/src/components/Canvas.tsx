@@ -134,9 +134,18 @@ const Canvas = ({userId} : {userId: string}) =>
             if(canvasRef.current)
             {
                 ctx =  canvasRef.current.getContext('2d');
-                ctx.canvas.hidden = false;
-                ctx.canvas.display = "block";
+                // ctx.canvas.hidden = false;
+                ctx.canvas.style.display = "block";
+                console.log("Make game visible ");
             }
+        }else{
+            if(canvasRef.current)
+            {
+                ctx =  canvasRef.current.getContext('2d');
+                // ctx.canvas.hidden = false;
+                ctx.canvas.style.display = "none";
+            }
+            
         }
     }, [gameActive])
     function handleGameCode(data: string)

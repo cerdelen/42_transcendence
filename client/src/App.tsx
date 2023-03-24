@@ -70,6 +70,8 @@ function App() {
         },
       });
       const id = await response.text();
+      console.log("so thi is app.tsx" + id);
+      
       await setUserId(id);
       await getData(id);
     } catch (error) {

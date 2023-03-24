@@ -12,7 +12,7 @@ const Game = ({userId} : { userId: string}) => {
 	<main>
 		{/* <GameScreenManagment socket={socket} inLobby={inLobby} gameCode={gameCode}/> */}
 		{/* <div className='game-area'> */}
-			    <Canvas userId={userId}/>
+		<Canvas userId={userId}/>
 		{/* </div> */}
 	</main>
   )

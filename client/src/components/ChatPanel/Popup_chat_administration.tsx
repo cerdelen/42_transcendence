@@ -16,6 +16,12 @@ type administraion_props =
 	// "conversation_admin_arr":[322,98455]
 	// "conversation_black_list_arr":[]
 	// "conversation_mute_list_arr":[]
+	
+	
+	
+	
+	// (':conversation_id/setKick/:id_to_kick')
+	// (':conversation_id/setBan/:id_to_ban')
 
 const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_user_ids_in_chat_details} : administraion_props) =>
 {
@@ -23,12 +29,12 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 	const handle_kick = async (user_id: number, is_banned_click: boolean) =>
 	{
 		console.log(" called handle_kick or ban ");
-		
+
 		if(is_banned_click)
 		{
 			try
 			{
-				const respone = await fetch(`http://localhost:3003/conversation/${displayed_chat.conversation_id}/banById/${user_id}`,{
+				const respone = await fetch(`http://localhost:3003/conversation/${displayed_chat.conversation_id}/setBan/${user_id}`,{
 				method: "PUT",
 					headers: {
 						// "Content-Type": "application/json",
@@ -63,7 +69,7 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 		{
 			try
 			{
-				const respone = await fetch(`http://localhost:3003/conversation/${displayed_chat.conversation_id}/kickById/${user_id}`,{
+				const respone = await fetch(`http://localhost:3003/conversation/${displayed_chat.conversation_id}/setKick/${user_id}`,{
 				method: "PUT",
 					headers: {
 						// "Content-Type": "application/json",

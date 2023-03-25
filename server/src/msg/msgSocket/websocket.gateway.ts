@@ -41,7 +41,9 @@ export class MessagingGateway implements OnGatewayConnection {
 				console.log(JSON.stringify(data));
 				
 				this.msg.createMsg(data);
-				this.server.emit("message", {text: data.message, author_id: data.author});
+				console.log(`From backend message subscriber: message = ${data.text}, author = ${data.author}`);
+				
+				this.server.emit("message", {text: data.text, author_id: data.author});
 		}
 
 		@SubscribeMessage('typing')

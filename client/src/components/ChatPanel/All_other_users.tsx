@@ -22,7 +22,7 @@ const User_preview_card = ({other_user_id} : {other_user_id: number}) => {
 	{
 		// setDisplayed_chat(chat_id);
 		// setUserIdCard()
-		console.log(other_user_id);
+		// console.log(other_user_id);
 		// console.log(userIdCard);
 		setUserIdCard(other_user_id.toString());
 		setShowUserInto(true);

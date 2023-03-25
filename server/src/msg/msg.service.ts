@@ -115,14 +115,14 @@ export class MsgService {
 					author: createMsgDto.author,
 					// user_name: user.name
 				},
-				include: {
-					user_relation: {
-						select: {
-							user_msg_arr: true,
-							id: true
-						}    
-					}
-				}
+				// include: {
+				// 	user_relation: {
+				// 		select: {
+				// 			user_msg_arr: true,
+				// 			id: true
+				// 		}    
+				// 	}
+				// }
 			})
 			// if (conversat.conversation_id !== user.id ) {
 			// 	throw new HttpException('cannot create msg', HttpStatus.FORBIDDEN);
@@ -171,13 +171,13 @@ export class MsgService {
 					created_at: 'desc'
 				},
 				//in frontend i guess we will compare users id and logged in email for validation matter, if id is not the same, we know its not the user
-				include: {
-					user_relation: true
-						// select: {
-						// 	id: true
-						// }
-					// }
-				},
+				// include: {
+				// 	user_relation: true
+				// 		// select: {
+				// 		// 	id: true
+				// 		// }
+				// 	// }
+				// },
 			})
 			return Msg;
 		}

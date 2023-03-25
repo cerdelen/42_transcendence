@@ -99,11 +99,15 @@ export class UserController
 	@UseGuards(Two_FA_Guard)
 	async	get_user_name(@Body('user_id') user_id : string)
 	{
-		if(!Number.isNaN(user_id))
+		console.log(user_id);
+		
+		if(!Number.isNaN(Number(user_id)))
 		{
 			// const name = await this.userService.get_user_name(Number(user_id));
 			return this.userService.get_user_name(Number(user_id));
 		}
+		console.log("we newver got inside ");
+		
 	}
 
 	@Get('get_all_other_user_ids')

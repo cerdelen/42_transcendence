@@ -18,13 +18,13 @@ interface message
 class display_message_info {
 	text: string;
 	author_id: number;
-  
+
 	constructor(_text: string, _author_id: number)
 	{
-	  this.text = _text;
-	  this.author_id = _author_id;
+		this.text = _text;
+		this.author_id = _author_id;
 	}
-  }
+}
 
 function DisplayTyping({typingDisplay} : {typingDisplay: string})
 {
@@ -37,7 +37,6 @@ const Display_message_in_chat = ({ message }: { message: display_message_info })
 {
 	const { userId } = useContext(UserContext);
 	const is_me : boolean = (message.author_id == Number(userId));
-	// console.log("this is isme " + is_me);
 	
   
 	return (
@@ -84,8 +83,8 @@ const Display_message_in_chat = ({ message }: { message: display_message_info })
 		if(chat_id == -1)
 		{
 		  console.log("chat_id == -1 cleaning messages");
-		  const messages : display_message_info[] = [];
-		  set_messages(messages)
+		  const empty : display_message_info[] = [];
+		  set_messages(empty)
 		  return ;
 		}
 		const response = await fetch(`http://localhost:3003/conversation/get_messages_from_conversation/${chat_id}`, {
@@ -95,18 +94,18 @@ const Display_message_in_chat = ({ message }: { message: display_message_info })
 				  },
 			  })
 		const data : [] = await response.json();
-		let messages : display_message_info[] = [];
+		let re_messages : display_message_info[] = [];
 		if (data.length == 0)
 		{
-		  set_messages(messages);
+		  set_messages(re_messages);
 		  return ;
 		}
 		// console.log("this is the data i got " + await JSON.stringify(data));
 		for(let i = 0; i < data.length; i++)
 		{
-		  messages.push(new display_message_info(data[i]["text"], data[i]["author"]));
+			re_messages.push(new display_message_info(data[i]["text"], data[i]["author"]));
 		}
-		set_messages(messages);
+		set_messages(re_messages);
 	  } 
 	  get_messages(chat_id);
 	}, [chat_id]);
@@ -121,7 +120,6 @@ const Display_message_in_chat = ({ message }: { message: display_message_info })
 
 	  </>
 	)
-	// return <>{users.map((user : message) => (<li> {"["}{user.name}{"]"} {"\t"} {user.text} </li>))}</>;
 }
 
 export default Display_full_chat

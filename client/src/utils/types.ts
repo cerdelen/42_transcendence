@@ -8,7 +8,7 @@ export type displayed_chat_class =
 	conversation_is_public?: boolean;
 	conversation_pass_protected?: boolean;
 	conversation_password?: string;		
-	conversation_participant_arr?: number[];
+	conversation_participant_arr: number[];
 	conversation_owner_arr?: number[];
 	conversation_admin_arr?: number[];
 	conversation_black_list_arr?: number[];

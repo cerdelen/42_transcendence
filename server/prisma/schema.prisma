@@ -51,7 +51,7 @@ model Conversation {
 
 	conversation_participant_arr	Int[]		@default([])
 	conversation_owner_arr			Int[]
-	conversation_admin_arr			Int[] 
+	conversation_admin_arr			Int[]
 	conversation_black_list_arr		Int[]
 	conversation_mute_list_arr		Int[]
 

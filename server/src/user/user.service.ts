@@ -334,7 +334,7 @@ export class UserService {
 	async set_user_online(user_id: number, state: boolean)
 	{
 		return this.prisma.user.update({
-			where: {id: user_id},
+			where: {id: user_id}, 
 			data: {online: state},
 		});
 	}

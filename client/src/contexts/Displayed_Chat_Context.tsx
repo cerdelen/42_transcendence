@@ -8,7 +8,7 @@ type MyContextType = {
 };
 
 const Displayed_Chat_Context = createContext<MyContextType>({
-	displayed_chat: {conversation_id: -1},
+	displayed_chat: { conversation_id: -1, conversation_participant_arr: []},
 	setDisplayed_chat: () => {},
 });
 
@@ -33,7 +33,7 @@ type MyContextProviderProps = {
 
 export function Displayed_Chat_Provider({ children }: MyContextProviderProps)
 {
-	var default_chat_class : displayed_chat_class = { conversation_id: -1};
+	var default_chat_class : displayed_chat_class = { conversation_id: -1, conversation_participant_arr: []};
 	// default_chat_class.id = -1;
 	const [displayed_chat, setDisplayed_chat] = useState<displayed_chat_class>(default_chat_class);
 	// const [displayed_chat, setDisplayed_chat] = useState(-1);

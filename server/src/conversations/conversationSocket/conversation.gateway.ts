@@ -35,7 +35,7 @@ export class conversationGateway implements OnGatewayConnection {
 				console.log(JSON.stringify(data));
 				const smth : conv_gateway_dto = data;
 				console.log(smth.chat_id);
-				this.conversationService.remove_user_from_conversation(Number(data.chat_id), Number(data.userId));
+				// this.conversationService.remove_user_from_conversation(Number(data.chat_id), Number(data.userId));
 		}
 
 } 

@@ -417,6 +417,16 @@ export class ConversationController {
 				return updatedConversationWithoutBannedUser;
 			}	
 		}
+
+		@UseGuards(Jwt_Auth_Guard)
+		@Put(':conversation_id/setKick/:id_to_kick')
+		async setKickUser(
+			@Req() req: any,
+			@Param('conversation_id', new ParseIntPipe()) conversation_id: number,
+			@Param('id_to_kick', new ParseIntPipe()) id_to_kick: number,
+		) {
+			return this.conversationsService.remove_user_from_conversation(conversation_id, req.user.id, id_to_kick);
+		}
 }
 
 // async banUser(@Req() req : any, @Param('id', new ParseIntPipe()) id: number, @Param('bid', new ParseIntPipe()) bid: number){

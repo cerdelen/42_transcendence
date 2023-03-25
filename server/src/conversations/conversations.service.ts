@@ -146,7 +146,7 @@ export class ConversationService {
 			where,
 		},
 		)
-	}
+	}   
 
 	async exclude (user, ...keys) {
 		for (let id of keys) {
@@ -202,6 +202,7 @@ export class ConversationService {
 	async setAdministratorOfConversation(conversId: number, adminId: number, userId: number): Promise<Conversation> {
 		let conversation : Conversation;
 		let user : User;
+
 		conversation = await this.findConversation(conversId);
 		console.log("CONVERSATION_ID = " + conversation.conversation_id);
 
@@ -264,27 +265,50 @@ export class ConversationService {
 		return updatedUser;
 	}
 
-	async	remove_user_from_conversation(chat_id: number, userId: number)
+	async	remove_user_from_conversation(chat_id: number, userId: number, id_to_kick: number)
 	{
-		const conv = await this.prisma.conversation.findUnique({
+		
+		const conversation = await this.prisma.conversation.findUnique({
 			where: {
 				conversation_id: chat_id,
 			}
 		})
-		if (!conv || conv.group_chat == false) return ;
-		const ind_1 = conv.conversation_participant_arr.indexOf(userId);
-		conv.conversation_participant_arr.splice(ind_1, 1);
+		console.log("CONVERSSS = " + conversation.conversation_id);
+		
+		if (!conversation) return ;
+
+		const admin_user_idx = conversation.conversation_admin_arr.indexOf(userId, 0);
+		// const idx_from_black_list = conversation.conversation_black_list_arr.findIndex(element => element == id_to_ban);
+		const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == id_to_kick);
+			console.log("ADMIN_USER_IDX = " + admin_user_idx);
+			// console.log("idx_from_black_list = " + idx_from_black_list);
+			console.log("owner_user_idx = " + owner_user_idx);
+
+			if (owner_user_idx >= 0) {
+				console.log("HEREEEE1");
+				throw new HttpException("Can't kick the conversation owner!!!", HttpStatus.FORBIDDEN);
+			}
+			else if (admin_user_idx < 0) {
+				console.log("HEREEEE2");
+				console.log("Current user is not considered to be an Administrator");
+				return conversation;
+			}
+			// else if (idx_from_black_list >= 0) {
+			// 	console.log("HEREEEE3");
+				// conversation.conversation_black_list_arr.splice(idx_from_black_list, 1);
+		const req_user_idx = conversation.conversation_participant_arr.indexOf(id_to_kick);
+		conversation.conversation_participant_arr.splice(req_user_idx, 1);
 		await this.prisma.conversation.update({
 			where: {conversation_id: chat_id},
-			data: {conversation_participant_arr :conv.conversation_participant_arr }
+			data: {conversation_participant_arr :conversation.conversation_participant_arr }
 		});
 		const user = await this.prisma.user.findUnique({where: {id: userId}});
-		const ind_2 = user.conversation_id_arr.indexOf(chat_id);
-		user.conversation_id_arr.splice(ind_2, 1);
+		const conv_id_from_user = user.conversation_id_arr.indexOf(chat_id);
+		user.conversation_id_arr.splice(conv_id_from_user, 1);
 		await this.prisma.user.update({
 			where: {id: userId},
 			data: {conversation_id_arr: user.conversation_id_arr}
-		});
+		}); 
 	}
 }
 

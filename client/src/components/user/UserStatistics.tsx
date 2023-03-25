@@ -10,7 +10,6 @@ interface Props {
 }
 
 const UserStats = ({ userId }: Props) => {
-  console.log("UserStats");
   const [winRatio, setWinRatio] = useState(0.0);
   const [wins, setWins] = useState(0);
   const [loses, setLoses] = useState(0);
@@ -38,11 +37,9 @@ const UserStats = ({ userId }: Props) => {
       setAchievementOne(stats["achievement_0"]);
       setAchievementTwo(stats["achievement_1"]);
       setAchievementThree(stats["achievement_2"]);
-      console.log(stats);
     };
 
     fetchStats();
-    console.log(winRatio);
   }, [userId]);
 
   return (

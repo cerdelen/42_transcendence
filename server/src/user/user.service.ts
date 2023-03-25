@@ -86,12 +86,15 @@ export class UserService {
 		const	user = await this.prisma.user.findUnique({ where : { id: userId }});
 		const	add_friend = await this.prisma.user.findUnique({ where : { id: friend }});
 		const	index = user.friendlist.findIndex(x => x == friend);
+		const	index_2 = add_friend.friendlist.findIndex(x => x == friend);
 		// console.log(index);
 
 		if(add_friend && user && index == -1)
 		{
-			await user.friendlist.push(friend);
+			user.friendlist.push(friend);
+			add_friend.friendlist.push(userId);
 			await	this.prisma.user.update({where: { id: userId}, data: { friendlist: user.friendlist}});
+			await	this.prisma.user.update({where: { id: friend}, data: { friendlist: add_friend.friendlist}});
 		}
 	}
 
@@ -101,11 +104,14 @@ export class UserService {
 		const	user = await this.prisma.user.findUnique({ where : { id: userId }});
 		const	rmv_friend = await this.prisma.user.findUnique({ where : { id: friend }});
 		const	index = user.friendlist.findIndex(x => x == friend);
+		const	index_2 = rmv_friend.friendlist.findIndex(x => x == userId);
 		
 		if(rmv_friend && user && index != -1)
 		{
-			await user.friendlist.splice(index, 1);
+			user.friendlist.splice(index, 1);
+			rmv_friend.friendlist.splice(index_2, 1);
 			await	this.prisma.user.update({where: { id: userId}, data: { friendlist: user.friendlist}});
+			await	this.prisma.user.update({where: { id: friend}, data: { friendlist: rmv_friend.friendlist}});
 		}
 	}
 

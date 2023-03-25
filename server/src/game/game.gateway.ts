@@ -5,11 +5,14 @@ import {getInitialState, gameLoop} from './make_game_state'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { io_server } from 'src/utils/Server';
+import { interval } from 'rxjs';
 let roomNames : {roomName: string, gameInstance: any}[] = [];
 
 const state = {};
 const clientRooms = {};
 let gameCode : string = "";
+
+let response : number = 0;
 
 @WebSocketGateway(
   {
@@ -27,12 +30,32 @@ export class GameGateway {
     this.server.on('connection', (socket) => {
       console.log(socket.id);
       console.log("connected");
+      setInterval(() => 
+      {
+        socket.emit("online_check");
+        if(response === 0)
+        {
+          //socket.id switch user offline with userID
+          console.log("Is offline");
+        }
+        response = 0;
+      }, 10000)
     })
   }
 
   constructor(private readonly gameService: GameService, private prisma : PrismaService, private userService : UserService) {  
   }
 
+  @SubscribeMessage("online_inform")
+  async handle_online(@MessageBody() userId: string)
+  {
+    if(userId)
+    {
+      //make user online
+      response = 1;
+      console.log("User is online");
+    }
+  }
   @SubscribeMessage('makeOnline')
   async makeOnline(@MessageBody() userId: string)
   {

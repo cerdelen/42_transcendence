@@ -77,6 +77,14 @@ function App() {
       console.error(error);
     }
   }
+
+  useEffect(() => 
+    {
+        our_socket.on("online_check", () => 
+        {
+          our_socket.emit("online_inform", {userId});
+        })
+    }, [])
   useEffect(() => {
     const myCookie = JSCookies.get("accessToken");
     if (myCookie !== undefined) {

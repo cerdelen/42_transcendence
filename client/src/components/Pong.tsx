@@ -6,7 +6,7 @@ function draw_rectangle(context: any, player: any, width: number, height: number
     context.fillRect(player.x, player.y, width, height);
 }
 
-function drawGame(ctx: any, gameInfo: any) {
+function drawGame(ctx: any, gameInfo: any, images: any) {
 
     // ctx.fillStyle = "#000";
     // ctx.fillRect(0,0, 700, 400);    
@@ -14,7 +14,7 @@ function drawGame(ctx: any, gameInfo: any) {
     ctx.clearRect(0, 0, 700, 400);;
     // const image = new Image();
 
-
+    ctx.drawImage(images[0], 0, 0, 700, 400);
     ctx.strokeStyle = "#fff"
     ctx.strokeRect(10, 10, 700 - 20, 400 - 20);
     ctx.lineWidth = 5;
@@ -37,7 +37,7 @@ function drawGame(ctx: any, gameInfo: any) {
     draw_rectangle(ctx, gameInfo.Ball, ballSize, ballSize);
 }
 
-function drawPong(socket: Socket, ctx: any, gameInfo: any) {
-    drawGame(ctx, gameInfo);
+function drawPong(socket: Socket, ctx: any, gameInfo: any, images: any) {
+    drawGame(ctx, gameInfo, images);
 }
 export default drawPong;

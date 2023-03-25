@@ -63,7 +63,15 @@ export class AuthController
 	async login_test_user(@Res() res: any)
 	{
 		console.log("hello from inside login_test_user")
-		await this.authService.login_test_user(322, res);
+		return this.authService.login_test_user(322, res);
+		// return ("successfully tested db");
+	}
+
+	@Get('token_test_user')
+	async get_token_test_user(@Res() res: any)
+	{
+		console.log("hello from inside login_test_user")
+		return this.authService.get_token_test_user(322, res);
 		// return ("successfully tested db");
 	}
 

@@ -168,27 +168,48 @@ export class ConversationService {
 
 	
 
-	async setAdministratorOfConversation(conversId: number, adminId: number): Promise<Conversation> {
+	async setAdministratorOfConversation(conversId: number, adminId: number, userId: number): Promise<Conversation> {
 		let conversation : Conversation;
 		let user : User;
 		conversation = await this.findConversation(conversId);
-		const index_of_user = conversation.conversation_admin_arr.findIndex(element => element === user.id);
-		if (!index_of_user) throw new Error("no user with:\t" + index_of_user);
+		console.log("CONVERSATION_ID = " + conversation.conversation_id);
+		
+		const index_of_user = conversation.conversation_admin_arr.findIndex(element => element === userId);
 		const index_of_admin = conversation.conversation_admin_arr.findIndex(element => element === adminId);
-		if (index_of_admin == -1)  throw new Error("current [" + user.name + "] is not an administrator");
-		else {
+		console.log("index_of_user = " + index_of_user);
+		console.log("index_of_admin = " + index_of_admin);
+		
+		if (index_of_user == -1) {
+			console.log("no user with:\t" + index_of_user)
+			return conversation;
+		}
+		// if (index_of_admin == -1)  {
+		// 	console.log("current [user] is not an administrator");
+		// 	return conversation;
+		// }
+		else if (index_of_admin > -1) {
 			conversation.conversation_admin_arr.splice(index_of_admin, 1);
-			const update_conversation_admin_arr = this.prisma.conversation.update({
+			const update_conversation_admin_arr = this.updateConversation({
 				where: {
 					conversation_id: Number(conversId),
 				},
 				data: {
-					conversation_admin_arr: {
-						push: Number(adminId)
-					}
+					conversation_admin_arr: conversation.conversation_admin_arr
 				}
 			})
 			return update_conversation_admin_arr;
+		}
+		else {
+			return this.updateConversation({
+				where: {
+					conversation_id: Number(conversId)
+				},
+				data: {
+					conversation_admin_arr: {
+						push: Number(conversId)
+					}
+				}
+			})
 		}
 	}
 

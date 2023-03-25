@@ -4,6 +4,8 @@ import {pong_properties, KeyInfo, Player} from './Pong_types'
 import { SocketContext, our_socket } from '../utils/context/SocketContext';
 
 
+
+
 const Canvas = ({userId} : {userId: string}) =>
 {
     let initial_state : pong_properties = {
@@ -39,12 +41,35 @@ const Canvas = ({userId} : {userId: string}) =>
             yVel: 0,
         }
     }
-    function ButtonShow({userId, GameActive ,init, setGameActive, setCodeInput} : 
-        { userId: string, GameActive: boolean, init :any, setGameActive: any, setCodeInput : any}) 
+    function Custmization_fields ({setMapNumber} : {setMapNumber: any})
+    {
+        
+        return  (
+            <>
+            <br/>
+            <br/>
+            <button className="game_buttons" onClick={() => 
+            {
+                setMapNumber(0);
+            }}> Cat Valley </button>
+            <button className="game_buttons" onClick={() => 
+            {
+                setMapNumber(1);
+            }}> Paris </button>
+            <button className="game_buttons" onClick={() => 
+            {
+                setMapNumber(2);
+            }}> Bulgaria </button>
+            </>
+        )
+    }
+    
+    function ButtonShow({userId, GameActive, setGameActive, setCodeInput} : 
+        { userId: string, GameActive: boolean, setGameActive: any, setCodeInput : any}) 
     {
         if(!GameActive)
         {
-            return (<button onClick={() => {
+            return (<button id="joinButton" onClick={() => {
                 if(!userId)
                 {
                     our_socket.emit("joinGame", "1");
@@ -52,10 +77,10 @@ const Canvas = ({userId} : {userId: string}) =>
                     console.log('this is joingame userid' + userId);
                     our_socket.emit("joinGame", userId);
                 }
-                init();
                 setGameActive(true);
             }} > Join Game </button>)
         }else{
+
             return (
                 <>
                 </>
@@ -66,14 +91,63 @@ const Canvas = ({userId} : {userId: string}) =>
 
     const [gameInfo, setGameInfo] = useState<pong_properties>(initial_state);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [inLobby, setInLobby] = useState(false);
     const [gameActive, setGameActive] = useState(false);
 	const [gameCode, setGameCode] = useState("");
 	const [codeInput, setCodeInput] = useState("");
     const [playerNumber, setPlayerNumber] = useState(0);
+    const [mapNumber, setMapNumber] = useState(0);
     let ctx : any;
+    function WaitingScreenCatto ({gameActive} : {gameActive: boolean})
+    {
+        if(!gameActive)
+        return (
+            <>
+                      <ButtonShow userId={userId} GameActive={gameActive} setGameActive={setGameActive} setCodeInput={setCodeInput}/>        
+                  <Custmization_fields setMapNumber={setMapNumber}/>                  
 
+                  <br/>
+                  <div className="cat">
+	<div className="ear ear--left"></div>
+	<div className="ear ear--right"></div>
+	<div className="face">
+		<div className="eye eye--left">
+			<div className="eye-pupil"></div>
+		</div>
+		<div className="eye eye--right">
+			<div className="eye-pupil"></div>
+		</div>
+		<div className="muzzle"></div>
+	</div>
+        </div>
 
+            </>
+        )
+        else{
+            return <>
+            </>;
+        }
+    }
+    useEffect(() => 
+    {
+        if(gameActive)
+        {
+            if(canvasRef.current)
+            {
+                ctx =  canvasRef.current.getContext('2d');
+                // ctx.canvas.hidden = false;
+                ctx.canvas.style.display = "block";
+                console.log("Make game visible ");
+            }
+        }else{
+            if(canvasRef.current)
+            {
+                ctx =  canvasRef.current.getContext('2d');
+                // ctx.canvas.hidden = false;
+                ctx.canvas.style.display = "none";
+            }
+            
+        }
+    }, [gameActive])
     function handleGameCode(data: string)
     {
         setGameCode(data);
@@ -84,12 +158,6 @@ const Canvas = ({userId} : {userId: string}) =>
         setPlayerNumber(0);
         setCodeInput("");
         setGameCode("");
-        setInLobby(false);
-
-    }
-    function init () 
-    {
-            setInLobby(true);
     }
     useEffect(() => 
     {
@@ -139,19 +207,27 @@ const Canvas = ({userId} : {userId: string}) =>
             setGameActive(false);
         })
     }, [gameActive])
-   
+    useEffect(() => 
+    {
+        if(canvasRef.current)
+        {
+            ctx =  canvasRef.current.getContext('2d');
+            ctx.canvas.hidden = true;
+        }
+    }, [])
     useEffect( () => 
     {
         our_socket.on('gameState', (gameState: string) => 
         {
             if(!gameActive)
             {
-                return ; 
+                return ;    
             }
             setGameInfo(JSON.parse(gameState));
             if(canvasRef.current)
             {
                 ctx =  canvasRef.current.getContext('2d');
+                
                 requestAnimationFrame(() => drawPong(our_socket, ctx, gameInfo));
             }
         })
@@ -187,12 +263,16 @@ const Canvas = ({userId} : {userId: string}) =>
     
     return (
         <>
+            <div className="gameStuff">
             <center>
             <h1> Welcome to Pong </h1>
             <br/>
             <br/>
-            <ButtonShow userId={userId} GameActive={gameActive} init={init} setGameActive={setGameActive} setCodeInput={setCodeInput}/>
+            
+        
+        <WaitingScreenCatto gameActive={gameActive} />
         </center>
+        </div>
             <canvas 
             ref={canvasRef}
             width={700}

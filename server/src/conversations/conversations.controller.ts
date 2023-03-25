@@ -349,14 +349,14 @@ export class ConversationController {
 		) {
 			const conversation = await this.conversationsService.findConversation(conversation_id);
 			console.log("CONVERSATION_ID = " + conversation.conversation_id);
-			
+
 			const admin_user_idx = conversation.conversation_admin_arr.indexOf(req.user.id, 0);
 			const idx_from_black_list = conversation.conversation_black_list_arr.findIndex(element => element == id_to_ban);
 			const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == id_to_ban);
 			console.log("ADMIN_USER_IDX = " + admin_user_idx);
 			console.log("idx_from_black_list = " + idx_from_black_list);
 			console.log("owner_user_idx = " + owner_user_idx);
-			
+
 			if (owner_user_idx >= 0) {
 				console.log("HEREEEE1");
 				throw new HttpException("Can't mute the conversation owner!!!", HttpStatus.FORBIDDEN);
@@ -368,6 +368,7 @@ export class ConversationController {
 			}
 			else if (idx_from_black_list >= 0) {
 				console.log("HEREEEE3");
+				
 				conversation.conversation_black_list_arr.splice(idx_from_black_list, 1);
 				return this.conversationsService.updateConversation({
 					where: {
@@ -384,7 +385,7 @@ export class ConversationController {
 				
 				conversation.conversation_black_list_arr.splice(black_list_idx, 1);
 				const user : User = await this.userService.findUserById(id_to_ban);
-				
+
 				const convers_idx_arr_from_user = user.conversation_id_arr.indexOf(conversation_id);
 				user.conversation_id_arr.splice(convers_idx_arr_from_user, 1);
 				this.userService.updateUser({

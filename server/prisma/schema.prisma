@@ -15,9 +15,9 @@ model User {
 	id						Int			@unique
 	name					String		@unique
 	mail					String
-	// chatParticipant	ChatParticipant?	@relation(fields: [chatPtsId], references: [ChatPartId])
 	conversation_id_arr		Int[]
-	user_msg_arr			Message[]
+	
+	// block_users_arr			Int[]		@default([])
 
 	// picture			String?
 	// 2_FA_stuff
@@ -85,7 +85,8 @@ model Message {
 	conversation_id				Int?			
 	// usr_id						Int?			
 	conversation_relation		Conversation?		@relation(fields: [conversation_id], references: [conversation_id])
-	user_relation				User?				@relation(fields: [author], references: [id])		
+	// user_relation				User?				@relation(fields: [author], references: [id])		
+
 }
 
 model Game {

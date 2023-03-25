@@ -3,27 +3,72 @@ import { UserContext } from "../../contexts/UserContext"
 import JSCookies from "js-cookie";
 import group_picture from "../../images/group_chat_picture.jpeg"
 import Chat_details from "./Chat_details";
+import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 
 interface chat_props {
 	chat_id: number,
 	onTestChange: any,
 }
 
-
-const handleCreateGroupChat = async (my_chats_ids: number[], setmy_chats_ids:any, userId: string)  =>
+// const handleCreateGroupChat = async (my_chats_ids: number[], setmy_chats_ids:any, userId: string)	=>
+const Chat_name_input = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids, setButton_state} : { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any, setButton_state: any}) =>
 {
-	const name: string = "hello";
+	const [inputValue, setInputValue] = useState('');
+	const { setDisplayed_chat } = useMyDisplayedChatContext();
+	
+
+	const handleInputChange = (e: any) => {
+	setInputValue(e.target.value);
+	};
+
+	const handleButtonClick = async () => {
+	if(inputValue.length > 0)
+	{
+			const response = await fetch(`http://localhost:3003/conversation/create_group_chat/${inputValue}`,{
+				method: "Get",
+				headers: {
+					// "Content-Type": "application/json",
+					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+				},
+			})
+		const data = await response.json();
+		console.log(" this is the response of create group chat " + JSON.stringify(data));
+		console.log(data["conversation_owner_arr"]);
+		setDisplayed_chat(data);
+		setButton_state(true);
+	}
+	else 
+	{
+
+		console.log(`Input value: ${inputValue}`);
+		console.log(`Input length: ` + inputValue.length);
+	}
+	};
+
+	return (
+	<div className="popup">
+		<input type="text" value={inputValue} onChange={handleInputChange} />
+		<button onClick={handleButtonClick}>CREATE</button>
+	</div>
+	);
+}
+
+const handleCreateGroupChat = async (setButton_state: any)	=>
+{
+	// const name: string = "hello";
 	console.log("handleCreateGroupChat");
 
-	const response = await fetch(`http://localhost:3003/conversation/create_group_chat/${name}`,{
-			method: "Get",
-			headers: {
-				// "Content-Type": "application/json",
-				Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-			},
-		})
+	setButton_state(false);
+
+	// const response = await fetch(`http://localhost:3003/conversation/create_group_chat/${name}`,{
+	// 		method: "Get",
+	// 		headers: {
+	// 			// "Content-Type": "application/json",
+	// 			Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+	// 		},
+	// 	})
 	// const data = await response.json();
-	console.log(JSON.stringify( response));
+	// console.log(JSON.stringify( response));
 	
 }
 
@@ -105,7 +150,7 @@ const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, s
 	// console.log(photo);
 	// console.log(conversation_name);
 	return (
-		<li className='Chat_preview_cards'  onClick={handleOnClick}>
+		<li className='Chat_preview_cards'	onClick={handleOnClick}>
 			<div className='player-availability'>
 				<img src={group_picture} alt="" />
 				<span id='user-name' title={"chat_name"} >{conversation_name}</span>
@@ -135,27 +180,37 @@ const	Get_all_open_group_chats = ({not_joined_chats_ids, my_chats_ids, setmy_cha
 			}
 		}
 		get_ids();
-	  }, []);
+		}, []);
 
-	  return (
+		return (
 		<ul className="all_open_group_chats-ul">
 			{not_joined_chats_ids.map((chat_id, idx) => (
 					<Group_chat_preview_card key={idx} chat_id={chat_id} not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
 				))}
 		</ul>
-	  )
+		)
 
 }
 
 const	Open_group_cards = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) => 
 {
 	console.log("rendering Open_group_cards");
+	const [ button_state, setButton_state ] = useState(true);
 	const { userId } = useContext(UserContext);
 	return (
 		<div className='live-games'>
 		<h3>JOIN GROUP CHATS</h3>
 		<Get_all_open_group_chats not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
-		<button onClick={() => handleCreateGroupChat(my_chats_ids, setmy_chats_ids, userId)} >CEATE GROUP CHAT</button>
+		
+		{	button_state ? 
+				<button onClick={() => handleCreateGroupChat(setButton_state)} >CEATE GROUP CHAT</button>
+			:
+				< Chat_name_input not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids} setButton_state={setButton_state} />
+		}
+		{/* <button onClick={() => handleCreateGroupChat(my_chats_ids, setmy_chats_ids, userId)} >CEATE GROUP CHAT</button> */}
+		
+		
+		
 		<h3>CHAT DETAILS</h3>
 		<Chat_details not_joined_chats_ids={not_joined_chats_ids} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids} setNot_joined_chats_ids={setNot_joined_chats_ids}/>
 		</div>

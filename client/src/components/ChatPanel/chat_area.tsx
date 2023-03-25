@@ -90,13 +90,18 @@ const Chat_area = () =>
 	const [joined, setJoined] = useState(false);
 	const { displayed_chat } = useMyDisplayedChatContext();
 
+	console.log("fjieowgjiwgewifjiewfjiwe " + displayed_chat.conversation_id);
+	console.log(JSON.stringify(displayed_chat));
+	console.log("LOL ONEGASDKOEFK DKO FJKOIEW WDPOK ");
+	
+	
 
 	return (
 		<div id='chat-area' className='com-areas'>
-            <h2>Chat  {displayed_chat}</h2>
+            <h2>Chat  {displayed_chat.conversation_id}</h2>
 
             <div id='displayed-messagees'>
-              <Display_full_chat chat_id={displayed_chat} />
+              <Display_full_chat chat_id={displayed_chat.conversation_id} />
             </div>
             <form onSubmit={(e) => {  e.preventDefault() }}>
 				<Chat_input_filed_and_send_button />

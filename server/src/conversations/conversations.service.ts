@@ -80,6 +80,20 @@ export class ConversationService {
 			})
 		}
 
+	// async name_fix(conv: Conversation, user_id: number)
+	// {
+	// 	if (conv.group_chat == false)
+	// 	{
+	// 		const user_1 = await this.prisma.user.findUnique({where: {id : conv.conversation_participant_arr[0]}})
+	// 		const user_2 = await this.prisma.user.findUnique({where: {id : conv.conversation_participant_arr[1]}})
+	// 		if(user_id == user_1.id) 
+	// 			conv.conversation_name = user_2.name;
+	// 		else
+	// 			conv.conversation_name = user_1.name;
+	// 		return conv;
+	// 	}
+	// }
+	
 	async conversation(conversationwhereuniqueinput: Prisma.ConversationWhereUniqueInput) {
 		return this.prisma.conversation.findUnique({
 			where: conversationwhereuniqueinput
@@ -175,29 +189,29 @@ export class ConversationService {
 		return Msg;
 	}
 
-	
 
 	async setAdministratorOfConversation(conversId: number, adminId: number, userId: number): Promise<Conversation> {
 		let conversation : Conversation;
 		let user : User;
 		conversation = await this.findConversation(conversId);
 		console.log("CONVERSATION_ID = " + conversation.conversation_id);
-		
+
 		const index_of_user = conversation.conversation_admin_arr.findIndex(element => element === userId);
 		const index_of_admin = conversation.conversation_admin_arr.findIndex(element => element === adminId);
 		console.log("index_of_user = " + index_of_user);
 		console.log("index_of_admin = " + index_of_admin);
-		
+
 		if (index_of_user == -1) {
 			console.log("no user with:\t" + index_of_user)
 			return conversation;
+			
 		}
 		// if (index_of_admin == -1)  {
 		// 	console.log("current [user] is not an administrator");
 		// 	return conversation;
 		// }
 		else if (index_of_admin > -1) {
-			conversation.conversation_admin_arr.splice(index_of_admin, 1);
+			conversation.conversation_admin_arr.splice(index_of_admin, 0);
 			const update_conversation_admin_arr = this.updateConversation({
 				where: {
 					conversation_id: Number(conversId),
@@ -215,7 +229,7 @@ export class ConversationService {
 				},
 				data: {
 					conversation_admin_arr: {
-						push: Number(conversId)
+						push: Number(adminId)
 					}
 				}
 			})
@@ -245,13 +259,10 @@ export class ConversationService {
 	{
 		const conv = await this.prisma.conversation.findUnique({
 			where: {
-				conversation_id: chat_id
+				conversation_id: chat_id,
 			}
 		})
-		if (!conv)
-			return ;
-		if (conv.group_chat == false)
-		return ;
+		if (!conv || conv.group_chat == false) return ;
 		const ind_1 = conv.conversation_participant_arr.indexOf(userId);
 		conv.conversation_participant_arr.splice(ind_1, 1);
 		await this.prisma.conversation.update({

@@ -1,4 +1,4 @@
-import { UseGuards, Post, Inject, Body, UsePipes, ValidationPipe, Req, Get, Controller, Param, Put, ParseIntPipe } from '@nestjs/common';
+import { UseGuards, Post, Inject, Body, UsePipes, ValidationPipe, Req, Get, Controller, Param, Put, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
 import { Routes, Services } from '../utils/consts';
 // import { AuthenticateGuard } from '../utils/Guards';
 // import { IConversationsService } from './conversations';
@@ -40,8 +40,8 @@ export class ConversationController {
 			// 	let chat_member = this.conversationsService.findConversationByName(chat_name);
 			// 	user = await this.userService.findUserById(req.user.id);
 			// 	if(user)
-			// 		array.push(req.user.id);
 			// }
+			array.push(req.user.id);
 
 			console.log("CHAT_NAME = " + chat_name);
 			let newConversation : Conversation = await this.conversationsService.createConversation({
@@ -78,14 +78,17 @@ export class ConversationController {
 			console.log("CHAT_ID " + chat_id);
 			// const conversationId = chat_id;
 			const existingConversation = await this.conversationsService.findConversation(chat_id)
-			
+			if (!existingConversation.group_chat) {
+				console.log("The conversation is not a group chat!");
+				return null;
+			}
 			// if (!existingConversation) return null;
 			// if (!existingConversation.group_chat)
 			// 	return null;
 				//TODO
 				//banlist
 			const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);		//is he already part of the chat
-			if (userIdx > -1) return (false);				// this means he is already part of the chat and i dont want to add him again
+			if (userIdx > -1) return (false);			// this means he is already part of the chat and i dont want to add him again
 			await this.conversationsService.updateConversation({
 				where: {
 					conversation_id: Number(chat_id)
@@ -128,6 +131,7 @@ export class ConversationController {
  
 				this.conversationsService.updateConversationIdInUser(Number(anotherUserId), new_dialogue.conversation_id);
 				this.conversationsService.updateConversationIdInUser(Number(req.user.id), new_dialogue.conversation_id);
+				// this.conversationsService.name_fix(new_dialogue, req.user.id);
 				return new_dialogue;
 				// let conversation: Conversation;
 				// conversation.conversation_participant_arr.push(req.user.id);
@@ -179,7 +183,7 @@ export class ConversationController {
 			// 	throw new Error("Dialogue cannot have more than 2 users!");
 			
 		}
- 
+
 		@UseGuards(Jwt_Auth_Guard)
 		@Get('getMyChats')
 		async getMyConversations(
@@ -239,7 +243,7 @@ export class ConversationController {
 
 		//update an existing resource
 		@UseGuards(Jwt_Auth_Guard)
-		@Put('conversation/:conversationId/setAdmin/:adminId')
+		@Put(':conversationId/setAdmin/:adminId')
 		async setAdmin(
 			@Req() req: any,
 			@Param('conversationId', new ParseIntPipe()) conversId: number,
@@ -250,7 +254,156 @@ export class ConversationController {
 
 			return this.conversationsService.setAdministratorOfConversation(conversId, admId, req.user.id);
 		}
+
+
+		@UseGuards(Jwt_Auth_Guard)
+		@Put('leave/:conversation_id')
+		async leaveConversation(
+			@Req() req: any,
+			@Param('conversation_id') conversation_id: number
+		): Promise<Conversation> {
+			const conversation : Conversation = await this.conversationsService.findConversation(conversation_id);
+			const req_user_idx = conversation.conversation_participant_arr.indexOf(req.user.id);
+			const user : User = await this.userService.findUserById(req.user.id);
+			const conversation_id_arr_from_user = user.conversation_id_arr.indexOf(conversation_id);
+			const user_admin_idx = conversation.conversation_admin_arr.indexOf(req.user.id);
+			const user_owner_idx = conversation.conversation_owner_arr.indexOf(req.user.id);
+
+			if (conversation.conversation_admin_arr.length == 1 && conversation.conversation_admin_arr[0] == req.user.id)
+				throw new HttpException("No chance to leave a chat due to minimum amount of users in a conversation! Apologies!", HttpStatus.FORBIDDEN);
+			conversation.conversation_participant_arr.splice(req_user_idx, 1);
+			conversation.conversation_admin_arr.splice(user_admin_idx, 1);
+			user.conversation_id_arr.splice(conversation_id_arr_from_user, 1);
+			await this.conversationsService.updateConversation({
+				where: {
+					conversation_id: Number(conversation_id),
+				},
+				data: {
+					conversation_participant_arr: conversation.conversation_participant_arr,
+					conversation_admin_arr: conversation.conversation_admin_arr
+				}
+			})
+			await this.userService.updateUser({
+				where: {
+					id: Number(req.user.id)
+				},
+				data: {
+					conversation_id_arr: user.conversation_id_arr,
+				}
+			})
+			return conversation;
+		}
+
+		@UseGuards(Jwt_Auth_Guard)
+		@Put(':conversation_id/setMute/:id_to_mute')
+		async setMuteUser(
+			@Req() req: any,
+			@Param('conversation_id', new ParseIntPipe()) conversation_id: number,
+			@Param('id_to_mute', new ParseIntPipe()) id_to_mute: number
+		): Promise<Conversation> {
+			const conversation : Conversation = await this.conversationsService.findConversation(Number(conversation_id));
+
+			const admin_user_idx = conversation.conversation_admin_arr.indexOf(req.user.id, 0);
+			const idx_from_mute_list = conversation.conversation_mute_list_arr.findIndex(element => element == Number(id_to_mute));
+			const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == Number(id_to_mute));
+
+			if (owner_user_idx >= 0)
+				throw new HttpException("Can't mute the conversation owner!!!", HttpStatus.FORBIDDEN);
+			else if (admin_user_idx < 0) {
+				console.log("Current user is not considered to be an Administrator");
+				return conversation;
+			} 
+			else if (idx_from_mute_list >= 0) {
+				conversation.conversation_mute_list_arr.splice(idx_from_mute_list, 0);
+				const updatedConversationWithMuteUser = await this.conversationsService.updateConversation({
+					where: {
+						conversation_id: Number(conversation_id),
+					},
+					data: {
+						conversation_mute_list_arr: conversation.conversation_mute_list_arr
+					}
+				})
+				return updatedConversationWithMuteUser;
+			}
+			else {
+				const updatedConversationWithoutMuteUser = await this.conversationsService.updateConversation({
+					where: {
+						conversation_id: Number(conversation_id),
+					},
+					data: {
+						conversation_mute_list_arr: {
+							push: Number(id_to_mute),
+						}
+					}
+				})
+				return updatedConversationWithoutMuteUser;
+			}
+		}
+
+		@UseGuards(Jwt_Auth_Guard)
+		@Put(':conversation_id/setBan/:id_to_ban')
+		async setBanUser(
+			@Req() req: any,
+			@Param('conversation_id', new ParseIntPipe()) conversation_id: number,
+			@Param('id_to_ban', new ParseIntPipe()) id_to_ban: number,
+		) {
+			const conversation = await this.conversationsService.findConversation(conversation_id);
+			console.log("CONVERSATION_ID = " + conversation.conversation_id);
+			
+			const admin_user_idx = conversation.conversation_admin_arr.indexOf(req.user.id, 0);
+			const idx_from_black_list = conversation.conversation_black_list_arr.findIndex(element => element == id_to_ban);
+			const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == id_to_ban);
+			console.log("ADMIN_USER_IDX = " + admin_user_idx);
+			console.log("idx_from_black_list = " + idx_from_black_list);
+			console.log("owner_user_idx = " + owner_user_idx);
+			
+			if (owner_user_idx >= 0) {
+				throw new HttpException("Can't mute the conversation owner!!!", HttpStatus.FORBIDDEN);
+			}
+			else if (admin_user_idx < 0) {
+				console.log("Current user is not considered to be an Administrator");
+				return conversation;
+			}
+			else if (admin_user_idx >= 0) {
+				conversation.conversation_black_list_arr.splice(idx_from_black_list, 1);
+				return this.conversationsService.updateConversation({
+					where: {
+						conversation_id: Number(conversation_id),
+					},
+					data: {
+						conversation_black_list_arr: conversation.conversation_black_list_arr,
+					}
+				})
+			}
+			else {
+				const black_list_idx = conversation.conversation_participant_arr.indexOf(id_to_ban);
+				conversation.conversation_black_list_arr.splice(black_list_idx, 1);
+				const user : User = await this.userService.findUserById(id_to_ban);
+				const convers_idx_arr_from_user = user.conversation_id_arr.indexOf(conversation_id);
+				user.conversation_id_arr.splice(convers_idx_arr_from_user, 1);
+				this.userService.updateUser({
+					where: {
+						id: Number(id_to_ban)
+					},
+					data: {
+						conversation_id_arr: user.conversation_id_arr
+					}
+				})
+				const updatedConversationWithoutBannedUser = await this.conversationsService.updateConversation({
+					where: {
+						conversation_id: Number(conversation_id)
+					},
+					data: {
+						conversation_black_list_arr: {
+							push: Number(id_to_ban),
+						}
+					}
+				})
+				return updatedConversationWithoutBannedUser;
+			}	
+		}
 }
+
 
 
 

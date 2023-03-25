@@ -45,7 +45,7 @@ model Stats {
 model Conversation {
 	// User stuff
 	conversation_id					Int					@unique  @id @default(autoincrement()) 
-	conversation_name				String?		
+	conversation_name				String				@unique		
 	conversation_msg_arr			Message[]
 	conversation_created_at			DateTime			@default(now())
 	// chat_participants	ChatParticipant[]

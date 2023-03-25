@@ -77,7 +77,7 @@ export class ConversationService {
 			})
 		}
 
-	async conversation(conversationwhereuniqueinput: Prisma.ConversationWhereUniqueInput): Promise<Conversation | null> {
+	async conversation(conversationwhereuniqueinput: Prisma.ConversationWhereUniqueInput) {
 		return this.prisma.conversation.findUnique({
 			where: conversationwhereuniqueinput
 		})
@@ -89,6 +89,13 @@ export class ConversationService {
 		console.log("ID = found" );
 		return foundConversation;
 	}	
+
+	async findConversationByName(name: string) {
+		const foundConversation = await this.conversation({
+			conversation_name: name
+		})
+		return foundConversation;
+	}
 
 	async findAllConversationsByUser(user_id: number)  {
 		const existingUser = this.prisma.user.findUnique({

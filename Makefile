@@ -9,5 +9,7 @@ build: $(DEPENDENIES)
 down:
 	docker compose --file docker-compose-dev.yml down
 
+re: down all
+
 $(DEPENDENIES):
 	cd server; npm i; cd ../client; npm i; cd ../

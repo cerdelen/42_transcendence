@@ -3,30 +3,36 @@ import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context
 import { UserContext } from "../../contexts/UserContext";
 import { our_socket } from "../../utils/context/SocketContext";
 import JSCookies from "js-cookie";
+import { displayed_chat_class } from "../../utils/types";
 
 
 
 
 // const handleLeaveChat = () =>
-const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<number>>, userId:string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any) =>
+const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<displayed_chat_class>>, userId:string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any) =>
 {
-	console.log("handleLeaveChat ");
-	our_socket.emit('leave_group_chat', {chat_id: chat_id, userId: userId});
-	setDisplayed_chat(-1);
-	let arr : number [] = []
-	for(let i = 0; i < my_chats_ids.length; i++)
+	if (chat_id != -1)
 	{
-		if(chat_id != my_chats_ids[i])
+
+		console.log("handleLeaveChat ");
+		our_socket.emit('leave_group_chat', {chat_id: chat_id, userId: userId});
+		const default_chat : displayed_chat_class = { conversation_id: -1}
+		setDisplayed_chat(default_chat);
+		let arr : number [] = []
+		for(let i = 0; i < my_chats_ids.length; i++)
+		{
+			if(chat_id != my_chats_ids[i])
 			arr.push(my_chats_ids[i]);
+		}
+		setmy_chats_ids(arr);
+		let arr_2 : number [] = []
+		for(let i = 0; i < not_joined_chats_ids.length; i++)
+		{
+			arr_2.push(not_joined_chats_ids[i]);
+		}
+		arr_2.push(chat_id);
+		setNot_joined_chats_ids(arr_2);
 	}
-	setmy_chats_ids(arr);
-	let arr_2 : number [] = []
-	for(let i = 0; i < not_joined_chats_ids.length; i++)
-	{
-		arr_2.push(not_joined_chats_ids[i]);
-	}
-	arr_2.push(chat_id);
-	setNot_joined_chats_ids(arr_2);
 }
 
 const	Chat_details_chat_name = (displayed_chat: {displayed_chat: number}) =>
@@ -89,9 +95,12 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 
 	return (
 		<div className="Chat_details">
-			<Chat_details_chat_name displayed_chat={displayed_chat}/>
+			{/* <Chat_details_chat_name displayed_chat={displayed_chat}/> */}
+			<div className="Chat_name_for_chat_details">{displayed_chat.conversation_name}</div>
+
 			{/* <div className="Chat_name_for_chat_details">chat_name</div> */}
 			{/* <div className="Chat_name_for_chat_details">{chat_name}</div> */}
+			{/* <Chat_details_user_list /> */}
 			<ul className="User_list_in_chat_detals">
 				<li className="User_for_list_in_chat_details">User 1</li>
 				<li className="User_for_list_in_chat_details">User 2</li>
@@ -105,7 +114,8 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 				<li className="User_for_list_in_chat_details">User 10</li>
 				{/* Add more users as needed */}
 			</ul>
-			<button onClick={() => handleLeaveChat(displayed_chat, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids)}>Leave Chat</button>
+			<button onClick={() => handleLeaveChat(displayed_chat.conversation_id, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids)}>Leave Chat</button>
+			{/* <button onClick={() => handleLeaveChat(displayed_chat, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids)}>Leave Chat</button> */}
 			{/* <button onClick={handleLeaveChat}>Leave Chat</button> */}
 		</div>
 

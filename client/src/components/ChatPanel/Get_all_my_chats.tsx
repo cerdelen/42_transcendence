@@ -31,14 +31,26 @@ export class chat_card {
 
 
 const Chat_preview_card = ({chat_id, userId} : chat_props) => {
-	const { setDisplayed_chat } = useMyDisplayedChatContext();
+	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 	// console.log('called chat preview window');
 	// console.log(chat_id);
 
-	const handleOnClick = () => 
+	const handleOnClick = async () => 
 	{
-		setDisplayed_chat(chat_id);
-		// alert("What do here?" + chat_id);
+		if (displayed_chat.conversation_id != chat_id)
+		{
+			const response = await fetch(`http://localhost:3003/conversation/getConversationById/${chat_id}`, {
+				method: "Get",
+				headers: {
+					// "Content-Type": "application/json",
+					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+				},
+			});
+			const conv = await response.json();
+			// i have work to do here :)
+			// alert("What do here?" + chat_id);
+			setDisplayed_chat(conv);
+		}
 	}
 	
 	const [photo, setPhoto] = useState("");
@@ -69,10 +81,9 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			}
 			else											// its a group chat
 			{
-				setConversation_name(data["conversation_name"])
-				// await get_default_group_chat_picture();
 				setPhoto(group_picture);
 			}
+			setConversation_name(data["conversation_name"])
 		}
 		const getUserData = async (other_user_id : number) => {
 			// console.log("in get user data id = " + other_user_id);
@@ -86,17 +97,17 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			const path = await response.blob();
 			const url = URL.createObjectURL(path);
 			setPhoto(url);
-			const response_two = await fetch("http://localhost:3003/user/user_name", {
-				method: "Post",
-				headers: {
-					'Content-Type': 'application/json',
-					'Accept': 'application/json',
-				  Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-				},
-				body: JSON.stringify({ user_id: other_user_id }),
-			  });
-			const data = await response_two.text();
-			setConversation_name(data);
+			// const response_two = await fetch("http://localhost:3003/user/user_name", {
+			// 	method: "Post",
+			// 	headers: {
+			// 		'Content-Type': 'application/json',
+			// 		'Accept': 'application/json',
+			// 	  Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+			// 	},
+			// 	body: JSON.stringify({ user_id: other_user_id }),
+			//   });
+			// const data = await response_two.text();
+			// setConversation_name(data);
 		}
 		// const get_default_group_chat_picture = async () => {
 		// 	const response = await fetch(`http://localhost:3003/pictures/group_chat`, {

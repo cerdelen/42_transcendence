@@ -1,36 +1,9 @@
-
-import { players } from '../../models/temp-players';
-// import ListLiveGames from './ListLiveGames';
-// import ListOpenChats from './ListOpenChats';
-// import ListPlayersOnline from './ListPLayersOnline';
-import { Socket } from 'socket.io';
-// import  {io, Socket} from 'socket.io-client';
 import { useState, useEffect, Children, useMemo } from 'react';
-import { json, useParams } from 'react-router-dom';
-// import { getConversationMsgs } from '../../utils/apis';
-import { MessagesType } from '../../utils/types';
-import { ConversationType } from '../../utils/types';
-import { MessagePanel } from '../../messages/MessagePanel';
-// import { ConversationChannelPageStyle } from '../../utils/styles';
 import {useContext} from 'react';
 import { SocketContext, our_socket} from '../../utils/context/SocketContext';
-import UserPage from '../user/UserPage';
-import { useMyContext } from '../../contexts/InfoCardContext';
-
-import Chat_cards from './Community_left_collumn'
-import Open_group_cards from '../ChatPanel/open_group_chats_bar';
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
-import JSCookies from "js-cookie";
 import Display_full_chat from './display_full_chat';
 import { UserContext } from "../../contexts/UserContext"
-
-// interface message{
-//   name: string,
-//   message: string,
-// }
-
-
-
 
 interface message{
   author_id: string,
@@ -42,6 +15,16 @@ interface typing{
   isTyping: boolean,
 }
 
+// class display_message_info {
+// 	text: string;
+// 	author_id: number;
+
+// 	constructor(_text: string, _author_id: number)
+// 	{
+// 		this.text = _text;
+// 		this.author_id = _author_id;
+// 	}
+// }
 
 const Chat_input_filed_and_send_button = () =>
 {
@@ -55,7 +38,7 @@ const Chat_input_filed_and_send_button = () =>
 	  console.log("this is message text = " + input);
 	  console.log("this is author = " + Number(userId));
 	  console.log("this is chat_id = " + displayed_chat);
-	  our_socket.emit('message', {author: Number(userId), text: input, conversation_id: displayed_chat, created_at: Date.now()}, () => {
+	  our_socket.emit('message', {author: Number(userId), text: input, conversation_id: displayed_chat.conversation_id, created_at: Date.now()}, () => {
 		setInput('');
 	  })
 	}
@@ -89,24 +72,17 @@ const Chat_area = () =>
 	const [newMessage, setNewMessage] = useState<message>();
 	const [joined, setJoined] = useState(false);
 	const { displayed_chat } = useMyDisplayedChatContext();
-
-	console.log("fjieowgjiwgewifjiewfjiwe " + displayed_chat.conversation_id);
-	console.log(JSON.stringify(displayed_chat));
-	console.log("LOL ONEGASDKOEFK DKO FJKOIEW WDPOK ");
-	
-	
+	// const [messages, set_messages] = useState<Array<display_message_info>>([]);
 
 	return (
 		<div id='chat-area' className='com-areas'>
-            <h2>Chat  {displayed_chat.conversation_id}</h2>
-
+            <h2>Chat  {displayed_chat.conversation_name}</h2>
             <div id='displayed-messagees'>
               <Display_full_chat chat_id={displayed_chat.conversation_id} />
             </div>
             <form onSubmit={(e) => {  e.preventDefault() }}>
 				<Chat_input_filed_and_send_button />
             </form>
-
         </div>
 	)
 }

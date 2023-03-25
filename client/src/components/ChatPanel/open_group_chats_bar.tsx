@@ -15,6 +15,7 @@ const Chat_name_input = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, s
 {
 	const [inputValue, setInputValue] = useState('');
 	const { setDisplayed_chat } = useMyDisplayedChatContext();
+	// const { } = us
 	
 
 	const handleInputChange = (e: any) => {
@@ -37,7 +38,8 @@ const Chat_name_input = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, s
 		console.log(" this is the response of create group chat " + JSON.stringify(data));
 		console.log(data["conversation_owner_arr"]);
 		setDisplayed_chat(data);
-		setButton_state(true);
+		setButton_state(true);		
+		setmy_chats_ids([...my_chats_ids, data["conversation_id"]]);
 	}
 	else 
 	{
@@ -146,7 +148,7 @@ const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, s
 		// 	const url = URL.createObjectURL(path);
 		// 	setPhoto(url);
 		// }
-		// get_conversation(chat_id);
+		get_conversation(chat_id);
 		}, []);
 	// console.log("trying to do this here");
 	// console.log(photo);

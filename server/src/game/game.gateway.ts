@@ -44,6 +44,8 @@ export class GameGateway {
     }
     if(!roomNames[0]) 
     {
+      console.log("this is in the subscriber " + userId);
+      
       handleNewGame(client, this.server, Number.parseInt(userId), this.prisma);
       return ;
     }

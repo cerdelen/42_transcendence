@@ -42,7 +42,35 @@ export class AuthService
 			return _res.redirect('http://localhost:3000/auth?2fa=' + String(test_user_id));
 		}
 		console.log("2fa NOT enabled signing token");
-		return (this.sign_42_jwt_token(test_user_id, _res));
+		return (this.sign_42_jwt_token_test_user(test_user_id, _res));
+	}
+
+	async	get_token_test_user(test_user_id: number, @Res() _res: any) : Promise<any> 
+	{
+		var user = await this.userService.findUserById(test_user_id);
+		// console.log(user.id);
+		if(!user)
+		await this.create_test_user();
+		user = await this.userService.findUserById(test_user_id);
+		if(user.two_FA_enabled)
+		{
+			console.log("2fa enabled, redirecting to 2fa");
+			return _res.redirect('http://localhost:3000/auth?2fa=' + String(test_user_id));
+		}
+		console.log("2fa NOT enabled signing token");
+		return (this.sign_42_jwt_token_test_user(test_user_id, _res));
+	}
+
+	async	sign_42_jwt_token_test_user(user_id: number, res: any, is_two_FAed = false)
+	{
+		console.log('sign_jwt_token');
+		const	user	= await this.userService.findUserById(user_id);
+		const	payload	= { name: user.name, sub: user.id, mail: user.mail, is_two_FAed: is_two_FAed };
+		const	token	= this.jwtService.sign(payload, {secret: "generic secret"});
+		res.cookie('accessToken', token);
+		console.log('this is signed accessToken');
+		console.log(token);
+		return token;
 	}
 
 	async	sign_42_jwt_token(user_id: number, res: any, is_two_FAed = false)

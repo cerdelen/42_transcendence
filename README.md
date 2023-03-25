@@ -24,6 +24,17 @@ to start prisma studio:
         6. go to browser and open "localhost:5555" (first time you open it it will sefault, repeat from step 5)
 
 
+1. In case of Dummy user giving unautherized error use Postman to make a "Get" Request to "localhost:3003/auth/token_test_user"
+2. either you have the token as a response or in the terminal
+3. in file "client/src/components/loginpage.tsx" in funciton 	fakeLogin  change the hardcoded 'accessToken' in the JSCookies.set() funciton to the token found in step 2
+
+
+
+
+
+
+
+
 import { Injectable } from '@nestjs/common';
 import { User, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';

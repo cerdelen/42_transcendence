@@ -9,10 +9,11 @@ import { CreateConversationParams } from '../utils/types';
 import { UserService } from '../user/user.service';
 // import { Message } from '../messages/entities/message.entity';
 import { networkInterfaces, userInfo } from 'os';
-import { skip, identity } from 'rxjs';
+import { skip, identity, lastValueFrom } from 'rxjs';
 
 
 import { Message } from "@prisma/client"
+import { conv_gateway_dto } from './conversationSocket/conversation_gateway_dto';
 
 
 @Injectable()
@@ -85,6 +86,8 @@ export class ConversationService {
 
 	async findConversation(id: number): Promise<Conversation | undefined> {
 		console.log("ID = " + id);
+		if(Number.isNaN(Number(id)))
+			return null;
 		const foundConversation = await this.conversation({conversation_id: Number(id)});
 		console.log("ID = found" );
 		return foundConversation;
@@ -236,6 +239,31 @@ export class ConversationService {
 		return updatedUser;
 	}
 
+	async	remove_user_from_conversation(chat_id: number, userId: number)
+	{
+		const conv = await this.prisma.conversation.findUnique({
+			where: {
+				conversation_id: chat_id
+			}
+		})
+		if (!conv)
+			return ;
+		if (conv.group_chat == false)
+		return ;
+		const ind_1 = conv.conversation_participant_arr.indexOf(userId);
+		conv.conversation_participant_arr.splice(ind_1, 1);
+		await this.prisma.conversation.update({
+			where: {conversation_id: chat_id},
+			data: {conversation_participant_arr :conv.conversation_participant_arr }
+		});
+		const user = await this.prisma.user.findUnique({where: {id: userId}});
+		const ind_2 = user.conversation_id_arr.indexOf(chat_id);
+		user.conversation_id_arr.splice(ind_2, 1);
+		await this.prisma.user.update({
+			where: {id: userId},
+			data: {conversation_id_arr: user.conversation_id_arr}
+		});
+	}
 }
 
 

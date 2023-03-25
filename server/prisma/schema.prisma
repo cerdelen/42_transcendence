@@ -18,10 +18,11 @@ model User {
 	// chatParticipant	ChatParticipant?	@relation(fields: [chatPtsId], references: [ChatPartId])
 	conversation_id_arr		Int[]
 	user_msg_arr			Message[]
-
+	socketId				String @default("")
 	// picture			String?
 	// 2_FA_stuff
 	two_FA_enabled	Boolean    @default(false)
+	online			Boolean	   @default(false)
 	two_FA_secret	String?
 	friendlist		Int[]
 	stats			Stats?

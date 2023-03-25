@@ -13,32 +13,14 @@ import Game from "./components/Game";
 import { UserContext } from "./contexts/UserContext";
 import InfoCardProvider from "./contexts/InfoCardContext";
 import Displayed_Chat_Provider from "./contexts/Displayed_Chat_Context"
+import { Socket } from "socket.io";
+import { io } from "socket.io-client";
+import { SocketContext, our_socket } from './utils/context/SocketContext';
 
 export const ConversationContext = React.createContext<
   ConversationContextType[]
 >([]);
 
-// function App() {
-//   const [loggedIn, setLoggedIn] = useState(false);
-//   const [userId, setUserId] = useState('');
-//   console.log( "User id" + userId);
-//   const [userData, setUserData] = useState({});
-//   const [conversations, setConversations] = useState([]);
-
-// type Props = {
-//   user?: User;
-//   setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
-// }
-
-// function AppWithProviders({
-//   children,
-//   user,
-//   setUser,
-// }: PropsWithChildren & Props) {
-//   return <AuthContext.Provider value={{user, updateAuthUser: setUser}}>
-//     {children}
-//   </AuthContext.Provider>
-// }
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -65,6 +47,7 @@ function App() {
       
       setUserId(id);
       await getData(id);
+      our_socket.emit('makeOnline', id);
     } catch (error) {
       console.error(error);
     }
@@ -89,6 +72,7 @@ function App() {
       setStats(data["stats"]);
       setGames(data["games"]);
       setHasPicture(data["show_default_image"]);
+      
     } catch (error) {
       console.error(error);
     }
@@ -99,8 +83,22 @@ function App() {
       setLoggedIn(true);
       getUser();
     }
-  }, []);
 
+  }, []);
+  useEffect(() => {
+    function handleBeforeUnload(e: any) {
+      // Send socket event here
+      e.preventdefault();
+      our_socket.emit('makeOffline', {userId});
+      alert("Siemanko");
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
   return (
     <InfoCardProvider>
       <Displayed_Chat_Provider>

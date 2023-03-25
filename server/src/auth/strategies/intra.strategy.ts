@@ -28,7 +28,7 @@ export class Intra42Strategy extends PassportStrategy(Strategy, '42'){
 		// console.log(profile.username);
 		// console.log(profile.id);
 		// console.log(profile.emails[0]);
-		const user = await this.authService.validate_intra_user(profile.id, profile.username, profile.emails[0].value);
+		const user = await this.authService.validate_intra_user(profile.id, profile.username, profile.emails[0].value, "");
 		return (user);
 	}
 }

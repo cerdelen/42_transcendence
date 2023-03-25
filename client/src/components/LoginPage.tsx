@@ -13,7 +13,7 @@ const LoginPage = () => {
 
   const fakeLogin = async() => {
     try {
-      console.log('this is before fetch');
+      // console.log('this is before fetch');
         await fetch("http://localhost:3003/auth/create_test_user", {
         method: "Get",
       })
@@ -23,7 +23,7 @@ const LoginPage = () => {
       // const token = await response.text();
       // console.log('this is teh tokebn' + token);
       JSCookies.set("accessToken", 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdGluZ3VzZXIiLCJzdWIiOjMyMiwibWFpbCI6InRlc3Rpbmd1c2VyQGVtYWlsLmNvbSIsImlzX3R3b19GQWVkIjpmYWxzZSwiaWF0IjoxNjc5NjczOTMwLCJleHAiOjE2ODAyNzg3MzB9.ZeC2lHOm8Tmm6Al4BnHY9xea1tF8QB0gWRMxcIbvPe0');
-      console.log('this is cookie' + JSCookies.get("accessToken"));
+      // console.log('this is cookie' + JSCookies.get("accessToken"));
       window.location.assign('http://localhost:3000/');
     }
     catch (error) {

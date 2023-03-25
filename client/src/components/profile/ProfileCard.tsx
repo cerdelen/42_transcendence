@@ -76,7 +76,7 @@ const ProfileCard = () => {
         ) : (
           <div></div>
         )}
-        <button onClick={logOut}>Logout</button>
+        <button className="purple-button" onClick={logOut}>Logout</button>
       </div>
     </div>
   );

@@ -58,7 +58,7 @@ const SecondFactorPage = () => {
         onChange={handleCodeChange}
         required
       ></input>
-      <button type="submit">Submit</button>
+      <button className="purple-button" type="submit">Submit</button>
     </form>
   );
 };

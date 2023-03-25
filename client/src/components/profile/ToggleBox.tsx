@@ -17,7 +17,7 @@ const ToggleBox: React.FC<Props> = ({ setBase64String, status2FA }) => {
 
     //if the user went from unchecked to checked
     if (!checked) {
-      console.log(`In here again.. ${checked}`);
+      // console.log(`In here again.. ${checked}`);
       const myCookieValue = JSCookies.get("accessToken");
       //request a Base64String to create a QR code
       const response = await fetch("http://localhost:3003/2-fa/generate", {

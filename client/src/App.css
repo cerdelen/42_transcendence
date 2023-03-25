@@ -8,8 +8,6 @@
 @import "./styles/game-history.css";
 @import "./styles/user-stats.css";
 
-
-
 /* GENERAL */
 body {
   background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.83), rgb(56, 14, 104));
@@ -192,22 +190,23 @@ header .basic:hover {
   border: 1mm ridge white;
 }
 
-/* #user-dropdown button {
-  border: 2px solid red;
-} */
-/* button:not(#chat-area button, #userInfo button) {
-  background-color: #381a72; /* light purple */
-  /* color: white; */
-  /* border-radius: 15px; slightly rounded edges */
-  /* font-size: 1rem; */
-  /* padding: 0.5rem 1rem; adjust padding as needed */
-  /* border: 1px solid pink; remove default button border */
-  /* cursor: pointer; */
-/* } */
+#user-dropdown button {
+  /* border: 2px solid red; */
+}
 
-/* button:hover:not(#userInfo button) { */
-  /* box-shadow: 0 0 7px #d0cccc, 0 0 13px #d0cccc, 0 0 24px #d0cccc; */
-/* } */ */
+.purple-button {
+  background-color: #381a72;
+  color: white;
+  border-radius: 15px;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid pink;
+  cursor: pointer;
+}
+
+.purple-button:hover:not(#userInfo button) {
+  box-shadow: 0 0 7px #d0cccc, 0 0 13px #d0cccc, 0 0 24px #d0cccc;
+} 
 
 #user-dropdown * {
   /* border: 2px solid lime; */
@@ -398,115 +397,6 @@ footer {
   margin: 0 1rem;
 }
 
-
-.open-chat-card-li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /* border: 1px solid pink; */
-  border-radius: 25px;
-  margin-bottom: .6rem;
-  height: 100px;
-  background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140));
-}
-
-.open-chat-card-li div {
-  position: relative;
-}
-
-.open-chat-card-li div span{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  font-size: 1rem;
-  pointer-events: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 5rem;
-  
-}
-
-.open-chat-card-li img {
-  border-radius: 25px;
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-}
-
-.open-chat-card-li:hover {
-  box-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF;
-  cursor: pointer;
-}
-
-
-.open-chat-card-li span {
-  font-size: 10px;
-  font-weight: bold;
-}
-
-
-.open-chat-card-li .vertical-word {
-  writing-mode: vertical-rl;
-  font-size: 1.2rem;
-}
-/* GAME CARD */
-.game-card-li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /* border: 1px solid pink; */
-  border-radius: 25px;
-  margin-bottom: .6rem;
-  height: 100px;
-  background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140));
-}
-
-.game-card-li div {
-  position: relative;
-}
-
-.game-card-li div span{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  font-size: 1rem;
-  pointer-events: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 5rem;
-  
-}
-
-.game-card-li img {
-  border-radius: 25px;
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-}
-
-.game-card-li:hover {
-  box-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF;
-  cursor: pointer;
-}
-
-
-.game-card-li span {
-  font-size: 10px;
-  font-weight: bold;
-}
-
-
-.game-card-li .vertical-word {
-  writing-mode: vertical-rl;
-  font-size: 1.2rem;
-}
-
 /* Community */
 
 #community {
@@ -577,7 +467,8 @@ footer {
 .User_for_list_in_chat_details {
   margin-bottom: 0.5rem;
 }
-button {
+.game-page-button,
+.game_buttons {
   font-family: "Open Sans", sans-serif;
   font-size: 16px;
   letter-spacing: 2px;
@@ -594,10 +485,11 @@ button {
   touch-action: manipulation;
 
 }
+
 #joinButton {
   font-size: 50px;
 }
-button:active {
+.game-page-button:active {
   box-shadow: 0px 0px 0px 0px;
   top: 5px;
   left: 5px;

@@ -69,7 +69,7 @@ const Canvas = ({userId} : {userId: string}) =>
     {
         if(!GameActive)
         {
-            return (<button id="joinButton" onClick={() => {
+            return (<button className="game-page-button" id="joinButton" onClick={() => {
                 if(!userId)
                 {
                     our_socket.emit("joinGame", "1");

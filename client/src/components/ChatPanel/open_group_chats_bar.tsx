@@ -31,6 +31,8 @@ const Chat_name_input = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, s
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
 			})
+		console.log(JSON.stringify(response));
+		
 		const data = await response.json();
 		console.log(" this is the response of create group chat " + JSON.stringify(data));
 		console.log(data["conversation_owner_arr"]);

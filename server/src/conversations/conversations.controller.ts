@@ -32,7 +32,10 @@ export class ConversationController {
 			// console.log("USERCONTENT" + userContent.participants);
 
 			if (typeof chat_name === "undefined")
+			{
+				console.log("not creating chat because of undefined chat_name");
 				return null;
+			}
 			let array : number[] = [];
 			let user : User;
 			// for (let i = 0; i < chat_name.length; ++i)
@@ -49,6 +52,7 @@ export class ConversationController {
 				conversation_participant_arr: [Number(req.user.id)],
 				conversation_owner_arr: [Number(req.user.id)],
 				conversation_admin_arr: [Number(req.user.id)],
+				group_chat: true
 			})
 
 			for (let i = 0; i < array.length; ++i)
@@ -65,7 +69,8 @@ export class ConversationController {
 					}
 				})	
 			}
-			return newConversation;
+			const ret = await this.conversationsService.name_fix(newConversation, req.user.id);
+			return ret;
 		}
 
 		@UseGuards(Jwt_Auth_Guard)
@@ -132,7 +137,8 @@ export class ConversationController {
 				this.conversationsService.updateConversationIdInUser(Number(anotherUserId), new_dialogue.conversation_id);
 				this.conversationsService.updateConversationIdInUser(Number(req.user.id), new_dialogue.conversation_id);
 				// this.conversationsService.name_fix(new_dialogue, req.user.id);
-				return new_dialogue;
+				const ret = await this.conversationsService.name_fix(new_dialogue, req.user.id);
+				return ret;
 				// let conversation: Conversation;
 				// conversation.conversation_participant_arr.push(req.user.id);
 				// console.log("after push " + conversation.conversation_participant_arr);
@@ -190,7 +196,6 @@ export class ConversationController {
 			@Req() req: any,
 		) {
 			console.log();
-			
 			return this.conversationsService.findAllConversationsByUser(req.user.id);
 		}
 
@@ -220,16 +225,19 @@ export class ConversationController {
 		@UseGuards(Jwt_Auth_Guard)
 		@Get('getConversationById/:conversation_id')
 		async getConversation(
+			@Req() req: any,
 			@Param('conversation_id') conversation_id
 		) {
 			console.log();
-			
-			return this.conversationsService.findConversation(conversation_id);
+			const conv = await this.conversationsService.findConversation(conversation_id);
+			return this.conversationsService.name_fix(conv, req.user.id);
 		}
 
 		@UseGuards(Jwt_Auth_Guard)
 		@Get('getConversations')
 		async getConversations(): Promise<Conversation[]> {
+			
+
 			return this.conversationsService.getConversations({});
 		}
 

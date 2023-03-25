@@ -21,6 +21,9 @@ export class MessagesGateway {
   async create(@MessageBody() createMessageDto: CreateMessageDto) {
     const message = await this.messagesService.create(createMessageDto);
 
+
+    this.server.on("disconnect", () => {console.log("disconnected");
+    })
     this.server.emit('message', message);
     return message;
   }

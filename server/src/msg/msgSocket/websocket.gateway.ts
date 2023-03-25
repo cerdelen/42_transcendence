@@ -59,4 +59,4 @@ export class MessagingGateway implements OnGatewayConnection {
 			console.log("hello");
 			console.log(payload);
 		}
-} 
+}

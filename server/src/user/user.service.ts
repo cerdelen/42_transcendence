@@ -308,4 +308,34 @@ export class UserService {
 		}
 		return (arr)
 	}
+
+	async get_user_socket_id(user_id: number)
+	{
+		const user = await this.prisma.user.findUnique({where: {id: user_id}});
+
+		return (user.socketId);
+	}
+
+	async set_user_socket_id(user_id: number, s_id: string)
+	{
+		const user = await this.prisma.user.update({
+			where: {id: user_id},
+			data: {}
+		});
+	}
+
+	async get_user_online(user_id: number)
+	{
+		const user = await this.prisma.user.findUnique({where: {id: user_id}});
+
+		return (user.online);
+	}
+
+	async set_user_online(user_id: number)
+	{
+		const user = await this.prisma.user.findUnique({where: {id: user_id}});
+
+
+	}
+
 }

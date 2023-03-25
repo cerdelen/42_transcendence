@@ -80,19 +80,28 @@ export class ConversationService {
 			})
 		}
 
-	// async name_fix(conv: Conversation, user_id: number)
-	// {
-	// 	if (conv.group_chat == false)
-	// 	{
-	// 		const user_1 = await this.prisma.user.findUnique({where: {id : conv.conversation_participant_arr[0]}})
-	// 		const user_2 = await this.prisma.user.findUnique({where: {id : conv.conversation_participant_arr[1]}})
-	// 		if(user_id == user_1.id) 
-	// 			conv.conversation_name = user_2.name;
-	// 		else
-	// 			conv.conversation_name = user_1.name;
-	// 		return conv;
-	// 	}
-	// }
+	async name_fix(conv: Conversation, user_id: number)
+	{
+		console.log(" im trying to fix name for the this conv " + conv.conversation_id);
+		
+		if (conv.group_chat == false)
+		{
+			const id_1 = conv.conversation_participant_arr[0];
+			const id_2 = conv.conversation_participant_arr[1];
+			const user_1 = await this.prisma.user.findUnique({where: {id : id_1}})
+			const user_2 = await this.prisma.user.findUnique({where: {id : id_2}})
+			if (user_1 && user_2)
+			{
+				if(user_id == user_1.id) 
+					conv.conversation_name = user_2.name;
+				else
+					conv.conversation_name = user_1.name;
+			}
+			else
+				conv.conversation_name = "";
+		}
+		return conv;
+	}
 	
 	async conversation(conversationwhereuniqueinput: Prisma.ConversationWhereUniqueInput) {
 		return this.prisma.conversation.findUnique({

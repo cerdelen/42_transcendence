@@ -26,7 +26,6 @@ export class GameGateway {
     this.server.on('connection', (socket) => {
       console.log(socket.id);
       console.log("connected");
-      
     })
   }
 

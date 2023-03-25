@@ -357,22 +357,26 @@ export class ConversationController {
 		) {
 			const conversation = await this.conversationsService.findConversation(conversation_id);
 			console.log("CONVERSATION_ID = " + conversation.conversation_id);
-			
+
 			const admin_user_idx = conversation.conversation_admin_arr.indexOf(req.user.id, 0);
 			const idx_from_black_list = conversation.conversation_black_list_arr.findIndex(element => element == id_to_ban);
 			const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == id_to_ban);
 			console.log("ADMIN_USER_IDX = " + admin_user_idx);
 			console.log("idx_from_black_list = " + idx_from_black_list);
 			console.log("owner_user_idx = " + owner_user_idx);
-			
+
 			if (owner_user_idx >= 0) {
+				console.log("HEREEEE1");
 				throw new HttpException("Can't mute the conversation owner!!!", HttpStatus.FORBIDDEN);
 			}
 			else if (admin_user_idx < 0) {
+				console.log("HEREEEE2");
 				console.log("Current user is not considered to be an Administrator");
 				return conversation;
 			}
-			else if (admin_user_idx >= 0) {
+			else if (idx_from_black_list >= 0) {
+				console.log("HEREEEE3");
+				
 				conversation.conversation_black_list_arr.splice(idx_from_black_list, 1);
 				return this.conversationsService.updateConversation({
 					where: {
@@ -385,8 +389,11 @@ export class ConversationController {
 			}
 			else {
 				const black_list_idx = conversation.conversation_participant_arr.indexOf(id_to_ban);
+				console.log("black_list_idx" + black_list_idx);
+				
 				conversation.conversation_black_list_arr.splice(black_list_idx, 1);
 				const user : User = await this.userService.findUserById(id_to_ban);
+
 				const convers_idx_arr_from_user = user.conversation_id_arr.indexOf(conversation_id);
 				user.conversation_id_arr.splice(convers_idx_arr_from_user, 1);
 				this.userService.updateUser({
@@ -412,7 +419,51 @@ export class ConversationController {
 		}
 }
 
-
+// async banUser(@Req() req : any, @Param('id', new ParseIntPipe()) id: number, @Param('bid', new ParseIntPipe()) bid: number){
+//     const chat : Chat = await this.chatService.findOne(id);
+//     const index = chat.admins.indexOf(req.user.id, 0);
+//     const index1 = chat.blackList.findIndex(x => x == bid)
+//     const index2 = chat.owner.findIndex(x => x == bid)
+//     if (index == -1){
+//       console.log("User not admin");
+//       return chat;
+//     }
+//     else if (index2 > -1) {
+//       throw new HttpException('Trying to ban Owner', HttpStatus.FORBIDDEN);
+//     }
+//     else if (index1 > -1) {
+//       chat.blackList.splice(index1, 1);
+//       return this.chatService.updateChat({
+//         where: { id: Number(id) },
+//         data: {
+//           blackList: chat.blackList
+//         },
+//       });
+//     }
+//     else{
+//       const index1 = chat.participants.indexOf(bid);
+//       console.log(index1);
+//       chat.participants.splice(index1, 1);
+//       const user : User = await this.userService.findOne(bid);
+//       const index2 = user.chatId.indexOf(id);
+//       user.chatId.splice(index2, 1);
+//       this.userService.updateUser({
+//         where: {id: Number(bid)},
+//         data: {chatId: user.chatId},
+//       })
+//       // console.log(participants);
+//       return this.chatService.updateChat({
+//         where: { id: Number(id) },
+//         data: {
+//           participants: chat.participants,
+//           blackList: {
+//             push: Number(bid)
+//           }
+//         },
+//       });
+//     }
+//   }
+// }
 
 
 

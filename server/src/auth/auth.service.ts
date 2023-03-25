@@ -102,7 +102,7 @@ export class AuthService
 		return(token);
 	}
 
-	async validate_intra_user(id: number, username : string, email : string): Promise<User>
+	async validate_intra_user(id: number, username : string, email : string, socketId: string): Promise<User>
 	{
 		console.log(email);
 		const user = await this.userService.findUserById(id);
@@ -120,6 +120,7 @@ export class AuthService
 				id: Number(id),
 				name: username,
 				mail: email,
+				socketId: socketId,
 			});
 			return (user); 
 		}
@@ -147,7 +148,8 @@ export class AuthService
 		const user = await this.userService.createUser({
 			id: Number(322),
 			name: 'testinguser',
-			mail: 'testinguser@email.com'
+			mail: 'testinguser@email.com',
+			socketId: '321231321', //This might break stuff
 		});
 	}
 }

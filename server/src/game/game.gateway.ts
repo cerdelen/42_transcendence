@@ -4,6 +4,7 @@ import { Server, Socket as socket_io } from 'socket.io';
 import {getInitialState, gameLoop} from './make_game_state'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
+import { io_server } from 'src/utils/Server';
 let roomNames : {roomName: string, gameInstance: any}[] = [];
 
 const state = {};
@@ -30,6 +31,14 @@ export class GameGateway {
   }
 
   constructor(private readonly gameService: GameService, private prisma : PrismaService, private userService : UserService) {  
+  }
+
+  @SubscribeMessage('makeOnline')
+  async makeOnline(@MessageBody() userId: string)
+  {
+
+    console.log(userId + " Siemanko ");
+    //Make user online boolean
   }
 
   @SubscribeMessage('joinGame')

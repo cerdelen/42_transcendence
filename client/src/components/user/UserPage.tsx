@@ -14,7 +14,7 @@ type Props = {
 };
 
 const UserPage = ({}: Props) => {
-  const { userId, games } = useContext(UserContext);
+  const { userId } = useContext(UserContext);
   const { userIdCard, setUserIdCard } = useMyContext();
 
   const [isVisible, setIsVisible] = useState(true);
@@ -35,9 +35,6 @@ const UserPage = ({}: Props) => {
     finished: boolean;
   };
 
-  // const initialGames: Game[] = [];
-
-  // const [gamesHistory, setGamesHistory] = useState<Game[]>(initialGames);
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
     setShowUserInto(false);

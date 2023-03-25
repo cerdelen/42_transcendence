@@ -190,22 +190,23 @@ header .basic:hover {
   border: 1mm ridge white;
 }
 
-/* #user-dropdown button {
-  border: 2px solid red;
-} */
-/* button:not(#chat-area button, #userInfo button) {
-  background-color: #381a72; /* light purple */
-  /* color: white; */
-  /* border-radius: 15px; slightly rounded edges */
-  /* font-size: 1rem; */
-  /* padding: 0.5rem 1rem; adjust padding as needed */
-  /* border: 1px solid pink; remove default button border */
-  /* cursor: pointer; */
-/* } */
+#user-dropdown button {
+  /* border: 2px solid red; */
+}
 
-/* button:hover:not(#userInfo button) { */
-  /* box-shadow: 0 0 7px #d0cccc, 0 0 13px #d0cccc, 0 0 24px #d0cccc; */
-/* } */ */
+.purple-button {
+  background-color: #381a72;
+  color: white;
+  border-radius: 15px;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid pink;
+  cursor: pointer;
+}
+
+.purple-button:hover:not(#userInfo button) {
+  box-shadow: 0 0 7px #d0cccc, 0 0 13px #d0cccc, 0 0 24px #d0cccc;
+} 
 
 #user-dropdown * {
   /* border: 2px solid lime; */
@@ -466,7 +467,8 @@ footer {
 .User_for_list_in_chat_details {
   margin-bottom: 0.5rem;
 }
-button {
+.game-page-button,
+.game_buttons {
   font-family: "Open Sans", sans-serif;
   font-size: 16px;
   letter-spacing: 2px;
@@ -483,10 +485,11 @@ button {
   touch-action: manipulation;
 
 }
+
 #joinButton {
   font-size: 50px;
 }
-button:active {
+.game-page-button:active {
   box-shadow: 0px 0px 0px 0px;
   top: 5px;
   left: 5px;

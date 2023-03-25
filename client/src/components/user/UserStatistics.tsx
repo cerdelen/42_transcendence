@@ -30,9 +30,11 @@ const UserStats = ({ userId }: Props) => {
         body: JSON.stringify({ user_id: userId }),
       });
       const stats = await response.json();
+
+      const zeroDevision = (stats["loses"] + stats["wins"]) === 0;
       setWins(stats["wins"]);
       setLoses(stats["loses"]);
-      setWinRatio(stats["wins"] / (stats["loses"] + stats["wins"]));
+      setWinRatio(zeroDevision ? 0 : stats["wins"] / (stats["loses"] + stats["wins"]));
       setAchievementOne(stats["achievement_0"]);
       setAchievementTwo(stats["achievement_1"]);
       setAchievementThree(stats["achievement_2"]);
@@ -40,13 +42,15 @@ const UserStats = ({ userId }: Props) => {
     };
 
     fetchStats();
+    console.log(winRatio);
   }, [userId]);
 
   return (
+    
     <div id="user-statistics">
       <div>{`Wins: ${wins}`}</div>
       <div>{`Loses: ${loses}`}</div>
-      <div>{`Ratio: ${winRatio * 100}%`}</div>
+      <div>{`Wins Ratio: ${winRatio * 100}%`}</div>
       <div>
         {achievementOne ? <img src={themeAchievement} alt="" /> : <div className="no-achievement">  </div>}
         {achievementTwo ? <img src={threeWinsAchievement} alt="" /> : <div className="no-achievement">  </div>}

@@ -62,7 +62,7 @@ const SecondFactorQR = ({qrString}: Props) => {
                 required
                 />
             </label>
-            <button type="submit">Submit</button>
+            <button className="purple-button" type="submit">Submit</button>
         </form>
       
       </div>}

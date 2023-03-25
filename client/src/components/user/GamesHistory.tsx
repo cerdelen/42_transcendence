@@ -89,10 +89,10 @@ const GameHistory = ({ gamesList }: Props) => {
       
       const allGames = await gamesListy.json();
         setGames(allGames);
-        // fetchNamesOponentOne(allGames);
-        // fetchNamesOponentTwo(allGames);
-        // getPicturePlayerOne(allGames);
-        // getPicturePlayerTwo(allGames);
+        fetchNamesOponentOne(allGames);
+        fetchNamesOponentTwo(allGames);
+        getPicturePlayerOne(allGames);
+        getPicturePlayerTwo(allGames);
       } catch (error) {
         console.error(`fetch games in GamesHistory failed: ${error}`);
         

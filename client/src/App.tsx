@@ -9,20 +9,11 @@ import {
   AuthContext,
   ConversationContextType,
 } from "./utils/context/AuthContext";
-import { User } from "./utils/types";
-import { PropsWithChildren } from "react";
-// import { ValidationPipe } from '@nestjs/common';
-import { SocketContext, our_socket } from "./utils/context/SocketContext";
-import Pong from "./components/Pong";
-// import io, { Socket} from 'socket.io-client';
 import Game from "./components/Game";
-import UserPage from "./components/user/UserPage";
 import { UserContext } from "./contexts/UserContext";
 import InfoCardProvider from "./contexts/InfoCardContext";
 import Displayed_Chat_Provider from "./contexts/Displayed_Chat_Context"
-// import { Chats_user_is_part_ofProvider } from "./contexts/Chats_user_is_part_of_context";
 
-// const socket = io('localhost:3003');
 export const ConversationContext = React.createContext<
   ConversationContextType[]
 >([]);
@@ -71,9 +62,8 @@ function App() {
         },
       });
       const id = await response.text();
-      console.log("so thi is app.tsx" + id);
       
-      await setUserId(id);
+      setUserId(id);
       await getData(id);
     } catch (error) {
       console.error(error);
@@ -106,14 +96,12 @@ function App() {
   useEffect(() => {
     const myCookie = JSCookies.get("accessToken");
     if (myCookie !== undefined) {
-      console.log("Set logged in to true");
       setLoggedIn(true);
       getUser();
     }
   }, []);
 
   return (
-    // <MyProvider loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
     <InfoCardProvider>
       <Displayed_Chat_Provider>
 
@@ -128,17 +116,14 @@ function App() {
               stats: stats,
               two_FA_enabled: two_FA_enabled,
               two_FA_secret: two_FA_secret,
-              // socket: socket,
             }}
             >
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={loggedIn ? <HomePage userId={userId}/> : <LoginPage />} />
-                {/* <Route path="/loggedin" element={loggedIn ? <HomePage socket={socket}/> : <LoginPage/>}/> */}
                 <Route path="/game" element={<Game userId={userId} />} />
                 <Route path="/auth" element={<SecondFactorPage />} />
                 <Route path="/home" element={<HomePage userId={userId}/>} />
-                {/* <Route path="/user" element={<UserPage />} /> */}
               </Routes>
             </BrowserRouter>
           </UserContext.Provider>
@@ -146,7 +131,6 @@ function App() {
       </Displayed_Chat_Provider>
     </InfoCardProvider>
 
-    // </MyProvider>
   );
 }
 

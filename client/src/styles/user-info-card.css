@@ -78,7 +78,7 @@
     margin-right: 2rem;
 }
 
-#userInfo button {
+#userInfo #exit-buttton {
     margin-top: 4px;
     margin-right: 3px;
     cursor: pointer;
@@ -93,9 +93,15 @@
     color: rgb(22, 2, 34);
       text-shadow: 0 0 20px #FFF, 0 0 30px #ffffff, 0 0 40px #FFF, 0 0 50px #FFF, 0 0 60px #FFF, 0 0 70px #FFF;
 }
+
 #userInfo #generic-info {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    justify-content: flex-start;
+    justify-content: space-between;
+}
+
+#buttons {
+    display: flex;
+    justify-content: space-between;
 }

@@ -27,13 +27,13 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
   };
 
   const handleNewNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
 
     setNewName(event.target.value);
   };
 
   const changeName = async () => {
-    console.log("changeName called");
+    // console.log("changeName called");
     try {
       const response = await fetch("http://localhost:3003/user/change_name", {
         method: "POST",

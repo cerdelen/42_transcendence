@@ -15,8 +15,6 @@ import { request } from 'http';
 import { PrismaService } from '../prisma/prisma.service';
 
 
-
-
 @Controller('conversation')
 export class ConversationController {
 	constructor (
@@ -25,41 +23,34 @@ export class ConversationController {
 
 
 	@UseGuards(Jwt_Auth_Guard)
-	@Post('create')
+	@Get('create_group_chat/:chat_name')
 	async createConversation(
 		@Req()
 		req : any,
-		@Body() userContent: {
-			name?: string;
-			chat?: boolean;
-			public?: boolean;
-			password?: boolean;
-			request?: boolean;
-			participants: string[],
-			created_at?: Date
-		})
+		@Param('chat_name') chat_name: string)
 		{
-			console.log("USERCONTENT" + userContent.participants);
-			
-			if (typeof userContent.participants === "undefined")
+			// console.log("USERCONTENT" + userContent.participants);
+
+			if (typeof chat_name === "undefined")
 				return null;
 			let array : number[] = [];
 			let user : User;
-			for (let i = 0; i < userContent.participants.length; ++i)
-			{
-				let chat_member: number = Number(userContent.participants[i])
-				user = await this.userService.findUserById(chat_member);
-				if(user)
-					array.push(chat_member);
-			}
-			
+			// for (let i = 0; i < chat_name.length; ++i)
+			// {
+			// 	let chat_member = this.conversationsService.findConversationByName(chat_name);
+			// 	user = await this.userService.findUserById(req.user.id);
+			// 	if(user)
+			// 		array.push(req.user.id);
+			// }
+
+			console.log("CHAT_NAME = " + chat_name);
 			let newConversation : Conversation = await this.conversationsService.createConversation({
-				conversation_name: userContent.name,
-				conversation_participant_arr: array,
+				conversation_name: chat_name,
+				conversation_participant_arr: [Number(req.user.id)],
 				conversation_owner_arr: [Number(req.user.id)],
 				conversation_admin_arr: [Number(req.user.id)],
 			})
-			
+
 			for (let i = 0; i < array.length; ++i)
 			{
 				user = await this.userService.findUserById(array[i]);
@@ -94,7 +85,7 @@ export class ConversationController {
 				//TODO
 				//banlist
 			const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);		//is he already part of the chat
-			if (userIdx > -1) return null;				// this means he is already part of the chat and i dont want to add him again
+			if (userIdx > -1) return (false);				// this means he is already part of the chat and i dont want to add him again
 			await this.conversationsService.updateConversation({
 				where: {
 					conversation_id: Number(chat_id)
@@ -106,6 +97,7 @@ export class ConversationController {
 				}
 			})
 			this.conversationsService.updateConversationIdInUser(req.user.id, chat_id);
+			return (true);
 			// 	where: {
 			// 		id : Number(req.user.id)
 			// 	},
@@ -133,7 +125,7 @@ export class ConversationController {
 					conversation_participant_arr: arr,
 				})
 				console.log("NEW_DIALOGUE + " + new_dialogue.conversation_id);
-
+ 
 				this.conversationsService.updateConversationIdInUser(Number(anotherUserId), new_dialogue.conversation_id);
 				this.conversationsService.updateConversationIdInUser(Number(req.user.id), new_dialogue.conversation_id);
 				return new_dialogue;
@@ -205,6 +197,21 @@ export class ConversationController {
     	    return this.conversationsService.getMsgsByConversationID(conversationId)
 		}
 
+		@UseGuards(Jwt_Auth_Guard)
+		@Get('getConversationNameById/:conversation_id')
+		async getConversationName(
+			@Param('conversation_id') conversation_id
+		) {
+			console.log("getconversation name "+ JSON.stringify(conversation_id));
+			const conv = await this.conversationsService.findConversation(conversation_id);
+			if(conv)
+			{
+				console.log("i will be returning this "+ conv.conversation_name);
+				return (conv.conversation_name);
+			}
+			else
+				return ("");
+		}
 
 		@UseGuards(Jwt_Auth_Guard)
 		@Get('getConversationById/:conversation_id')
@@ -240,7 +247,7 @@ export class ConversationController {
 		) : Promise<Conversation> {
 			console.log("ADMIN_ID = " + admId);
 			console.log("User_ID = " + req.user.id);
-			
+
 			return this.conversationsService.setAdministratorOfConversation(conversId, admId, req.user.id);
 		}
 }

@@ -18,8 +18,6 @@ model User {
 	// chatParticipant	ChatParticipant?	@relation(fields: [chatPtsId], references: [ChatPartId])
 	conversation_id_arr		Int[]
 	user_msg_arr			Message[]
-			
-
 
 	// picture			String?
 	// 2_FA_stuff
@@ -45,7 +43,7 @@ model Stats {
 model Conversation {
 	// User stuff
 	conversation_id					Int					@unique  @id @default(autoincrement()) 
-	conversation_name				String?		
+	conversation_name				String?					
 	conversation_msg_arr			Message[]
 	conversation_created_at			DateTime			@default(now())
 	// chat_participants	ChatParticipant[]

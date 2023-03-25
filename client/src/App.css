@@ -296,9 +296,9 @@ footer {
 }
 .game-page-players-online-ul,
 .game-page-games-online-ul,
-.scrollable-list
-.game-page-games-online-ul
-  {
+.scrollable-list,
+.all_open_group_chats-ul
+{
   list-style-type: none;
   padding: 0;
   max-height: 77vh;
@@ -310,15 +310,38 @@ footer {
               -10px 0 20px -10px rgba(0, 0, 0, 1); */
 }
 
+
 .open-chats {
   max-height: 37vh;
 }
 .open_group_chats-ul {
   max-height: 32.5vh;
 }
-.game-page-games-online-ul {
+/* .game-page-games-online-ul, */
+.all_open_group_chats-ul
+{
+  padding: 0;
+  overflow-x: auto;
   max-height: 32.5vh;
+  min-height: 32.5vh;
 }
+
+.Chat_details
+{
+  padding: 0;
+  overflow-x: auto;
+  max-height: 32.5vh;
+  min-height: 32.5vh;
+}
+
+.game-page-games-online-ul
+{
+  overflow-x: auto;
+  max-height: 65vh;
+  min-height: 65vh;
+}
+
+
 .player-card-li{
   background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140));
   /* border: 1px solid pink; */
@@ -416,6 +439,33 @@ footer {
 }
 
 
+
+.Chat_details {
+  padding: 0;
+  overflow-x: none;
+  max-height: 32.5vh;
+  min-height: 32.5vh;
+}
+
+.Chat_name_for_chat_details {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.User_list_in_chat_detals {
+  max-height: calc(32.5vh - 10vh);
+  overflow-y: auto;
+  list-style: none; /* Remove the default bullet points */
+  margin: 0;
+  padding: 0;
+  display: flex; /* Display the list items in a column layout */
+  flex-direction: column;
+}
+
+.User_for_list_in_chat_details {
+  margin-bottom: 0.5rem;
+}
 button {
   font-family: "Open Sans", sans-serif;
   font-size: 16px;

@@ -9,10 +9,11 @@ import { CreateConversationParams } from '../utils/types';
 import { UserService } from '../user/user.service';
 // import { Message } from '../messages/entities/message.entity';
 import { networkInterfaces, userInfo } from 'os';
-import { skip, identity } from 'rxjs';
+import { skip, identity, lastValueFrom } from 'rxjs';
 
 
 import { Message } from "@prisma/client"
+import { conv_gateway_dto } from './conversationSocket/conversation_gateway_dto';
 
 
 @Injectable()
@@ -24,6 +25,8 @@ export class ConversationService {
 
 	async createConversation(data: Prisma.ConversationCreateInput): Promise<Conversation> {
 		console.log("PARTICIPANTS[] = " + data.conversation_participant_arr);
+		console.log("JSON_DATA = " + JSON.stringify(data));
+		
 		const newConversation = await this.prisma.conversation.create ({
 			data,
 		})
@@ -37,7 +40,7 @@ export class ConversationService {
 			where: {
 				group_chat: false,
 				conversation_participant_arr: {
-					has: user_id1,
+					has: user_id1, 
 				}
 		}})
 		for (let i = 0; i < checkDialogue.length; i++) {
@@ -77,7 +80,7 @@ export class ConversationService {
 			})
 		}
 
-	async conversation(conversationwhereuniqueinput: Prisma.ConversationWhereUniqueInput): Promise<Conversation | null> {
+	async conversation(conversationwhereuniqueinput: Prisma.ConversationWhereUniqueInput) {
 		return this.prisma.conversation.findUnique({
 			where: conversationwhereuniqueinput
 		})
@@ -85,10 +88,19 @@ export class ConversationService {
 
 	async findConversation(id: number): Promise<Conversation | undefined> {
 		console.log("ID = " + id);
+		if(Number.isNaN(Number(id)))
+			return null;
 		const foundConversation = await this.conversation({conversation_id: Number(id)});
 		console.log("ID = found" );
 		return foundConversation;
 	}	
+
+	// async findConversationByName(name: string) {
+	// 	const foundConversation = await this.conversation({
+	// 		conversation_name: name
+	// 	})
+	// 	return foundConversation;
+	// }
 
 	async findAllConversationsByUser(user_id: number)  {
 		const existingUser = this.prisma.user.findUnique({
@@ -229,6 +241,31 @@ export class ConversationService {
 		return updatedUser;
 	}
 
+	async	remove_user_from_conversation(chat_id: number, userId: number)
+	{
+		const conv = await this.prisma.conversation.findUnique({
+			where: {
+				conversation_id: chat_id
+			}
+		})
+		if (!conv)
+			return ;
+		if (conv.group_chat == false)
+		return ;
+		const ind_1 = conv.conversation_participant_arr.indexOf(userId);
+		conv.conversation_participant_arr.splice(ind_1, 1);
+		await this.prisma.conversation.update({
+			where: {conversation_id: chat_id},
+			data: {conversation_participant_arr :conv.conversation_participant_arr }
+		});
+		const user = await this.prisma.user.findUnique({where: {id: userId}});
+		const ind_2 = user.conversation_id_arr.indexOf(chat_id);
+		user.conversation_id_arr.splice(ind_2, 1);
+		await this.prisma.user.update({
+			where: {id: userId},
+			data: {conversation_id_arr: user.conversation_id_arr}
+		});
+	}
 }
 
 

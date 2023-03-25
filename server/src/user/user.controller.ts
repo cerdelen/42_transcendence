@@ -102,5 +102,14 @@ export class UserController
 			return this.userService.get_user_name(Number(user_id));
 		}
 	}
+
+	@Get('get_all_other_user_ids')
+	@UseGuards(Jwt_Auth_Guard)
+	async	get_all_other_user_ids(@Req() req: any)
+	{
+		console.log(req.user.id);
+		
+		return this.userService.get_all_other_user_ids(req.user.id);
+	}
 }
 

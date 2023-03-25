@@ -285,4 +285,21 @@ export class UserService {
 		}
 		return (false);
 	}
+
+	async	get_all_other_user_ids(userId: number)
+	{
+		const users = await this.prisma.user.findMany({
+			where: {
+				NOT: {
+					id: userId
+				}
+			}
+		});
+		let arr : number [] = []
+		for(let i = 0; i < users.length; i++)
+		{
+			arr.push(users[i].id);
+		}
+		return (arr)
+	}
 }

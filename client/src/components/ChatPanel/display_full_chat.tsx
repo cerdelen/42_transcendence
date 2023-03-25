@@ -9,6 +9,12 @@ interface typing
 	isTyping: boolean,
 }
 
+interface message
+{
+	author_id: string,
+	text: string,
+}
+
 class display_message_info {
 	text: string;
 	author_id: number;
@@ -51,6 +57,18 @@ const Display_message_in_chat = ({ message }: { message: display_message_info })
 
 	console.log("called display messages()");
 	useEffect(() => {
+		// our_socket.on('message', (message : message) => 
+		// {
+		// 	console.log("HELLLLOOOUYYSHSIJI THIS IS OUR SOCKET ON MESSAGE RECEIVED!!!!!!!!");
+		// 	console.log(message.text + " " + Number(message.author_id));
+		// 	let newMessage : display_message_info [] = []
+		// 	for(let i = 0; i < messages.length; i++)
+		// 	{
+		// 		newMessage.push(messages[i])
+		// 	}
+		// 	newMessage.push(new display_message_info(message.text, Number(message.author_id)));
+		// 	set_messages(newMessage);
+		// })
 		our_socket.on('typing', (typing: typing) =>
 		{
 			if(typing.isTyping)
@@ -84,8 +102,7 @@ const Display_message_in_chat = ({ message }: { message: display_message_info })
 		  return ;
 		}
 		// console.log("this is the data i got " + await JSON.stringify(data));
-		
-			  for(let i = 0; i < data.length; i++)
+		for(let i = 0; i < data.length; i++)
 		{
 		  messages.push(new display_message_info(data[i]["text"], data[i]["author"]));
 		}

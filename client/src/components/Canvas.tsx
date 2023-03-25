@@ -159,9 +159,10 @@ const Canvas = ({userId} : {userId: string}) =>
         setCodeInput("");
         setGameCode("");
     }
+    
     useEffect(() => 
     {
-
+        
         our_socket.on('sameUser', () =>
         {
             reset();

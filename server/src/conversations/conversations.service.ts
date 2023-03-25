@@ -178,13 +178,13 @@ export class ConversationService {
 				created_at: 'desc'
 			},
 			//in frontend i guess we will compare users id and logged in email for validation matter, if id is not the same, we know its not the user
-			include: {
-				user_relation: true
+			// include: {
+			// 	user_relation: true
 					// select: {
 					//     id: true
 					// }
 				// }
-			},
+			// },
 		})
 		return Msg;
 	}

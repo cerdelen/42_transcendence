@@ -11,16 +11,11 @@ datasource backend_database {
 // ? means a field is optional
 
 model User {
-	// User stuff
 	id						Int			@unique
 	name					String		@unique
 	mail					String
-	// chatParticipant	ChatParticipant?	@relation(fields: [chatPtsId], references: [ChatPartId])
 	conversation_id_arr		Int[]
-	user_msg_arr			Message[]
 	socketId				String @default("")
-	// picture			String?
-	// 2_FA_stuff
 	two_FA_enabled	Boolean    @default(false)
 	online			Boolean	   @default(false)
 	two_FA_secret	String?
@@ -86,7 +81,8 @@ model Message {
 	conversation_id				Int?			
 	// usr_id						Int?			
 	conversation_relation		Conversation?		@relation(fields: [conversation_id], references: [conversation_id])
-	user_relation				User?				@relation(fields: [author], references: [id])		
+	// user_relation				User?				@relation(fields: [author], references: [id])		
+
 }
 
 model Game {

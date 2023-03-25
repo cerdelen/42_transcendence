@@ -23,29 +23,30 @@ export class ConversationController {
 
 
 	@UseGuards(Jwt_Auth_Guard)
-	@Get('create/:chat_name')
+	@Get('create_group_chat/:chat_name')
 	async createConversation(
 		@Req()
 		req : any,
 		@Param('chat_name') chat_name: string)
 		{
 			// console.log("USERCONTENT" + userContent.participants);
-			
+
 			if (typeof chat_name === "undefined")
 				return null;
 			let array : number[] = [];
 			let user : User;
-			for (let i = 0; i < chat_name.length; ++i)
-			{
-				let chat_member = this.conversationsService.findConversationByName(chat_name);
-				user = await this.userService.findUserById(req.user.id);
-				if(user)
-					array.push(req.user.id);
-			}
+			// for (let i = 0; i < chat_name.length; ++i)
+			// {
+			// 	let chat_member = this.conversationsService.findConversationByName(chat_name);
+			// 	user = await this.userService.findUserById(req.user.id);
+			// 	if(user)
+			// 		array.push(req.user.id);
+			// }
 
+			console.log("CHAT_NAME = " + chat_name);
 			let newConversation : Conversation = await this.conversationsService.createConversation({
 				conversation_name: chat_name,
-				conversation_participant_arr: array,
+				conversation_participant_arr: [Number(req.user.id)],
 				conversation_owner_arr: [Number(req.user.id)],
 				conversation_admin_arr: [Number(req.user.id)],
 			})
@@ -109,25 +110,25 @@ export class ConversationController {
 			// return updatedUser
 		} 
 
-		// @UseGuards(Jwt_Auth_Guard)
-		// @Get('join_dialogue/:other_user_id')
-		// async joinDialogue(
-		// 	@Req() req: any,
-		// 	@Param('other_user_id') anotherUserId: string
-		// 	) {
-		// 		const check = await this.conversationsService.findDialogue(Number(req.user.id), Number(anotherUserId));
-		// 		if (check)
-		// 			return check;
-		// 		const arr: number[] = [Number(anotherUserId), Number(req.user.id)];
+		@UseGuards(Jwt_Auth_Guard)
+		@Get('join_dialogue/:other_user_id')
+		async joinDialogue(
+			@Req() req: any,
+			@Param('other_user_id') anotherUserId: string
+			) {
+				const check = await this.conversationsService.findDialogue(Number(req.user.id), Number(anotherUserId));
+				if (check)
+					return check;
+				const arr: number[] = [Number(anotherUserId), Number(req.user.id)];
 				
-		// 		const new_dialogue = await this.conversationsService.createConversation({
-		// 			conversation_participant_arr: arr,
-		// 		})
-		// 		console.log("NEW_DIALOGUE + " + new_dialogue.conversation_id);
-
-		// 		this.conversationsService.updateConversationIdInUser(Number(anotherUserId), new_dialogue.conversation_id);
-		// 		this.conversationsService.updateConversationIdInUser(Number(req.user.id), new_dialogue.conversation_id);
-		// 		return new_dialogue;
+				const new_dialogue = await this.conversationsService.createConversation({
+					conversation_participant_arr: arr,
+				})
+				console.log("NEW_DIALOGUE + " + new_dialogue.conversation_id);
+ 
+				this.conversationsService.updateConversationIdInUser(Number(anotherUserId), new_dialogue.conversation_id);
+				this.conversationsService.updateConversationIdInUser(Number(req.user.id), new_dialogue.conversation_id);
+				return new_dialogue;
 				// let conversation: Conversation;
 				// conversation.conversation_participant_arr.push(req.user.id);
 				// console.log("after push " + conversation.conversation_participant_arr);
@@ -177,7 +178,7 @@ export class ConversationController {
 			// if (existingConversation.conversation_participant_arr.length > 2)
 			// 	throw new Error("Dialogue cannot have more than 2 users!");
 			
-		// }
+		}
  
 		@UseGuards(Jwt_Auth_Guard)
 		@Get('getMyChats')

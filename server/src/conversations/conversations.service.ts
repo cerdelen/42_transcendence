@@ -25,6 +25,8 @@ export class ConversationService {
 
 	async createConversation(data: Prisma.ConversationCreateInput): Promise<Conversation> {
 		console.log("PARTICIPANTS[] = " + data.conversation_participant_arr);
+		console.log("JSON_DATA = " + JSON.stringify(data));
+		
 		const newConversation = await this.prisma.conversation.create ({
 			data,
 		})
@@ -38,7 +40,7 @@ export class ConversationService {
 			where: {
 				group_chat: false,
 				conversation_participant_arr: {
-					has: user_id1,
+					has: user_id1, 
 				}
 		}})
 		for (let i = 0; i < checkDialogue.length; i++) {
@@ -93,12 +95,12 @@ export class ConversationService {
 		return foundConversation;
 	}	
 
-	async findConversationByName(name: string) {
-		const foundConversation = await this.conversation({
-			conversation_name: name
-		})
-		return foundConversation;
-	}
+	// async findConversationByName(name: string) {
+	// 	const foundConversation = await this.conversation({
+	// 		conversation_name: name
+	// 	})
+	// 	return foundConversation;
+	// }
 
 	async findAllConversationsByUser(user_id: number)  {
 		const existingUser = this.prisma.user.findUnique({

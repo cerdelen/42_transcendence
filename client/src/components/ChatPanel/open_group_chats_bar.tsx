@@ -12,16 +12,15 @@ interface chat_props {
 
 const handleCreateGroupChat = async (my_chats_ids: number[], setmy_chats_ids:any, userId: string)  =>
 {
-
+	const name: string = "hello";
 	console.log("handleCreateGroupChat");
 
-	const response = await fetch("http://localhost:3003/conversation/create",{
-			method: "Post",
+	const response = await fetch(`http://localhost:3003/conversation/create_group_chat/${name}`,{
+			method: "Get",
 			headers: {
 				// "Content-Type": "application/json",
 				Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 			},
-			body: JSON.stringify({ participants: [userId] }),
 		})
 	// const data = await response.json();
 	console.log(JSON.stringify( response));

@@ -94,7 +94,7 @@ export class ConversationController {
 				//TODO
 				//banlist
 			const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);		//is he already part of the chat
-			if (userIdx > -1) return null;				// this means he is already part of the chat and i dont want to add him again
+			if (userIdx > -1) return (false);				// this means he is already part of the chat and i dont want to add him again
 			await this.conversationsService.updateConversation({
 				where: {
 					conversation_id: Number(chat_id)
@@ -106,6 +106,7 @@ export class ConversationController {
 				}
 			})
 			this.conversationsService.updateConversationIdInUser(req.user.id, chat_id);
+			return (true);
 			// 	where: {
 			// 		id : Number(req.user.id)
 			// 	},
@@ -205,6 +206,21 @@ export class ConversationController {
     	    return this.conversationsService.getMsgsByConversationID(conversationId)
 		}
 
+		@UseGuards(Jwt_Auth_Guard)
+		@Get('getConversationNameById/:conversation_id')
+		async getConversationName(
+			@Param('conversation_id') conversation_id
+		) {
+			console.log("getconversation name "+ JSON.stringify(conversation_id));
+			const conv = await this.conversationsService.findConversation(conversation_id);
+			if(conv)
+			{
+				console.log("i will be returning this "+ conv.conversation_name);
+				return (conv.conversation_name);
+			}
+			else
+				return ("");
+		}
 
 		@UseGuards(Jwt_Auth_Guard)
 		@Get('getConversationById/:conversation_id')

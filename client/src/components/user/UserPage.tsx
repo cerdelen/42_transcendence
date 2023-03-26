@@ -9,15 +9,12 @@ import UserPhoto from "./UserPhoto";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import GameHistory from "./GamesHistory";
 import UserStats from "./UserStatistics";
+import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
+import { our_socket } from "../../utils/context/SocketContext";
 
-type Props = {
-  // setShowUserInto: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const UserPage = ({}: Props) => {
+const UserPage = () => {
   const { userId } = useContext(UserContext);
   const { userIdCard } = useMyContext();
-  const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
   const [isVisible, setIsVisible] = useState(true);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
@@ -34,20 +31,7 @@ const UserPage = ({}: Props) => {
 
   const startChat = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:3003/conversation/join_dialogue/${userIdCard}`,
-        {
-          method: "Get",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-          },
-        }
-      );
-      console.log("join chat");
-      const conv = await response.json();
-      setDisplayed_chat(conv);
-      setShowUserInto(false);
+      our_socket.emit('create_dialogue', {userid_creator: userId, other_user: userIdCard});
     } catch (error) {
       alert("Could not go to chat");
     }
@@ -161,14 +145,3 @@ const UserPage = ({}: Props) => {
 };
 
 export default UserPage;
-
-type Game = {
-  id: number;
-  player_one: number;
-  player_two: number;
-  winner: number;
-  loser: number;
-  score_one: number;
-  score_two: number;
-  finished: boolean;
-};

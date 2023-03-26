@@ -6,31 +6,13 @@ import Chat_details from "./Chat_details";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 import { json } from "react-router-dom";
 import { our_socket } from "../../utils/context/SocketContext";
+import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
 
-interface chat_props {
-  chat_id: number;
-  onTestChange: any;
-}
+const Chat_name_input = ({setButton_state}: { setButton_state: any;}) => {
 
-// const handleCreateGroupChat = async (my_chats_ids: number[], setmy_chats_ids:any, userId: string)	=>
-const Chat_name_input = ({
-  not_joined_chats_ids,
-  my_chats_ids,
-  setmy_chats_ids,
-  setNot_joined_chats_ids,
-  setButton_state,
-}: {
-  not_joined_chats_ids: number[];
-  my_chats_ids: number[];
-  setmy_chats_ids: any;
-  setNot_joined_chats_ids: any;
-  setButton_state: any;
-}) => {
-
-
+  const {my_chats_ids, setmy_chats_ids, not_joined_chats_ids, setNot_joined_chats_ids} =  useMyChatCardsContext();
   const [inputValue, setInputValue] = useState("");
   const { setDisplayed_chat } = useMyDisplayedChatContext();
-  // const { } = us
 
   const handleInputChange = (e: any) => {
     setInputValue(e.target.value);
@@ -50,8 +32,6 @@ const Chat_name_input = ({
       );
 
       const data = await response.json();
-      // console.log(" this is the response of create group chat " + JSON.stringify(data));
-      // console.log(data["conversation_owner_arr"]);
       setDisplayed_chat(data);
       setButton_state(true);
       setmy_chats_ids([...my_chats_ids, data["conversation_id"]]);
@@ -68,20 +48,7 @@ const Chat_name_input = ({
 };
 
 const handleCreateGroupChat = async (setButton_state: any) => {
-  // const name: string = "hello";
-  // console.log("handleCreateGroupChat");
-
   setButton_state(false);
-
-  // const response = await fetch(`http://localhost:3003/conversation/create_group_chat/${name}`,{
-  // 		method: "Get",
-  // 		headers: {
-  // 			// "Content-Type": "application/json",
-  // 			Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-  // 		},
-  // 	})
-  // const data = await response.json();
-  // console.log(JSON.stringify( response));
 };
 
 const Group_chat_preview_card = ({
@@ -171,8 +138,7 @@ const Get_all_open_group_chats = ({
   my_chats_ids: number[];
   setmy_chats_ids: any;
   setNot_joined_chats_ids: any;
-}) =>
-{
+}) => {
   const { userId } = useContext(UserContext);
   useEffect(() => {
     async function get_ids() {
@@ -193,19 +159,16 @@ const Get_all_open_group_chats = ({
     get_ids();
   }, []);
   // useEffect(() => {
-    			
+
   //   		  }, []);
 
-          our_socket.on("some_one_left_group_chat", ({conv_id, left_user_id, conv_still_exists} : {conv_id: number, left_user_id: number, conv_still_exists: boolean}) =>
-    			{
-    				if (left_user_id == Number(userId))
-    				{
-    					if (conv_still_exists)
-    					{
-    						setNot_joined_chats_ids([...not_joined_chats_ids, conv_id])
-    					}
-    				}
-    			});
+  our_socket.on("some_one_left_group_chat", ({ conv_id, left_user_id, conv_still_exists }: { conv_id: number, left_user_id: number, conv_still_exists: boolean }) => {
+    if (left_user_id == Number(userId)) {
+      if (conv_still_exists) {
+        setNot_joined_chats_ids([...not_joined_chats_ids, conv_id])
+      }
+    }
+  });
 
   return (
     <ul className="list-cards">
@@ -223,18 +186,9 @@ const Get_all_open_group_chats = ({
   );
 };
 
-const Open_group_cards = ({
-  not_joined_chats_ids,
-  my_chats_ids,
-  setmy_chats_ids,
-  setNot_joined_chats_ids,
-}: {
-  not_joined_chats_ids: number[];
-  my_chats_ids: number[];
-  setmy_chats_ids: any;
-  setNot_joined_chats_ids: any;
-}) => {
+const Open_group_cards = () => {
   // console.log("rendering Open_group_cards");
+  const {my_chats_ids, setmy_chats_ids, not_joined_chats_ids, setNot_joined_chats_ids} =  useMyChatCardsContext();
   const [button_state, setButton_state] = useState(true);
   return (
     <div className="community-side-collumn">
@@ -248,21 +202,15 @@ const Open_group_cards = ({
         />
 
         {button_state ? (
-          <button onClick={() => handleCreateGroupChat(setButton_state)}>
+          <button onClick={() => setButton_state(false)}>
             CEATE GROUP CHAT
           </button>
         ) : (
           <Chat_name_input
-            not_joined_chats_ids={not_joined_chats_ids}
-            my_chats_ids={my_chats_ids}
-            setmy_chats_ids={setmy_chats_ids}
-            setNot_joined_chats_ids={setNot_joined_chats_ids}
             setButton_state={setButton_state}
           />
         )}
       </div>
-
-      {/* <button onClick={() => handleCreateGroupChat(my_chats_ids, setmy_chats_ids, userId)} >CEATE GROUP CHAT</button> */}
 
       <div className="right-pane-column">
         <h2>CHAT DETAILS</h2>

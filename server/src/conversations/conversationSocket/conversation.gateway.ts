@@ -1,6 +1,4 @@
-import { OnEvent } from '@nestjs/event-emitter';
 import { MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { MsgService } from 'src/msg/msg.service';
 import { ConversationService } from '../conversations.service';
 import { conv_gateway_dto } from './conversation_gateway_dto';
 
@@ -13,8 +11,6 @@ import { conv_gateway_dto } from './conversation_gateway_dto';
   ))
 export class conversationGateway implements OnGatewayConnection {
 	handleConnection(client: any, ...args: any[]) {
-		// console.log(client);
-		
 	}
 	constructor (private conversationService: ConversationService)
 	{
@@ -44,6 +40,26 @@ export class conversationGateway implements OnGatewayConnection {
 				}
 		}
 
-} 
+		@SubscribeMessage('create_dialogue')
+		async create_dialogue(
+			@MessageBody() data: any) {
 
-// conv_id, left_user_id, conv_still_exists
+				const userid_creator : number = Number(data.userid_creator);
+				const other_user : number = Number(data.other_user);
+				const check = await this.conversationService.findDialogue(Number(userid_creator), Number(other_user));
+				if (check)
+					return check;
+				const arr: number[] = [Number(other_user), Number(userid_creator)];
+				
+				const new_dialogue = await this.conversationService.createConversation({
+					conversation_participant_arr: arr,
+				})
+				console.log("NEW_DIALOGUE + " + new_dialogue.conversation_id);
+ 
+				this.conversationService.updateConversationIdInUser(Number(other_user), new_dialogue.conversation_id);
+				this.conversationService.updateConversationIdInUser(Number(userid_creator), new_dialogue.conversation_id);
+				const ret = await this.conversationService.name_fix(new_dialogue, userid_creator);
+				this.server.emit("new_dialogue_created", {userid_creator: userid_creator, other_user: other_user, chat_id: ret.conversation_id});
+		}
+
+} 

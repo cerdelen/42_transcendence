@@ -8,7 +8,6 @@ import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
 import { UserContext } from "../../contexts/UserContext";
 import { useMyContext } from "../../contexts/InfoCardContext";
 
-
 interface chat_props {
 	chat_id: number,
 	userId: string
@@ -130,48 +129,51 @@ const Get_all_my_chats = () =>
 	useEffect(() => {
 		const set_new_displayed_chat = async () =>
 		{
-			const response = await fetch(`http://localhost:3003/conversation/getConversationById/${reset_displayed_chat}`, {
-				method: "Get",
-				headers: {
-					// "Content-Type": "application/json",
-					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-				},
-			});
-			const conv = await response.json();
-			setDisplayed_chat(conv);
+			try {
+				if (reset_displayed_chat !== -1){
+					const response = await fetch(`http://localhost:3003/conversation/getConversationById/${reset_displayed_chat}`, {
+						method: "Get",
+						headers: {
+							// "Content-Type": "application/json",
+							Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+						},
+					});
+					const conv = await response.json();
+					setDisplayed_chat(conv);
+				}
+			} catch (error) {
+				console.log(error);	
+			}
 		}
 		set_new_displayed_chat();
 	}, [reset_displayed_chat]);
+
 		our_socket.on("new_dialogue_created", ({userid_creator, other_user, chat_id} : {userid_creator: number, other_user: number, chat_id: number}) =>
-		{
-			console.log("our_socket on someone left chat for all my chats " + chat_id + " " + userid_creator  + " " + other_user);
-			
+		{	
 			if (userid_creator == Number(userId))
 			{
-				console.log("we got into joined chat if")
 				setmy_chats_ids([...my_chats_ids, chat_id]);
 				set_reset_displayed_chat(chat_id);
 				setShowUserInto(false);
 			}
 			else if (other_user == Number(userId))
 			{
-				console.log("we got into joined chat if")
 				setmy_chats_ids([...my_chats_ids, chat_id]);
 			}
 		});
 
 		our_socket.on("some_one_left_group_chat", ({conv_id, left_user_id, conv_still_exists} : {conv_id: number, left_user_id: number, conv_still_exists: boolean}) =>
 		{
-			console.log("our_socket on someone left chat for all my chats " + conv_id + " " + left_user_id);
-			
 			if (left_user_id == Number(userId))
 			{
-				console.log("we got into the if")
 				const default_chat : displayed_chat_class = { conversation_id: -1, conversation_participant_arr: []}
 				setDisplayed_chat(default_chat);
 				const conv_indx = my_chats_ids.indexOf(conv_id);
-				my_chats_ids.splice(conv_indx, 1);
-				setmy_chats_ids([...my_chats_ids]);
+				if (conv_indx !== -1){
+					my_chats_ids.splice(conv_indx, 1);
+					setmy_chats_ids([...my_chats_ids]);
+				}
+				
 			}
 		});
 	

@@ -20,7 +20,7 @@
 	justify-content: space-between;
 	align-items: center;
 	padding: 0;
-	overflow: scroll;
+	overflow: auto;
 	border-radius: 5px;
 	box-shadow: 0 0 20px 5px rgba(138, 34, 142, 0.9);
 	border: 1px solid purple;

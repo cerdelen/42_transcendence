@@ -270,36 +270,7 @@ export class ConversationController {
 			@Req() req: any,
 			@Param('conversation_id') conversation_id: number
 		): Promise<Conversation> {
-			const conversation : Conversation = await this.conversationsService.findConversation(conversation_id);
-			const req_user_idx = conversation.conversation_participant_arr.indexOf(req.user.id);
-			const user : User = await this.userService.findUserById(req.user.id);
-			const conversation_id_arr_from_user = user.conversation_id_arr.indexOf(conversation_id);
-			const user_admin_idx = conversation.conversation_admin_arr.indexOf(req.user.id);
-			const user_owner_idx = conversation.conversation_owner_arr.indexOf(req.user.id);
-
-			if (conversation.conversation_admin_arr.length == 1 && conversation.conversation_admin_arr[0] == req.user.id)
-				throw new HttpException("No chance to leave a chat due to minimum amount of users in a conversation! Apologies!", HttpStatus.FORBIDDEN);
-			conversation.conversation_participant_arr.splice(req_user_idx, 1);
-			conversation.conversation_admin_arr.splice(user_admin_idx, 1);
-			user.conversation_id_arr.splice(conversation_id_arr_from_user, 1);
-			await this.conversationsService.updateConversation({
-				where: {
-					conversation_id: Number(conversation_id),
-				},
-				data: {
-					conversation_participant_arr: conversation.conversation_participant_arr,
-					conversation_admin_arr: conversation.conversation_admin_arr
-				}
-			})
-			await this.userService.updateUser({
-				where: {
-					id: Number(req.user.id)
-				},
-				data: {
-					conversation_id_arr: user.conversation_id_arr,
-				}
-			})
-			return conversation;
+			return this.conversationsService.leave_conversation(conversation_id, req)
 		}
 
 		@UseGuards(Jwt_Auth_Guard)

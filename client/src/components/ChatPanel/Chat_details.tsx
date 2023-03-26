@@ -10,60 +10,30 @@ import { RiAdminLine } from "react-icons/ri";
 import { RiVolumeMuteFill } from "react-icons/ri";
 
 
-const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<displayed_chat_class>>, userId:string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any) =>
+const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<displayed_chat_class>>, userId:string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any, group_chat: boolean|undefined) =>
 {
+	if (group_chat == false)
+		return ;
 	if (chat_id != -1)
 	{
 		our_socket.emit('leave_group_chat', {chat_id: chat_id, userId: userId});
-		const default_chat : displayed_chat_class = { conversation_id: -1, conversation_participant_arr: []}
-		setDisplayed_chat(default_chat);
-		let arr : number [] = []
-		for(let i = 0; i < my_chats_ids.length; i++)
-		{
-			if(chat_id != my_chats_ids[i])
-			arr.push(my_chats_ids[i]);
-		}
-		setmy_chats_ids(arr);
-		let arr_2 : number [] = []
-		for(let i = 0; i < not_joined_chats_ids.length; i++)
-		{
-			arr_2.push(not_joined_chats_ids[i]);
-		}
-		arr_2.push(chat_id);
-		setNot_joined_chats_ids(arr_2);
+		// const default_chat : displayed_chat_class = { conversation_id: -1, conversation_participant_arr: []}
+		// setDisplayed_chat(default_chat);
+		// let arr : number [] = []
+		// for(let i = 0; i < my_chats_ids.length; i++)
+		// {
+		// 	if(chat_id != my_chats_ids[i])
+		// 	arr.push(my_chats_ids[i]);
+		// }
+		// setmy_chats_ids(arr);
+		// let arr_2 : number [] = []
+		// for(let i = 0; i < not_joined_chats_ids.length; i++)
+		// {
+		// 	arr_2.push(not_joined_chats_ids[i]);
+		// }
+		// arr_2.push(chat_id);
+		// setNot_joined_chats_ids(arr_2);
 	}
-}
-
-const	Chat_details_chat_name = (displayed_chat: {displayed_chat: number}) =>
-{
-	const [chat_name, set_name] = useState("");
-
-	// //console.log("GIOEWJIFEWOPKFPEOWKDFP{EWKOFE{PWOFKPEKWPFEWKP{FDLEW{PFLP{EW{PFLEWLP      " + displayed_chat.displayed_chat);
-	
-
-	useEffect(() => {
-		async function get_name(){
-			const response = await fetch(`http://localhost:3003/conversation/getConversationNameById/${displayed_chat.displayed_chat}`, {
-				method: "Get",
-				headers: {
-					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-				},
-			})
-			if (response.ok)
-			{
-				const data : string = await response.json();
-				set_name(data);
-			}
-		}
-		get_name();
-	  }, []);
-
-	//   //console.log(chat_name + " this is the chat name i foudn for details");
-	  
-
-	  return (
-		<div className="Chat_name_for_chat_details">{chat_name}</div>
-	  )
 }
 
 const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details} : {user_id: number, set_user_ids_in_chat_details: any}) => 
@@ -133,26 +103,6 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 	const { userId } = useContext(UserContext);
 	const [ user_ids_in_chat_details , set_user_ids_in_chat_details] = useState<number[]>([...displayed_chat.conversation_participant_arr]);
 
-	//console.log("this is user_ids_in_chat_details " + user_ids_in_chat_details);
-	//console.log("this is user_ids_in_chat_details as input " + [...displayed_chat.conversation_participant_arr]);
-	//console.log("this is displayed_chat.conversation_participant_arr " + displayed_chat.conversation_participant_arr);
-
-	// useEffect(() => {
-	// 	async function get_name(){
-	// 		const response = await fetch(`http://localhost:3003/conversation/getConversationNameById/${displayed_chat}`, {
-	// 			method: "Get",
-	// 			headers: {
-	// 				Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-	// 			},
-	// 		})
-	// 		if (response.ok)
-	// 		{
-	// 			const data : string = await response.json();
-	// 			set_name(data);
-	// 		}
-	// 	}
-	// 	get_name();
-	//   }, []);
 	useEffect(() => {
 		async function set_map(){
 				set_user_ids_in_chat_details([...displayed_chat.conversation_participant_arr]);
@@ -177,7 +127,7 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 				{/* <li className="User_for_list_in_chat_details">User 1</li> */}
 				{/* Add more users as needed */}
 			</ul>
-			<button onClick={() => handleLeaveChat(displayed_chat.conversation_id, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids)}>Leave Chat</button>
+			<button onClick={() => handleLeaveChat(displayed_chat.conversation_id, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids, displayed_chat.group_chat)}>Leave Chat</button>
 			{/* <button onClick={() => handleLeaveChat(displayed_chat, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids)}>Leave Chat</button> */}
 			{/* <button onClick={handleLeaveChat}>Leave Chat</button> */}
 		</div>

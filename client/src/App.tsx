@@ -82,6 +82,7 @@ function App() {
       our_socket.emit("online_inform", { userId });
     });
   }, []);
+  
   useEffect(() => {
     const myCookie = JSCookies.get("accessToken");
     if (myCookie !== undefined) {
@@ -89,20 +90,7 @@ function App() {
       getUser();
     }
   }, []);
-  useEffect(() => {
-    function handleBeforeUnload(e: any) {
-      // Send socket event here
-      e.preventdefault();
-      our_socket.emit("makeOffline", { userId });
-      alert("Siemanko");
-    }
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
   return (
     <InfoCardProvider>
       <Displayed_Chat_Provider>

@@ -34,9 +34,6 @@ export class chat_card {
 
 const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
-	// console.log('called chat preview window');
-	// console.log(chat_id);
-
 	const handleOnClick = async () => 
 	{
 		if (displayed_chat.conversation_id != chat_id)
@@ -88,7 +85,6 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			setConversation_name(data["conversation_name"])
 		}
 		const getUserData = async (other_user_id : number) => {
-			// console.log("in get user data id = " + other_user_id);
 			const response = await fetch(`http://localhost:3003/pictures/${other_user_id}`, {
 				method: "Get",
 				headers: {
@@ -99,48 +95,20 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			const path = await response.blob();
 			const url = URL.createObjectURL(path);
 			setPhoto(url);
-			// const response_two = await fetch("http://localhost:3003/user/user_name", {
-			// 	method: "Post",
-			// 	headers: {
-			// 		'Content-Type': 'application/json',
-			// 		'Accept': 'application/json',
-			// 	  Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-			// 	},
-			// 	body: JSON.stringify({ user_id: other_user_id }),
-			//   });
-			// const data = await response_two.text();
-			// setConversation_name(data);
 		}
-		// const get_default_group_chat_picture = async () => {
-		// 	const response = await fetch(`http://localhost:3003/pictures/group_chat`, {
-		// 		method: "Get",
-		// 		headers: {
-		// 			// "Content-Type": "application/json",
-		// 			Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-		// 		},
-		// 	}) 
-		// 	const path = await response.blob();
-		// 	const url = URL.createObjectURL(path);
-		// 	setPhoto(url);
-		// }
 		get_conversation(chat_id);
-		// if(group_chat == false)
 		}, []);
 
 	return (
-		<li className='Chat_preview_cards'onClick={handleOnClick}>
-			<div className='player-availability'>
-				<img src={photo} alt="" />
-				<span id='user-name' title={"chat_name"} >{conversation_name}</span>
-			</div>
+		<li className='Chat_preview_cards' title={conversation_name} onClick={handleOnClick}>
+			<img src={photo} alt="" />
+			<span id='user-name' >{conversation_name}</span>
 		</li>
 	)
 }
 
 const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: string, my_chats_ids: number[], setmy_chats_ids:any}) =>
 {
-	// const { setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
-	// console.log("Get_all_my_chats is rendered");
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 
 	useEffect(() => {
@@ -151,11 +119,8 @@ const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: st
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
 			})
-			if (response.ok)
-			{
+			if (response.ok) {
 				const data : number[] = await response.json();
-				// console.log("response from getmychats fetch " + JSON.stringify(data));
-				
 				setmy_chats_ids(data);
 			}
 		}
@@ -178,19 +143,16 @@ const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: st
 		});
 	  }, []);
 	return (
-		<>
+		<div className="left-pane-column" >
 			<h2>My Chats</h2>
-			<ul >
-				{/* <img src={photo} alt="" /> */}
-				<div className='player-availability'>
-					<div>smth inside</div>
-					{
-						my_chats_ids.map((chat_id, idx) => (
-							<Chat_preview_card key={idx} chat_id={chat_id} userId={userId} />
-						))}	
-				</div>
+			<ul className='list-cards' >
+				{
+					my_chats_ids.map((chat_id, idx) => (
+						<Chat_preview_card key={idx} chat_id={chat_id} userId={userId} />
+					))
+				}	
 			</ul>
-		</>
+		</div>
 	)
 	
 }

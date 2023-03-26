@@ -12,16 +12,16 @@ import {
 import Game from "./components/Game";
 import { UserContext } from "./contexts/UserContext";
 import InfoCardProvider, { useMyContext } from "./contexts/InfoCardContext";
-import Displayed_Chat_Provider from "./contexts/Displayed_Chat_Context"
+import Displayed_Chat_Provider from "./contexts/Displayed_Chat_Context";
 import { Socket } from "socket.io";
 import { io } from "socket.io-client";
-import { SocketContext, our_socket } from './utils/context/SocketContext';
-
+import { SocketContext, our_socket } from "./utils/context/SocketContext";
+import Community from "./components/community/CommunityPage";
+import LandingPage from "./LandingPage";
 
 export const ConversationContext = React.createContext<
   ConversationContextType[]
 >([]);
-
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -44,10 +44,10 @@ function App() {
         },
       });
       const id = await response.text();
-      
+
       setUserId(id);
       await getData(id);
-      our_socket.emit('makeOnline', id);
+      our_socket.emit("makeOnline", id);
     } catch (error) {
       console.error(error);
     }
@@ -72,19 +72,16 @@ function App() {
       setStats(data["stats"]);
       setGames(data["games"]);
       setHasPicture(data["show_default_image"]);
-      
     } catch (error) {
       console.error(error);
     }
   }
 
-  useEffect(() => 
-    {
-        our_socket.on("online_check", () => 
-        {
-          our_socket.emit("online_inform", {userId});
-        })
-    }, [])
+  useEffect(() => {
+    our_socket.on("online_check", () => {
+      our_socket.emit("online_inform", { userId });
+    });
+  }, []);
   useEffect(() => {
     const myCookie = JSCookies.get("accessToken");
     if (myCookie !== undefined) {
@@ -96,48 +93,46 @@ function App() {
     function handleBeforeUnload(e: any) {
       // Send socket event here
       e.preventdefault();
-      our_socket.emit('makeOffline', {userId});
+      our_socket.emit("makeOffline", { userId });
       alert("Siemanko");
     }
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
   return (
     <InfoCardProvider>
       <Displayed_Chat_Provider>
-
-          <UserContext.Provider
-            value={{
-              userId: userId,
-              friendlist: friendlist,
-              games: games,
-              show_default_image: show_default_image,
-              mail: mail,
-              name: name,
-              stats: stats,
-              two_FA_enabled: two_FA_enabled,
-              two_FA_secret: two_FA_secret,
-            }}
-            >
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={loggedIn ? <HomePage userId={userId}/> : <LoginPage />} />
+        <UserContext.Provider
+          value={{
+            userId: userId,
+            friendlist: friendlist,
+            games: games,
+            show_default_image: show_default_image,
+            mail: mail,
+            name: name,
+            stats: stats,
+            two_FA_enabled: two_FA_enabled,
+            two_FA_secret: two_FA_secret,
+          }}
+        >
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} >
+                <Route index element={<LandingPage/>} />
                 <Route path="/game" element={<Game userId={userId} />} />
-                <Route path="/auth" element={<SecondFactorPage />} />
-                <Route path="/home" element={<HomePage userId={userId}/>} />
-              </Routes>
-            </BrowserRouter>
-          </UserContext.Provider>
-
+                <Route path="/community" element={<Community userId={userId} />} />
+              </Route>
+              <Route path="/auth" element={<SecondFactorPage />} />
+            </Routes>
+          </BrowserRouter>
+        </UserContext.Provider>
       </Displayed_Chat_Provider>
     </InfoCardProvider>
-
   );
 }
 
 export default App;
-

@@ -52,8 +52,10 @@ header nav ul {
   padding: 0;
 }
 
-header li {
+header .nav-link {
   margin: 0 1rem;
+  text-decoration: none;
+  color: white;
 }
 
 .basic {

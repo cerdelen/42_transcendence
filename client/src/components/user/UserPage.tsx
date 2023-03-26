@@ -120,7 +120,7 @@ const UserPage = ({}: Props) => {
   {
     console.log("Inviting player " + username);
     setShowUserInto(false);
-    our_socket.emit('createInvitationRoom');
+    our_socket.emit('createInvitationRoom', userId);
   }
   return (
     <>
@@ -144,8 +144,10 @@ const UserPage = ({}: Props) => {
                     Chat
                   </button>
                   <Link to="/game">
-                  <button className="purple-button" onClick={() => startAndinvitePlayers(userName)}>
-                    {/* <Game /> */}
+                  {//Username}//
+}
+                  <button className="purple-button" onClick={() => startAndinvitePlayers(userId)}>
+                    
                     Play
                   </button>
                   </Link>

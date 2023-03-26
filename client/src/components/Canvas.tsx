@@ -15,13 +15,16 @@ const Canvas = ({ userId }: { userId: string }) => {
             <>
                 <br />
                 <br />
-                <button className="game_buttons" onClick={() => {
+                <button className="game_buttons" onClick={(e) => {
+                    e.preventDefault();
                     setMapNumber(0);
                 }}> Bulgaria </button>
-                <button className="game_buttons" onClick={() => {
+                <button className="game_buttons" onClick={(e) => {
+                    e.preventDefault();
                     setMapNumber(1);
                 }}> Paris </button>
-                <button className="game_buttons" onClick={() => {
+                <button className="game_buttons" onClick={(e) => {
+                    e.preventDefault();
                     setMapNumber(2);
                 }}> Cat Valley </button>
             </>
@@ -89,10 +92,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             </>;
         }
     }
-    useEffect(() => 
-    {
-        our_socket.emit("setupUserSocketId", userId);
-    }, [])
+
     useEffect(() => {
         if (gameActive) {
             if (canvasRef.current) {
@@ -156,7 +156,17 @@ const Canvas = ({ userId }: { userId: string }) => {
             ctx.clearRect(0, 0, 700, 400);;
         }
     }
-
+    useEffect(() => 
+    {
+        our_socket.on('invitationInit', (UserIndex_: number) => {
+            setGameActive(true);
+            console.log("Id of the user ", UserIndex_);
+            let num: number = UserIndex_;
+            setPlayerNumber(num);
+            our_socket.off("init");
+            
+        });
+    }, [gameActive])
     useEffect(() => {
         our_socket.on('init', (UserIndex_: number) => {
             if(!gameActive)

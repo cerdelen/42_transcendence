@@ -90,7 +90,12 @@ function App() {
       getUser();
     }
   }, []);
+  useEffect(() => 
+  {
+      our_socket.emit("setupUserSocketId", userId);
+  }, [])
 
+  
   return (
     <InfoCardProvider>
       <Displayed_Chat_Provider>

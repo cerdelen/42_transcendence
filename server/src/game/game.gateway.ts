@@ -73,9 +73,26 @@ export class GameGateway {
   }
 
   @SubscribeMessage('createInvitationRoom')
-  async handleInvitation(@MessageBody() userId: string)
+  async handleInvitation(@MessageBody() userId: string, @ConnectedSocket() client)
   {
     console.log("Siemanko");
+    if (!roomNames[0]) {
+
+      console.log('newgame player id 1 is' + userId);
+
+      const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
+    
+      clientRooms[client.id] = game.id.toString();
+      client.emit('gameCode', game.id.toString());
+      state[game.id] = getInitialState();
+    
+      client.join(game.id.toString());
+    
+      client.emit('invitationInit', 1);
+      console.log("Emiting intialization");
+      roomNames.push({ roomName: game.id.toString(), gameInstance: game });
+      return;
+    }
   }
   
   @SubscribeMessage('joinGame')
@@ -261,5 +278,6 @@ async function handleNewGame(client: any, server: Server, clientId: number, pris
   client.join(game.id.toString());
 
   client.emit('init', 1);
+  console.log("Emiting intialization");
   roomNames.push({ roomName: game.id.toString(), gameInstance: game });
 }

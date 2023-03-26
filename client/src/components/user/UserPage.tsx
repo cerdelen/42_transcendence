@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import JSCookies from "js-cookie";
 import { UserContext } from "../../contexts/UserContext";
 import { AiOutlineEdit } from "react-icons/ai";
+import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 import ListFriends from "./ListFriends";
 import UserName from "./UserName";
 import UserPhoto from "./UserPhoto";
@@ -16,6 +17,7 @@ type Props = {
 const UserPage = ({}: Props) => {
   const { userId } = useContext(UserContext);
   const { userIdCard } = useMyContext();
+  const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
   const [isVisible, setIsVisible] = useState(true);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
@@ -30,20 +32,33 @@ const UserPage = ({}: Props) => {
     setShowUserInto(false);
   };
 
-  const startChat = () => {};
+  const startChat = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3003/conversation/join_dialogue/${userIdCard}`,
+        {
+          method: "Get",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+          },
+        }
+      );
+      console.log("join chat");
+      const conv = await response.json();
+      setDisplayed_chat(conv);
+      setShowUserInto(false);
+    } catch (error) {
+      alert("Could not go to chat");
+    }
+  };
 
-  const startGame = () => {};
+  const startGame = async () => {
+   
+  };
 
   const updateFriendsList = async () => {
-    // console.log(userIdCard);
-    // console.log(userId);
-
-    console.log(friendsList);
-
-    // console.log(isFriend);
-    // console.log(friendsList.includes(userId));
-
-    if (isFriend) {
+ if (isFriend) {
       try {
         const response = await fetch(
           "http://localhost:3003/user/remove_friend",

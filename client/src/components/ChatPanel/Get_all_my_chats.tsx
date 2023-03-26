@@ -138,7 +138,7 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: string, my_chats_ids: number[], setmy_chats_ids:any}) =>
 {
 	// const { setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
-	console.log("Get_all_my_chats is rendered");
+	// console.log("Get_all_my_chats is rendered");
 	useEffect(() => {
 		async function get_ids(){
 			const response = await fetch("http://localhost:3003/conversation/GetMyChats", {
@@ -150,7 +150,7 @@ const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: st
 			if (response.ok)
 			{
 				const data : number[] = await response.json();
-				console.log("response from getmychats fetch " + JSON.stringify(data));
+				// console.log("response from getmychats fetch " + JSON.stringify(data));
 				
 				setmy_chats_ids(data);
 			}

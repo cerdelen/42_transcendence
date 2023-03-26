@@ -302,11 +302,11 @@ export class ConversationService {
 			where: {conversation_id: chat_id},
 			data: {conversation_participant_arr :conversation.conversation_participant_arr }
 		});
-		const user = await this.prisma.user.findUnique({where: {id: userId}});
+		const user = await this.prisma.user.findUnique({where: {id: id_to_kick}});
 		const conv_id_from_user = user.conversation_id_arr.indexOf(chat_id);
 		user.conversation_id_arr.splice(conv_id_from_user, 1);
 		await this.prisma.user.update({
-			where: {id: userId},
+			where: {id: id_to_kick},
 			data: {conversation_id_arr: user.conversation_id_arr}
 		}); 
 	}

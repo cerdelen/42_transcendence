@@ -54,35 +54,40 @@ const Display_message_in_chat = ({ message }: { message: display_message_info })
 	const [typingDisplay, setTypingDisplay] = useState('');
 	const [messages, set_messages] = useState<Array<display_message_info>>([]);
 
-	console.log("called display messages()");
-	useEffect(() => {
-		// our_socket.on('message', (message : message) => 
-		// {
-		// 	console.log("HELLLLOOOUYYSHSIJI THIS IS OUR SOCKET ON MESSAGE RECEIVED!!!!!!!!");
-		// 	console.log(message.text + " " + Number(message.author_id));
-		// 	let newMessage : display_message_info [] = []
-		// 	for(let i = 0; i < messages.length; i++)
-		// 	{
-		// 		newMessage.push(messages[i])
-		// 	}
-		// 	newMessage.push(new display_message_info(message.text, Number(message.author_id)));
-		// 	set_messages(newMessage);
-		// })
-		our_socket.on('typing', (typing: typing) =>
+	//console.log("called display messages()");
+	our_socket.on('message', (message : message) => 
+	{
+		//console.log("SOCKET ON MESSAGES");
+		
+		//console.log(JSON.stringify(messages));
+		
+		let newMessage : display_message_info [] = []
+		for(let i = 0; i < messages.length; i++)
 		{
-			if(typing.isTyping)
-			{
-				setTypingDisplay(`${typing.name} is typing ...`);
-			}else{
-				setTypingDisplay("");
-			}
-		})
+			newMessage.push(messages[i])
+		}
+		newMessage.push(new display_message_info(message.text, Number(message.author_id)));
+		// //console.log(`New messages: ${newMessage}`);
+		
+		set_messages(newMessage);
+	})
+	our_socket.on('typing', (typing: typing) =>
+	{
+		if(typing.isTyping)
+		{
+			setTypingDisplay(`${typing.name} is typing ...`);
+		}else{
+			setTypingDisplay("");
+		}
+	})
+	useEffect(() => {
 	  const get_messages = async(chat_id: number) =>
 	  {
-		console.log("this is the get_nessages() this means i will be running a fetch");
+		//console.log("GET MESSAGES");
+		
 		if(chat_id == -1)
 		{
-		  console.log("chat_id == -1 cleaning messages");
+		  //console.log("chat_id == -1 cleaning messages");
 		  const empty : display_message_info[] = [];
 		  set_messages(empty)
 		  return ;
@@ -100,8 +105,8 @@ const Display_message_in_chat = ({ message }: { message: display_message_info })
 		  set_messages(re_messages);
 		  return ;
 		}
-		// console.log("this is the data i got " + await JSON.stringify(data));
-		for(let i = 0; i < data.length; i++)
+		// //console.log("this is the data i got " + await JSON.stringify(data));
+		for(let i = data.length - 1; i > -1; i--)
 		{
 			re_messages.push(new display_message_info(data[i]["text"], data[i]["author"]));
 		}
@@ -110,7 +115,7 @@ const Display_message_in_chat = ({ message }: { message: display_message_info })
 	  get_messages(chat_id);
 	}, [chat_id]);
   
-	console.log("this is the messages"  + JSON.stringify(messages));
+	//console.log("this is the messages"  + JSON.stringify(messages));
 	return (
 	  <>
 		{messages.map((message, idx) => (

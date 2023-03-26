@@ -15,7 +15,7 @@ const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<Reac
 	if (chat_id != -1)
 	{
 
-		console.log("handleLeaveChat ");
+		// //console.log("handleLeaveChat ");
 		our_socket.emit('leave_group_chat', {chat_id: chat_id, userId: userId});
 		const default_chat : displayed_chat_class = { conversation_id: -1, conversation_participant_arr: []}
 		setDisplayed_chat(default_chat);
@@ -40,7 +40,7 @@ const	Chat_details_chat_name = (displayed_chat: {displayed_chat: number}) =>
 {
 	const [chat_name, set_name] = useState("");
 
-	console.log("GIOEWJIFEWOPKFPEOWKDFP{EWKOFE{PWOFKPEKWPFEWKP{FDLEW{PFLP{EW{PFLEWLP      " + displayed_chat.displayed_chat);
+	// //console.log("GIOEWJIFEWOPKFPEOWKDFP{EWKOFE{PWOFKPEKWPFEWKP{FDLEW{PFLP{EW{PFLEWLP      " + displayed_chat.displayed_chat);
 	
 
 	useEffect(() => {
@@ -60,7 +60,7 @@ const	Chat_details_chat_name = (displayed_chat: {displayed_chat: number}) =>
 		get_name();
 	  }, []);
 
-	  console.log(chat_name + " this is the chat name i foudn for details");
+	//   //console.log(chat_name + " this is the chat name i foudn for details");
 	  
 
 	  return (
@@ -70,8 +70,10 @@ const	Chat_details_chat_name = (displayed_chat: {displayed_chat: number}) =>
 
 const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details} : {user_id: number, set_user_ids_in_chat_details: any}) => 
 {
+	//console.log("calling Participant_in_chat_detail_card for " + user_id);
+	
 	const { displayed_chat } = useMyDisplayedChatContext();
-	console.log("called participant chat detail card for id " + user_id);
+	// //console.log("called participant chat detail card for id " + user_id);
 	const [ is_owner , set_is_owner ] = useState(false);
 	const [ is_admin, set_is_admin ] = useState(false);
 	const [ is_muted, set_is_muted ] = useState(false);
@@ -82,7 +84,8 @@ const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details}
 		async function get_name()
 		{
 			try{
-
+				//console.log("get name for " + user_id);
+				
 				const response = await fetch(`http://localhost:3003/user/user_name`, {
 					method: "POST",
 					body: JSON.stringify({ user_id: user_id.toString() }),
@@ -93,7 +96,7 @@ const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details}
 				});
 
 				const user_name_inside = await response.text();
-				// console.log("this is the response . text where we wirkj rughr biw" + data);
+				// //console.log("this is the response . text where we wirkj rughr biw" + data);
 				set_user_name(user_name_inside);
 			}
 			catch(error)
@@ -111,6 +114,9 @@ const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details}
 		set_is_admin(true);
 	if (displayed_chat.conversation_mute_list_arr?.includes(user_id) && is_muted == false)
 		set_is_muted(true);
+
+	//console.log(`USERNAME ${user_name}`);
+	
 	return (
 		<div onClick={() => set_display_popup(!display_popup)}> {user_name} 
 			{is_owner ? <div>owner</div> : <div>not owner</div>}
@@ -128,9 +134,9 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 	const { userId } = useContext(UserContext);
 	const [ user_ids_in_chat_details , set_user_ids_in_chat_details] = useState<number[]>([...displayed_chat.conversation_participant_arr]);
 
-	console.log(" this is user_ids_in_chat_details " + user_ids_in_chat_details);
-	console.log(" this is displayed_chat.conversation_participant_arr " + displayed_chat.conversation_participant_arr);
-	
+	//console.log("this is user_ids_in_chat_details " + user_ids_in_chat_details);
+	//console.log("this is user_ids_in_chat_details as input " + [...displayed_chat.conversation_participant_arr]);
+	//console.log("this is displayed_chat.conversation_participant_arr " + displayed_chat.conversation_participant_arr);
 
 	// useEffect(() => {
 	// 	async function get_name(){
@@ -148,6 +154,12 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 	// 	}
 	// 	get_name();
 	//   }, []);
+	useEffect(() => {
+		async function set_map(){
+				set_user_ids_in_chat_details([...displayed_chat.conversation_participant_arr]);
+		}
+		set_map();
+	  }, [displayed_chat]);
 
 
 

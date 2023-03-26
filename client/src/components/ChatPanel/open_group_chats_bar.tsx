@@ -32,11 +32,11 @@ const Chat_name_input = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, s
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
 			})
-		console.log(JSON.stringify(response));
+		// console.log(JSON.stringify(response));
 		
 		const data = await response.json();
-		console.log(" this is the response of create group chat " + JSON.stringify(data));
-		console.log(data["conversation_owner_arr"]);
+		// console.log(" this is the response of create group chat " + JSON.stringify(data));
+		// console.log(data["conversation_owner_arr"]);
 		setDisplayed_chat(data);
 		setButton_state(true);		
 		setmy_chats_ids([...my_chats_ids, data["conversation_id"]]);
@@ -44,8 +44,8 @@ const Chat_name_input = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, s
 	else 
 	{
 
-		console.log(`Input value: ${inputValue}`);
-		console.log(`Input length: ` + inputValue.length);
+		// console.log(`Input value: ${inputValue}`);
+		// console.log(`Input length: ` + inputValue.length);
 	}
 	};
 
@@ -60,7 +60,7 @@ const Chat_name_input = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, s
 const handleCreateGroupChat = async (setButton_state: any)	=>
 {
 	// const name: string = "hello";
-	console.log("handleCreateGroupChat");
+	// console.log("handleCreateGroupChat");
 
 	setButton_state(false);
 
@@ -87,7 +87,7 @@ const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, s
 	
 	const handleOnClick = async () => 
 	{
-		console.log("handleOnClick of group chat card for chat id " + chat_id);
+		// console.log("handleOnClick of group chat card for chat id " + chat_id);
 		const response = await fetch(`http://localhost:3003/conversation/join_group_chat/${chat_id}`, {
 				method: "Get",
 				headers: {
@@ -95,13 +95,13 @@ const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, s
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
 			})
-		console.log(response);
+		// console.log(response);
 		// console.log("old array " + my_chats_ids);
 		// let new_arr : number [] = my_chats_ids;
 		// new_arr.push(chat_id)
 		// console.log("new array " + new_arr);
 		const data = await response.json();
-		console.log(data);
+		// console.log(data);
 		if (data == true)
 		{
 			let arr : number [] = []
@@ -165,7 +165,7 @@ const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, s
 
 const	Get_all_open_group_chats = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) =>
 {
-	console.log("Get_all_open_group_chats is rendered");
+	// console.log("Get_all_open_group_chats is rendered");
 	// const { not_joined_chats_ids, setNot_joined_chats_ids } = useContext(Not_joined_group_chats_context);
 	// const [not_joined_chats_ids, setNot_joined_chats_ids] = useState<Array<number>>([]);
 	useEffect(() => {
@@ -198,7 +198,7 @@ const	Get_all_open_group_chats = ({not_joined_chats_ids, my_chats_ids, setmy_cha
 
 const	Open_group_cards = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) => 
 {
-	console.log("rendering Open_group_cards");
+	// console.log("rendering Open_group_cards");
 	const [ button_state, setButton_state ] = useState(true);
 	const { userId } = useContext(UserContext);
 	return (

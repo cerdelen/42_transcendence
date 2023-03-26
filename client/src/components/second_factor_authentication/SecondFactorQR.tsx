@@ -29,17 +29,14 @@ const SecondFactorQR = ({qrString}: Props) => {
         },
       })
         .then(response => {
-          console.log(response);
           if (response.ok)
           {
-            response.text().then(data => console.log(data));
-
             setSuccess(true);
             alert("2 Factor authentication has been Enabled.");
           }
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
           alert("Something went wrong");
         });
     }

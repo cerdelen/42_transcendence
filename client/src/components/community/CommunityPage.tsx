@@ -83,10 +83,9 @@ function Display_full_chat({chat_id} : {chat_id : number})
   useEffect(() => {
     const get_messages = async(chat_id: number) =>
     {
-      console.log("this is the get_nessages() this means i will be running a fetch");
       if(chat_id == -1)
       {
-        console.log("chat_id == -1 cleaning messages");
+        // console.log("chat_id == -1 cleaning messages");
         const messages : display_message_info[] = [];
         set_messages(messages)
         return ;
@@ -115,7 +114,7 @@ function Display_full_chat({chat_id} : {chat_id : number})
     get_messages(chat_id);
   }, [chat_id]);
 
-  console.log("this is the messages"  + JSON.stringify(messages));
+  // console.log("this is the messages"  + JSON.stringify(messages));
   return (
     <>
       {messages.map((message, idx) => (

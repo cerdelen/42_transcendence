@@ -24,24 +24,18 @@ const SecondFactorPage = () => {
           method: "POST",
           body: JSON.stringify({ two_FA_code: code, userId: userId }),
           headers: {
-            // Accept: "application/json",
             "Content-Type": "application/json",
             Authorization: `Bearer ${myCookieValue}`,
           },
         });
         
         if (response.ok) {
-          console.log("hello");
-          console.log(response);
           window.location.assign("http://localhost:3000/home");
-          console.log(JSCookies.get("accessToken"));
           const token = await response.text();
           JSCookies.set("accessToken", token);
-          // response.text().then(data => console.log(data));
-          // console.log();
         }
       } catch (error) {
-        console.log(`Logging the error: ${error}`);
+        console.error(`Logging the error: ${error}`);
 
       }
     }

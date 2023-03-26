@@ -4,6 +4,8 @@ import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context
 import { useRevalidator } from "react-router-dom";
 // import Chats_user_is_part_of_context from "../../contexts/Chats_user_is_part_of_context";
 import group_picture from "../../images/group_chat_picture.jpeg"
+import { our_socket } from "../../utils/context/SocketContext";
+import { displayed_chat_class } from "../../utils/types";
 
 
 interface chat_props {
@@ -139,6 +141,8 @@ const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: st
 {
 	// const { setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
 	// console.log("Get_all_my_chats is rendered");
+	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
+
 	useEffect(() => {
 		async function get_ids(){
 			const response = await fetch("http://localhost:3003/conversation/GetMyChats", {
@@ -156,6 +160,22 @@ const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: st
 			}
 		}
 		get_ids();
+	  }, []);
+	useEffect(() => {
+		our_socket.on("some_one_left_group_chat", ({conv_id, left_user_id, conv_still_exists} : {conv_id: number, left_user_id: number, conv_still_exists: boolean}) =>
+		{
+			console.log("our_socket on someone left chat for all my chats " + conv_id + " " + left_user_id);
+			
+			if (left_user_id == Number(userId))
+			{
+				console.log("we got into the if")
+				const default_chat : displayed_chat_class = { conversation_id: -1, conversation_participant_arr: []}
+				setDisplayed_chat(default_chat);
+				const conv_indx = my_chats_ids.indexOf(conv_id);
+				my_chats_ids.splice(conv_indx, 1);
+				setmy_chats_ids([...my_chats_ids]);
+			}
+		});
 	  }, []);
 	return (
 		<>

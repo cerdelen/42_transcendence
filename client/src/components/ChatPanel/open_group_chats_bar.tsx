@@ -5,6 +5,7 @@ import group_picture from "../../images/group_chat_picture.jpeg"
 import Chat_details from "./Chat_details";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 import { json } from "react-router-dom";
+import { our_socket } from "../../utils/context/SocketContext";
 
 interface chat_props {
 	chat_id: number,
@@ -159,6 +160,7 @@ const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, s
 
 const	Get_all_open_group_chats = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) =>
 {
+	const { userId } = useContext(UserContext);
 	// console.log("Get_all_open_group_chats is rendered");
 	// const { not_joined_chats_ids, setNot_joined_chats_ids } = useContext(Not_joined_group_chats_context);
 	// const [not_joined_chats_ids, setNot_joined_chats_ids] = useState<Array<number>>([]);
@@ -179,6 +181,26 @@ const	Get_all_open_group_chats = ({not_joined_chats_ids, my_chats_ids, setmy_cha
 		}
 		get_ids();
 		}, []);
+
+		useEffect(() => {
+			our_socket.on("some_one_left_group_chat", ({conv_id, left_user_id, conv_still_exists} : {conv_id: number, left_user_id: number, conv_still_exists: boolean}) =>
+			{
+				if (left_user_id == Number(userId))
+				{
+					if (conv_still_exists)
+					{
+						setNot_joined_chats_ids([...not_joined_chats_ids, conv_id])
+					}
+				}
+			});
+		  }, []);
+		// let arr_2 : number [] = []
+		// for(let i = 0; i < not_joined_chats_ids.length; i++)
+		// {
+		// 	arr_2.push(not_joined_chats_ids[i]);
+		// }
+		// arr_2.push(chat_id);
+		// setNot_joined_chats_ids(arr_2);
 
 		return (
 		<ul className="all_open_group_chats-ul">

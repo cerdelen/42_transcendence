@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { io_server } from 'src/utils/Server';
 import { interval } from 'rxjs';
+import { Socket } from 'dgram';
 let roomNames: { roomName: string, gameInstance: any }[] = [];
 
 const state = {};
@@ -44,6 +45,13 @@ export class GameGateway {
   constructor(private readonly gameService: GameService, private prisma: PrismaService, private userService: UserService) {
   }
 
+  @SubscribeMessage("setupUserSocketId")
+  async setupUserSocketId(@MessageBody() userId: string,
+  @ConnectedSocket() socket)
+  {
+    await this.userService.updateUser({where: {id: Number.parseInt(userId)}, data: {socketId: socket.id}} );
+    console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
+  }
   @SubscribeMessage("online_inform")
   async handle_online(@MessageBody() userId: string) {
     if (userId) {
@@ -57,6 +65,12 @@ export class GameGateway {
 
     console.log(userId + " Siemanko ");
     //Make user online boolean
+  }
+
+  @SubscribeMessage('createInvitationRoom')
+  async handleInvitation(@MessageBody() userId: string)
+  {
+
   }
 
   @SubscribeMessage('joinGame')

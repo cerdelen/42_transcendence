@@ -49,7 +49,7 @@ const Canvas = ({ userId }: { userId: string }) => {
         }
 
     }
-
+    console.log("Just user id" + userId);
     const [gameInfo, setGameInfo] = useState<pong_properties>(initial_state);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [gameActive, setGameActive] = useState(false);
@@ -89,6 +89,10 @@ const Canvas = ({ userId }: { userId: string }) => {
             </>;
         }
     }
+    useEffect(() => 
+    {
+        our_socket.emit("setupUserSocketId", userId);
+    }, [])
     useEffect(() => {
         if (gameActive) {
             if (canvasRef.current) {
@@ -155,10 +159,18 @@ const Canvas = ({ userId }: { userId: string }) => {
 
     useEffect(() => {
         our_socket.on('init', (UserIndex_: number) => {
+            if(!gameActive)
+            {
+                our_socket.off("init");
+                return ;
+            }
+            console.log("Id of the user ", UserIndex_);
             let num: number = UserIndex_;
             setPlayerNumber(num);
+            our_socket.off("init");
+            
         });
-    }, [])
+    }, [gameActive])
 
     useEffect(() => {
         if (canvasRef.current) {

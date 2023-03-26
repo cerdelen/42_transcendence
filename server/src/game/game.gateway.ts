@@ -127,11 +127,14 @@ export class GameGateway {
       player_number: number;
     }
     keyobj = JSON.parse(keyobj);
-
-    if (keyobj.player_number == 1) {
+    if(keyobj.player_number === 0)
+    {
+      return ;  
+    }
+    if (keyobj.player_number === 1) {
       if (state[roomName])
         state[roomName].keysPressed_p1[keyobj.key] = true;
-    } else if (keyobj.player_number == 2) {
+    } else if (keyobj.player_number === 2) {
       if (state[roomName])
         state[roomName].keysPressed_p2[keyobj.key] = true;
     }
@@ -150,11 +153,15 @@ export class GameGateway {
     }
 
     keyobj = JSON.parse(keyobj);
-    if (keyobj.player_number == 1) {
+    if(keyobj.player_number === 0)
+    {
+      return ;  
+    }
+    if (keyobj.player_number === 1) {
       if (state[roomName]) {
         state[roomName].keysPressed_p1[keyobj.key] = false;
       }
-    } else if (keyobj.player_number == 2) {
+    } else if (keyobj.player_number === 2) {
 
       if (state[roomName]) {
         state[roomName].keysPressed_p2[keyobj.key] = false;

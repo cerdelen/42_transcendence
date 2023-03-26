@@ -9,6 +9,7 @@ import {
 import { UserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
 import { our_socket } from "../../utils/context/SocketContext";
+import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 
 interface typing {
   name: string;
@@ -35,36 +36,42 @@ function DisplayTyping({ typingDisplay }: { typingDisplay: string }) {
 }
 
 const Display_message_in_chat = ({
-  message,
+  message, name_map
 }: {
   message: display_message_info;
+  name_map: Map<number, string>
 }) => {
   const { userId } = useContext(UserContext);
   const is_me: boolean = message.author_id == Number(userId);
-  const [author, setAuthor] = useState("");
-  useEffect(() => {
-    const get_user_info = async (id: number) => {
-      const response = await fetch("http://localhost:3003/user/user_name", {
-        method: "Post",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-        },
-        body: JSON.stringify({ user_id: id }),
-      });
-      const userName = await response.text();
 
-      setAuthor(userName);
-    };
+  // const [author, setAuthor] = useState("");
+  // useEffect(() => {
+  //   const get_user_info = async (id: number) => {
+  //     console.log("running a fetch");
+      
+  //     const response = await fetch("http://localhost:3003/user/user_name", {
+  //       method: "Post",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Accept: "application/json",
+  //         Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+  //       },
+  //       body: JSON.stringify({ user_id: id }),
+  //     });
+  //     const userName = await response.text();
 
-    get_user_info(message.author_id);
-  });
+  //     setAuthor(userName);
+  //   };
+
+  //   get_user_info(message.author_id);
+  // });
+  // console.log("this is name map " + JSON.stringify(name_map.get(322)));
+  console.log("display message called");
 
   return (
     <>
       <div className={`${is_me ? "right-message" : "left-message"} chat-entry`}>
-        <div id="message-author">{author}</div>
+        <div id="message-author">{name_map.get(message.author_id)}</div>
         <div>{message.text}</div>
       </div>
     </>
@@ -75,7 +82,14 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
   const [typingDisplay, setTypingDisplay] = useState("");
   const [messages, set_messages] = useState<Array<display_message_info>>([]);
   const chatWindow = useRef<HTMLDivElement>(null);
-  //console.log("called display messages()");
+  const [ name_map, set_name_map ] = useState<Map<number, string>>(new Map);
+  // let name_map: Map<number, string> = new Map;
+	const { displayed_chat } = useMyDisplayedChatContext();
+  // name_map.set()
+
+
+
+
   our_socket.on("message", (message: message) => {
     //console.log("SOCKET ON MESSAGES");
 
@@ -100,6 +114,24 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
     }
   });
   useEffect(() => {
+    const prep_name_map = async (participants: number[]) => {
+      let temp_map : Map<number, string> = new Map;
+      for (let index = 0; index < participants.length; index++) {        
+        const response = await fetch("http://localhost:3003/user/user_name", {
+          method: "Post",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+          },
+          body: JSON.stringify({ user_id: participants[index]}),
+        });
+        const userName = await response.text();
+  
+        temp_map.set(participants[index], userName);
+      }
+      set_name_map(temp_map);
+    }
     const get_messages = async (chat_id: number) => {
       //console.log("GET MESSAGES");
 
@@ -109,6 +141,8 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
         set_messages(empty);
         return;
       }
+      console.log("fetching all message");
+      
       const response = await fetch(
         `http://localhost:3003/conversation/get_messages_from_conversation/${chat_id}`,
         {
@@ -138,7 +172,12 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
       set_messages(re_messages);
     };
     get_messages(chat_id);
-}, [chat_id]);
+    prep_name_map(displayed_chat.conversation_participant_arr);
+  }, [chat_id, displayed_chat]);
+
+
+
+
 
 useLayoutEffect(() => {
 	  const windowRef = chatWindow.current;
@@ -147,7 +186,6 @@ useLayoutEffect(() => {
 	  }
   }, []);
 
-
   useEffect(() => {
     // Scroll to bottom of chat window whenever messages change
     const windowRef = chatWindow.current;
@@ -155,10 +193,14 @@ useLayoutEffect(() => {
       windowRef.scrollTop = windowRef.scrollHeight + 1000;
     }
   }, [messages]);
+
+  
+  console.log("rendering full chat");
+  
   return (
     <div ref={chatWindow} id="displayed-messages" className="whole-chat"> 
       {messages.map((message, idx) => (
-        <Display_message_in_chat key={idx} message={message} />
+        <Display_message_in_chat key={idx} message={message} name_map={name_map}/>
       ))}
       <DisplayTyping typingDisplay={typingDisplay} />
     </div>

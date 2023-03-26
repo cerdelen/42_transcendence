@@ -2,11 +2,11 @@ import React, { useRef, useEffect, useState, useId } from "react";
 import drawPong from './Pong'
 import { pong_properties, KeyInfo, Player } from './Pong_types'
 import { SocketContext, our_socket } from '../utils/context/SocketContext';
-import Bulgaria from "../images/tochka.jpg"
 
-
+import { useMyContext } from '../contexts/InfoCardContext'
 
 const Canvas = ({ userId }: { userId: string }) => {
+    const { images } = useMyContext();
     let initial_state: pong_properties = {
         keysPressed: [],
         player_1_score: 0,
@@ -88,7 +88,7 @@ const Canvas = ({ userId }: { userId: string }) => {
     const [codeInput, setCodeInput] = useState("");
     const [playerNumber, setPlayerNumber] = useState(0);
     const [mapNumber, setMapNumber] = useState(0);
-    const [images, setImages] = useState<any[]>([]);
+    
     let ctx: any;
     function WaitingScreenCatto({ gameActive }: { gameActive: boolean }) {
         if (!gameActive)
@@ -191,12 +191,6 @@ const Canvas = ({ userId }: { userId: string }) => {
             ctx = canvasRef.current.getContext('2d');
             ctx.canvas.hidden = true;
         }
-        
-        let pic = new Image();
-        pic.src = Bulgaria
-        let pic_ : any[] = [...images];
-        pic_.push(pic);
-        setImages(pic_)
     }, [])
     useEffect(() => {
         our_socket.on('gameState', (gameState: string) => {
@@ -207,7 +201,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             if (canvasRef.current) {
                 ctx = canvasRef.current.getContext('2d');
 
-                requestAnimationFrame(() => drawPong(our_socket, ctx, gameInfo, images));
+                requestAnimationFrame(() => drawPong(our_socket, ctx, gameInfo, images[mapNumber]));
             }
         })
     }, [gameInfo, gameActive])

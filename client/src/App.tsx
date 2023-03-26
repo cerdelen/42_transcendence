@@ -11,11 +11,12 @@ import {
 } from "./utils/context/AuthContext";
 import Game from "./components/Game";
 import { UserContext } from "./contexts/UserContext";
-import InfoCardProvider from "./contexts/InfoCardContext";
+import InfoCardProvider, { useMyContext } from "./contexts/InfoCardContext";
 import Displayed_Chat_Provider from "./contexts/Displayed_Chat_Context"
 import { Socket } from "socket.io";
 import { io } from "socket.io-client";
 import { SocketContext, our_socket } from './utils/context/SocketContext';
+
 
 export const ConversationContext = React.createContext<
   ConversationContextType[]
@@ -33,7 +34,6 @@ function App() {
   const [stats, setStats] = useState({});
   const [games, setGames] = useState([]);
   const [show_default_image, setHasPicture] = useState(false);
-
   async function getUser() {
     try {
       let response = await fetch("http://localhost:3003/user/get_id", {
@@ -91,7 +91,6 @@ function App() {
       setLoggedIn(true);
       getUser();
     }
-
   }, []);
   useEffect(() => {
     function handleBeforeUnload(e: any) {

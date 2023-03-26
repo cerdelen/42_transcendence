@@ -4,42 +4,11 @@ import { pong_properties, KeyInfo, Player } from './Pong_types'
 import { SocketContext, our_socket } from '../utils/context/SocketContext';
 
 import { useMyContext } from '../contexts/InfoCardContext'
+import { Socket } from "socket.io-client";
 
 const Canvas = ({ userId }: { userId: string }) => {
-    const { images } = useMyContext();
-    let initial_state: pong_properties = {
-        keysPressed: [],
-        player_1_score: 0,
-        player_2_score: 0,
-        Ball: {
-            speed: 5,
-            x: 700 / 2 - 10 / 2,
-            y: 400 / 2 - 10 / 2,
-            width: 50,
-            height: 50,
-            xVel: 1,
-            yVel: 1,
-            direction: 0,
-        },
-        Player1: {
-            speed: 10,
-            x: 20,
-            y: 400 / 2 - 60 / 2,
-            width: 20,
-            height: 60,
-            xVel: 0,
-            yVel: 0,
-        },
-        Player2: {
-            speed: 10,
-            x: 700 - (20 + 20),
-            y: 400 / 2 - 60 / 2,
-            width: 20,
-            height: 60,
-            xVel: 0,
-            yVel: 0,
-        }
-    }
+    const { images, initial_state } = useMyContext();
+
     function Custmization_fields({ setMapNumber }: { setMapNumber: any }) {
 
         return (
@@ -88,7 +57,8 @@ const Canvas = ({ userId }: { userId: string }) => {
     const [codeInput, setCodeInput] = useState("");
     const [playerNumber, setPlayerNumber] = useState(0);
     const [mapNumber, setMapNumber] = useState(0);
-    
+    const [animationFrameNum, setAnimationFrameNum] = useState(0);
+
     let ctx: any;
     function WaitingScreenCatto({ gameActive }: { gameActive: boolean }) {
         if (!gameActive)
@@ -135,6 +105,41 @@ const Canvas = ({ userId }: { userId: string }) => {
             }
 
         }
+        our_socket.on('sameUser', () => {
+            reset();
+            setGameActive(false);
+            alert("Same user wanted to connect to one game");
+            // our_socket.off('sameUser');    
+        })
+
+        our_socket.on("handleTooManyPlayers", () => {
+            reset();
+            setGameActive(false);
+            alert("This game has too many players");
+            // our_socket.off("handleTooManyPlayers");
+        })
+
+        our_socket.on('gameOver', (data: number) => {
+            if (!gameActive) {
+                our_socket.off('gameOver');
+                return;
+            }
+            console.log("Socket id ", our_socket.id);
+            let num: number = data;
+            if (num == Number.parseInt(userId)) {
+                console.log("Winner");
+                reset();
+                console.log("You win executed " + userId);
+                cancelAnimationFrame(animationFrameNum);
+            } else {
+                console.log("You lose executed\n" + userId);
+                reset();
+                cancelAnimationFrame(animationFrameNum);
+            }
+            setGameActive(false);
+            our_socket.off('gameOver');
+        })
+
     }, [gameActive])
     function handleGameCode(data: string) {
         setGameCode(data);
@@ -144,26 +149,11 @@ const Canvas = ({ userId }: { userId: string }) => {
         setPlayerNumber(0);
         setCodeInput("");
         setGameCode("");
+        if (canvasRef.current) {
+            ctx = canvasRef.current.getContext('2d');
+            ctx.clearRect(0, 0, 700, 400);;
+        }
     }
-
-    useEffect(() => {
-
-        our_socket.on('sameUser', () => {
-            reset();
-            setGameActive(false);
-            console.log("Same User");
-            // our_socket.off('sameUser');
-        })
-
-        our_socket.on("handleTooManyPlayers", () => {
-            reset();
-            setGameActive(false);
-            console.log("Too many players");
-            // our_socket.off('handleTooManyPlayers');
-        })
-
-        our_socket.on('gameCode', handleGameCode);
-    }, [gameActive])
 
     useEffect(() => {
         our_socket.on('init', (UserIndex_: number) => {
@@ -171,76 +161,57 @@ const Canvas = ({ userId }: { userId: string }) => {
             setPlayerNumber(num);
             our_socket.off('init');
         });
-
     }, [playerNumber])
-    useEffect(() => {
-        our_socket.on('gameOver', (data: number) => {
-            if (!gameActive) {
-                our_socket.off('gameOver');
-                return;
-            }
-            let num: number = data;
-            if (num == Number.parseInt(userId)) {
-                console.log("Winner");
-                reset();
-                
-            } else {
-                console.log("Loser");
-                reset();
-                
-            }
-            setGameActive(false);
-            our_socket.off('gameOver');
-        })
-        
-    }, [gameActive])
+
     useEffect(() => {
         if (canvasRef.current) {
             ctx = canvasRef.current.getContext('2d');
             ctx.canvas.hidden = true;
         }
+        our_socket.on('gameCode', handleGameCode);
     }, [])
+
     useEffect(() => {
         our_socket.on('gameState', (gameState: string) => {
             if (!gameActive) {
+                our_socket.off('gameState');
+
                 return;
             }
             let animFrame: number;
             setGameInfo(JSON.parse(gameState));
             if (canvasRef.current) {
                 ctx = canvasRef.current.getContext('2d');
-                animFrame = requestAnimationFrame(() => drawPong(our_socket, ctx, gameInfo, images[mapNumber]));
+                setAnimationFrameNum(requestAnimationFrame(() => drawPong(our_socket, ctx, gameInfo, images[mapNumber])));
             }
             our_socket.off('gameState');
         })
+        // cancelAnimationFrame(animationFrameNum);
     }, [gameInfo, gameActive])
 
     // useEffect(() => 
     // {
-        document.addEventListener('keydown', (e) => {
-            if (!gameActive) {
-                return;
-            }
-            let obj: KeyInfo =
-            {
-                key: e.keyCode,
-                player_number: playerNumber
-            };
-            our_socket.emit('keydown', JSON.stringify(obj));
-        })
-        document.addEventListener('keyup', (e) => {
-            if (!gameActive) {
-                return;
-            }
-            let obj: KeyInfo =
-            {
-                key: e.keyCode,
-                player_number: playerNumber
-            };
-            our_socket.emit('keyup', JSON.stringify(obj));
-        })
+    document.addEventListener('keydown', (e) => {
+        if (!gameActive)
+            return;
+        let obj: KeyInfo =
+        {
+            key: e.keyCode,
+            player_number: playerNumber
+        };
+        our_socket.emit('keydown', JSON.stringify(obj));
+    })
+    document.addEventListener('keyup', (e) => {
+        if (!gameActive)
+            return;
+        let obj: KeyInfo =
+        {
+            key: e.keyCode,
+            player_number: playerNumber
+        };
+        our_socket.emit('keyup', JSON.stringify(obj));
+    })
     // }, [])
-   
 
 
     return (

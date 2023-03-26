@@ -205,6 +205,18 @@ export class UserService {
 
 		let index_one;
 		let index_two;
+		if (!user_one || !user_two)
+		{
+			console.log("user one or user 2 is undefined");
+			console.log("user 1 " + user_one);
+			console.log("user 2 " + user_two);
+			
+			return ;
+
+		}
+		console.log("user one or user 2");
+		console.log("user 1 " + user_one);
+		console.log("user 2 " + user_two);
 		if(!user_one.games == null)
 			index_one = user_one.games.findIndex(x => x == game.id);
 		else

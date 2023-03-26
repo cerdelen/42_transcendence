@@ -26,7 +26,7 @@ const PlayerOnlineCard = ({username, photo, playing, status}: PlayerProps) => {
 
 const ListPlayersOnline = () => {
 	return (
-		<ul className='game-page-players-online-ul'>
+		<ul className='Community-left-collumn'>
 			{players.map((player, idx) => (
 				<PlayerOnlineCard 
 					key={idx} //kill me father for I am about to sin and destroy this pc

@@ -16,7 +16,7 @@ const Community_left_collumn = ({userId, my_chats_ids, setmy_chats_ids} : { user
 	// const { my_chats_ids, setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
 	
 	return (
-		<div className='players-online'>
+		<div className='Community-left-collumn'>
 			{ show_chats ? <button onClick={() => {set_Show_chats(false)}}>Show All Users</button> : <button onClick={() => {set_Show_chats(true)}}>Show My Chats</button>}
 			{ show_chats ? 
 				<Get_all_my_chats userId={userId} my_chats_ids={my_chats_ids} setmy_chats_ids={setmy_chats_ids}/>

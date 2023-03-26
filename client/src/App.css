@@ -285,7 +285,8 @@ footer {
 
 /* GAME-PAGE-PLAYERS-Online */
 
-.players-online {
+.Community-left-collumn
+{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -293,12 +294,12 @@ footer {
   max-width: 500px;
 }
 
-.live-games {
+.Community-right-collumn {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.game-page-players-online-ul,
+.Community-left-collumn-ul,
 .game-page-games-online-ul,
 .scrollable-list,
 .all_open_group_chats-ul

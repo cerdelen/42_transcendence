@@ -3,42 +3,42 @@ const LandingPage = () => {
 	return (
 	<>
 	<div>
-	<div className='cat'>
-  <div className='head'>
-    <div className='face'>
-      <div className='stripes'>
-        <div className='top'></div>
-        <div className='left'></div>
-        <div className='right'></div>
+	<div id='cat'>
+  <div id='head'>
+    <div id='face'>
+      <div id='stripes'>
+        <div id='top'></div>
+        <div id='left'></div>
+        <div id='right'></div>
       </div>
-      <div className='eyes'>
-        <div className='left'></div>
-        <div className='right'></div>
+      <div id='eyes'>
+        <div id='left'></div>
+        <div id='right'></div>
       </div>
-      <div className='nose'></div>
-      <div className='mouth'></div>
+      <div id='nose'></div>
+      <div id='mouth'></div>
     </div>
-    <div className='ears'>
-      <div className='left'></div>
-      <div className='right'></div>
+    <div id='ears'>
+      <div id='left'></div>
+      <div id='right'></div>
     </div>
   </div>
-  <div className='suit'>
-    <div className='collar'>
-      <div className='top'></div>
+  <div id='suit'>
+    <div id='collar'>
+      <div id='top'></div>
     </div>
-    <div className='arms'>
-      <div className='left'></div>
-      <div className='right'></div>
+    <div id='arms'>
+      <div id='left'></div>
+      <div id='right'></div>
     </div>
-    <div className='paws'>
-      <div className='left'></div>
-      <div className='right'></div>
+    <div id='paws'>
+      <div id='left'></div>
+      <div id='right'></div>
     </div>
-    <div className='body'></div>
+    <div id='body'></div>
   </div>
-  <div className='tail'></div>
-  <div className='shadow'></div>
+  <div id='tail'></div>
+  <div id='shadow'></div>
 </div>
 
 	</div>

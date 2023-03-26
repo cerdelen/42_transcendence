@@ -34,7 +34,7 @@ export class GameGateway {
         socket.emit("online_check");
         if (response === 0) {
           //socket.id switch user offline with userID
-          console.log("Is offline");
+          // console.log("Is offline");
         }
         response = 0;
       }, 10000)
@@ -49,7 +49,7 @@ export class GameGateway {
     if (userId) {
       //make user online
       response = 1;
-      console.log("User is online");
+      // console.log("User is online");
     }
   }
   @SubscribeMessage('makeOnline')

@@ -10,11 +10,7 @@ import Get_all_other_users from "./All_other_users";
 
 
 const Community_left_collumn = ({userId, my_chats_ids, setmy_chats_ids} : { userId: string, my_chats_ids: number[], setmy_chats_ids:any}) => {
-	// console.log("rendering Community_left_collumn");
 	const [show_chats, set_Show_chats] = useState(true);
-	// console.log(test);
-	// const { my_chats_ids, setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
-	
 	return (
 		<div className='Community-left-collumn'>
 			{ show_chats ? <button onClick={() => {set_Show_chats(false)}}>Show All Users</button> : <button onClick={() => {set_Show_chats(true)}}>Show My Chats</button>}

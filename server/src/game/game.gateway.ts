@@ -49,6 +49,11 @@ export class GameGateway {
   async setupUserSocketId(@MessageBody() userId: string,
   @ConnectedSocket() socket)
   {
+    if(!userId)
+    {
+      console.log("socket id setting up error");
+      return ;
+    }
     await this.userService.updateUser({where: {id: Number.parseInt(userId)}, data: {socketId: socket.id}} );
     console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
   }
@@ -70,9 +75,9 @@ export class GameGateway {
   @SubscribeMessage('createInvitationRoom')
   async handleInvitation(@MessageBody() userId: string)
   {
-
+    console.log("Siemanko");
   }
-
+  
   @SubscribeMessage('joinGame')
   async joinGame(@MessageBody() userId: string,
     @ConnectedSocket() client) {

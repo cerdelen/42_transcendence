@@ -9,6 +9,8 @@ import UserPhoto from "./UserPhoto";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import GameHistory from "./GamesHistory";
 import UserStats from "./UserStatistics";
+import { our_socket } from "../../utils/context/SocketContext";
+import { Link } from "react-router-dom";
 
 type Props = {
   // setShowUserInto: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,13 +18,12 @@ type Props = {
 
 const UserPage = ({}: Props) => {
   const { userId } = useContext(UserContext);
-  const { userIdCard } = useMyContext();
+  const { userIdCard, setShowUserInto } = useMyContext();
   const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
   const [isVisible, setIsVisible] = useState(true);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [TFA, setTFA] = useState(false);
-  const { setShowUserInto } = useMyContext();
   const [friendsList, setFriendsList] = useState<string[]>([]);
   const [gamesList, setGamesList] = useState([]);
   const isMe = userId === userIdCard;
@@ -114,6 +115,13 @@ const UserPage = ({}: Props) => {
     };
     if (userIdCard) getData();
   }, [userIdCard, isFriend]);
+
+  function startAndinvitePlayers(username : string)
+  {
+    console.log("Inviting player " + username);
+    setShowUserInto(false);
+    our_socket.emit('createInvitationRoom');
+  }
   return (
     <>
       {true && (
@@ -135,9 +143,12 @@ const UserPage = ({}: Props) => {
                   <button className="purple-button" onClick={startChat}>
                     Chat
                   </button>
-                  <button className="purple-button" onClick={startGame}>
+                  <Link to="/game">
+                  <button className="purple-button" onClick={() => startAndinvitePlayers(userName)}>
+                    {/* <Game /> */}
                     Play
                   </button>
+                  </Link>
                   <button className="purple-button" onClick={updateFriendsList}>
                     {" "}
                     {isFriend ? "Unfriend" : "Friend"}

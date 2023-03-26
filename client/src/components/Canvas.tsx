@@ -17,13 +17,13 @@ const Canvas = ({ userId }: { userId: string }) => {
                 <br />
                 <button className="game_buttons" onClick={() => {
                     setMapNumber(0);
-                }}> Cat Valley </button>
+                }}> Bulgaria </button>
                 <button className="game_buttons" onClick={() => {
                     setMapNumber(1);
                 }}> Paris </button>
                 <button className="game_buttons" onClick={() => {
                     setMapNumber(2);
-                }}> Bulgaria </button>
+                }}> Cat Valley </button>
             </>
         )
     }

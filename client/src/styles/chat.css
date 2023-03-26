@@ -3,6 +3,15 @@
     background-color: bisque;
     background: linear-gradient(to bottom right, rgb(134, 73, 127), rgb(129, 103, 146));
     border: 1rem ridge ;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow-y: visible;
+    justify-content: start;
+    scroll-behavior: smooth;
+    height: 65vh;
+    /* transform: rotate(180deg);
+    direction: rtl; */
   }
   
   #chat-input {
@@ -26,13 +35,12 @@
     /* left: 90%; */
     right: 0;
     height: 100%;
-    width: 50px; /* adjust as needed */
+    width: 50px;
     border: none;
     /* border-radius: 0 25px 25px 0; */
     border-radius: 9px;
     font-size: 16px;
     line-height: 1.5;
-    /* background-color: blue; */
     color: rgb(134, 73, 127);
   }
   
@@ -42,4 +50,55 @@
     height: 50px;
   }
   
-  
+.chat-entry {
+  max-width: 70%;
+  margin: 4px;
+  padding: 5px 10px;
+  border: 1px solid white;
+  background-color: rgb(127, 87, 157);
+  box-shadow:  
+  10px 0 20px -10px rgba(0, 0, 0, 0.9),
+  -10px 0 20px -10px rgba(0, 0, 0, 0.9);
+  /* transform: rotate(180deg);
+    direction: ltr; */
+}
+
+.left-message {
+  align-self: flex-start;
+  border-radius: 15px 15px 15px 0px;
+}
+
+.right-message {
+  align-self: flex-end;
+  text-align: end;
+  border-radius: 15px 15px 0px 15px;
+}
+
+.whole-chat {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.right-message #message-author {
+  color: rgb(56, 14, 104);
+}
+
+.left-message #message-author {
+  color: rgb(83, 25, 35);
+}
+#message-author {
+  font-weight: 600;
+}
+
+#chat-area {
+  display: grid;
+  grid-template-rows: .5fr 4.5fr .5fr;
+  box-shadow:  10px 0 20px -10px rgba(0, 0, 0, 0.9),
+              -10px 0 20px -10px rgba(0, 0, 0, 0.9);
+  overflow-x: hidden;
+}
+
+#chat-area h2{
+  margin-left: 1rem;
+}

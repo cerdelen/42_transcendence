@@ -1,4 +1,4 @@
-import { useState, useEffect, Children, useMemo } from 'react';
+import { useState, useEffect, Children, useMemo, useRef } from 'react';
 import {useContext} from 'react';
 import { SocketContext, our_socket} from '../../utils/context/SocketContext';
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
@@ -53,6 +53,7 @@ const Chat_input_filed_and_send_button = () =>
 	  }, 2000);
 	}
 
+	
 	return (
 		<>
 			<input id='chat-input' type="text"  value={input} onInput={emitTyping} onChange={(e) => {
@@ -77,9 +78,9 @@ const Chat_area = () =>
 	return (
 		<div id='chat-area' className='com-areas'>
             <h2>Chat  {displayed_chat.conversation_name}</h2>
-            <div id='displayed-messagees'>
-              <Display_full_chat chat_id={displayed_chat.conversation_id} />
-            </div>
+            {/* <div id='displayed-messages' className='whole-chat'> */}
+              <Display_full_chat  chat_id={displayed_chat.conversation_id} />
+            {/* </div> */}
             <form onSubmit={(e) => {  e.preventDefault() }}>
 				<Chat_input_filed_and_send_button />
             </form>

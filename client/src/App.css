@@ -411,17 +411,6 @@ footer {
 .centered-element {
 }
 
-#chat-area {
-  display: grid;
-  grid-template-rows: .5fr 4.5fr .5fr;
-  box-shadow:  10px 0 20px -10px rgba(0, 0, 0, 0.9),
-              -10px 0 20px -10px rgba(0, 0, 0, 0.9);
-  overflow-x: hidden;
-}
-
-#chat-area h2{
-  margin-left: 1rem;
-}
 
 .com-areas {
   /* background-color: lightblue; */

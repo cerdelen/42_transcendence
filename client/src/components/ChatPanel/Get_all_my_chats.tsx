@@ -111,6 +111,7 @@ const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: st
 {
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 
+	
 	useEffect(() => {
 		async function get_ids(){
 			const response = await fetch("http://localhost:3003/conversation/GetMyChats", {
@@ -126,7 +127,9 @@ const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: st
 		}
 		get_ids();
 	  }, []);
-	useEffect(() => {
+	// useEffect(() => {
+		
+		//   }, []);
 		our_socket.on("some_one_left_group_chat", ({conv_id, left_user_id, conv_still_exists} : {conv_id: number, left_user_id: number, conv_still_exists: boolean}) =>
 		{
 			console.log("our_socket on someone left chat for all my chats " + conv_id + " " + left_user_id);
@@ -141,7 +144,7 @@ const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: st
 				setmy_chats_ids([...my_chats_ids]);
 			}
 		});
-	  }, []);
+	
 	return (
 		<div className="left-pane-column" >
 			<h2>My Chats</h2>

@@ -116,12 +116,12 @@ const Group_chat_preview_card = ({
     if (data == true) {
       console.log("got inot the data == true ");
 
-      let arr: number[] = [];
-      for (let i = 0; i < my_chats_ids.length; i++) {
-        arr.push(my_chats_ids[i]);
-      }
-      arr.push(chat_id);
-      setmy_chats_ids([...arr, chat_id]);
+      // let arr: number[] = [];
+      // for (let i = 0; i < my_chats_ids.length; i++) {
+      //   arr.push(my_chats_ids[i]);
+      // }
+      // arr.push(chat_id);
+      setmy_chats_ids([...my_chats_ids, chat_id]);
       let arr_2: number[] = [];
       for (let i = 0; i < not_joined_chats_ids.length; i++) {
         if (chat_id != not_joined_chats_ids[i])
@@ -145,27 +145,10 @@ const Group_chat_preview_card = ({
       );
       const data = await response.json();
       const participants = data["conversation_participant_arr"];
-      // console.log("Hellooooooo this is data" + JSON.stringify(data));
       setConversation_name(data["conversation_name"]);
-      // await get_default_group_chat_picture();
     };
-    // const get_default_group_chat_picture = async () => {
-    // 	const response = await fetch(`http://localhost:3003/pictures/group_chat`, {
-    // 		method: "Get",
-    // 		headers: {
-    // 			// "Content-Type": "application/json",
-    // 			Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-    // 		},
-    // 	})
-    // 	const path = await response.blob();
-    // 	const url = URL.createObjectURL(path);
-    // 	setPhoto(url);
-    // }
     get_conversation(chat_id);
   }, []);
-  // console.log("trying to do this here");
-  // console.log(photo);
-  // console.log(conversation_name);
   return (
     <li className="Chat_preview_cards" onClick={handleOnClick}>
       <div>
@@ -209,8 +192,11 @@ const Get_all_open_group_chats = ({
     }
     get_ids();
   }, []);
-  useEffect(() => {
-    			our_socket.on("some_one_left_group_chat", ({conv_id, left_user_id, conv_still_exists} : {conv_id: number, left_user_id: number, conv_still_exists: boolean}) =>
+  // useEffect(() => {
+    			
+  //   		  }, []);
+
+          our_socket.on("some_one_left_group_chat", ({conv_id, left_user_id, conv_still_exists} : {conv_id: number, left_user_id: number, conv_still_exists: boolean}) =>
     			{
     				if (left_user_id == Number(userId))
     				{
@@ -220,7 +206,6 @@ const Get_all_open_group_chats = ({
     					}
     				}
     			});
-    		  }, []);
 
   return (
     <ul className="list-cards">

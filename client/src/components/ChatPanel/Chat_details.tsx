@@ -10,14 +10,10 @@ import { RiAdminLine } from "react-icons/ri";
 import { RiVolumeMuteFill } from "react-icons/ri";
 
 
-
-// const handleLeaveChat = () =>
 const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<displayed_chat_class>>, userId:string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any) =>
 {
 	if (chat_id != -1)
 	{
-
-		// //console.log("handleLeaveChat ");
 		our_socket.emit('leave_group_chat', {chat_id: chat_id, userId: userId});
 		const default_chat : displayed_chat_class = { conversation_id: -1, conversation_participant_arr: []}
 		setDisplayed_chat(default_chat);

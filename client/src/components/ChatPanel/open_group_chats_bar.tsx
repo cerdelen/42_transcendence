@@ -4,6 +4,7 @@ import JSCookies from "js-cookie";
 import group_picture from "../../images/group_chat_picture.jpeg"
 import Chat_details from "./Chat_details";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
+import { json } from "react-router-dom";
 
 interface chat_props {
 	chat_id: number,
@@ -78,15 +79,11 @@ const handleCreateGroupChat = async (setButton_state: any)	=>
 
 const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { chat_id: number, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) =>
 {
-	// {not_joined_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { chat_id: number, not_joined_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}
-	// console.log('called chat preview window');
-	// console.log(chat_id);
-	const [photo, setPhoto] = useState("");
 	const [conversation_name, setConversation_name] = useState("");
-	// const { my_chats_ids } = useContext(Chats_user_is_part_of_context)
 	
 	const handleOnClick = async () => 
 	{
+		
 		// console.log("handleOnClick of group chat card for chat id " + chat_id);
 		const response = await fetch(`http://localhost:3003/conversation/join_group_chat/${chat_id}`, {
 				method: "Get",
@@ -95,22 +92,19 @@ const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, s
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
 			})
-		// console.log(response);
-		// console.log("old array " + my_chats_ids);
-		// let new_arr : number [] = my_chats_ids;
-		// new_arr.push(chat_id)
-		// console.log("new array " + new_arr);
 		const data = await response.json();
-		// console.log(data);
+		console.log("after fetch" + JSON.stringify(data));
 		if (data == true)
 		{
+			console.log("got inot the data == true ");
+
 			let arr : number [] = []
 			for(let i = 0; i < my_chats_ids.length; i++)
 			{
 				arr.push(my_chats_ids[i]);
 			}
 			arr.push(chat_id);
-			setmy_chats_ids(arr);
+			setmy_chats_ids([...arr, chat_id]);
 			let arr_2 : number [] = []
 			for(let i = 0; i < not_joined_chats_ids.length; i++)
 			{

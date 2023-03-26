@@ -31,7 +31,6 @@ function drawGame(ctx: any, gameInfo: any, image: any) {
     //draw scores
     ctx.fillText(gameInfo.player_1_score, 280, 50);
     ctx.fillText(gameInfo.player_2_score, 390, 50);
-
     draw_rectangle(ctx, gameInfo.Player1, paddleWidth, paddleHeight);
     draw_rectangle(ctx, gameInfo.Player2, paddleWidth, paddleHeight);
     draw_rectangle(ctx, gameInfo.Ball, ballSize, ballSize);
@@ -40,4 +39,5 @@ function drawGame(ctx: any, gameInfo: any, image: any) {
 function drawPong(socket: Socket, ctx: any, gameInfo: any, image: any) {
     drawGame(ctx, gameInfo, image);
 }
+
 export default drawPong;

@@ -22,6 +22,9 @@ body {
   /* text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF; */
 }
 
+h2 {
+  text-align: center;
+}
 header,
 footer,
 main {
@@ -195,10 +198,6 @@ header .basic:hover {
   border: 1mm ridge white;
 }
 
-#user-dropdown button {
-  /* border: 2px solid red; */
-}
-
 .purple-button {
   background-color: #381a72;
   color: white;
@@ -309,15 +308,15 @@ footer {
   max-height: 37vh;
 }
 .open_group_chats-ul {
-  max-height: 32.5vh;
+  /* max-height: 32.5vh; */
 }
 
 .all_open_group_chats-ul
 {
-  padding: 0;
+  /* padding: 0;
   overflow-x: auto;
   max-height: 32.5vh;
-  min-height: 32.5vh;
+  min-height: 32.5vh; */
 }
 
 .Chat_details
@@ -333,6 +332,8 @@ footer {
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 9rem;
+  word-wrap: break-word;
+  border: 1px solid red;
 }
 
 #in-a-game {
@@ -344,7 +345,7 @@ footer {
 
 #community {
   display: grid;
-  grid-template-columns: 1fr 4.5fr 1fr;
+  grid-template-columns: minmax(280px, 1fr) minmax(680px, 4.5fr) minmax(280px, 1fr);
   gap: 1rem;
   
 }

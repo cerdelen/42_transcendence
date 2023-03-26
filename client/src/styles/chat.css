@@ -59,6 +59,7 @@
   box-shadow:  
   10px 0 20px -10px rgba(0, 0, 0, 0.9),
   -10px 0 20px -10px rgba(0, 0, 0, 0.9);
+  word-wrap: break-word;
   /* transform: rotate(180deg);
     direction: ltr; */
 }

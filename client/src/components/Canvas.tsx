@@ -151,13 +151,15 @@ const Canvas = ({ userId }: { userId: string }) => {
         our_socket.on('sameUser', () => {
             reset();
             setGameActive(false);
-            alert("Same user wanted to connect to one game");
+            console.log("Same User");
+            // our_socket.off('sameUser');
         })
 
         our_socket.on("handleTooManyPlayers", () => {
             reset();
             setGameActive(false);
-            alert("This game has too many players");
+            console.log("Too many players");
+            // our_socket.off('handleTooManyPlayers');
         })
 
         our_socket.on('gameCode', handleGameCode);
@@ -167,24 +169,30 @@ const Canvas = ({ userId }: { userId: string }) => {
         our_socket.on('init', (UserIndex_: number) => {
             let num: number = UserIndex_;
             setPlayerNumber(num);
+            our_socket.off('init');
         });
 
     }, [playerNumber])
     useEffect(() => {
         our_socket.on('gameOver', (data: number) => {
             if (!gameActive) {
+                our_socket.off('gameOver');
                 return;
             }
             let num: number = data;
             if (num == Number.parseInt(userId)) {
+                console.log("Winner");
                 reset();
-                alert("You win!");
+                
             } else {
+                console.log("Loser");
                 reset();
-                alert("You lose :( ");
+                
             }
             setGameActive(false);
+            our_socket.off('gameOver');
         })
+        
     }, [gameActive])
     useEffect(() => {
         if (canvasRef.current) {
@@ -197,37 +205,42 @@ const Canvas = ({ userId }: { userId: string }) => {
             if (!gameActive) {
                 return;
             }
+            let animFrame: number;
             setGameInfo(JSON.parse(gameState));
             if (canvasRef.current) {
                 ctx = canvasRef.current.getContext('2d');
-
-                requestAnimationFrame(() => drawPong(our_socket, ctx, gameInfo, images[mapNumber]));
+                animFrame = requestAnimationFrame(() => drawPong(our_socket, ctx, gameInfo, images[mapNumber]));
             }
+            our_socket.off('gameState');
         })
     }, [gameInfo, gameActive])
 
-    document.addEventListener('keydown', (e) => {
-        if (!gameActive) {
-            return;
-        }
-        let obj: KeyInfo =
-        {
-            key: e.keyCode,
-            player_number: playerNumber
-        };
-        our_socket.emit('keydown', JSON.stringify(obj));
-    })
-    document.addEventListener('keyup', (e) => {
-        if (!gameActive) {
-            return;
-        }
-        let obj: KeyInfo =
-        {
-            key: e.keyCode,
-            player_number: playerNumber
-        };
-        our_socket.emit('keyup', JSON.stringify(obj));
-    })
+    // useEffect(() => 
+    // {
+        document.addEventListener('keydown', (e) => {
+            if (!gameActive) {
+                return;
+            }
+            let obj: KeyInfo =
+            {
+                key: e.keyCode,
+                player_number: playerNumber
+            };
+            our_socket.emit('keydown', JSON.stringify(obj));
+        })
+        document.addEventListener('keyup', (e) => {
+            if (!gameActive) {
+                return;
+            }
+            let obj: KeyInfo =
+            {
+                key: e.keyCode,
+                player_number: playerNumber
+            };
+            our_socket.emit('keyup', JSON.stringify(obj));
+        })
+    // }, [])
+   
 
 
     return (

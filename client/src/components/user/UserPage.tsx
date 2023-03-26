@@ -9,17 +9,17 @@ import UserPhoto from "./UserPhoto";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import GameHistory from "./GamesHistory";
 import UserStats from "./UserStatistics";
-import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
 import { our_socket } from "../../utils/context/SocketContext";
+import { Link } from "react-router-dom";
+
 
 const UserPage = () => {
   const { userId } = useContext(UserContext);
-  const { userIdCard } = useMyContext();
+  const { userIdCard, setShowUserInto } = useMyContext();
   const [isVisible, setIsVisible] = useState(true);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [TFA, setTFA] = useState(false);
-  const { setShowUserInto } = useMyContext();
   const [friendsList, setFriendsList] = useState<string[]>([]);
   const [gamesList, setGamesList] = useState([]);
   const isMe = userId === userIdCard;
@@ -35,10 +35,6 @@ const UserPage = () => {
     } catch (error) {
       alert("Could not go to chat");
     }
-  };
-
-  const startGame = async () => {
-   
   };
 
   const updateFriendsList = async () => {
@@ -98,6 +94,13 @@ const UserPage = () => {
     };
     if (userIdCard) getData();
   }, [userIdCard, isFriend]);
+
+  function startAndinvitePlayers(username : string)
+  {
+    console.log("Inviting player " + username);
+    setShowUserInto(false);
+    our_socket.emit('createInvitationRoom');
+  }
   return (
     <>
       {true && (
@@ -119,9 +122,9 @@ const UserPage = () => {
                   <button className="purple-button" onClick={startChat}>
                     Chat
                   </button>
-                  <button className="purple-button" onClick={startGame}>
-                    Play
-                  </button>
+                  <Link to="/game">
+                    <button className="purple-button" onClick={() => startAndinvitePlayers(userName)}>Play</button>
+                  </Link>
                   <button className="purple-button" onClick={updateFriendsList}>
                     {" "}
                     {isFriend ? "Unfriend" : "Friend"}

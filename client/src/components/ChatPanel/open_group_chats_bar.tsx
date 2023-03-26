@@ -155,7 +155,7 @@ const Group_chat_preview_card = ({chat_id, not_joined_chats_ids, my_chats_ids, s
 	// console.log(conversation_name);
 	return (
 		<li className='Chat_preview_cards'	onClick={handleOnClick}>
-			<div className='player-availability'>
+			<div >
 				<img src={group_picture} alt="" />
 				<span id='user-name' title={"chat_name"} >{conversation_name}</span>
 			</div>

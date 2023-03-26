@@ -125,7 +125,7 @@ const Get_all_other_users = ({userId, my_chats_ids, setmy_chats_ids} : { userId:
 	return (
 		<>
 			<h2>Other Users</h2>
-			<ul className='game-page-games-online-ul'>
+			<ul >
 				{/* <img src={photo} alt="" /> */}
 				<div className='player-availability'>
 					<div>smth inside</div>

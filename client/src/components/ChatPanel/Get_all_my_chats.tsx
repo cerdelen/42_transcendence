@@ -160,7 +160,7 @@ const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: st
 	return (
 		<>
 			<h2>My Chats</h2>
-			<ul className='game-page-games-online-ul'>
+			<ul >
 				{/* <img src={photo} alt="" /> */}
 				<div className='player-availability'>
 					<div>smth inside</div>

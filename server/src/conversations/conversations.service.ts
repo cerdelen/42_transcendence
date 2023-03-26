@@ -51,6 +51,29 @@ export class ConversationService {
 		
 	}
 
+	async	set_password(chat_id: number, user_id: number, password: string)
+	{
+		console.log(chat_id + "in setvice set password");
+		
+		const conv = await this.prisma.conversation.findUnique({where: {conversation_id: chat_id}});
+
+		if (!conv)
+			return ;
+		if (conv.group_chat == false)
+			return ;
+		if (conv.conversation_owner_arr[0] != user_id)
+			return ;
+		await this.prisma.conversation.update({
+			where: {
+				conversation_id: chat_id
+			},
+			data: {
+				conversation_password: password,
+				conversation_pass_protected: true,
+			}
+		})
+	}
+
 	// async createConversation(user: User, params: CreateConversationParams) {
 	// 	const userDB = await this.user.findUserById(user.id);
 	// 	const {authorId, recipientId} = params;

@@ -116,7 +116,17 @@ export class ConversationController {
 			// 	}
 			// })
 			// return updatedUser
-		} 
+		}
+
+		@UseGuards(Jwt_Auth_Guard)
+		@Post('set_password/:chat_id')
+		async set_password(@Req() req: any, @Param('chat_id') chat_id: number, @Body('Password') password : string)
+		{
+			// console.log("this is password in controller " + JSON.stringify( password));
+			// console.log("this is password in controller " + password);
+			
+			await this.conversationsService.set_password(Number(chat_id), Number(req.user.id), password);
+		}
 
 		@UseGuards(Jwt_Auth_Guard)
 		@Get('join_dialogue/:other_user_id')

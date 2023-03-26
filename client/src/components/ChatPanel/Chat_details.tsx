@@ -20,6 +20,67 @@ const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<Reac
 	}
 }
 
+const Password_input = ({setButton_state, chat_id}: { setButton_state: any; chat_id: number}) => 
+{
+	const [inputValue, setInputValue] = useState("");
+
+	const handleInputChange = (e: any) =>
+	{
+	  setInputValue(e.target.value);
+	};
+  
+	const handleButtonClick = async () =>
+	{
+	  if (inputValue.length > 0)
+	  {
+		console.log(chat_id + "chat id i append to url");
+		
+		await fetch(
+		  `http://localhost:3003/conversation/set_password/${chat_id}`,
+		  {
+			method: "Post",
+			headers: {
+			  "Content-Type": "application/json",
+			  Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+			},
+			// body: JSON.stringify({"Password": inputValue}),
+			body: JSON.stringify({Password: inputValue }),
+		  }
+		);
+		setButton_state(true);
+	  }
+	};
+	return (
+	  <div className="popup">
+		<input type="text" value={inputValue} onChange={handleInputChange} />
+		<button onClick={handleButtonClick}>Set Password</button>
+	  </div>
+	);
+  };
+
+const handleSetPassword = (set_show_button: React.Dispatch<React.SetStateAction<boolean>>) =>
+{
+	set_show_button(false);
+}
+
+const PasswordSetter = () =>
+{
+	const { displayed_chat } = useMyDisplayedChatContext();
+	const [ show_button, set_show_button ] = useState(true);
+
+	return (
+		<>
+			{
+				show_button ?
+					<button onClick={() => handleSetPassword(set_show_button)}>Set Password</button>
+					:
+					<Password_input setButton_state={set_show_button} chat_id={displayed_chat.conversation_id}/>
+			}
+		</>
+	)
+}
+
+
 const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details} : {user_id: number, set_user_ids_in_chat_details: any}) => 
 {
 	const { displayed_chat } = useMyDisplayedChatContext();
@@ -80,6 +141,7 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 	const { userId } = useContext(UserContext);
 	const [ user_ids_in_chat_details , set_user_ids_in_chat_details] = useState<number[]>([...displayed_chat.conversation_participant_arr]);
+	// const is_owner : boolean = displayed_chat.conversation_owner_arr?.findIndex(Number(userId)) != -1;
 
 	useEffect(() => {
 		async function set_map(){
@@ -101,9 +163,13 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 			{
 				displayed_chat.group_chat && <button onClick={() => handleLeaveChat(displayed_chat.conversation_id, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids, displayed_chat.group_chat)}>Leave Chat</button>
 			}
+			{
+				(displayed_chat.group_chat && displayed_chat.conversation_owner_arr?.includes(Number(userId))) ?
+				<PasswordSetter />
+				:
+				<></>
+			}
 		</div>
-
-
 	)
 }
 

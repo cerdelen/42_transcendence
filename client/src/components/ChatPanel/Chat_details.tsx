@@ -5,7 +5,9 @@ import { our_socket } from "../../utils/context/SocketContext";
 import JSCookies from "js-cookie";
 import { displayed_chat_class } from "../../utils/types";
 import Popup_chat_administration from "./Popup_chat_administration";
-
+import { FaCrown } from "react-icons/fa";
+import { RiAdminLine } from "react-icons/ri";
+import { RiVolumeMuteFill } from "react-icons/ri";
 
 
 
@@ -118,10 +120,11 @@ const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details}
 	//console.log(`USERNAME ${user_name}`);
 	
 	return (
-		<div onClick={() => set_display_popup(!display_popup)}> {user_name} 
-			{is_owner ? <div>owner</div> : <div>not owner</div>}
-			{is_admin? <div>admin</div> : <div>not admin</div>}
-			{is_muted ? <div>muted</div> : <div>not muted</div>}
+		<div onClick={() => set_display_popup(!display_popup)}>
+			<span>{user_name} </span>
+			{is_owner && <FaCrown title="owner"/>}
+			{is_admin && <RiAdminLine title="admin"/>}
+			{is_muted && <RiVolumeMuteFill title="muted"/>}
 			{display_popup && <Popup_chat_administration user_id={user_id} setmuted={set_is_muted} setadmin={set_is_admin} setowner={set_is_owner} set_user_ids_in_chat_details={set_user_ids_in_chat_details}/>}
 		</div>
 	);

@@ -154,12 +154,12 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 	// "conversation_mute_list_arr":[]
 
 	return (
-		<>
-			<button onClick={() => handle_kick(user_id, false)}>KICK</button>
-			<button onClick={() => handle_mute(user_id)}>MUTE</button>
-			<button onClick={() => handle_kick(user_id, true)}>BAN</button>
-			<button onClick={() => handle_make_admin(user_id)}>MAKE ADMIN</button>
-		</>
+		<div id="admin-buttons">
+			<button className="purple-button" onClick={() => handle_kick(user_id, false)}>KICK</button>
+			<button className="purple-button" onClick={() => handle_mute(user_id)}>MUTE</button>
+			<button className="purple-button" onClick={() => handle_kick(user_id, true)}>BAN</button>
+			<button className="purple-button" onClick={() => handle_make_admin(user_id)}>MAKE ADMIN</button>
+		</div>
 	)
 }
 

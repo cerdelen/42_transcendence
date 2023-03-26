@@ -7,6 +7,7 @@
 @import "./styles/user-info-card.css";
 @import "./styles/game-history.css";
 @import "./styles/user-stats.css";
+@import "./styles/admin-buttons.css";
 
 /* GENERAL */
 body {
@@ -441,6 +442,9 @@ footer {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 700;
+  font-size: larger;
+  color: rgb(252, 252, 252);
 }
 
 .User_list_in_chat_detals {
@@ -478,7 +482,8 @@ footer {
 #joinButton {
   font-size: 50px;
 }
-.game-page-button:active {
+.game-page-button:active,
+.game_buttons:active {
   box-shadow: 0px 0px 0px 0px;
   top: 5px;
   left: 5px;

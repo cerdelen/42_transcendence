@@ -12,14 +12,10 @@ import UserStats from "./UserStatistics";
 import { our_socket } from "../../utils/context/SocketContext";
 import { Link } from "react-router-dom";
 
-type Props = {
-  // setShowUserInto: React.Dispatch<React.SetStateAction<boolean>>;
-};
 
-const UserPage = ({}: Props) => {
+const UserPage = () => {
   const { userId } = useContext(UserContext);
   const { userIdCard, setShowUserInto } = useMyContext();
-  const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
   const [isVisible, setIsVisible] = useState(true);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
@@ -35,27 +31,10 @@ const UserPage = ({}: Props) => {
 
   const startChat = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:3003/conversation/join_dialogue/${userIdCard}`,
-        {
-          method: "Get",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-          },
-        }
-      );
-      console.log("join chat");
-      const conv = await response.json();
-      setDisplayed_chat(conv);
-      setShowUserInto(false);
+      our_socket.emit('create_dialogue', {userid_creator: userId, other_user: userIdCard});
     } catch (error) {
       alert("Could not go to chat");
     }
-  };
-
-  const startGame = async () => {
-   
   };
 
   const updateFriendsList = async () => {
@@ -144,12 +123,16 @@ const UserPage = ({}: Props) => {
                     Chat
                   </button>
                   <Link to="/game">
+<<<<<<< HEAD
                   {//Username}//
 }
                   <button className="purple-button" onClick={() => startAndinvitePlayers(userId)}>
                     
                     Play
                   </button>
+=======
+                    <button className="purple-button" onClick={() => startAndinvitePlayers(userName)}>Play</button>
+>>>>>>> 7b5dd2853fa67c8880fc5755857bfe0faf97f2f6
                   </Link>
                   <button className="purple-button" onClick={updateFriendsList}>
                     {" "}
@@ -174,14 +157,3 @@ const UserPage = ({}: Props) => {
 };
 
 export default UserPage;
-
-type Game = {
-  id: number;
-  player_one: number;
-  player_two: number;
-  winner: number;
-  loser: number;
-  score_one: number;
-  score_two: number;
-  finished: boolean;
-};

@@ -72,7 +72,7 @@ const Get_all_other_users = () =>
 	  }, []);
 	return (
 		<div className="left-pane-column" >
-			<h2>Other Users</h2>
+			<h2>All Players</h2>
 			<ul className='list-cards'>
 				{
 					other_users_ids.map((other_user_id, idx) => (

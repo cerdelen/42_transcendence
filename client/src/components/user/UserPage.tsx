@@ -12,7 +12,6 @@ import UserStats from "./UserStatistics";
 import { our_socket } from "../../utils/context/SocketContext";
 import { Link } from "react-router-dom";
 
-
 const UserPage = () => {
   const { userId } = useContext(UserContext);
   const { userIdCard, setShowUserInto } = useMyContext();
@@ -31,14 +30,17 @@ const UserPage = () => {
 
   const startChat = async () => {
     try {
-      our_socket.emit('create_dialogue', {userid_creator: userId, other_user: userIdCard});
+      our_socket.emit("create_dialogue", {
+        userid_creator: userId,
+        other_user: userIdCard,
+      });
     } catch (error) {
       alert("Could not go to chat");
     }
   };
 
   const updateFriendsList = async () => {
- if (isFriend) {
+    if (isFriend) {
       try {
         const response = await fetch(
           "http://localhost:3003/user/remove_friend",
@@ -95,11 +97,10 @@ const UserPage = () => {
     if (userIdCard) getData();
   }, [userIdCard, isFriend]);
 
-  function startAndinvitePlayers(username : string)
-  {
+  function startAndinvitePlayers(username: string) {
     console.log("Inviting player " + username);
     setShowUserInto(false);
-    our_socket.emit('createInvitationRoom', userId);
+    our_socket.emit("createInvitationRoom", userId);
   }
   return (
     <>
@@ -123,16 +124,12 @@ const UserPage = () => {
                     Chat
                   </button>
                   <Link to="/game">
-<<<<<<< HEAD
-                  {//Username}//
-}
-                  <button className="purple-button" onClick={() => startAndinvitePlayers(userId)}>
-                    
-                    Play
-                  </button>
-=======
-                    <button className="purple-button" onClick={() => startAndinvitePlayers(userName)}>Play</button>
->>>>>>> 7b5dd2853fa67c8880fc5755857bfe0faf97f2f6
+                    <button
+                      className="purple-button"
+                      onClick={() => startAndinvitePlayers(userName)}
+                    >
+                      Play
+                    </button>
                   </Link>
                   <button className="purple-button" onClick={updateFriendsList}>
                     {" "}

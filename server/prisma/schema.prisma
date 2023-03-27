@@ -8,8 +8,6 @@ datasource backend_database {
 	url			= env("DATABASE_URL")
 }
 
-// ? means a field is optional
-
 model User {
 	id								Int				@unique
 	name							String			@unique
@@ -38,24 +36,19 @@ model Stats {
 }
 
 model Conversation {
-	// User stuff
 	conversation_id					Int				@unique  @id @default(autoincrement()) 
 	conversation_name				String?					
 	conversation_msg_arr			Message[]
 	conversation_created_at			DateTime		@default(now())
-	// chat_participants	ChatParticipant[]
 	conversation					Boolean			@default(true)
-	//something to consider later after creating chat
 	conversation_is_public			Boolean			@default(true)
 	conversation_pass_protected		Boolean			@default(false)
 	conversation_password			String?		
-
 	conversation_participant_arr	Int[]			@default([])
 	conversation_owner_arr			Int[]
 	conversation_admin_arr			Int[]
 	conversation_black_list_arr		Int[]
 	conversation_mute_list_arr		Int[]
-
 	group_chat						Boolean			@default(false)
 }
 

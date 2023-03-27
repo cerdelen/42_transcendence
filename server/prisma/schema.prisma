@@ -11,87 +11,70 @@ datasource backend_database {
 // ? means a field is optional
 
 model User {
-	id						Int			@unique
-	name					String		@unique
-	mail					String
-	conversation_id_arr		Int[]
-	socketId				String @default("")
-	two_FA_enabled	Boolean    @default(false)
-	online			Boolean	   @default(false)
-	two_FA_secret	String?
-	friendlist		Int[]
-	stats			Stats?
-	games			Int[]				// ids of games??
-	show_default_image		Boolean		@default(false)
+	id								Int				@unique
+	name							String			@unique
+	mail							String
+	conversation_id_arr				Int[]
+	socketId						String 			@default("")
+	two_FA_enabled					Boolean    		@default(false)
+	online							Boolean	   		@default(false)
+	two_FA_secret					String?
+	friendlist						Int[]
+	stats							Stats?
+	games							Int[]				// ids of games??
+	show_default_image				Boolean			@default(false)
+	blocked_users					Int[]			@default([])
 }
 
 model Stats {
-	user			User		@relation(fields: [stat_id], references: [id])
-	stat_id			Int			@unique 
-	wins			Int			@default(0)
-	loses			Int			@default(0)
-	mmr				Int			@default(1500)
-	achievement_0	Boolean		@default(false)										// win 3 games
-	achievement_1	Boolean		@default(false)										// reach 1700 mmr
-	achievement_2	Boolean		@default(false)										// win to zero
+	user							User			@relation(fields: [stat_id], references: [id])
+	stat_id							Int				@unique 
+	wins							Int				@default(0)
+	loses							Int				@default(0)
+	mmr								Int				@default(1500)
+	achievement_0					Boolean			@default(false)										// win 3 games
+	achievement_1					Boolean			@default(false)										// reach 1700 mmr
+	achievement_2					Boolean			@default(false)										// win to zero
 }
 
 model Conversation {
 	// User stuff
-	conversation_id					Int					@unique  @id @default(autoincrement()) 
+	conversation_id					Int				@unique  @id @default(autoincrement()) 
 	conversation_name				String?					
 	conversation_msg_arr			Message[]
-	conversation_created_at			DateTime			@default(now())
+	conversation_created_at			DateTime		@default(now())
 	// chat_participants	ChatParticipant[]
-	conversation					Boolean				@default(true)
+	conversation					Boolean			@default(true)
 	//something to consider later after creating chat
-	conversation_is_public			Boolean		@default(true)
-	conversation_pass_protected		Boolean		@default(false)
+	conversation_is_public			Boolean			@default(true)
+	conversation_pass_protected		Boolean			@default(false)
 	conversation_password			String?		
 
-	conversation_participant_arr	Int[]		@default([])
+	conversation_participant_arr	Int[]			@default([])
 	conversation_owner_arr			Int[]
 	conversation_admin_arr			Int[]
 	conversation_black_list_arr		Int[]
 	conversation_mute_list_arr		Int[]
 
-	//sorry but i gotta do this
-	group_chat						Boolean		@default(false)
+	group_chat						Boolean			@default(false)
 }
 
-// model ChatParticipant {
-
-// 	ChatPartId		Int				@unique @id @default(autoincrement())
-// 	// chat			Chat			@relation(fields: [ChatPartId], references: [chat_id])
-// 	chat			Chat[]
-// 	// user			User?			@relation(fields: [userId], references: [id])
-// 	userId			User?			
-
-// 	// @@map(name: "chat_role")
-// }
- 
 model Message {
-	// User stuff
-	msg_id				Int			@unique  @id @default(autoincrement()) 
-	author				Int		
-	// user_name			String		
-	text				String
-	created_at			DateTime	@default(now())
-	//necessary fro array of messages in Chat model
-	conversation_id				Int?			
-	// usr_id						Int?			
-	conversation_relation		Conversation?		@relation(fields: [conversation_id], references: [conversation_id])
-	// user_relation				User?				@relation(fields: [author], references: [id])		
-
+	msg_id							Int				@unique  @id @default(autoincrement()) 
+	author							Int		
+	text							String
+	created_at						DateTime		@default(now())
+	conversation_id					Int?			
+	conversation_relation			Conversation?	@relation(fields: [conversation_id], references: [conversation_id])
 }
 
 model Game {
-	id					Int @unique @id @default(autoincrement())
-	player_one			Int
-	player_two			Int @default(0)
-	winner				Int	@default(0)
-	loser				Int @default(0)
-	score_one			Int @default(0)
-	score_two			Int @default(0)
-	finished			Boolean		@default(false)
+	id								Int				@unique @id @default(autoincrement())
+	player_one						Int
+	player_two						Int				@default(0)
+	winner							Int				@default(0)
+	loser							Int				@default(0)
+	score_one						Int				@default(0)
+	score_two						Int				@default(0)
+	finished						Boolean			@default(false)
 }

@@ -43,7 +43,7 @@ export class MessagingGateway implements OnGatewayConnection {
 				this.msg.createMsg(data);
 				console.log(`From backend message subscriber: message = ${data.text}, author = ${data.author}`);
 				
-				this.server.emit("message", {text: data.text, author_id: data.author});
+				this.server.emit("message", {text: data.text, author_id: data.author, chat_id: data.conversation_id});
 		}
 
 		@SubscribeMessage('typing')
@@ -52,7 +52,7 @@ export class MessagingGateway implements OnGatewayConnection {
 				console.log("here is handle_is_typing subscriber");
 				console.log(JSON.stringify(data));
 				
-				this.server.emit('typing', {isTyping: data.isTyping, name: data.userId})
+				this.server.emit('typing', {isTyping: data.isTyping, name: data.userId, chat_id: data.chat_id})
 				// this.msg.createMsg(data);
 		}
 

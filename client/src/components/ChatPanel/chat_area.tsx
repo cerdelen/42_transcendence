@@ -34,9 +34,9 @@ const Chat_input_filed_and_send_button = () => {
   let timeout: any;
   const emitTyping = () => {
     //   console.log("i am emitting typing");
-    our_socket.emit("typing", { isTyping: true, userId: userId });
+    our_socket.emit("typing", { isTyping: true, userId: userId, chat_id: displayed_chat.conversation_id });
     timeout = setTimeout(() => {
-      our_socket.emit("typing", { isTyping: false, userId: userId });
+      our_socket.emit("typing", { isTyping: false, userId: userId, chat_id: displayed_chat.conversation_id });
     }, 2000);
   };
 

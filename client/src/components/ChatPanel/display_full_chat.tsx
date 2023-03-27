@@ -14,11 +14,13 @@ import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context
 interface typing {
   name: string;
   isTyping: boolean;
+  chat_id: number;
 }
 
 interface message {
   author_id: string;
   text: string;
+  chat_id: number
 }
 
 class display_message_info {
@@ -44,28 +46,6 @@ const Display_message_in_chat = ({
   const { userId } = useContext(UserContext);
   const is_me: boolean = message.author_id == Number(userId);
 
-  // const [author, setAuthor] = useState("");
-  // useEffect(() => {
-  //   const get_user_info = async (id: number) => {
-  //     console.log("running a fetch");
-      
-  //     const response = await fetch("http://localhost:3003/user/user_name", {
-  //       method: "Post",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Accept: "application/json",
-  //         Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-  //       },
-  //       body: JSON.stringify({ user_id: id }),
-  //     });
-  //     const userName = await response.text();
-
-  //     setAuthor(userName);
-  //   };
-
-  //   get_user_info(message.author_id);
-  // });
-  // console.log("this is name map " + JSON.stringify(name_map.get(322)));
   console.log("display message called");
 
   return (
@@ -91,24 +71,30 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
 
 
   our_socket.on("message", (message: message) => {
-    //console.log("SOCKET ON MESSAGES");
+    console.log("SOCKET ON MESSAGES");
 
     //console.log(JSON.stringify(messages));
+    console.log(JSON.stringify(message));
+    
+    if (message.chat_id == displayed_chat.conversation_id)
+    {
 
-    let newMessage: display_message_info[] = [];
-    for (let i = 0; i < messages.length; i++) {
-      newMessage.push(messages[i]);
-    }
-    newMessage.push(
-      new display_message_info(message.text, Number(message.author_id))
-    );
-    // //console.log(`New messages: ${newMessage}`);
-
-    set_messages(newMessage);
-  });
+      let newMessage: display_message_info[] = [];
+      for (let i = 0; i < messages.length; i++) {
+        newMessage.push(messages[i]);
+      }
+      newMessage.push(
+        new display_message_info(message.text, Number(message.author_id))
+        );
+        // //console.log(`New messages: ${newMessage}`);
+        
+        set_messages(newMessage);
+      }
+    });
   our_socket.on("typing", (typing: typing) => {
-    if (typing.isTyping) {
-      setTypingDisplay(`${typing.name} is typing ...`);
+    if (typing.isTyping && typing.chat_id == displayed_chat.conversation_id) {
+      const name = name_map.get(Number(typing.name));
+      setTypingDisplay(`${name} is typing ...`);
     } else {
       setTypingDisplay("");
     }

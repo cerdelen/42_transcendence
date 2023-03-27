@@ -350,4 +350,36 @@ export class UserService {
 			data: {online: state},
 		});
 	}
+
+	async	block_user(user_id: number, user_to_block: number)
+	{
+		const user = await this.prisma.user.findUnique({where: { id: user_id }});
+
+		if (!user)
+			return ;
+		const idx = user.blocked_users.indexOf(user_to_block)
+		if (idx != -1)
+			return ;
+		user.blocked_users.push(user_to_block);
+		await this.prisma.user.update({
+			where: {id: user_id},
+			data: { blocked_users: user.blocked_users}
+		});
+	}
+
+	async	unblock_user(user_id: number, user_to_unblock: number)
+	{
+		const user = await this.prisma.user.findUnique({where: { id: user_id }});
+
+		if (!user)
+			return ;
+		const idx = user.blocked_users.indexOf(user_to_unblock)
+		if (idx == -1)
+			return ;
+		user.blocked_users.splice(idx, 1);
+		await this.prisma.user.update({
+			where: {id: user_id},
+			data: { blocked_users: user.blocked_users}
+		});
+	}
 }

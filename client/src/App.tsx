@@ -4,7 +4,7 @@ import JSCookies from "js-cookie";
 import LoginPage from "./components/LoginPage";
 import HomePage from "./components/HomePage";
 import SecondFactorPage from "./components/second_factor_authentication/SecondFactorPage";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import {
   AuthContext,
   ConversationContextType,
@@ -62,6 +62,8 @@ function App() {
     console.log("Invite accepted");
     setIsInvited(false);
     setinviterName("");
+    let obj = {inviterName: inviterName, userId: userId}
+    our_socket.emit("playerAccepted", JSON.stringify(obj))
   }
 
   function rejectInvite()
@@ -123,11 +125,6 @@ function App() {
   }, [userId])
   useEffect(() => 
   {
-    our_socket.on("gameCancelled", (rejectedUserName) => 
-    {
-      alert("Game has been cancelled by " + rejectedUserName);
-    })
-
       our_socket.on("invitationPopUp", (invitingUserName) =>
       {
         console.log("You've been invited mate");
@@ -156,7 +153,9 @@ function App() {
         <Popup open={isInvited} position="right center" onClose={rejectInvite} >
           <h2>You've been invited to the game by {inviterName}</h2>
           <center>
-          <button className="game_buttons" onClick={acceptInvite}> Accept </button>
+          
+            <button className="game_buttons" onClick={acceptInvite}> Accept </button>
+          
           <button className="game_buttons" onClick={rejectInvite}> Reject </button>
           </center>
         </Popup>

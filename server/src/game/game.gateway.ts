@@ -106,6 +106,13 @@ export class GameGateway {
     //Make user online boolean
   }
 
+  @SubscribeMessage('playerAccepted')
+  async playerAccepted(@MessageBody() obj, @ConnectedSocket() socket)
+  {
+    let new_obj = JSON.parse(obj);
+    let user = await this.userService.findUserByName(new_obj.inviterName)
+    console.log("Game screen lodade");
+  }
   @SubscribeMessage('rejectInvite')
   async rejectInvitation(@MessageBody() obj, @ConnectedSocket() socket)
   {

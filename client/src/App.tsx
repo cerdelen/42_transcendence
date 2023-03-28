@@ -112,6 +112,10 @@ function App() {
     }
   }, []);
 
+  useEffect( () => 
+  {
+    our_socket
+  })
   useEffect(() =>
   {
     console.log("User id on the frontend " , userId)
@@ -119,7 +123,10 @@ function App() {
   }, [userId])
   useEffect(() => 
   {
-      
+    our_socket.on("gameCancelled", (rejectedUserName) => 
+    {
+      alert("Game has been cancelled by " + rejectedUserName);
+    })
 
       our_socket.on("invitationPopUp", (invitingUserName) =>
       {

@@ -26,6 +26,29 @@ let gameCode: string = "";
 
 let response: number = 0;
 
+
+async function emitToTheUserSocket(user: any, server: Server, event_name:string, message: string)
+{
+  const sockets = await server.fetchSockets();
+  let final_socket : any = {}; 
+  let found : boolean = false;
+  sockets.forEach( (e)  => 
+  {
+    if(e.id === user.socketId)
+    {
+      final_socket = e;
+      found = true;
+    }
+  });
+  if(!found)
+  {
+    console.log("Socket of invitee not found");
+    return ;
+  }
+  
+  final_socket.emit(event_name, message)
+}
+
 @WebSocketGateway(
   {
     cors: {
@@ -87,7 +110,17 @@ export class GameGateway {
   async rejectInvitation(@MessageBody() obj, @ConnectedSocket() socket)
   {
     let new_obj = JSON.parse(obj);
-    console.log("inviter name " + new_obj.userId + " rejects "+  new_obj.inviterName )
+    let user = await this.userService.findUserByName(new_obj.inviterName);
+    let new_invitation_obj : invitesType = {creator_id: String(user.id), invitee_id: new_obj.userId};
+    let delindex = invites.indexOf(new_invitation_obj);
+    if(!delindex)
+    {
+      console.log("Index to delete not found in reject invite ");
+      return ;
+    }
+    invites.splice(delindex, 1);
+    let new_user = await this.userService.findUserById(new_obj.userId);
+    emitToTheUserSocket(user, this.server, "gameCancelled", new_user.name)
   }
   
   @SubscribeMessage('createInvitationRoom')
@@ -96,21 +129,22 @@ export class GameGateway {
     let object = JSON.parse(obj);
     let userId = object.userId;
     let invitedUserId = object.userName;
+    let user = await this.userService.findUserByName(invitedUserId);
     let unique : boolean = true;
     if (!roomNames[0]) {
       let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: invitedUserId};
      
       invites.forEach((entry) => {
-        if(entry.creator_id == userId && entry.invitee_id == invitedUserId || entry.creator_id == invitedUserId  && entry.invitee_id  == userId)
+        if(entry.creator_id == userId && entry.invitee_id == String(user.id) || entry.creator_id == String(user.id)  && entry.invitee_id  == userId)
         {
           unique = false;
         }
       });
-      // if(!unique)
-      // {
-      //   console.log("Invitation already exist");
-      //   return ;
-      // }
+      if(!unique)
+      {
+        console.log("Invitation already exist");
+        return ;
+      }
       invites.push(new_invitation_obj);
       
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
@@ -126,32 +160,13 @@ export class GameGateway {
 
       //find invited user socket Id
       console.log(userId + " Inviting user " , invitedUserId);
-      let user = await this.userService.findUserByName(invitedUserId);
-
-      console.log("Sending event here" , user.socketId);
-      const sockets = await this.server.fetchSockets();
-      let final_socket : any = {}; 
-      let found : boolean = false;
-      sockets.forEach( (e)  => 
-      {
-        if(e.id === user.socketId)
-        {
-          final_socket = e;
-          found = true;
-        }
-      });
-      if(!found)
-      {
-        console.log("Socket of invitee not found");
-        return ;
-      }
       let creator = await this.userService.findUserById(Number.parseInt(userId));
-      
-      final_socket.emit("invitationPopUp", creator.name)
+      console.log("Sending event here" , user.socketId);
+      emitToTheUserSocket(user, this.server, "invitationPopUp", creator.name)
       invites.forEach(element => {
         console.log("User number " + element.creator_id + " invited " + element.invitee_id);
       });
-      
+    
       return;
     }
   }

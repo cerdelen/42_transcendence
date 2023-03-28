@@ -89,13 +89,14 @@ export class GameGateway {
     let object = JSON.parse(obj);
     let userId = object.userId;
     let invitedUserId = object.userName;
+    let unique : boolean = true;
     if (!roomNames[0]) {
       let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: invitedUserId};
-      let unique : boolean = true;
+     
       invites.forEach((entry) => {
         if(entry.creator_id == userId && entry.invitee_id == invitedUserId || entry.creator_id == invitedUserId  && entry.invitee_id  == userId)
         {
-          return false;
+          unique = false;
         }
       });
       if(!unique)

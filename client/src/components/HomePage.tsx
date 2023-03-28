@@ -7,6 +7,7 @@ import { Socket } from 'socket.io-client'
 import { useMyContext } from '../contexts/InfoCardContext'
 import UserPage from './user/UserPage'
 import { Outlet } from 'react-router-dom'
+import PopUp from './Popup'
 
 const HomePage = () => {
 
@@ -16,6 +17,7 @@ const HomePage = () => {
 		<Header />
 		<Outlet />
 		{showUserInfo && <UserPage />}
+		<PopUp />
 		<Footer />
 	</div>
   )

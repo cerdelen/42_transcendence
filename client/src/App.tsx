@@ -24,6 +24,7 @@ import { emit } from "process";
 
 
 import { useNavigate } from 'react-router-dom';
+import PopUp from "./components/Popup";
 
 
 
@@ -42,7 +43,7 @@ function App() {
   const [friendlist, setFriendslist] = useState([]);
   const [stats, setStats] = useState({});
   const [games, setGames] = useState([]);
-  const [isInvited, setIsInvited] = useState(false);
+  // const [isInvited, setIsInvited] = useState(false);
   const [show_default_image, setHasPicture] = useState(false);
   const [inviterName, setinviterName] = useState("");
   // const navigate = useNavigate();
@@ -66,27 +67,27 @@ function App() {
   }
   
 
-  function acceptInvite()
-  {
-    console.log("Invite accepted");
-    setIsInvited(false);
-    setinviterName("");
-    // navigate("/home");
-    let obj = {inviterName: inviterName, userId: userId}
-    our_socket.emit("playerAccepted", JSON.stringify(obj))
-    console.log("player accepted the invitation ");
-  }
+  // function acceptInvite()
+  // {
+  //   console.log("Invite accepted");
+  //   setIsInvited(false);
+  //   setinviterName("");
+  //   // navigate("/home");
+  //   let obj = {inviterName: inviterName, userId: userId}
+  //   our_socket.emit("playerAccepted", JSON.stringify(obj))
+  //   console.log("player accepted the invitation ");
+  // }
 
-  function rejectInvite()
-  {
-    if(isInvited === false)
-      return ;
-    console.log("Invite rejected");
-    let obj = {inviterName: inviterName, userId: userId}
-    our_socket.emit("rejectInvite", JSON.stringify(obj));
-    setinviterName("");
-    setIsInvited(false);
-  }
+  // function rejectInvite()
+  // {
+  //   if(isInvited === false)
+  //     return ;
+  //   console.log("Invite rejected");
+  //   let obj = {inviterName: inviterName, userId: userId}
+  //   our_socket.emit("rejectInvite", JSON.stringify(obj));
+  //   setinviterName("");
+  //   setIsInvited(false);
+  // }
   async function getData(userid: string) {
     try {
       let response = await fetch("http://localhost:3003/user/user_data", {
@@ -134,15 +135,15 @@ function App() {
     console.log("User id on the frontend " , userId)
     our_socket.emit("setupUserSocketId", userId);
   }, [userId])
-  useEffect(() => 
-  {
-      our_socket.on("invitationPopUp", (invitingUserName) =>
-      {
-        console.log("You've been invited mate");
-        setinviterName(invitingUserName);
-        setIsInvited(true);
-      })
-  }, [])
+  // useEffect(() => 
+  // {
+  //     our_socket.on("invitationPopUp", (invitingUserName) =>
+  //     {
+  //       console.log("You've been invited mate");
+  //       setinviterName(invitingUserName);
+  //       setIsInvited(true);
+  //     })
+  // }, [])
 
   return (
     <InfoCardProvider>
@@ -160,13 +161,14 @@ function App() {
             two_FA_secret: two_FA_secret,
           }}
         >
-          <Popup open={isInvited} position="right center" onClose={rejectInvite} >
+          {/* <Popup open={isInvited} position="right center" onClose={rejectInvite} >
           <h2>You've been invited to the game by {inviterName}</h2>
           <center>
           <button className="game_buttons" onClick={acceptInvite}> Accept </button>
           <button className="game_buttons" onClick={rejectInvite}> Reject </button>
           </center>
-          </Popup>
+          </Popup> */}
+          {/* <PopUp/> */}
           <BrowserRouter>
             <Routes>
               <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} >

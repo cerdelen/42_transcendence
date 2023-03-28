@@ -97,10 +97,12 @@ const UserPage = () => {
     if (userIdCard) getData();
   }, [userIdCard, isFriend]);
 
-  function startAndinvitePlayers(username: string) {
-    console.log("Inviting player " + username);
+  function startAndinvitePlayers(userId: string, userName: string) {
+    console.log(userId + " Inviting player " + userName);
     setShowUserInto(false);
-    our_socket.emit("createInvitationRoom", userId);
+    let obj : any = {userId: userId, userName: userName};
+    
+    our_socket.emit("createInvitationRoom", JSON.stringify(obj));
   }
   return (
     <>
@@ -126,7 +128,7 @@ const UserPage = () => {
                   <Link to="/game">
                     <button
                       className="purple-button"
-                      onClick={() => startAndinvitePlayers(userName)}
+                      onClick={() => startAndinvitePlayers(userId, userName)}
                     >
                       Play
                     </button>

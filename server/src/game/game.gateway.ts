@@ -7,7 +7,18 @@ import { UserService } from 'src/user/user.service';
 import { io_server } from 'src/utils/Server';
 import { interval } from 'rxjs';
 import { Socket } from 'dgram';
+import { emit } from 'process';
 let roomNames: { roomName: string, gameInstance: any }[] = [];
+
+let invitationRooms = {};
+let invitationRoomsNames : { roomName: string, gameInstance: any}[] = [];
+
+interface invitesType
+{
+  creator_id: string;
+  invitee_id: string;
+};
+let invites : invitesType[] = [];
 
 const state = {};
 const clientRooms = {};
@@ -73,24 +84,65 @@ export class GameGateway {
   }
 
   @SubscribeMessage('createInvitationRoom')
-  async handleInvitation(@MessageBody() userId: string, @ConnectedSocket() client)
+  async handleInvitation(@MessageBody() obj , @ConnectedSocket() client)
   {
-    console.log("Siemanko");
+    let object = JSON.parse(obj);
+    let userId = object.userId;
+    let invitedUserId = object.userName;
     if (!roomNames[0]) {
-
-      console.log('newgame player id 1 is' + userId);
-
+      let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: invitedUserId};
+      let unique : boolean = true;
+      invites.forEach((entry) => {
+        if(entry.creator_id == userId && entry.invitee_id == invitedUserId || entry.creator_id == invitedUserId  && entry.invitee_id  == userId)
+        {
+          return false;
+        }
+      });
+      if(!unique)
+      {
+        console.log("Invitation already exist");
+        alert("Invitation already exists");
+        return ;
+      }
+      invites.push(new_invitation_obj);
+      
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
     
-      clientRooms[client.id] = game.id.toString();
+      invitationRooms[client.id] = game.id.toString();
       client.emit('gameCode', game.id.toString());
       state[game.id] = getInitialState();
     
       client.join(game.id.toString());
     
       client.emit('invitationInit', 1);
-      console.log("Emiting intialization");
-      roomNames.push({ roomName: game.id.toString(), gameInstance: game });
+      invitationRoomsNames.push({ roomName: game.id.toString(), gameInstance: game });
+
+      //find invited user socket Id
+      console.log(userId + " Inviting user " , invitedUserId);
+      let user = await this.userService.findUserByName(invitedUserId);
+
+      console.log("Sending event here" , user.socketId);
+      const sockets = await this.server.fetchSockets();
+      let final_socket : any = {}; 
+      let found : boolean = false;
+      sockets.forEach( (e)  => 
+      {
+        if(e.id === user.socketId)
+        {
+          final_socket = e;
+          found = true;
+        }
+      });
+      if(!found)
+      {
+        console.log("Socket of invitee not found");
+        return ;
+      }
+      final_socket.emit("invitationPopUp")
+      invites.forEach(element => {
+        console.log("User number " + element.creator_id + " invited " + element.invitee_id);
+      });
+
       return;
     }
   }

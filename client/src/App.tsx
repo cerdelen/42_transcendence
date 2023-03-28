@@ -81,7 +81,7 @@ function App() {
     our_socket.on("online_check", () => {
       our_socket.emit("online_inform", { userId });
     });
-  }, []);
+  },[] );
   
   useEffect(() => {
     const myCookie = JSCookies.get("accessToken");
@@ -90,9 +90,21 @@ function App() {
       getUser();
     }
   }, []);
+
+  useEffect(() =>
+  {
+    console.log("User id on the frontend " , userId)
+    our_socket.emit("setupUserSocketId", userId);
+  }, [userId])
   useEffect(() => 
   {
-      our_socket.emit("setupUserSocketId", userId);
+      
+
+      our_socket.on("invitationPopUp", () =>
+      {
+        console.log("You've been invited mate");
+        alert("You've been invited");
+      })
   }, [])
 
   

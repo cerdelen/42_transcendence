@@ -22,6 +22,12 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { emit } from "process";
 
+
+import { useNavigate } from 'react-router-dom';
+
+
+
+
 export const ConversationContext = React.createContext<
   ConversationContextType[]
 >([]);
@@ -39,6 +45,7 @@ function App() {
   const [isInvited, setIsInvited] = useState(false);
   const [show_default_image, setHasPicture] = useState(false);
   const [inviterName, setinviterName] = useState("");
+  // const navigate = useNavigate();
   async function getUser() {
     try {
       let response = await fetch("http://localhost:3003/user/get_id", {
@@ -57,13 +64,17 @@ function App() {
       console.error(error);
     }
   }
+  
+
   function acceptInvite()
   {
     console.log("Invite accepted");
     setIsInvited(false);
     setinviterName("");
+    // navigate("/home");
     let obj = {inviterName: inviterName, userId: userId}
     our_socket.emit("playerAccepted", JSON.stringify(obj))
+    console.log("player accepted the invitation ");
   }
 
   function rejectInvite()
@@ -133,7 +144,6 @@ function App() {
       })
   }, [])
 
-  
   return (
     <InfoCardProvider>
       <Displayed_Chat_Provider>
@@ -150,15 +160,13 @@ function App() {
             two_FA_secret: two_FA_secret,
           }}
         >
-        <Popup open={isInvited} position="right center" onClose={rejectInvite} >
+          <Popup open={isInvited} position="right center" onClose={rejectInvite} >
           <h2>You've been invited to the game by {inviterName}</h2>
           <center>
-          
-            <button className="game_buttons" onClick={acceptInvite}> Accept </button>
-          
+          <button className="game_buttons" onClick={acceptInvite}> Accept </button>
           <button className="game_buttons" onClick={rejectInvite}> Reject </button>
           </center>
-        </Popup>
+          </Popup>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} >

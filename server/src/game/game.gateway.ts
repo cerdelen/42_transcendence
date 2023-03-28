@@ -102,7 +102,6 @@ export class GameGateway {
       if(!unique)
       {
         console.log("Invitation already exist");
-        alert("Invitation already exists");
         return ;
       }
       invites.push(new_invitation_obj);

@@ -18,6 +18,9 @@ import { io } from "socket.io-client";
 import { SocketContext, our_socket } from "./utils/context/SocketContext";
 import Community from "./components/community/CommunityPage";
 import LandingPage from "./LandingPage";
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+import { emit } from "process";
 
 export const ConversationContext = React.createContext<
   ConversationContextType[]
@@ -33,7 +36,9 @@ function App() {
   const [friendlist, setFriendslist] = useState([]);
   const [stats, setStats] = useState({});
   const [games, setGames] = useState([]);
+  const [isInvited, setIsInvited] = useState(false);
   const [show_default_image, setHasPicture] = useState(false);
+  const [inviterName, setinviterName] = useState("");
   async function getUser() {
     try {
       let response = await fetch("http://localhost:3003/user/get_id", {
@@ -52,7 +57,23 @@ function App() {
       console.error(error);
     }
   }
+  function acceptInvite()
+  {
+    console.log("Invite accepted");
+    setIsInvited(false);
+    setinviterName("");
+  }
 
+  function rejectInvite()
+  {
+    if(isInvited === false)
+      return ;
+    console.log("Invite rejected");
+    let obj = {inviterName: inviterName, userId: userId}
+    our_socket.emit("rejectInvite", JSON.stringify(obj));
+    setinviterName("");
+    setIsInvited(false);
+  }
   async function getData(userid: string) {
     try {
       let response = await fetch("http://localhost:3003/user/user_data", {
@@ -100,10 +121,11 @@ function App() {
   {
       
 
-      our_socket.on("invitationPopUp", () =>
+      our_socket.on("invitationPopUp", (invitingUserName) =>
       {
         console.log("You've been invited mate");
-        alert("You've been invited");
+        setinviterName(invitingUserName);
+        setIsInvited(true);
       })
   }, [])
 
@@ -124,6 +146,13 @@ function App() {
             two_FA_secret: two_FA_secret,
           }}
         >
+        <Popup open={isInvited} position="right center" onClose={rejectInvite} >
+          <h2>You've been invited to the game by {inviterName}</h2>
+          <center>
+          <button className="game_buttons" onClick={acceptInvite}> Accept </button>
+          <button className="game_buttons" onClick={rejectInvite}> Reject </button>
+          </center>
+        </Popup>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} >

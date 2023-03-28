@@ -83,6 +83,13 @@ export class GameGateway {
     //Make user online boolean
   }
 
+  @SubscribeMessage('rejectInvite')
+  async rejectInvitation(@MessageBody() obj, @ConnectedSocket() socket)
+  {
+    let new_obj = JSON.parse(obj);
+    console.log("inviter name " + new_obj.userId + " rejects "+  new_obj.inviterName )
+  }
+  
   @SubscribeMessage('createInvitationRoom')
   async handleInvitation(@MessageBody() obj , @ConnectedSocket() client)
   {
@@ -99,11 +106,11 @@ export class GameGateway {
           unique = false;
         }
       });
-      if(!unique)
-      {
-        console.log("Invitation already exist");
-        return ;
-      }
+      // if(!unique)
+      // {
+      //   console.log("Invitation already exist");
+      //   return ;
+      // }
       invites.push(new_invitation_obj);
       
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
@@ -138,11 +145,13 @@ export class GameGateway {
         console.log("Socket of invitee not found");
         return ;
       }
-      final_socket.emit("invitationPopUp")
+      let creator = await this.userService.findUserById(Number.parseInt(userId));
+      
+      final_socket.emit("invitationPopUp", creator.name)
       invites.forEach(element => {
         console.log("User number " + element.creator_id + " invited " + element.invitee_id);
       });
-
+      
       return;
     }
   }

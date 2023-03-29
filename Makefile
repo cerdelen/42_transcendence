@@ -1,13 +1,13 @@
 DEPENDENIES = NPM
 
-all: $(DEPENDENIES)
-	docker compose --file docker-compose-dev.yml up
+all:
+	docker compose up
 
-build: $(DEPENDENIES)
-	docker compose --file docker-compose-dev.yml up --build
+build: 
+	docker compose up --build
 
 down:
-	docker compose --file docker-compose-dev.yml down
+	docker compose down
 
 re: down all
 

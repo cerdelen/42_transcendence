@@ -2,16 +2,18 @@ import themeAchievement from "../../images/changed-theme-achievement.png";
 import threeWinsAchievement from "../../images/three-wins-achievement.png";
 import halfGamesAchievement from "../../images/won-half-of-your-games-achievement.png";
 
-const Achievements = () => {
+const Achievements = ({achievements} : {achievements: boolean[]}) => {
+  const achiev_0 = "Win 2 Games";
+  const achiev_1 = "Reach a total amount of 1600 mmr";
+  const achiev_2 = "Win a game without letting your enemy score once";
+
   return (
     <section id="achievements-box">
       <h3>Achievements</h3>
       <div id="achievements">
-        <img src={themeAchievement} alt="" />
-        <img src={halfGamesAchievement} alt="" />
-        <img src={threeWinsAchievement} alt="" />
-        <img src={threeWinsAchievement} alt="" />
-        <img src={threeWinsAchievement} alt="" />
+      {achievements[0] ? <img src={themeAchievement} alt="achievement_0_true" title={achiev_0}/> : <div className="no-achievement" title={achiev_0}> </div>}
+      {achievements[1] ? <img src={threeWinsAchievement} alt="achievement_1_true" title={achiev_1}/> : <div className="no-achievement" title={achiev_1}>  </div>}
+      {achievements[2] ? <img src={halfGamesAchievement} alt="achievement_2_true" title={achiev_2}/> : <div className="no-achievement" title={achiev_2}>  </div>}
       </div>
     </section>
   );

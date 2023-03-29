@@ -13,8 +13,24 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
   const { userId } = useContext(UserContext);
   const [showInput, setShowInput] = useState<boolean>(false);
   const { showUserInfo, setShowUserInto, setUserIdCard } = useMyContext();
+  const [photo, setPhoto] = useState("");
   const [newName, setNewName] = useState<string>("");
   useEffect(() => {
+    const get_user_photo = async () => {
+      const response_two = await fetch(
+        `http://localhost:3003/pictures/${userId}`,
+        {
+          method: "Get",
+          headers: {
+            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+          },
+        }
+      );
+      const path = await response_two.blob();
+      const url = URL.createObjectURL(path);
+      setPhoto(url);
+    };
+    get_user_photo();
     setNewName(userName);
   }, [userName]);
 
@@ -63,7 +79,7 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
           setShowUserInto(!showUserInfo);
           setUserIdCard(userId);
         }}
-        src={expertLevel}
+        src={photo}
         alt=""
       />
       {showInput ? (

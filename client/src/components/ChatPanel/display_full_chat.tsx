@@ -46,7 +46,7 @@ const Display_message_in_chat = ({
   const { userId } = useContext(UserContext);
   const is_me: boolean = message.author_id == Number(userId);
 
-  console.log("display message called");
+  // console.log("display message called");
 
   return (
     <>
@@ -122,7 +122,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
         set_messages(empty);
         return;
       }
-      console.log("fetching all message");
+      // console.log("fetching all message");
       
       const response = await fetch(
         `http://localhost:3003/conversation/get_messages_from_conversation/${chat_id}`,
@@ -173,7 +173,7 @@ useLayoutEffect(() => {
   }, [messages]);
 
   
-  console.log("rendering full chat");
+  // console.log("rendering full chat");
   
   return (
     <div ref={chatWindow} id="displayed-messages" className="whole-chat"> 

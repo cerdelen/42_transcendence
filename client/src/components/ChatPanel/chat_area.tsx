@@ -65,7 +65,7 @@ const Chat_area = () => {
 	const { userId } = useContext(UserContext);
 	const [ reset_displayed_chat, set_reset_displayed_chat] = useState(displayed_chat.conversation_id);
 
-console.log("I WANNA RESET EVERTHNG HERE" + reset_displayed_chat);
+// console.log("I WANNA RESET EVERTHNG HERE" + reset_displayed_chat);
 
   our_socket.on("some_one_joined_group_chat", ({conv_id, joined_user_id} : {conv_id: number, joined_user_id: number}) =>
 		{	
@@ -82,7 +82,7 @@ console.log("I WANNA RESET EVERTHNG HERE" + reset_displayed_chat);
 		const set_new_displayed_chat = async () =>
 		{
 			try {
-        console.log("tryin so hard");
+        // console.log("tryin so hard");
         
 				if (reset_displayed_chat !== -1){
 					const response = await fetch(`http://localhost:3003/conversation/getConversationById/${reset_displayed_chat}`, {

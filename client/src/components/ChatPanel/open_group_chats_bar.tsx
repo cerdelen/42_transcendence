@@ -79,9 +79,9 @@ const Group_chat_preview_card = ({
       }
     );
     const data = await response.json();
-    console.log("after fetch" + JSON.stringify(data));
+    // console.log("after fetch" + JSON.stringify(data));
     if (data == true) {
-      console.log("got inot the data == true ");
+      // console.log("got inot the data == true ");
 
       // let arr: number[] = [];
       // for (let i = 0; i < my_chats_ids.length; i++) {
@@ -162,14 +162,14 @@ const Get_all_open_group_chats = ({
 
   our_socket.on("some_one_left_group_chat", ({ conv_id, left_user_id, conv_still_exists }: { conv_id: number, left_user_id: number, conv_still_exists: boolean }) =>
   {
-    console.log("this is the on subscriber");
+    // console.log("this is the on subscriber");
     if (left_user_id == Number(userId) && conv_still_exists)
     {
         if (!not_joined_chats_ids.includes(conv_id))
           setNot_joined_chats_ids([...not_joined_chats_ids, conv_id]);
     }
   });
-  console.log(not_joined_chats_ids);
+  // console.log(not_joined_chats_ids);
   
   return (
     <ul className="list-cards">

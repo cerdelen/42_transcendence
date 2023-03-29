@@ -129,7 +129,7 @@ function App() {
   })
   useEffect(() =>
   {
-    console.log("User id on the frontend " , userId)
+    // console.log("User id on the frontend " , userId)
     our_socket.emit("setupUserSocketId", userId);
   }, [userId])
   // useEffect(() => 

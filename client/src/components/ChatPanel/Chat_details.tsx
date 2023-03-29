@@ -91,6 +91,7 @@ const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details}
 	const [ is_muted, set_is_muted ] = useState(false);
 	const [display_popup, set_display_popup ] = useState(false);
 	const [user_name, set_user_name] = useState("");
+
 	useEffect (() => 
 	{
 		async function get_name()
@@ -116,13 +117,36 @@ const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details}
 		}
 		get_name();
 	}, []);
+
 	
 	if (displayed_chat.conversation_owner_arr?.includes(user_id) && is_owner == false)
+	{
+		console.log("Status");
+		
+		console.log(displayed_chat.conversation_owner_arr?.includes(user_id));
+		
 		set_is_owner(true);
-	if (displayed_chat.conversation_admin_arr?.includes(user_id) && is_admin == false)
+		console.log("setting " + user_name + " as owner");
+	}
+	else if (!displayed_chat.conversation_owner_arr?.includes(user_id) && is_owner == true)
+	{
+		set_is_owner(false)
+	}
+	
+	if (displayed_chat.conversation_admin_arr?.includes(user_id) && is_admin == false) {
 		set_is_admin(true);
-	if (displayed_chat.conversation_mute_list_arr?.includes(user_id) && is_muted == false)
+	}
+	else if (!displayed_chat.conversation_admin_arr?.includes(user_id) && is_admin == true)
+	{
+		set_is_admin(false)
+	}
+	if (displayed_chat.conversation_mute_list_arr?.includes(user_id) && is_muted == false){
 		set_is_muted(true);
+	}
+	else if (!displayed_chat.conversation_mute_list_arr?.includes(user_id) && is_muted == true)
+	{
+		set_is_muted(false)
+	}
 
 	//console.log(`USERNAME ${user_name}`);
 	
@@ -153,9 +177,7 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 
 
 		our_socket.on("some_one_joined_group_chat", ({conv_id, joined_user_id} : {conv_id: number, joined_user_id: number}) =>
-		{
-			console.log();
-			
+		{			
 			if (joined_user_id != Number(userId) && conv_id == displayed_chat.conversation_id)
 			{
 				set_user_ids_in_chat_details([... user_ids_in_chat_details, joined_user_id]);
@@ -178,8 +200,8 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 		<div className="Chat_details">
 			<div className="Chat_name_for_chat_details">{displayed_chat.conversation_name}</div>
 			<ul className="User_list_in_chat_detals">
-				{user_ids_in_chat_details.map((user_id, idx) => (
-					<Participant_in_chat_detail_card user_id={user_id} key={idx} set_user_ids_in_chat_details={set_user_ids_in_chat_details}/>
+				{user_ids_in_chat_details.map((user_id) => (
+					<Participant_in_chat_detail_card user_id={user_id} key={user_id} set_user_ids_in_chat_details={set_user_ids_in_chat_details}/>
 				))}
 			</ul>
 			{

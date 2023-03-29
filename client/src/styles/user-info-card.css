@@ -56,7 +56,7 @@
 }
 
 
-#userInfo #friend-card {
+.friend-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -69,12 +69,12 @@
     border: .5mm ridge white ;
 }
 
-#userInfo #friend-card img{
+.friend-card img{
     border-top-left-radius: 25px;
     border-bottom-left-radius: 25px;
 }
 
-#userInfo #friend-card span{
+.friend-card span{
     margin-right: 2rem;
 }
 

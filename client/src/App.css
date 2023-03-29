@@ -11,6 +11,7 @@
 @import "./styles/community-left-column.css";
 @import "./styles/community-right-column.css";
 @import "./styles/home-page-cat.css";
+@import "./styles/chat-details.css";
 
 /* GENERAL */
 body {
@@ -320,13 +321,7 @@ footer {
   min-height: 32.5vh; */
 }
 
-.Chat_details
-{
-  padding: 0;
-  overflow-x: auto;
-  max-height: 32.5vh;
-  min-height: 32.5vh;
-}
+
 
 #user-name {
   overflow: hidden;
@@ -370,12 +365,6 @@ footer {
 
 
 
-.Chat_details {
-  padding: 0;
-  overflow-x: none;
-  max-height: 32.5vh;
-  min-height: 32.5vh;
-}
 
 .Chat_name_for_chat_details {
   white-space: nowrap;

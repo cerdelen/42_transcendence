@@ -9,7 +9,7 @@ interface NameProps {
 
 const NameComponent = ({ name, pic }: NameProps) => {
   return (
-    <li id="friend-card">
+    <li className="friend-card">
       <img
         src={pic}
         alt="userPhoto"

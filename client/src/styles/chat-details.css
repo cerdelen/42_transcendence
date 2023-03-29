@@ -1,0 +1,39 @@
+.Chat_details {
+	border: 1px solid yellow;
+}
+
+
+/* .Chat_details {
+	padding: 0;
+	overflow-x: none;
+	max-height: 32.5vh;
+	min-height: 32.5vh;
+  } */
+
+
+
+/* CHAT_PARTICIPANT_CARD */
+
+.friend-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-width: 220px;
+	margin-bottom: 0.6rem;
+	border-radius: 25px;
+	background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140));
+	margin-left: 0;
+	padding-left: 0;
+	border: .5mm ridge white;
+}
+
+.participant-card img {
+	border-top-left-radius: 25px;
+	border-bottom-left-radius: 25px;
+	width: 64px;
+	height: 64px;
+}
+
+.friend-card span {
+	margin-right: 2rem;
+}

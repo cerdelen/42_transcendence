@@ -12,6 +12,7 @@
 @import "./styles/community-right-column.css";
 @import "./styles/home-page-cat.css";
 @import "./styles/chat-details.css";
+/* @import "./components/ladder/Ladder.css"; */
 
 /* GENERAL */
 body {

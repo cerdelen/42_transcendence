@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import JSCookies from "js-cookie";
-
+import "./Ladder.css"
 
 
 const Ladder_card = ({ rank, mmr, name }: { rank: number, mmr: number, name: string }) =>
 {
     return (
-        <li key={rank}> {rank + 1}   {name}{mmr}</li>
+        <li key={rank} className="ladder-card"> {rank + 1}   {name}{mmr}</li>
     )
 }
 
@@ -36,7 +36,7 @@ const Ladder = () =>
 	  
 
 	return(
-		<ul>
+		<ul className="rankings-ladder">
 			{
 				ladder.map((player:{mmr: number, name: string}, idx)=>(
 					<Ladder_card key={idx} rank={idx} mmr={player.mmr} name={player.name}/>

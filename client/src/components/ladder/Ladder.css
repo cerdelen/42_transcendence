@@ -1,0 +1,21 @@
+.rankings-ladder {
+	/* padding-top: 115px; */
+	border: 2px solid pink;
+	height: 60%;
+	overflow: auto;
+	list-style-type: none;
+	padding: 0;
+	padding-top: 15px;
+}
+
+.ladder-card {
+	text-decoration: none;
+	background-color: purple;
+	margin-bottom: 15px;
+	/* justify-content: center; */
+	/* align-self: center; */
+	text-align: center;
+	padding: 20px;
+	font-size: xx-large;
+
+}

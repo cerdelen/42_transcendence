@@ -24,7 +24,7 @@ import { emit } from "process";
 
 import { useNavigate } from 'react-router-dom';
 import PopUp from "./components/Popup";
-import Ladder from "./Ladder/Ladder";
+import Ladder from "./components/ladder/Ladder";
 
 
 

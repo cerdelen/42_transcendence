@@ -8,9 +8,9 @@ import { json } from "react-router-dom";
 import { our_socket } from "../../utils/context/SocketContext";
 import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
 
-const Chat_name_input = ({setButton_state}: { setButton_state: any;}) => {
+const Chat_name_input = ({ setButton_state }: { setButton_state: any; }) => {
 
-  const {my_chats_ids, setmy_chats_ids, not_joined_chats_ids, setNot_joined_chats_ids} =  useMyChatCardsContext();
+  const { my_chats_ids, setmy_chats_ids, not_joined_chats_ids, setNot_joined_chats_ids } = useMyChatCardsContext();
   const [inputValue, setInputValue] = useState("");
   const { setDisplayed_chat } = useMyDisplayedChatContext();
 
@@ -118,12 +118,12 @@ const Group_chat_preview_card = ({
   }, []);
   return (
     <li className="Chat_preview_cards" onClick={handleOnClick}>
-      <div>
+      {/* <div> */}
         <img src={group_picture} alt="" />
         <span id="user-name" title={"chat_name"}>
           {conversation_name}
         </span>
-      </div>
+      {/* </div> */}
     </li>
   );
 };
@@ -138,8 +138,7 @@ const Get_all_open_group_chats = ({
   my_chats_ids: number[];
   setmy_chats_ids: any;
   setNot_joined_chats_ids: any;
-}) =>
-{
+}) => {
   const { userId } = useContext(UserContext);
   useEffect(() => {
     async function get_ids() {
@@ -160,17 +159,15 @@ const Get_all_open_group_chats = ({
     get_ids();
   }, []);
 
-  our_socket.on("some_one_left_group_chat", ({ conv_id, left_user_id, conv_still_exists }: { conv_id: number, left_user_id: number, conv_still_exists: boolean }) =>
-  {
+  our_socket.on("some_one_left_group_chat", ({ conv_id, left_user_id, conv_still_exists }: { conv_id: number, left_user_id: number, conv_still_exists: boolean }) => {
     // console.log("this is the on subscriber");
-    if (left_user_id == Number(userId) && conv_still_exists)
-    {
-        if (!not_joined_chats_ids.includes(conv_id))
-          setNot_joined_chats_ids([...not_joined_chats_ids, conv_id]);
+    if (left_user_id == Number(userId) && conv_still_exists) {
+      if (!not_joined_chats_ids.includes(conv_id))
+        setNot_joined_chats_ids([...not_joined_chats_ids, conv_id]);
     }
   });
   // console.log(not_joined_chats_ids);
-  
+
   return (
     <ul className="list-cards">
       {not_joined_chats_ids.map((chat_id, idx) => (
@@ -189,12 +186,14 @@ const Get_all_open_group_chats = ({
 
 const Open_group_cards = () => {
   // console.log("rendering Open_group_cards");
-  const {my_chats_ids, setmy_chats_ids, not_joined_chats_ids, setNot_joined_chats_ids} =  useMyChatCardsContext();
+  const { my_chats_ids, setmy_chats_ids, not_joined_chats_ids, setNot_joined_chats_ids } = useMyChatCardsContext();
   const [button_state, setButton_state] = useState(true);
   return (
     <div className="community-side-collumn">
       <div className="right-pane-column">
         <h2>JOIN GROUP CHATS</h2>
+
+
         <Get_all_open_group_chats
           not_joined_chats_ids={not_joined_chats_ids}
           my_chats_ids={my_chats_ids}
@@ -203,7 +202,7 @@ const Open_group_cards = () => {
         />
 
         {button_state ? (
-          <button onClick={() => setButton_state(false)}>
+          <button className="purple-button" onClick={() => setButton_state(false)}>
             CEATE GROUP CHAT
           </button>
         ) : (

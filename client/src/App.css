@@ -334,7 +334,6 @@ footer {
   white-space: nowrap;
   max-width: 9rem;
   word-wrap: break-word;
-  border: 1px solid red;
 }
 
 #in-a-game {
@@ -693,12 +692,3 @@ body {
 body {
   background: #A4FFC4;
 } */
-
-
-.popup-content {
-  margin: auto;
-  background: rgb(233, 211, 11);
-  color: #000;
-  width: 50%;
-  padding: 5px;
-}

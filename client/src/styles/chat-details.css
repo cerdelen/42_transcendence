@@ -1,5 +1,13 @@
 .Chat_details {
-	border: 1px solid yellow;
+	width: 100%;
+	height: 80%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	overflow: auto;
+	border-radius: 5px;
+	box-shadow: 0 0 20px 5px rgb(138 34 142 / 90%);
+	background-image: linear-gradient(to bottom left, rgb(0, 0, 0), rgb(96, 62, 135));
 }
 
 
@@ -14,7 +22,7 @@
 
 /* CHAT_PARTICIPANT_CARD */
 
-.friend-card {
+.participant-card {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -34,6 +42,33 @@
 	height: 64px;
 }
 
-.friend-card span {
+/* .friend-card span {
 	margin-right: 2rem;
+} */
+
+.icons{
+	margin-right: 1rem;
+	color: purple;
+}
+
+/* NAME */
+
+
+.Chat_name_for_chat_details {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-weight: 700;
+	font-size: larger;
+	color: rgb(252, 252, 252);
+	align-self: stretch;
+	background-color: purple;
+	padding-left: 1rem;
+	padding-top: .6rem;
+	padding-bottom: .6rem;
+}
+
+.admin-buttons {
+	display: flex;
+	flex-direction: column;
 }

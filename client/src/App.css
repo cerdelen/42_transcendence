@@ -201,7 +201,8 @@ header .basic:hover {
 }
 
 .purple-button {
-  background-color: #381a72;
+  /* background-color: #381a72; */
+  background-color: purple;
   color: white;
   border-radius: 15px;
   font-size: 1rem;
@@ -363,17 +364,6 @@ footer {
 
 }
 
-
-
-
-.Chat_name_for_chat_details {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 700;
-  font-size: larger;
-  color: rgb(252, 252, 252);
-}
 
 .User_list_in_chat_detals {
   max-height: calc(32.5vh - 10vh);

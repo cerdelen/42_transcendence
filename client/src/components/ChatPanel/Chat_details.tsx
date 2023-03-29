@@ -69,7 +69,7 @@ const PasswordSetter = () => {
 		<>
 			{
 				show_button ?
-					<button onClick={() => handleSetPassword(set_show_button)}>Set Password</button>
+					<button className="purple-button" onClick={() => handleSetPassword(set_show_button)}>Set Password</button>
 					:
 					<Password_input setButton_state={set_show_button} chat_id={displayed_chat.conversation_id} />
 			}
@@ -164,13 +164,12 @@ const Participant_in_chat_detail_card = ({ user_id, set_user_ids_in_chat_details
 		<div className="participant-card" onClick={() => open_admin_as()}>
 			<img src={photo} alt="" />
 			{is_me ? <span> You </span> : <span> {user_name} </span>}
-			<div>
-
-			{is_owner && <FaCrown title="owner" />}
-			{is_admin && <RiAdminLine title="admin" />}
-			{is_muted && <RiVolumeMuteFill title="muted" />}
+			<div className="icons">
+				{is_owner && <FaCrown title="owner" />}
+				{is_admin && <RiAdminLine title="admin" />}
+				{is_muted && <RiVolumeMuteFill title="muted" />}
+				{display_popup && <Popup_chat_administration user_id={user_id} setmuted={set_is_muted} setadmin={set_is_admin} setowner={set_is_owner} set_user_ids_in_chat_details={set_user_ids_in_chat_details} />}
 			</div>
-			{display_popup && <Popup_chat_administration user_id={user_id} setmuted={set_is_muted} setadmin={set_is_admin} setowner={set_is_owner} set_user_ids_in_chat_details={set_user_ids_in_chat_details} />}
 		</div>
 	);
 }
@@ -207,20 +206,23 @@ const Chat_details = ({ not_joined_chats_ids, my_chats_ids, setmy_chats_ids, set
 
 	return (
 		<div className="Chat_details">
-			<div className="Chat_name_for_chat_details">{displayed_chat.conversation_name}</div>
+			{displayed_chat.conversation_name && <div className="Chat_name_for_chat_details">{displayed_chat.conversation_name}</div>}
 			<ul className="User_list_in_chat_detals">
 				{user_ids_in_chat_details.map((user_id) => (
 					<Participant_in_chat_detail_card user_id={user_id} key={user_id} set_user_ids_in_chat_details={set_user_ids_in_chat_details} />
 				))}
 			</ul>
-			{/* {
-				displayed_chat.group_chat && <button onClick={() => handleLeaveChat(displayed_chat.conversation_id, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids, displayed_chat.group_chat)}>Leave Chat</button>
-			}
-			{
-				(displayed_chat.group_chat && displayed_chat.conversation_owner_arr?.includes(Number(userId))) &&
-				<PasswordSetter />
+			<div className="admin-buttons">
 
-			} */}
+				{
+					displayed_chat.group_chat && <button className="purple-button" onClick={() => handleLeaveChat(displayed_chat.conversation_id, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids, displayed_chat.group_chat)}>Leave Chat</button>
+				}
+				{
+					(displayed_chat.group_chat && displayed_chat.conversation_owner_arr?.includes(Number(userId))) &&
+					<PasswordSetter />
+
+				}
+			</div>
 		</div>
 	)
 }

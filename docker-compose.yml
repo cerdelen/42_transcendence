@@ -39,7 +39,7 @@ services:
     depends_on:
       - postgres_db
     restart: always
-    command: ['./wait-for-it.sh', 'postgres_db:5432', '--', 'nodemon']
+    command: ['./wait-for-it.sh', 'postgres_db:5432', '--', './start.sh']
     container_name: server
   #############
   ## CLIENT ##

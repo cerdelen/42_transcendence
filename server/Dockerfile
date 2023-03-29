@@ -7,6 +7,6 @@ COPY . ./
 RUN npm install -g nodemon --silent
 RUN npm install --silent
 RUN apk add --no-cache bash
-#RUN npx prisma db push
+RUN npx prisma generate
 
 EXPOSE 5500

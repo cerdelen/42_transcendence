@@ -112,15 +112,12 @@ const UserPage = () => {
             <div>
               <UserPhoto userId={userIdCard} />
             </div>
-
             <div id="generic-info">
               <span>{`Player: ${userName}`}</span>
               <span>{`Email: ${userEmail}`}</span>
               {isMe ? <span>{`2FA enabled: ${TFA}`}</span> : <span></span>}
 
-              {isMe ? (
-                <div></div> //////REMINDER TO CHANGE THIS
-              ) : (
+              {!isMe &&
                 <div id="buttons">
                   <button className="purple-button" onClick={startChat}>
                     Chat
@@ -138,7 +135,7 @@ const UserPage = () => {
                     {isFriend ? "Unfriend" : "Friend"}
                   </button>
                 </div>
-              )}
+              }
             </div>
             <UserStats userId={userIdCard} />
           </div>

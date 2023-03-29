@@ -169,8 +169,12 @@ const Get_all_my_chats = () =>
 				const default_chat : displayed_chat_class = { conversation_id: -1, conversation_participant_arr: []}
 				setDisplayed_chat(default_chat);
 				const conv_indx = my_chats_ids.indexOf(conv_id);
-				if (conv_indx !== -1){
+				if (conv_indx !== -1)
+				{
+					console.log("we want to splice id " + conv_id + " at idx " + conv_indx);
+					console.log(my_chats_ids);
 					my_chats_ids.splice(conv_indx, 1);
+					console.log(my_chats_ids);
 					setmy_chats_ids([...my_chats_ids]);
 				}
 				
@@ -182,8 +186,8 @@ const Get_all_my_chats = () =>
 			<h2>My Chats</h2>
 			<ul className='list-cards' >
 				{
-					my_chats_ids.map((chat_id, idx) => (
-						<Chat_preview_card key={idx} chat_id={chat_id} userId={userId} />
+					my_chats_ids.map((chat_id) => (
+						<Chat_preview_card key={chat_id} chat_id={chat_id} userId={userId} />
 					))
 				}	
 			</ul>

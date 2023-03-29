@@ -12,6 +12,8 @@ import { RiVolumeMuteFill } from "react-icons/ri";
 
 const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<displayed_chat_class>>, userId:string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any, group_chat: boolean|undefined) =>
 {
+	console.log("calling this handleLeaveChat");
+	
 	if (group_chat == false)
 		return ;
 	if (chat_id != -1)
@@ -63,6 +65,8 @@ const handleSetPassword = (set_show_button: React.Dispatch<React.SetStateAction<
 	set_show_button(false);
 }
 
+
+
 const PasswordSetter = () =>
 {
 	const { displayed_chat } = useMyDisplayedChatContext();
@@ -89,6 +93,9 @@ const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details}
 	const [ is_muted, set_is_muted ] = useState(false);
 	const [display_popup, set_display_popup ] = useState(false);
 	const [user_name, set_user_name] = useState("");
+	const { userId } = useContext(UserContext);
+	const is_me = Number(userId) == user_id;
+
 	useEffect (() => 
 	{
 		async function get_name()
@@ -114,19 +121,43 @@ const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details}
 		}
 		get_name();
 	}, []);
+
 	
 	if (displayed_chat.conversation_owner_arr?.includes(user_id) && is_owner == false)
+	{
 		set_is_owner(true);
-	if (displayed_chat.conversation_admin_arr?.includes(user_id) && is_admin == false)
+	}
+	else if (!displayed_chat.conversation_owner_arr?.includes(user_id) && is_owner == true)
+	{
+		set_is_owner(false)
+	}
+	
+	if (displayed_chat.conversation_admin_arr?.includes(user_id) && is_admin == false) {
 		set_is_admin(true);
-	if (displayed_chat.conversation_mute_list_arr?.includes(user_id) && is_muted == false)
+	}
+	else if (!displayed_chat.conversation_admin_arr?.includes(user_id) && is_admin == true)
+	{
+		set_is_admin(false)
+	}
+	if (displayed_chat.conversation_mute_list_arr?.includes(user_id) && is_muted == false){
 		set_is_muted(true);
+	}
+	else if (!displayed_chat.conversation_mute_list_arr?.includes(user_id) && is_muted == true)
+	{
+		set_is_muted(false)
+	}
 
 	//console.log(`USERNAME ${user_name}`);
+	const open_admin_as = () =>
+	{		
+		if(Number(userId) != user_id && displayed_chat.group_chat == true)
+			set_display_popup(!display_popup);
+	}
+
 	
 	return (
-		<div onClick={() => set_display_popup(!display_popup)}>
-			<span>{user_name} </span>
+		<div onClick={() => open_admin_as()}>
+			{is_me ? <span> You </span> : <span> {user_name} </span>}
 			{is_owner && <FaCrown title="owner"/>}
 			{is_admin && <RiAdminLine title="admin"/>}
 			{is_muted && <RiVolumeMuteFill title="muted"/>}
@@ -141,7 +172,6 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 	const { userId } = useContext(UserContext);
 	const [ user_ids_in_chat_details , set_user_ids_in_chat_details] = useState<number[]>([...displayed_chat.conversation_participant_arr]);
-	// const is_owner : boolean = displayed_chat.conversation_owner_arr?.findIndex(Number(userId)) != -1;
 
 	useEffect(() => {
 		async function set_map(){
@@ -151,13 +181,32 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 	  }, [displayed_chat]);
 
 
+		our_socket.on("some_one_joined_group_chat", ({conv_id, joined_user_id} : {conv_id: number, joined_user_id: number}) =>
+		{			
+			if (joined_user_id != Number(userId) && conv_id == displayed_chat.conversation_id)
+			{
+				set_user_ids_in_chat_details([... user_ids_in_chat_details, joined_user_id]);
+			}
+		});
+
+		our_socket.on("some_one_left_group_chat", ({conv_id, left_user_id, conv_still_exists} : {conv_id: number, left_user_id: number, conv_still_exists: boolean}) =>
+		{
+			if (left_user_id != Number(userId) && conv_id == displayed_chat.conversation_id && conv_still_exists)
+			{
+				const left_user_idx = user_ids_in_chat_details.indexOf(left_user_id);
+				if (left_user_idx !== -1){
+					user_ids_in_chat_details.splice(left_user_idx, 1);
+					set_user_ids_in_chat_details([...user_ids_in_chat_details]);
+				}
+			}
+		});
 
 	return (
 		<div className="Chat_details">
 			<div className="Chat_name_for_chat_details">{displayed_chat.conversation_name}</div>
 			<ul className="User_list_in_chat_detals">
-				{user_ids_in_chat_details.map((user_id, idx) => (
-					<Participant_in_chat_detail_card user_id={user_id} key={idx} set_user_ids_in_chat_details={set_user_ids_in_chat_details}/>
+				{user_ids_in_chat_details.map((user_id) => (
+					<Participant_in_chat_detail_card user_id={user_id} key={user_id} set_user_ids_in_chat_details={set_user_ids_in_chat_details}/>
 				))}
 			</ul>
 			{

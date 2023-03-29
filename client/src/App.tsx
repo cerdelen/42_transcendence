@@ -18,13 +18,13 @@ import { io } from "socket.io-client";
 import { SocketContext, our_socket } from "./utils/context/SocketContext";
 import Community from "./components/community/CommunityPage";
 import LandingPage from "./LandingPage";
-import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { emit } from "process";
 
 
 import { useNavigate } from 'react-router-dom';
 import PopUp from "./components/Popup";
+import Ladder from "./Ladder/Ladder";
 
 
 
@@ -43,10 +43,8 @@ function App() {
   const [friendlist, setFriendslist] = useState([]);
   const [stats, setStats] = useState({});
   const [games, setGames] = useState([]);
-  // const [isInvited, setIsInvited] = useState(false);
   const [show_default_image, setHasPicture] = useState(false);
   const [inviterName, setinviterName] = useState("");
-  // const navigate = useNavigate();
   async function getUser() {
     try {
       let response = await fetch("http://localhost:3003/user/get_id", {
@@ -132,7 +130,7 @@ function App() {
   })
   useEffect(() =>
   {
-    console.log("User id on the frontend " , userId)
+    // console.log("User id on the frontend " , userId)
     our_socket.emit("setupUserSocketId", userId);
   }, [userId])
   // useEffect(() => 
@@ -175,6 +173,7 @@ function App() {
                 <Route index element={<LandingPage/>} />
                 <Route path="/game" element={<Game userId={userId} />} />
                 <Route path="/community" element={<Community userId={userId} />} />
+                <Route path="/ladder" element={<Ladder />} />
               </Route>
               <Route path="/auth" element={<SecondFactorPage />} />
             </Routes>

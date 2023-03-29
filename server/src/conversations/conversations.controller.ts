@@ -13,13 +13,15 @@ import { ConversationModule } from './conversations.module';
 import { userInfo } from 'os';
 import { request } from 'http';
 import { PrismaService } from '../prisma/prisma.service';
+import { conversationGateway } from './conversationSocket/conversation.gateway';
 
 
 @Controller('conversation')
 export class ConversationController {
 	constructor (
 		private readonly conversationsService: ConversationService,
-		private readonly userService: UserService) {}
+		private readonly userService: UserService,
+		private readonly convGateway: conversationGateway) {}
 
 
 	@UseGuards(Jwt_Auth_Guard)
@@ -78,20 +80,13 @@ export class ConversationController {
 		async joinConversation(
 			@Req() req: any,	
 			@Param('chat_id') chat_id: number
-			
 		) {
 			console.log("CHAT_ID " + chat_id);
-			// const conversationId = chat_id;
 			const existingConversation = await this.conversationsService.findConversation(chat_id)
 			if (!existingConversation.group_chat) {
 				console.log("The conversation is not a group chat!");
 				return null;
 			}
-			// if (!existingConversation) return null;
-			// if (!existingConversation.group_chat)
-			// 	return null;
-				//TODO
-				//banlist
 			const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);		//is he already part of the chat
 			if (userIdx > -1) return (false);			// this means he is already part of the chat and i dont want to add him again
 			await this.conversationsService.updateConversation({
@@ -105,17 +100,8 @@ export class ConversationController {
 				}
 			})
 			this.conversationsService.updateConversationIdInUser(req.user.id, chat_id);
+			this.convGateway.joined_chat(Number(chat_id), Number(req.user.id));
 			return (true);
-			// 	where: {
-			// 		id : Number(req.user.id)
-			// 	},
-			// 	data: {         
-			// 		conversation_id_arr: {
-			// 			push: Number(chat_id)
-			// 		}
-			// 	}
-			// })
-			// return updatedUser
 		}
 
 		@UseGuards(Jwt_Auth_Guard)
@@ -124,7 +110,7 @@ export class ConversationController {
 		{
 			// console.log("this is password in controller " + JSON.stringify( password));
 			// console.log("this is password in controller " + password);
-			
+
 			await this.conversationsService.set_password(Number(chat_id), Number(req.user.id), password);
 		}
 

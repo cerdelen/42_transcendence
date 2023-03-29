@@ -7,13 +7,47 @@ import { UserService } from 'src/user/user.service';
 import { io_server } from 'src/utils/Server';
 import { interval } from 'rxjs';
 import { Socket } from 'dgram';
+import { emit } from 'process';
 let roomNames: { roomName: string, gameInstance: any }[] = [];
+
+let invitationRooms = {};
+let invitationRoomsNames : { roomName: string, gameInstance: any}[] = [];
+
+interface invitesType
+{
+  creator_id: string;
+  invitee_id: string;
+};
+let invites : invitesType[] = [];
 
 const state = {};
 const clientRooms = {};
 let gameCode: string = "";
 
 let response: number = 0;
+
+
+async function emitToTheUserSocket(user: any, server: Server, event_name:string, message: string)
+{
+  const sockets = await server.fetchSockets();
+  let final_socket : any = {}; 
+  let found : boolean = false;
+  sockets.forEach( (e)  => 
+  {
+    if(e.id === user.socketId)
+    {
+      final_socket = e;
+      found = true;
+    }
+  });
+  if(!found)
+  {
+    console.log("Socket of invitee not found");
+    return ;
+  }
+  
+  final_socket.emit(event_name, message)
+}
 
 @WebSocketGateway(
   {
@@ -72,25 +106,74 @@ export class GameGateway {
     //Make user online boolean
   }
 
-  @SubscribeMessage('createInvitationRoom')
-  async handleInvitation(@MessageBody() userId: string, @ConnectedSocket() client)
+  @SubscribeMessage('playerAccepted')
+  async playerAccepted(@MessageBody() obj, @ConnectedSocket() socket)
   {
-    console.log("Siemanko");
+    let new_obj = JSON.parse(obj);
+    let user = await this.userService.findUserByName(new_obj.inviterName)
+    console.log("Game screen lodade");
+  }
+  @SubscribeMessage('rejectInvite')
+  async rejectInvitation(@MessageBody() obj, @ConnectedSocket() socket)
+  {
+    let new_obj = JSON.parse(obj);
+    let user = await this.userService.findUserByName(new_obj.inviterName);
+    let new_invitation_obj : invitesType = {creator_id: String(user.id), invitee_id: new_obj.userId};
+    let delindex = invites.indexOf(new_invitation_obj);
+    if(!delindex)
+    {
+      console.log("Index to delete not found in reject invite ");
+      return ;
+    }
+    invites.splice(delindex, 1);
+    let new_user = await this.userService.findUserById(new_obj.userId);
+    emitToTheUserSocket(user, this.server, "gameCancelled", new_user.name)
+  }
+  
+  @SubscribeMessage('createInvitationRoom')
+  async handleInvitation(@MessageBody() obj , @ConnectedSocket() client)
+  {
+    let object = JSON.parse(obj);
+    let userId = object.userId;
+    let invitedUserId = object.userName;
+    let user = await this.userService.findUserByName(invitedUserId);
+    let unique : boolean = true;
     if (!roomNames[0]) {
-
-      console.log('newgame player id 1 is' + userId);
-
+      let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: invitedUserId};
+     
+      invites.forEach((entry) => {
+        if(entry.creator_id == userId && entry.invitee_id == String(user.id) || entry.creator_id == String(user.id)  && entry.invitee_id  == userId)
+        {
+          unique = false;
+        }
+      });
+      if(!unique)
+      {
+        console.log("Invitation already exist");
+        return ;
+      }
+      invites.push(new_invitation_obj);
+      
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
     
-      clientRooms[client.id] = game.id.toString();
+      invitationRooms[client.id] = game.id.toString();
       client.emit('gameCode', game.id.toString());
       state[game.id] = getInitialState();
     
       client.join(game.id.toString());
     
       client.emit('invitationInit', 1);
-      console.log("Emiting intialization");
-      roomNames.push({ roomName: game.id.toString(), gameInstance: game });
+      invitationRoomsNames.push({ roomName: game.id.toString(), gameInstance: game });
+
+      //find invited user socket Id
+      console.log(userId + " Inviting user " , invitedUserId);
+      let creator = await this.userService.findUserById(Number.parseInt(userId));
+      console.log("Sending event here" , user.socketId);
+      emitToTheUserSocket(user, this.server, "invitationPopUp", creator.name)
+      invites.forEach(element => {
+        console.log("User number " + element.creator_id + " invited " + element.invitee_id);
+      });
+    
       return;
     }
   }

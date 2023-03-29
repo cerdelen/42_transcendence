@@ -6,7 +6,7 @@
     border-radius: 50px;
 }
 
-#user-statistics .no-achievement {
+.no-achievement {
     width: 64px;
     height: 64px;
     border: 1mm ridge purple;

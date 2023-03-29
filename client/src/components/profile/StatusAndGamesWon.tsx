@@ -1,9 +1,13 @@
 import { players, Player } from "../../models/temp-players";
 const player: Player = players[0];
 
-type Props = {};
+type Props = {
+  wins: number;
+};
 
 const StatusAndGamesWon = (props: Props) => {
+  console.log("wins = " + props.wins);
+
   return (
     <div id="status-games-won">
       <span
@@ -13,7 +17,7 @@ const StatusAndGamesWon = (props: Props) => {
       <span id="availability">
         {player.availability ? "ONLINE" : "OFFLINE"}
       </span>
-      <span style={{ fontWeight: "bolder" }}>WINS {player.gamesWon} </span>
+      <span style={{ fontWeight: "bolder" }}>WINS {props.wins} </span>
     </div>
   );
 };

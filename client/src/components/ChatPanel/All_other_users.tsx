@@ -29,7 +29,6 @@ const User_preview_card = ({other_user_id} : {other_user_id: number}) => {
 				const response_two = await fetch(`http://localhost:3003/pictures/${other_user_id}`, {
 					method: "Get",
 					headers: {
-						// "Content-Type": "application/json",
 						Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 					},
 				}) 

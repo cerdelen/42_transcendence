@@ -65,6 +65,8 @@ const handleSetPassword = (set_show_button: React.Dispatch<React.SetStateAction<
 	set_show_button(false);
 }
 
+
+
 const PasswordSetter = () =>
 {
 	const { displayed_chat } = useMyDisplayedChatContext();
@@ -91,6 +93,8 @@ const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details}
 	const [ is_muted, set_is_muted ] = useState(false);
 	const [display_popup, set_display_popup ] = useState(false);
 	const [user_name, set_user_name] = useState("");
+	const { userId } = useContext(UserContext);
+	const is_me = Number(userId) == user_id;
 
 	useEffect (() => 
 	{
@@ -121,12 +125,7 @@ const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details}
 	
 	if (displayed_chat.conversation_owner_arr?.includes(user_id) && is_owner == false)
 	{
-		console.log("Status");
-		
-		console.log(displayed_chat.conversation_owner_arr?.includes(user_id));
-		
 		set_is_owner(true);
-		console.log("setting " + user_name + " as owner");
 	}
 	else if (!displayed_chat.conversation_owner_arr?.includes(user_id) && is_owner == true)
 	{
@@ -149,10 +148,16 @@ const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details}
 	}
 
 	//console.log(`USERNAME ${user_name}`);
+	const open_admin_as = () =>
+	{		
+		if(Number(userId) != user_id && displayed_chat.group_chat == true)
+			set_display_popup(!display_popup);
+	}
+
 	
 	return (
-		<div onClick={() => set_display_popup(!display_popup)}>
-			<span>{user_name} </span>
+		<div onClick={() => open_admin_as()}>
+			{is_me ? <span> You </span> : <span> {user_name} </span>}
 			{is_owner && <FaCrown title="owner"/>}
 			{is_admin && <RiAdminLine title="admin"/>}
 			{is_muted && <RiVolumeMuteFill title="muted"/>}

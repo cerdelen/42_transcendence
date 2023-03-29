@@ -24,6 +24,7 @@ import { emit } from "process";
 
 import { useNavigate } from 'react-router-dom';
 import PopUp from "./components/Popup";
+import Ladder from "./Ladder/Ladder";
 
 
 
@@ -172,6 +173,7 @@ function App() {
                 <Route index element={<LandingPage/>} />
                 <Route path="/game" element={<Game userId={userId} />} />
                 <Route path="/community" element={<Community userId={userId} />} />
+                <Route path="/ladder" element={<Ladder />} />
               </Route>
               <Route path="/auth" element={<SecondFactorPage />} />
             </Routes>

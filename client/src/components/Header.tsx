@@ -17,6 +17,7 @@ const Header = () => {
         <ul>
           <Link className="nav-link basic" to="/game">Game</Link>
           <Link className="nav-link basic" to="/community">Community</Link>
+          <Link className="nav-link basic" to="/ladder">Ladder</Link>
         </ul>
       </nav>
       <ProfileCard />

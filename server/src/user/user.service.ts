@@ -136,7 +136,7 @@ export class UserService {
 			{
 				this.add_achievement(user_id, 0)
 			}
-			if (stats.mmr >= 1685)
+			if (stats.mmr >= 1600)
 			{
 				this.add_achievement(user_id, 1)
 			}
@@ -381,5 +381,18 @@ export class UserService {
 			where: {id: user_id},
 			data: { blocked_users: user.blocked_users}
 		});
+	}
+
+	async	get_ladder()
+	{
+		const ladder : Stats [] = await this.prisma.stats.findMany({
+			orderBy:[{mmr: 'desc'}],
+		});
+		let arr : {mmr: Number, name: String}[] = []
+		for(let i = 0; i < ladder.length; i++)
+		{
+			arr.push({mmr: ladder[i].mmr, name: await this.get_user_name(ladder[i].stat_id)});
+		}
+		return (arr);
 	}
 }

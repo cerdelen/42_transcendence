@@ -12,6 +12,7 @@ interface Props {
 const UserStats = ({ userId }: Props) => {
   const [winRatio, setWinRatio] = useState(0.0);
   const [wins, setWins] = useState(0);
+  const [mmr, setMmr] = useState(0);
   const [loses, setLoses] = useState(0);
   const [achievementOne, setAchievementOne] = useState(false);
   const [achievementTwo, setAchievementTwo] = useState(false);
@@ -31,6 +32,7 @@ const UserStats = ({ userId }: Props) => {
       const stats = await response.json();
 
       const zeroDevision = (stats["loses"] + stats["wins"]) === 0;
+      setMmr(stats["mmr"]);
       setWins(stats["wins"]);
       setLoses(stats["loses"]);
       setWinRatio(zeroDevision ? 0 : stats["wins"] / (stats["loses"] + stats["wins"]));
@@ -42,16 +44,21 @@ const UserStats = ({ userId }: Props) => {
     fetchStats();
   }, [userId]);
 
+  const achiev_0 = "Win 2 Games";
+  const achiev_1 = "Reach a total amount of 1600 mmr";
+  const achiev_2 = "Win a game without letting your enemy score once";
+
   return (
     
     <div id="user-statistics">
       <div>{`Wins: ${wins}`}</div>
       <div>{`Loses: ${loses}`}</div>
+      <div>{`Rank: ${mmr}`}</div>
       <div>{`Wins Ratio: ${winRatio * 100}%`}</div>
       <div>
-        {achievementOne ? <img src={themeAchievement} alt="" /> : <div className="no-achievement">  </div>}
-        {achievementTwo ? <img src={threeWinsAchievement} alt="" /> : <div className="no-achievement">  </div>}
-        {achievementThree ? <img src={halfGamesAchievement} alt="" /> : <div className="no-achievement">  </div>}
+        {achievementOne ? <img src={themeAchievement} alt="achievement_0_true" title={achiev_0}/> : <div className="no-achievement" title={achiev_0}> </div>}
+        {achievementTwo ? <img src={threeWinsAchievement} alt="achievement_1_true" title={achiev_1}/> : <div className="no-achievement" title={achiev_1}>  </div>}
+        {achievementThree ? <img src={halfGamesAchievement} alt="achievement_2_true" title={achiev_2}/> : <div className="no-achievement" title={achiev_2}>  </div>}
       </div>
     </div>
   );

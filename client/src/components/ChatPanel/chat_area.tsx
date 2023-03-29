@@ -17,11 +17,7 @@ const Chat_input_filed_and_send_button = () => {
   const { displayed_chat } = useMyDisplayedChatContext();
   const { userId } = useContext(UserContext);
 
-  const sendMessage = () => {
-    //   console.log("sendMessage function beginning");
-    //   console.log("this is message text = " + input);
-    //   console.log("this is author = " + Number(userId));
-    //   console.log("this is chat_id = " + displayed_chat.conversation_id);
+  const sendMessage = () => {;
     our_socket.emit( "message", {
         author: Number(userId),
         text: input,
@@ -106,7 +102,7 @@ console.log("I WANNA RESET EVERTHNG HERE" + reset_displayed_chat);
 			}
 		}
 		set_new_displayed_chat();
-	}, []);
+	}, [reset_displayed_chat]);
   
   
 

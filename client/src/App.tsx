@@ -18,7 +18,6 @@ import { io } from "socket.io-client";
 import { SocketContext, our_socket } from "./utils/context/SocketContext";
 import Community from "./components/community/CommunityPage";
 import LandingPage from "./LandingPage";
-import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { emit } from "process";
 
@@ -43,10 +42,8 @@ function App() {
   const [friendlist, setFriendslist] = useState([]);
   const [stats, setStats] = useState({});
   const [games, setGames] = useState([]);
-  // const [isInvited, setIsInvited] = useState(false);
   const [show_default_image, setHasPicture] = useState(false);
   const [inviterName, setinviterName] = useState("");
-  // const navigate = useNavigate();
   async function getUser() {
     try {
       let response = await fetch("http://localhost:3003/user/get_id", {

@@ -63,22 +63,11 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
   const [messages, set_messages] = useState<Array<display_message_info>>([]);
   const chatWindow = useRef<HTMLDivElement>(null);
   const [ name_map, set_name_map ] = useState<Map<number, string>>(new Map);
-  // let name_map: Map<number, string> = new Map;
 	const { displayed_chat } = useMyDisplayedChatContext();
-  // name_map.set()
-
-
-
 
   our_socket.on("message", (message: message) => {
-    console.log("SOCKET ON MESSAGES");
-
-    //console.log(JSON.stringify(messages));
-    console.log(JSON.stringify(message));
-    
     if (message.chat_id == displayed_chat.conversation_id)
     {
-
       let newMessage: display_message_info[] = [];
       for (let i = 0; i < messages.length; i++) {
         newMessage.push(messages[i]);
@@ -86,23 +75,28 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
       newMessage.push(
         new display_message_info(message.text, Number(message.author_id))
         );
-        // //console.log(`New messages: ${newMessage}`);
-        
         set_messages(newMessage);
       }
     });
-  our_socket.on("typing", (typing: typing) => {
-    if (typing.isTyping && typing.chat_id == displayed_chat.conversation_id) {
+  our_socket.on("typing", (typing: typing) =>
+  {
+    if (typing.isTyping && typing.chat_id == displayed_chat.conversation_id)
+    {
       const name = name_map.get(Number(typing.name));
       setTypingDisplay(`${name} is typing ...`);
-    } else {
+    }
+    else
+    {
       setTypingDisplay("");
     }
   });
-  useEffect(() => {
-    const prep_name_map = async (participants: number[]) => {
+  useEffect(() =>
+  {
+    const prep_name_map = async (participants: number[]) =>
+    {
       let temp_map : Map<number, string> = new Map;
-      for (let index = 0; index < participants.length; index++) {        
+      for (let index = 0; index < participants.length; index++)
+      {
         const response = await fetch("http://localhost:3003/user/user_name", {
           method: "Post",
           headers: {
@@ -118,7 +112,8 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
       }
       set_name_map(temp_map);
     }
-    const get_messages = async (chat_id: number) => {
+    const get_messages = async (chat_id: number) =>
+    {
       //console.log("GET MESSAGES");
 
       if (chat_id == -1) {
@@ -160,9 +155,6 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
     get_messages(chat_id);
     prep_name_map(displayed_chat.conversation_participant_arr);
   }, [chat_id, displayed_chat]);
-
-
-
 
 
 useLayoutEffect(() => {

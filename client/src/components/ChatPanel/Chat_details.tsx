@@ -12,6 +12,8 @@ import { RiVolumeMuteFill } from "react-icons/ri";
 
 const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<displayed_chat_class>>, userId:string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any, group_chat: boolean|undefined) =>
 {
+	console.log("calling this handleLeaveChat");
+	
 	if (group_chat == false)
 		return ;
 	if (chat_id != -1)
@@ -141,7 +143,6 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 	const { userId } = useContext(UserContext);
 	const [ user_ids_in_chat_details , set_user_ids_in_chat_details] = useState<number[]>([...displayed_chat.conversation_participant_arr]);
-	// const is_owner : boolean = displayed_chat.conversation_owner_arr?.findIndex(Number(userId)) != -1;
 
 	useEffect(() => {
 		async function set_map(){
@@ -151,6 +152,27 @@ const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setN
 	  }, [displayed_chat]);
 
 
+		our_socket.on("some_one_joined_group_chat", ({conv_id, joined_user_id} : {conv_id: number, joined_user_id: number}) =>
+		{
+			console.log();
+			
+			if (joined_user_id != Number(userId) && conv_id == displayed_chat.conversation_id)
+			{
+				set_user_ids_in_chat_details([... user_ids_in_chat_details, joined_user_id]);
+			}
+		});
+
+		our_socket.on("some_one_left_group_chat", ({conv_id, left_user_id, conv_still_exists} : {conv_id: number, left_user_id: number, conv_still_exists: boolean}) =>
+		{
+			if (left_user_id != Number(userId) && conv_id == displayed_chat.conversation_id && conv_still_exists)
+			{
+				const left_user_idx = user_ids_in_chat_details.indexOf(left_user_id);
+				if (left_user_idx !== -1){
+					user_ids_in_chat_details.splice(left_user_idx, 1);
+					set_user_ids_in_chat_details([...user_ids_in_chat_details]);
+				}
+			}
+		});
 
 	return (
 		<div className="Chat_details">

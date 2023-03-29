@@ -138,7 +138,8 @@ const Get_all_open_group_chats = ({
   my_chats_ids: number[];
   setmy_chats_ids: any;
   setNot_joined_chats_ids: any;
-}) => {
+}) =>
+{
   const { userId } = useContext(UserContext);
   useEffect(() => {
     async function get_ids() {
@@ -158,18 +159,18 @@ const Get_all_open_group_chats = ({
     }
     get_ids();
   }, []);
-  // useEffect(() => {
 
-  //   		  }, []);
-
-  our_socket.on("some_one_left_group_chat", ({ conv_id, left_user_id, conv_still_exists }: { conv_id: number, left_user_id: number, conv_still_exists: boolean }) => {
-    if (left_user_id == Number(userId)) {
-      if (conv_still_exists) {
-        setNot_joined_chats_ids([...not_joined_chats_ids, conv_id])
-      }
+  our_socket.on("some_one_left_group_chat", ({ conv_id, left_user_id, conv_still_exists }: { conv_id: number, left_user_id: number, conv_still_exists: boolean }) =>
+  {
+    console.log("this is the on subscriber");
+    if (left_user_id == Number(userId) && conv_still_exists)
+    {
+        if (!not_joined_chats_ids.includes(conv_id))
+          setNot_joined_chats_ids([...not_joined_chats_ids, conv_id]);
     }
   });
-
+  console.log(not_joined_chats_ids);
+  
   return (
     <ul className="list-cards">
       {not_joined_chats_ids.map((chat_id, idx) => (

@@ -50,7 +50,7 @@
 #userInfo .user-info-lists {
     border: 2px solid lime;
     height: auto;
-    overflow: scroll;
+    overflow: auto;
     /* margin-left: 0; */
     padding: 1rem;
 }

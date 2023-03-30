@@ -169,7 +169,7 @@ const Get_all_open_group_chats = ({
   // console.log(not_joined_chats_ids);
 
   return (
-    <ul className="list-cards">
+    <ul className="list-cards right-shadow">
       {not_joined_chats_ids.map((chat_id, idx) => (
         <Group_chat_preview_card
           key={idx}

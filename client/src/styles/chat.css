@@ -5,9 +5,9 @@
     border: 1rem ridge ;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    /* justify-content: flex-end; */
     overflow-y: visible;
-    justify-content: start;
+    justify-content: flex-start;
     scroll-behavior: smooth;
     height: 65vh;
     /* transform: rotate(180deg);
@@ -59,6 +59,7 @@
   box-shadow:  
   10px 0 20px -10px rgba(0, 0, 0, 0.9),
   -10px 0 20px -10px rgba(0, 0, 0, 0.9);
+  word-wrap: break-word;
   /* transform: rotate(180deg);
     direction: ltr; */
 }
@@ -97,6 +98,7 @@
   box-shadow:  10px 0 20px -10px rgba(0, 0, 0, 0.9),
               -10px 0 20px -10px rgba(0, 0, 0, 0.9);
   overflow-x: hidden;
+  max-height: 90vh;
 }
 
 #chat-area h2{

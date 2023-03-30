@@ -136,7 +136,7 @@ export class UserService {
 			{
 				this.add_achievement(user_id, 0)
 			}
-			if (stats.mmr >= 1685)
+			if (stats.mmr >= 1600)
 			{
 				this.add_achievement(user_id, 1)
 			}
@@ -205,6 +205,18 @@ export class UserService {
 
 		let index_one;
 		let index_two;
+		if (!user_one || !user_two)
+		{
+			console.log("user one or user 2 is undefined");
+			console.log("user 1 " + user_one);
+			console.log("user 2 " + user_two);
+			
+			return ;
+
+		}
+		console.log("user one or user 2");
+		console.log("user 1 " + user_one);
+		console.log("user 2 " + user_two);
 		if(!user_one.games == null)
 			index_one = user_one.games.findIndex(x => x == game.id);
 		else
@@ -337,5 +349,50 @@ export class UserService {
 			where: {id: user_id}, 
 			data: {online: state},
 		});
+	}
+
+	async	block_user(user_id: number, user_to_block: number)
+	{
+		const user = await this.prisma.user.findUnique({where: { id: user_id }});
+
+		if (!user)
+			return ;
+		const idx = user.blocked_users.indexOf(user_to_block)
+		if (idx != -1)
+			return ;
+		user.blocked_users.push(user_to_block);
+		await this.prisma.user.update({
+			where: {id: user_id},
+			data: { blocked_users: user.blocked_users}
+		});
+	}
+
+	async	unblock_user(user_id: number, user_to_unblock: number)
+	{
+		const user = await this.prisma.user.findUnique({where: { id: user_id }});
+
+		if (!user)
+			return ;
+		const idx = user.blocked_users.indexOf(user_to_unblock)
+		if (idx == -1)
+			return ;
+		user.blocked_users.splice(idx, 1);
+		await this.prisma.user.update({
+			where: {id: user_id},
+			data: { blocked_users: user.blocked_users}
+		});
+	}
+
+	async	get_ladder()
+	{
+		const ladder : Stats [] = await this.prisma.stats.findMany({
+			orderBy:[{mmr: 'desc'}],
+		});
+		let arr : {mmr: Number, name: String}[] = []
+		for(let i = 0; i < ladder.length; i++)
+		{
+			arr.push({mmr: ladder[i].mmr, name: await this.get_user_name(ladder[i].stat_id)});
+		}
+		return (arr);
 	}
 }

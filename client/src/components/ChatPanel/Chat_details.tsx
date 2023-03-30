@@ -8,185 +8,222 @@ import Popup_chat_administration from "./Popup_chat_administration";
 import { FaCrown } from "react-icons/fa";
 import { RiAdminLine } from "react-icons/ri";
 import { RiVolumeMuteFill } from "react-icons/ri";
+import themeAchievement from "../../images/changed-theme-achievement.png";
+import path from "path";
 
+const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<displayed_chat_class>>, userId: string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids: any, setNot_joined_chats_ids: any, group_chat: boolean | undefined) => {
+	console.log("calling this handleLeaveChat");
 
-
-// const handleLeaveChat = () =>
-const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<displayed_chat_class>>, userId:string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any) =>
-{
-	if (chat_id != -1)
-	{
-
-		// //console.log("handleLeaveChat ");
-		our_socket.emit('leave_group_chat', {chat_id: chat_id, userId: userId});
-		const default_chat : displayed_chat_class = { conversation_id: -1, conversation_participant_arr: []}
-		setDisplayed_chat(default_chat);
-		let arr : number [] = []
-		for(let i = 0; i < my_chats_ids.length; i++)
-		{
-			if(chat_id != my_chats_ids[i])
-			arr.push(my_chats_ids[i]);
-		}
-		setmy_chats_ids(arr);
-		let arr_2 : number [] = []
-		for(let i = 0; i < not_joined_chats_ids.length; i++)
-		{
-			arr_2.push(not_joined_chats_ids[i]);
-		}
-		arr_2.push(chat_id);
-		setNot_joined_chats_ids(arr_2);
+	if (group_chat == false)
+		return;
+	if (chat_id != -1) {
+		our_socket.emit('leave_group_chat', { chat_id: chat_id, userId: userId });
 	}
 }
 
-const	Chat_details_chat_name = (displayed_chat: {displayed_chat: number}) =>
-{
-	const [chat_name, set_name] = useState("");
+const Password_input = ({ setButton_state, chat_id }: { setButton_state: any; chat_id: number }) => {
+	const [inputValue, setInputValue] = useState("");
 
-	// //console.log("GIOEWJIFEWOPKFPEOWKDFP{EWKOFE{PWOFKPEKWPFEWKP{FDLEW{PFLP{EW{PFLEWLP      " + displayed_chat.displayed_chat);
-	
+	const handleInputChange = (e: any) => {
+		setInputValue(e.target.value);
+	};
 
-	useEffect(() => {
-		async function get_name(){
-			const response = await fetch(`http://localhost:3003/conversation/getConversationNameById/${displayed_chat.displayed_chat}`, {
-				method: "Get",
-				headers: {
-					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-				},
-			})
-			if (response.ok)
-			{
-				const data : string = await response.json();
-				set_name(data);
-			}
+	const handleButtonClick = async () => {
+		if (inputValue.length > 0) {
+			console.log(chat_id + "chat id i append to url");
+
+			await fetch(
+				`http://localhost:3003/conversation/set_password/${chat_id}`,
+				{
+					method: "Post",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+					},
+					// body: JSON.stringify({"Password": inputValue}),
+					body: JSON.stringify({ Password: inputValue }),
+				}
+			);
+			setButton_state(true);
 		}
-		get_name();
-	  }, []);
+	};
+	return (
+		<div className="popup">
+			<input type="text" value={inputValue} onChange={handleInputChange} />
+			<button onClick={handleButtonClick}>Set Password</button>
+		</div>
+	);
+};
 
-	//   //console.log(chat_name + " this is the chat name i foudn for details");
-	  
-
-	  return (
-		<div className="Chat_name_for_chat_details">{chat_name}</div>
-	  )
+const handleSetPassword = (set_show_button: React.Dispatch<React.SetStateAction<boolean>>) => {
+	set_show_button(false);
 }
 
-const Participant_in_chat_detail_card = ({user_id, set_user_ids_in_chat_details} : {user_id: number, set_user_ids_in_chat_details: any}) => 
-{
-	//console.log("calling Participant_in_chat_detail_card for " + user_id);
-	
+
+
+const PasswordSetter = () => {
 	const { displayed_chat } = useMyDisplayedChatContext();
-	// //console.log("called participant chat detail card for id " + user_id);
-	const [ is_owner , set_is_owner ] = useState(false);
-	const [ is_admin, set_is_admin ] = useState(false);
-	const [ is_muted, set_is_muted ] = useState(false);
-	const [display_popup, set_display_popup ] = useState(false);
+	const [show_button, set_show_button] = useState(true);
+
+	return (
+		<>
+			{
+				show_button ?
+					<button className="purple-button" onClick={() => handleSetPassword(set_show_button)}>Set Password</button>
+					:
+					<Password_input setButton_state={set_show_button} chat_id={displayed_chat.conversation_id} />
+			}
+		</>
+	)
+}
+
+
+const Participant_in_chat_detail_card = ({ user_id, set_user_ids_in_chat_details }: { user_id: number, set_user_ids_in_chat_details: any }) => {
+	const { displayed_chat } = useMyDisplayedChatContext();
+	const [is_owner, set_is_owner] = useState(false);
+	const [is_admin, set_is_admin] = useState(false);
+	const [is_muted, set_is_muted] = useState(false);
+	const [display_popup, set_display_popup] = useState(false);
 	const [user_name, set_user_name] = useState("");
-	useEffect (() => 
-	{
-		async function get_name()
-		{
-			try{
-				//console.log("get name for " + user_id);
-				
+	const { userId } = useContext(UserContext);
+	const is_me = Number(userId) == user_id;
+	const [photo, setPhoto] = useState("");
+	useEffect(() => {
+		async function get_name() {
+			try {
 				const response = await fetch(`http://localhost:3003/user/user_name`, {
 					method: "POST",
 					body: JSON.stringify({ user_id: user_id.toString() }),
 					headers: {
-              			"Content-Type": "application/json",
-			  			Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 					},
 				});
 
 				const user_name_inside = await response.text();
-				// //console.log("this is the response . text where we wirkj rughr biw" + data);
 				set_user_name(user_name_inside);
 			}
-			catch(error)
-			{
+			catch (error) {
 				console.error(error);
 			}
 
 		}
 		get_name();
 	}, []);
-	
-	if (displayed_chat.conversation_owner_arr?.includes(user_id) && is_owner == false)
+
+	useEffect(() => {
+		const getUserPic = async () => {
+			try {
+
+				const response = await fetch(`http://localhost:3003/pictures/${userId}`, {
+					method: "Get",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+					},
+				});
+				const path = await response.blob();
+				const url = URL.createObjectURL(path);
+				setPhoto(url)
+			} catch (error) {
+				console.error(`fetch getUserPic in ListFriends failed: ${error}`);
+			}
+
+		};
+		getUserPic();
+	}, [])
+
+	if (displayed_chat.conversation_owner_arr?.includes(user_id) && is_owner == false) {
 		set_is_owner(true);
-	if (displayed_chat.conversation_admin_arr?.includes(user_id) && is_admin == false)
+	}
+	else if (!displayed_chat.conversation_owner_arr?.includes(user_id) && is_owner == true) {
+		set_is_owner(false)
+	}
+
+	if (displayed_chat.conversation_admin_arr?.includes(user_id) && is_admin == false) {
 		set_is_admin(true);
-	if (displayed_chat.conversation_mute_list_arr?.includes(user_id) && is_muted == false)
+	}
+	else if (!displayed_chat.conversation_admin_arr?.includes(user_id) && is_admin == true) {
+		set_is_admin(false)
+	}
+	if (displayed_chat.conversation_mute_list_arr?.includes(user_id) && is_muted == false) {
 		set_is_muted(true);
+	}
+	else if (!displayed_chat.conversation_mute_list_arr?.includes(user_id) && is_muted == true) {
+		set_is_muted(false)
+	}
 
 	//console.log(`USERNAME ${user_name}`);
-	
+	const open_admin_as = () => {
+		if (Number(userId) != user_id && displayed_chat.group_chat == true)
+			set_display_popup(!display_popup);
+	}
+
+
 	return (
-		<div onClick={() => set_display_popup(!display_popup)}>
-			<span>{user_name} </span>
-			{is_owner && <FaCrown title="owner"/>}
-			{is_admin && <RiAdminLine title="admin"/>}
-			{is_muted && <RiVolumeMuteFill title="muted"/>}
-			{display_popup && <Popup_chat_administration user_id={user_id} setmuted={set_is_muted} setadmin={set_is_admin} setowner={set_is_owner} set_user_ids_in_chat_details={set_user_ids_in_chat_details}/>}
+		<div className="participant-card" onClick={() => open_admin_as()}>
+			<img src={photo} alt="" />
+			{is_me ? <span> You </span> : <span> {user_name} </span>}
+			<div className="icons">
+				{is_owner && <FaCrown title="owner" />}
+				{is_admin && <RiAdminLine title="admin" />}
+				{is_muted && <RiVolumeMuteFill title="muted" />}
+				{display_popup && <Popup_chat_administration user_id={user_id} setmuted={set_is_muted} setadmin={set_is_admin} setowner={set_is_owner} set_user_ids_in_chat_details={set_user_ids_in_chat_details} />}
+			</div>
 		</div>
 	);
 }
 
 
-const	Chat_details = ({not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids} : { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids:any, setNot_joined_chats_ids: any}) =>
-{
+const Chat_details = ({ not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids }: { not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids: any, setNot_joined_chats_ids: any }) => {
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 	const { userId } = useContext(UserContext);
-	const [ user_ids_in_chat_details , set_user_ids_in_chat_details] = useState<number[]>([...displayed_chat.conversation_participant_arr]);
+	const [user_ids_in_chat_details, set_user_ids_in_chat_details] = useState<number[]>([...displayed_chat.conversation_participant_arr]);
 
-	//console.log("this is user_ids_in_chat_details " + user_ids_in_chat_details);
-	//console.log("this is user_ids_in_chat_details as input " + [...displayed_chat.conversation_participant_arr]);
-	//console.log("this is displayed_chat.conversation_participant_arr " + displayed_chat.conversation_participant_arr);
-
-	// useEffect(() => {
-	// 	async function get_name(){
-	// 		const response = await fetch(`http://localhost:3003/conversation/getConversationNameById/${displayed_chat}`, {
-	// 			method: "Get",
-	// 			headers: {
-	// 				Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-	// 			},
-	// 		})
-	// 		if (response.ok)
-	// 		{
-	// 			const data : string = await response.json();
-	// 			set_name(data);
-	// 		}
-	// 	}
-	// 	get_name();
-	//   }, []);
 	useEffect(() => {
-		async function set_map(){
-				set_user_ids_in_chat_details([...displayed_chat.conversation_participant_arr]);
+		async function set_map() {
+			set_user_ids_in_chat_details([...displayed_chat.conversation_participant_arr]);
 		}
 		set_map();
-	  }, [displayed_chat]);
+	}, [displayed_chat]);
 
 
+	our_socket.on("some_one_joined_group_chat", ({ conv_id, joined_user_id }: { conv_id: number, joined_user_id: number }) => {
+		if (joined_user_id != Number(userId) && conv_id == displayed_chat.conversation_id) {
+			set_user_ids_in_chat_details([...user_ids_in_chat_details, joined_user_id]);
+		}
+	});
+
+	our_socket.on("some_one_left_group_chat", ({ conv_id, left_user_id, conv_still_exists }: { conv_id: number, left_user_id: number, conv_still_exists: boolean }) => {
+		if (left_user_id != Number(userId) && conv_id == displayed_chat.conversation_id && conv_still_exists) {
+			const left_user_idx = user_ids_in_chat_details.indexOf(left_user_id);
+			if (left_user_idx !== -1) {
+				user_ids_in_chat_details.splice(left_user_idx, 1);
+				set_user_ids_in_chat_details([...user_ids_in_chat_details]);
+			}
+		}
+	});
 
 	return (
 		<div className="Chat_details">
-			{/* <Chat_details_chat_name displayed_chat={displayed_chat}/> */}
-			<div className="Chat_name_for_chat_details">{displayed_chat.conversation_name}</div>
-
-			{/* <div className="Chat_name_for_chat_details">chat_name</div> */}
-			{/* <div className="Chat_name_for_chat_details">{chat_name}</div> */}
-			{/* <Chat_details_user_list /> */}
+			{displayed_chat.conversation_name && <div className="Chat_name_for_chat_details">{displayed_chat.conversation_name}</div>}
 			<ul className="User_list_in_chat_detals">
-				{user_ids_in_chat_details.map((user_id, idx) => (
-					<Participant_in_chat_detail_card user_id={user_id} key={idx} set_user_ids_in_chat_details={set_user_ids_in_chat_details}/>
+				{user_ids_in_chat_details.map((user_id) => (
+					<Participant_in_chat_detail_card user_id={user_id} key={user_id} set_user_ids_in_chat_details={set_user_ids_in_chat_details} />
 				))}
-				{/* <li className="User_for_list_in_chat_details">User 1</li> */}
-				{/* Add more users as needed */}
 			</ul>
-			<button onClick={() => handleLeaveChat(displayed_chat.conversation_id, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids)}>Leave Chat</button>
-			{/* <button onClick={() => handleLeaveChat(displayed_chat, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids)}>Leave Chat</button> */}
-			{/* <button onClick={handleLeaveChat}>Leave Chat</button> */}
+			<div className="admin-buttons">
+
+				{
+					displayed_chat.group_chat && <button className="purple-button" onClick={() => handleLeaveChat(displayed_chat.conversation_id, setDisplayed_chat, userId, not_joined_chats_ids, my_chats_ids, setmy_chats_ids, setNot_joined_chats_ids, displayed_chat.group_chat)}>Leave Chat</button>
+				}
+				{
+					(displayed_chat.group_chat && displayed_chat.conversation_owner_arr?.includes(Number(userId))) &&
+					<PasswordSetter />
+
+				}
+			</div>
 		</div>
-
-
 	)
 }
 

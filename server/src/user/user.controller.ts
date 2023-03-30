@@ -116,7 +116,13 @@ export class UserController
 	{
 		console.log(req.user.id);
 		
-		return this.userService.get_all_other_user_ids(req.user.id);
+		return (this.userService.get_all_other_user_ids(req.user.id));
+	}
+
+	@Get('get_ladder')
+	@UseGuards(Jwt_Auth_Guard)
+	async	get_ladder()
+	{
+		return (this.userService.get_ladder());
 	}
 }
-

@@ -13,13 +13,15 @@ import { ConversationModule } from './conversations.module';
 import { userInfo } from 'os';
 import { request } from 'http';
 import { PrismaService } from '../prisma/prisma.service';
+import { conversationGateway } from './conversationSocket/conversation.gateway';
 
 
 @Controller('conversation')
 export class ConversationController {
 	constructor (
 		private readonly conversationsService: ConversationService,
-		private readonly userService: UserService) {}
+		private readonly userService: UserService,
+		private readonly convGateway: conversationGateway) {}
 
 
 	@UseGuards(Jwt_Auth_Guard)
@@ -78,20 +80,13 @@ export class ConversationController {
 		async joinConversation(
 			@Req() req: any,	
 			@Param('chat_id') chat_id: number
-			
 		) {
 			console.log("CHAT_ID " + chat_id);
-			// const conversationId = chat_id;
 			const existingConversation = await this.conversationsService.findConversation(chat_id)
 			if (!existingConversation.group_chat) {
 				console.log("The conversation is not a group chat!");
 				return null;
 			}
-			// if (!existingConversation) return null;
-			// if (!existingConversation.group_chat)
-			// 	return null;
-				//TODO
-				//banlist
 			const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);		//is he already part of the chat
 			if (userIdx > -1) return (false);			// this means he is already part of the chat and i dont want to add him again
 			await this.conversationsService.updateConversation({
@@ -105,18 +100,19 @@ export class ConversationController {
 				}
 			})
 			this.conversationsService.updateConversationIdInUser(req.user.id, chat_id);
+			this.convGateway.joined_chat(Number(chat_id), Number(req.user.id));
 			return (true);
-			// 	where: {
-			// 		id : Number(req.user.id)
-			// 	},
-			// 	data: {         
-			// 		conversation_id_arr: {
-			// 			push: Number(chat_id)
-			// 		}
-			// 	}
-			// })
-			// return updatedUser
-		} 
+		}
+
+		@UseGuards(Jwt_Auth_Guard)
+		@Post('set_password/:chat_id')
+		async set_password(@Req() req: any, @Param('chat_id') chat_id: number, @Body('Password') password : string)
+		{
+			// console.log("this is password in controller " + JSON.stringify( password));
+			// console.log("this is password in controller " + password);
+
+			await this.conversationsService.set_password(Number(chat_id), Number(req.user.id), password);
+		}
 
 		@UseGuards(Jwt_Auth_Guard)
 		@Get('join_dialogue/:other_user_id')
@@ -270,36 +266,7 @@ export class ConversationController {
 			@Req() req: any,
 			@Param('conversation_id') conversation_id: number
 		): Promise<Conversation> {
-			const conversation : Conversation = await this.conversationsService.findConversation(conversation_id);
-			const req_user_idx = conversation.conversation_participant_arr.indexOf(req.user.id);
-			const user : User = await this.userService.findUserById(req.user.id);
-			const conversation_id_arr_from_user = user.conversation_id_arr.indexOf(conversation_id);
-			const user_admin_idx = conversation.conversation_admin_arr.indexOf(req.user.id);
-			const user_owner_idx = conversation.conversation_owner_arr.indexOf(req.user.id);
-
-			if (conversation.conversation_admin_arr.length == 1 && conversation.conversation_admin_arr[0] == req.user.id)
-				throw new HttpException("No chance to leave a chat due to minimum amount of users in a conversation! Apologies!", HttpStatus.FORBIDDEN);
-			conversation.conversation_participant_arr.splice(req_user_idx, 1);
-			conversation.conversation_admin_arr.splice(user_admin_idx, 1);
-			user.conversation_id_arr.splice(conversation_id_arr_from_user, 1);
-			await this.conversationsService.updateConversation({
-				where: {
-					conversation_id: Number(conversation_id),
-				},
-				data: {
-					conversation_participant_arr: conversation.conversation_participant_arr,
-					conversation_admin_arr: conversation.conversation_admin_arr
-				}
-			})
-			await this.userService.updateUser({
-				where: {
-					id: Number(req.user.id)
-				},
-				data: {
-					conversation_id_arr: user.conversation_id_arr,
-				}
-			})
-			return conversation;
+			return this.conversationsService.leave_conversation(conversation_id, req)
 		}
 
 		@UseGuards(Jwt_Auth_Guard)

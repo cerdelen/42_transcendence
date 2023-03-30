@@ -1,24 +1,13 @@
-FROM node:12-alpine as build
-WORKDIR /app
-COPY . /app/
+FROM node:18-alpine
 
-# prepare for build
-RUN npm install --silent
-RUN npm run build
+WORKDIR /app/server
 
+COPY . ./
 
-# move build to new container
-FROM node:12-alpine
-WORKDIR /app
-
-COPY --from=build /app/build /app/
-COPY package.json /app/package.json
-COPY ormconfig.json /app/ormconfig.json
-COPY wait-for-it.sh /app/wait-for-it.sh
-
+RUN npm install -g nodemon --silent
 RUN npm install --silent
 RUN apk add --no-cache bash
+RUN npx prisma generate
+RUN chmod 777 start.sh
 
-
-# expose port
-EXPOSE 5500 
+EXPOSE 5500

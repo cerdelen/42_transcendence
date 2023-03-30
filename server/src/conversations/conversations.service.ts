@@ -51,6 +51,29 @@ export class ConversationService {
 		
 	}
 
+	async	set_password(chat_id: number, user_id: number, password: string)
+	{
+		console.log(chat_id + "in setvice set password");
+		
+		const conv = await this.prisma.conversation.findUnique({where: {conversation_id: chat_id}});
+
+		if (!conv)
+			return ;
+		if (conv.group_chat == false)
+			return ;
+		if (conv.conversation_owner_arr[0] != user_id)
+			return ;
+		await this.prisma.conversation.update({
+			where: {
+				conversation_id: chat_id
+			},
+			data: {
+				conversation_password: password,
+				conversation_pass_protected: true,
+			}
+		})
+	}
+
 	// async createConversation(user: User, params: CreateConversationParams) {
 	// 	const userDB = await this.user.findUserById(user.id);
 	// 	const {authorId, recipientId} = params;
@@ -82,8 +105,9 @@ export class ConversationService {
 
 	async name_fix(conv: Conversation, user_id: number)
 	{
+		if (!conv)
+			return ;
 		console.log(" im trying to fix name for the this conv " + conv.conversation_id);
-		
 		if (conv.group_chat == false)
 		{
 			const id_1 = conv.conversation_participant_arr[0];
@@ -245,6 +269,78 @@ export class ConversationService {
 				}
 			})
 		}
+	}
+
+	async	leave_conversation(conversation_id: number, user_id: number) : Promise<Conversation>
+	{
+		const conversation : Conversation = await this.findConversation(conversation_id);
+		
+		if (!conversation)
+			return null;
+
+		if(conversation.group_chat == false)
+			return (conversation);
+		
+		const req_user_idx = conversation.conversation_participant_arr.indexOf(user_id, 0);
+		const user : User = await this.user.findUserById(user_id);
+		const conversation_id_arr_from_user = user.conversation_id_arr.indexOf(conversation_id);
+		const user_admin_idx = conversation.conversation_admin_arr.indexOf(user_id);
+		const user_owner_idx = conversation.conversation_owner_arr.indexOf(user_id);
+
+
+
+		// if (conversation.conversation_admin_arr.length == 1 && conversation.conversation_admin_arr[0] == user_id)
+		// 	throw new HttpException("No chance to leave a chat due to minimum amount of users in a conversation! Apologies!", HttpStatus.FORBIDDEN);
+		conversation.conversation_participant_arr.splice(req_user_idx, 1);
+		if (user_admin_idx > 0)
+		{
+			conversation.conversation_admin_arr.splice(user_admin_idx, 1);
+			if (conversation.conversation_admin_arr.length == 0)
+			{
+				if (conversation.conversation_participant_arr.length > 0)
+					conversation.conversation_owner_arr.push(conversation.conversation_participant_arr[0]);
+			}
+		}
+		if (user_owner_idx > -1)
+		{
+			console.log("we got into here ");
+
+			conversation.conversation_owner_arr.splice(user_owner_idx, 1);
+			if (conversation.conversation_admin_arr.length > 0)
+				conversation.conversation_owner_arr.push(conversation.conversation_admin_arr[0]);
+			else if (conversation.conversation_participant_arr.length > 0)
+				conversation.conversation_owner_arr.push(conversation.conversation_participant_arr[0]);
+		}
+		user.conversation_id_arr.splice(conversation_id_arr_from_user, 1);
+		await this.updateConversation({
+			where: {
+				conversation_id: Number(conversation_id),
+			},
+			data: {
+				conversation_participant_arr: conversation.conversation_participant_arr,
+				conversation_admin_arr: conversation.conversation_admin_arr,
+				conversation_owner_arr: conversation.conversation_owner_arr
+			}
+		})
+		await this.user.updateUser({
+			where: {
+				id: Number(user_id)
+			},
+			data: {
+				conversation_id_arr: user.conversation_id_arr,
+			}
+		})
+		if (conversation.conversation_participant_arr.length == 0)
+		{
+			this.delete_conversation(conversation_id);
+			return null;
+		}
+		return conversation;
+	}
+
+	async	delete_conversation(chat_id: number)
+	{
+		return this.prisma.conversation.delete({where: {conversation_id: chat_id}});
 	}
 
 	async updateConversationIdInUser(user_id: number, conversationId: number): Promise<User> {

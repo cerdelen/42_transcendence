@@ -8,6 +8,11 @@
 @import "./styles/game-history.css";
 @import "./styles/user-stats.css";
 @import "./styles/admin-buttons.css";
+@import "./styles/community-left-column.css";
+@import "./styles/community-right-column.css";
+@import "./styles/home-page-cat.css";
+@import "./styles/chat-details.css";
+/* @import "./components/ladder/Ladder.css"; */
 
 /* GENERAL */
 body {
@@ -20,6 +25,9 @@ body {
   /* text-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF; */
 }
 
+h2 {
+  text-align: center;
+}
 header,
 footer,
 main {
@@ -52,8 +60,10 @@ header nav ul {
   padding: 0;
 }
 
-header li {
+header .nav-link {
   margin: 0 1rem;
+  text-decoration: none;
+  color: white;
 }
 
 .basic {
@@ -185,18 +195,15 @@ header .basic:hover {
 }
 
 #achievements img {
-  width: 50px;
-  height: 50px;
+  width: 64px;
+  height: 64px;
   object-fit: cover;
   border: 1mm ridge white;
 }
 
-#user-dropdown button {
-  /* border: 2px solid red; */
-}
-
 .purple-button {
-  background-color: #381a72;
+  /* background-color: #381a72; */
+  background-color: purple;
   color: white;
   border-radius: 15px;
   font-size: 1rem;
@@ -283,21 +290,9 @@ footer {
 
 /* GAME-PAGE-PLAYERS-Online */
 
-.players-online {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 500px;
-}
 
-.live-games {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.game-page-players-online-ul,
-.game-page-games-online-ul,
+
+
 .scrollable-list,
 .all_open_group_chats-ul
 {
@@ -317,80 +312,25 @@ footer {
   max-height: 37vh;
 }
 .open_group_chats-ul {
-  max-height: 32.5vh;
+  /* max-height: 32.5vh; */
 }
-/* .game-page-games-online-ul, */
+
 .all_open_group_chats-ul
 {
-  padding: 0;
+  /* padding: 0;
   overflow-x: auto;
   max-height: 32.5vh;
-  min-height: 32.5vh;
-}
-
-.Chat_details
-{
-  padding: 0;
-  overflow-x: auto;
-  max-height: 32.5vh;
-  min-height: 32.5vh;
-}
-
-.game-page-games-online-ul
-{
-  overflow-x: auto;
-  max-height: 65vh;
-  min-height: 65vh;
+  min-height: 32.5vh; */
 }
 
 
-.player-card-li{
-  background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140));
-  /* border: 1px solid pink; */
-  border-radius: 25px;
-  display: flex;
-  align-items: center;
-  margin-bottom: .6rem;
-}
-
-.player-card-li img{
-  border-top-left-radius: 25px;
-  border-bottom-left-radius: 25px;
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-}
-
-.Chat_preview_cards{
-  background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140));
-  /* border: 1px solid pink; */
-  border-radius: 25px;
-  display: flex;
-  align-items: center;
-  margin-bottom: .6rem;
-}
-
-.Chat_preview_cards img{
-  border-top-left-radius: 25px;
-  border-bottom-left-radius: 25px;
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-}
-
-.player-availability {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-}
 
 #user-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 9rem;
+  word-wrap: break-word;
 }
 
 #in-a-game {
@@ -402,16 +342,12 @@ footer {
 
 #community {
   display: grid;
-  grid-template-columns: 1fr 4.5fr 1fr;
+  grid-template-columns: minmax(280px, 1fr) minmax(680px, 4.5fr) minmax(280px, 1fr);
   gap: 1rem;
   
 }
 
 /* CHAT AREA */
-
-.centered-element {
-}
-
 
 .com-areas {
   /* background-color: lightblue; */
@@ -429,23 +365,6 @@ footer {
 
 }
 
-
-
-.Chat_details {
-  padding: 0;
-  overflow-x: none;
-  max-height: 32.5vh;
-  min-height: 32.5vh;
-}
-
-.Chat_name_for_chat_details {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 700;
-  font-size: larger;
-  color: rgb(252, 252, 252);
-}
 
 .User_list_in_chat_detals {
   max-height: calc(32.5vh - 10vh);
@@ -746,4 +665,10 @@ body {
   align-items: center;
   justify-content: center;
   background: #161616;
+} */
+
+
+/* 
+body {
+  background: #A4FFC4;
 } */

@@ -30,7 +30,7 @@ const SecondFactorPage = () => {
         });
         
         if (response.ok) {
-          window.location.assign("http://localhost:3000/home");
+          window.location.assign("http://localhost:3000/");
           const token = await response.text();
           JSCookies.set("accessToken", token);
         }

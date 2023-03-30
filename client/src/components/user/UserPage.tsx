@@ -9,20 +9,16 @@ import UserPhoto from "./UserPhoto";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import GameHistory from "./GamesHistory";
 import UserStats from "./UserStatistics";
+import { our_socket } from "../../utils/context/SocketContext";
+import { Link } from "react-router-dom";
 
-type Props = {
-  // setShowUserInto: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const UserPage = ({}: Props) => {
+const UserPage = () => {
   const { userId } = useContext(UserContext);
-  const { userIdCard } = useMyContext();
-  const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
+  const { userIdCard, setShowUserInto } = useMyContext();
   const [isVisible, setIsVisible] = useState(true);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [TFA, setTFA] = useState(false);
-  const { setShowUserInto } = useMyContext();
   const [friendsList, setFriendsList] = useState<string[]>([]);
   const [gamesList, setGamesList] = useState([]);
   const isMe = userId === userIdCard;
@@ -34,31 +30,17 @@ const UserPage = ({}: Props) => {
 
   const startChat = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:3003/conversation/join_dialogue/${userIdCard}`,
-        {
-          method: "Get",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-          },
-        }
-      );
-      console.log("join chat");
-      const conv = await response.json();
-      setDisplayed_chat(conv);
-      setShowUserInto(false);
+      our_socket.emit("create_dialogue", {
+        userid_creator: userId,
+        other_user: userIdCard,
+      });
     } catch (error) {
       alert("Could not go to chat");
     }
   };
 
-  const startGame = async () => {
-   
-  };
-
   const updateFriendsList = async () => {
- if (isFriend) {
+    if (isFriend) {
       try {
         const response = await fetch(
           "http://localhost:3003/user/remove_friend",
@@ -114,6 +96,14 @@ const UserPage = ({}: Props) => {
     };
     if (userIdCard) getData();
   }, [userIdCard, isFriend]);
+
+  function startAndinvitePlayers(userId: string, userName: string) {
+    console.log(userId + " Inviting player " + userName);
+    setShowUserInto(false);
+    let obj : any = {userId: userId, userName: userName};
+    
+    our_socket.emit("createInvitationRoom", JSON.stringify(obj));
+  }
   return (
     <>
       {true && (
@@ -122,28 +112,30 @@ const UserPage = ({}: Props) => {
             <div>
               <UserPhoto userId={userIdCard} />
             </div>
-
             <div id="generic-info">
               <span>{`Player: ${userName}`}</span>
               <span>{`Email: ${userEmail}`}</span>
               {isMe ? <span>{`2FA enabled: ${TFA}`}</span> : <span></span>}
 
-              {isMe ? (
-                <div></div> //////REMINDER TO CHANGE THIS
-              ) : (
+              {!isMe &&
                 <div id="buttons">
                   <button className="purple-button" onClick={startChat}>
                     Chat
                   </button>
-                  <button className="purple-button" onClick={startGame}>
-                    Play
-                  </button>
+                  <Link to="/game">
+                    <button
+                      className="purple-button"
+                      onClick={() => startAndinvitePlayers(userId, userName)}
+                    >
+                      Play
+                    </button>
+                  </Link>
                   <button className="purple-button" onClick={updateFriendsList}>
                     {" "}
                     {isFriend ? "Unfriend" : "Friend"}
                   </button>
                 </div>
-              )}
+              }
             </div>
             <UserStats userId={userIdCard} />
           </div>
@@ -161,14 +153,3 @@ const UserPage = ({}: Props) => {
 };
 
 export default UserPage;
-
-type Game = {
-  id: number;
-  player_one: number;
-  player_two: number;
-  winner: number;
-  loser: number;
-  score_one: number;
-  score_two: number;
-  finished: boolean;
-};

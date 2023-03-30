@@ -1,10 +1,12 @@
 import { useState, useEffect, useContext } from "react";
 import JSCookies from "js-cookie";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
-import { useRevalidator } from "react-router-dom";
-// import Chats_user_is_part_of_context from "../../contexts/Chats_user_is_part_of_context";
 import group_picture from "../../images/group_chat_picture.jpeg"
-
+import { our_socket } from "../../utils/context/SocketContext";
+import { displayed_chat_class } from "../../utils/types";
+import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
+import { UserContext } from "../../contexts/UserContext";
+import { useMyContext } from "../../contexts/InfoCardContext";
 
 interface chat_props {
 	chat_id: number,
@@ -16,7 +18,6 @@ export class chat_card {
 	chat_name: string;
 	other_chatters: number [];
 	private_chat: boolean;
-	// photo: File;
 
 	constructor(chat_name: string, conv_id: number, other_chatters: number []) {
 		this.conversation_id = conv_id;
@@ -32,9 +33,6 @@ export class chat_card {
 
 const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
-	// console.log('called chat preview window');
-	// console.log(chat_id);
-
 	const handleOnClick = async () => 
 	{
 		if (displayed_chat.conversation_id != chat_id)
@@ -47,8 +45,6 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 				},
 			});
 			const conv = await response.json();
-			// i have work to do here :)
-			// alert("What do here?" + chat_id);
 			setDisplayed_chat(conv);
 		}
 	}
@@ -86,7 +82,6 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			setConversation_name(data["conversation_name"])
 		}
 		const getUserData = async (other_user_id : number) => {
-			// console.log("in get user data id = " + other_user_id);
 			const response = await fetch(`http://localhost:3003/pictures/${other_user_id}`, {
 				method: "Get",
 				headers: {
@@ -97,48 +92,25 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			const path = await response.blob();
 			const url = URL.createObjectURL(path);
 			setPhoto(url);
-			// const response_two = await fetch("http://localhost:3003/user/user_name", {
-			// 	method: "Post",
-			// 	headers: {
-			// 		'Content-Type': 'application/json',
-			// 		'Accept': 'application/json',
-			// 	  Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-			// 	},
-			// 	body: JSON.stringify({ user_id: other_user_id }),
-			//   });
-			// const data = await response_two.text();
-			// setConversation_name(data);
 		}
-		// const get_default_group_chat_picture = async () => {
-		// 	const response = await fetch(`http://localhost:3003/pictures/group_chat`, {
-		// 		method: "Get",
-		// 		headers: {
-		// 			// "Content-Type": "application/json",
-		// 			Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-		// 		},
-		// 	}) 
-		// 	const path = await response.blob();
-		// 	const url = URL.createObjectURL(path);
-		// 	setPhoto(url);
-		// }
 		get_conversation(chat_id);
-		// if(group_chat == false)
 		}, []);
 
 	return (
-		<li className='Chat_preview_cards'onClick={handleOnClick}>
-			<div className='player-availability'>
-				<img src={photo} alt="" />
-				<span id='user-name' title={"chat_name"} >{conversation_name}</span>
-			</div>
+		<li className='Chat_preview_cards' title={conversation_name} onClick={handleOnClick}>
+			<img src={photo} alt="" />
+			<span id='user-name' >{conversation_name}</span>
 		</li>
 	)
 }
 
-const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: string, my_chats_ids: number[], setmy_chats_ids:any}) =>
+const Get_all_my_chats = () =>
 {
-	// const { setmy_chats_ids } = useContext(Chats_user_is_part_of_context)
-	// console.log("Get_all_my_chats is rendered");
+	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
+	const {my_chats_ids, setmy_chats_ids} =  useMyChatCardsContext();
+	const {userId} = useContext(UserContext);
+	const [ reset_displayed_chat, set_reset_displayed_chat] = useState(displayed_chat.conversation_id);
+	const { setShowUserInto } = useMyContext();
 	useEffect(() => {
 		async function get_ids(){
 			const response = await fetch("http://localhost:3003/conversation/GetMyChats", {
@@ -147,30 +119,79 @@ const Get_all_my_chats = ({userId, my_chats_ids, setmy_chats_ids} : { userId: st
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
 			})
-			if (response.ok)
-			{
+			if (response.ok) {
 				const data : number[] = await response.json();
-				// console.log("response from getmychats fetch " + JSON.stringify(data));
-				
 				setmy_chats_ids(data);
 			}
 		}
 		get_ids();
 	  }, []);
+	useEffect(() => {
+		const set_new_displayed_chat = async () =>
+		{
+			try {
+				if (reset_displayed_chat !== -1){
+					const response = await fetch(`http://localhost:3003/conversation/getConversationById/${reset_displayed_chat}`, {
+						method: "Get",
+						headers: {
+							// "Content-Type": "application/json",
+							Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+						},
+					});
+					const conv = await response.json();
+					setDisplayed_chat(conv);
+				}
+			} catch (error) {
+				console.log(error);	
+			}
+		}
+		set_new_displayed_chat();
+	}, [reset_displayed_chat]);
+
+		our_socket.on("new_dialogue_created", ({userid_creator, other_user, chat_id} : {userid_creator: number, other_user: number, chat_id: number}) =>
+		{	
+			if (userid_creator == Number(userId))
+			{
+				setmy_chats_ids([...my_chats_ids, chat_id]);
+				set_reset_displayed_chat(chat_id);
+				setShowUserInto(false);
+			}
+			else if (other_user == Number(userId))
+			{
+				setmy_chats_ids([...my_chats_ids, chat_id]);
+			}
+		});
+
+		our_socket.on("some_one_left_group_chat", ({conv_id, left_user_id, conv_still_exists} : {conv_id: number, left_user_id: number, conv_still_exists: boolean}) =>
+		{
+			if (left_user_id == Number(userId))
+			{
+				const default_chat : displayed_chat_class = { conversation_id: -1, conversation_participant_arr: []}
+				setDisplayed_chat(default_chat);
+				const conv_indx = my_chats_ids.indexOf(conv_id);
+				if (conv_indx !== -1)
+				{
+					console.log("we want to splice id " + conv_id + " at idx " + conv_indx);
+					console.log(my_chats_ids);
+					my_chats_ids.splice(conv_indx, 1);
+					console.log(my_chats_ids);
+					setmy_chats_ids([...my_chats_ids]);
+				}
+				
+			}
+		});
+	
 	return (
-		<>
+		<div className="left-pane-column" >
 			<h2>My Chats</h2>
-			<ul className='game-page-games-online-ul'>
-				{/* <img src={photo} alt="" /> */}
-				<div className='player-availability'>
-					<div>smth inside</div>
-					{
-						my_chats_ids.map((chat_id, idx) => (
-							<Chat_preview_card key={idx} chat_id={chat_id} userId={userId} />
-						))}	
-				</div>
+			<ul className='list-cards' >
+				{
+					my_chats_ids.map((chat_id) => (
+						<Chat_preview_card key={chat_id} chat_id={chat_id} userId={userId} />
+					))
+				}	
 			</ul>
-		</>
+		</div>
 	)
 	
 }

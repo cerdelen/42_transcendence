@@ -1,91 +1,134 @@
-import { useState, useEffect, Children, useMemo, useRef } from 'react';
-import {useContext} from 'react';
-import { SocketContext, our_socket} from '../../utils/context/SocketContext';
+import { useEffect, useState } from "react";
+import { useContext } from "react";
+import { our_socket } from "../../utils/context/SocketContext";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
-import Display_full_chat from './display_full_chat';
-import { UserContext } from "../../contexts/UserContext"
+import Display_full_chat from "./display_full_chat";
+import { UserContext } from "../../contexts/UserContext";
+import empty_chat_picture from "../../images/sleeping_cat.jpeg";
+import JSCookies from "js-cookie";
 
-interface message{
-  author_id: string,
-  text: string,
+interface message {
+  author_id: string;
+  text: string;
 }
 
-interface typing{
-  name: string,
-  isTyping: boolean,
-}
+const Chat_input_filed_and_send_button = () => {
+  const [input, setInput] = useState("");
+  const { displayed_chat } = useMyDisplayedChatContext();
+  const { userId } = useContext(UserContext);
 
-// class display_message_info {
-// 	text: string;
-// 	author_id: number;
+  const sendMessage = () => {;
+    our_socket.emit( "message", {
+        author: Number(userId),
+        text: input,
+        conversation_id: displayed_chat.conversation_id,
+        created_at: Date.now(),
+      },
+      () => {}
+    );
+    setInput("");
+  };
+  let timeout: any;
+  const emitTyping = () => {
+    //   console.log("i am emitting typing");
+    our_socket.emit("typing", { isTyping: true, userId: userId, chat_id: displayed_chat.conversation_id });
+    timeout = setTimeout(() => {
+      our_socket.emit("typing", { isTyping: false, userId: userId, chat_id: displayed_chat.conversation_id });
+    }, 2000);
+  };
 
-// 	constructor(_text: string, _author_id: number)
-// 	{
-// 		this.text = _text;
-// 		this.author_id = _author_id;
-// 	}
-// }
+  return (
+    <>
+      <input
+        id="chat-input"
+        type="text"
+        value={input}
+        onInput={emitTyping}
+        onChange={(e) => {
+          setInput(e.target.value);
+        }}
+      />
+      <button
+        type="submit"
+        onClick={(e) => {
+          if (input) sendMessage();
+        }}
+      >
+        Send
+      </button>
+    </>
+  );
+};
 
-const Chat_input_filed_and_send_button = () =>
-{
-	const [input, setInput] = useState(""); 
-	const { displayed_chat } = useMyDisplayedChatContext();
+const Chat_area = () => {
+  const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 	const { userId } = useContext(UserContext);
+	const [ reset_displayed_chat, set_reset_displayed_chat] = useState(displayed_chat.conversation_id);
 
-	const sendMessage = () =>
-	{
-	//   console.log("sendMessage function beginning");
-	//   console.log("this is message text = " + input);
-	//   console.log("this is author = " + Number(userId));
-	//   console.log("this is chat_id = " + displayed_chat.conversation_id);
-	  our_socket.emit('message', {author: Number(userId), text: input, conversation_id: displayed_chat.conversation_id, created_at: Date.now()}, () => {
-	})
-		setInput('');
-	}
-	let timeout : any;
-	const emitTyping = () =>
-	{
-	//   console.log("i am emitting typing");
-	  our_socket.emit('typing', {isTyping: true, userId: userId});
-	  timeout = setTimeout(() => 
-	  {
-		our_socket.emit('typing', {isTyping: false, userId: userId});
-	  }, 2000);
-	}
+// console.log("I WANNA RESET EVERTHNG HERE" + reset_displayed_chat);
 
-	
-	return (
-		<>
-			<input id='chat-input' type="text"  value={input} onInput={emitTyping} onChange={(e) => {
-				setInput(e.target.value);
-			}} />
-			<button type="submit" onClick={(e) => {
-				if(input)
-				sendMessage();
-			}}>Send</button>
-			</>
-	)
-}
+  our_socket.on("some_one_joined_group_chat", ({conv_id, joined_user_id} : {conv_id: number, joined_user_id: number}) =>
+		{	
+      console.log("hello this is subscriber to some_one_joined_group_chat");
 
-const Chat_area = () =>
-{
-	const [users, setUsers] = useState<message[]>([]);
-	const [newMessage, setNewMessage] = useState<message>();
-	const [joined, setJoined] = useState(false);
-	const { displayed_chat } = useMyDisplayedChatContext();
-	// const [messages, set_messages] = useState<Array<display_message_info>>([]);
+			if (joined_user_id == Number(userId))
+			{
+        console.log("HLELOOO IN THE IF, " + conv_id);
+        set_reset_displayed_chat(conv_id);
+			}
+		});
 
-	return (
-		<div id='chat-area' className='com-areas'>
-            <h2>Chat  {displayed_chat.conversation_name}</h2>
-            {/* <div id='displayed-messages' className='whole-chat'> */}
-              <Display_full_chat  chat_id={displayed_chat.conversation_id} />
-            {/* </div> */}
-            <form onSubmit={(e) => {  e.preventDefault() }}>
-				<Chat_input_filed_and_send_button />
-            </form>
-        </div>
-	)
-}
+  useEffect(() => {
+		const set_new_displayed_chat = async () =>
+		{
+			try {
+        // console.log("tryin so hard");
+        
+				if (reset_displayed_chat !== -1){
+					const response = await fetch(`http://localhost:3003/conversation/getConversationById/${reset_displayed_chat}`, {
+						method: "Get",
+						headers: {
+							// "Content-Type": "application/json",
+							Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+						},
+					});
+					const conv = await response.json();
+          console.log("RESEING WHOLE CONV");
+          
+					setDisplayed_chat(conv);
+				}
+			} catch (error) {
+				console.log(error);	
+			}
+		}
+		set_new_displayed_chat();
+	}, [reset_displayed_chat]);
+  
+  
 
-export default Chat_area
+  return (
+    <div id="chat-area" className="com-areas">
+      {displayed_chat.conversation_id == -1 ? (
+        <>
+          <h2>You have no open chats {displayed_chat.conversation_name}</h2>
+          <img src={empty_chat_picture} />
+          <div></div>
+        </>
+      ) : (
+        <>
+          <h2>Chat {displayed_chat.conversation_name}</h2>
+          <Display_full_chat chat_id={displayed_chat.conversation_id} />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <Chat_input_filed_and_send_button />
+          </form>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default Chat_area;

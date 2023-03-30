@@ -1,4 +1,3 @@
-
 import { useContext, useEffect, useRef, useState } from "react";
 import SecondFactorQR from "../second_factor_authentication/SecondFactorQR";
 import JSCookies from "js-cookie";
@@ -38,10 +37,11 @@ const ProfileCard = () => {
   // console.log(userId);
   const [name, setName] = useState("");
   const [statusTFA, setStatusTFA] = useState(false);
+  const [wins, set_wins] = useState(0);
+  const [achievements, set_achievementes] = useState<boolean[]>([]);
 
   useEffect(() => {
     const getData = async () => {
-
       // console.log("one more time");
       const response = await fetch("http://localhost:3003/user/user_data", {
         method: "Post",
@@ -51,12 +51,40 @@ const ProfileCard = () => {
         },
         body: JSON.stringify({ user_id: userId }),
       });
+      const response_stats = await fetch(
+        "http://localhost:3003/user/user_stats",
+        {
+          method: "Post",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+          },
+          body: JSON.stringify({ user_id: userId }),
+        }
+      );
       const data = await response.json();
+      const stats = await response_stats.json();
       setName(data["name"]);
       setStatusTFA(data["two_FA_enabled"]);
+      let achievs: boolean[] = [];
+      console.log("this is data");
+      console.log(data);
+      console.log("this is stats");
+      console.log(stats);
+
+      achievs.push(stats["achievement_0"]);
+      achievs.push(stats["achievement_1"]);
+      achievs.push(stats["achievement_2"]);
+      // achievement_1
+      // :
+      // false
+      // achievement_"])
+      console.log("this is achiev array");
+      console.log(achievs);
+      set_achievementes(achievs);
+      set_wins(stats["wins"]);
     };
-    if (userId)
-      getData();
+    if (userId) getData();
   }, [userId]);
 
   return (
@@ -65,18 +93,27 @@ const ProfileCard = () => {
         Profile
       </span>
       <ProfilePicture />
-      <div ref={secondElementRef} id="user-dropdown" style={{ display: isDropdownOpen ? "flex" : "none" }}>
-        <LevelImageAndUsername userName={name} setIsDropdownOpen={setIsDropdownOpen} />
-        <StatusAndGamesWon />
-        <Achievements />
-        <ToggleBox setBase64String={setBase64String} status2FA={statusTFA}/>
+      <div
+        ref={secondElementRef}
+        id="user-dropdown"
+        style={{ display: isDropdownOpen ? "flex" : "none" }}
+      >
+        <LevelImageAndUsername
+          userName={name}
+          setIsDropdownOpen={setIsDropdownOpen}
+        />
+        <StatusAndGamesWon wins={wins} />
+        <Achievements achievements={achievements} />
+        <ToggleBox setBase64String={setBase64String} status2FA={statusTFA} />
 
         {base64String !== "" ? (
           <SecondFactorQR qrString={base64String} />
         ) : (
           <div></div>
         )}
-        <button className="purple-button" onClick={logOut}>Logout</button>
+        <button className="purple-button" onClick={logOut}>
+          Logout
+        </button>
       </div>
     </div>
   );

@@ -1,64 +1,59 @@
 /* GAME CARD */
 .game-card-li {
-    display: grid;
-    grid-template-columns: 5fr 1fr 5fr;
-    align-items: stretch;
-    justify-content: space-around;
-    border: 1px solid pink;
-    border-radius: 25px;
-    margin-bottom: .6rem;
-    height: 100px;
-    /* background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(86, 38, 140)); */
-  }
+  display: grid;
+  grid-template-columns: 5fr 1fr 5fr;
+  align-items: stretch;
+  justify-content: space-around;
+  border: 1px solid pink;
+  border-radius: 25px;
+  margin-bottom: .6rem;
+  height: 100px;
+}
 
-  .game-card-li img {
-    border-radius: 50px;
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border: 1px solid purple
+.game-card-li img {
+  border-radius: 50px;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 1px solid purple
+}
 
-  }
-  
-  .game-card-li:hover {
-    box-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF;
-  }
-  
-  
-  .game-card-li span {
-    align-self: center;
-    /* font-size: 10px;
-    font-weight: bold; */
-    /* color: red; */
-  }
-  
+.game-card-li:hover {
+  box-shadow: 0 0 10px #FFF, 0 0 20px #FFF, 0 0 30px #FFF;
+}
+
+
+.game-card-li span {
+  align-self: center;
+}
+
 #game-card-left-opponent,
 #game-card-right-opponent {
-   display: flex;
-   align-items: center;
-   justify-content: space-around;
-   border: 1mm ridge white ;
-   border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border: 1mm ridge white;
+  border-radius: 25px;
 
 }
 
 .item2 {
-    grid-column: 2;
-    text-align: center; /* Optional: To horizontally center the text within the span */
-  }
+  grid-column: 2;
+  text-align: center;
+}
 
 .winner-left {
-    background: linear-gradient(to top left, rgb(128, 0, 128), rgb(56, 14, 104));
+  background: linear-gradient(to top left, rgb(128, 0, 128), rgb(56, 14, 104));
 }
 
 .winner-right {
-    background: linear-gradient(to top right, rgb(128, 0, 128), rgb(56, 14, 104));
+  background: linear-gradient(to top right, rgb(128, 0, 128), rgb(56, 14, 104));
 }
 
 .loser-left {
-    background: linear-gradient(to top left, rgb(126, 119, 126), rgb(49, 47, 51));
+  background: linear-gradient(to top left, rgb(126, 119, 126), rgb(49, 47, 51));
 }
 
 .loser-right {
-    background: linear-gradient(to top right, rgb(126, 119, 126), rgb(49, 47, 51));
+  background: linear-gradient(to top right, rgb(126, 119, 126), rgb(49, 47, 51));
 }

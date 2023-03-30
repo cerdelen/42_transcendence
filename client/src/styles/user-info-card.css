@@ -22,7 +22,7 @@
 }
 
 #userInfo #stats{
-    border: 2px solid yellow;
+    /* border: 2px solid yellow; */
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -33,25 +33,25 @@
 #userInfo #photo {
     width: 200px;
     height: 200px;
-    /* object-fit: contain; */
     border-radius: 5px;
-    border: 2px solid red;
+    /* border: 2px solid red; */
 }
 
 #userInfo #lists{
     display: grid;
-    /* flex-direction: row; */
     grid-template-columns: 1fr 2fr;
+    column-gap: 10px;
     height: 60%;
-    border: 2px solid red;
+    /* border: 2px solid red; */
 }
 
 
 #userInfo .user-info-lists {
-    border: 2px solid lime;
+    /* box-shadow: inset 10px 0 20px -10px rgba(107, 38, 154, 0.5),
+    inset -10px 0 20px -10px rgba(241, 32, 168, 0.5); */
+    /* border: 2px solid red; */
     height: auto;
     overflow: auto;
-    /* margin-left: 0; */
     padding: 1rem;
 }
 

@@ -182,7 +182,7 @@ const GameHistory = ({ gamesList }: Props) => {
 
   return (
     <ul className="user-info-lists">
-      <div>Games:</div>
+      <div className="title-section">Games:</div>
       <br />
       {games.map((game, idx) => (
         <GameCard

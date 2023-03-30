@@ -81,7 +81,7 @@ const ListFriends = ({ friendsList }: Props) => {
 
   return (
     <ul className="user-info-lists">
-      <div>Friends:</div>
+      <div className="title-section">Friends:</div>
       <br />
       {friendsNames.map((name, idx) => (
         <NameComponent key={name} name={name} pic={profilePictures[idx]} />

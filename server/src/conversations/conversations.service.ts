@@ -202,18 +202,19 @@ export class ConversationService {
 	async setAdministratorOfConversation(conversId: number, adminId: number, userId: number): Promise<Conversation> {
 		let conversation : Conversation;
 		let user : User;
-
+ 
 		conversation = await this.findConversation(conversId);
 		console.log("CONVERSATION_ID = " + conversation.conversation_id);
 
 		const index_of_user = conversation.conversation_admin_arr.findIndex(element => element === userId);
 		const index_of_admin = conversation.conversation_admin_arr.findIndex(element => element === adminId);
 		console.log("index_of_user = " + index_of_user);
+
 		console.log("index_of_admin = " + index_of_admin);
 
 		if (index_of_user == -1) {
 			console.log("no user with:\t" + index_of_user)
-			return conversation;
+			return conversation; 
 			
 		}
 		// if (index_of_admin == -1)  {

@@ -280,25 +280,37 @@ export class ConversationService {
 
 		if(conversation.group_chat == false)
 			return (conversation);
-		
+
+		if (!conversation.conversation_participant_arr.includes(user_id))
+			return conversation;
+
 		const req_user_idx = conversation.conversation_participant_arr.indexOf(user_id, 0);
 		const user : User = await this.user.findUserById(user_id);
 		const conversation_id_arr_from_user = user.conversation_id_arr.indexOf(conversation_id);
 		const user_admin_idx = conversation.conversation_admin_arr.indexOf(user_id);
 		const user_owner_idx = conversation.conversation_owner_arr.indexOf(user_id);
 
-
+		console.log("admin_array = " + conversation.conversation_admin_arr);
+		console.log("owner_array = " + conversation.conversation_owner_arr);
+		console.log("participant_array = " + conversation.conversation_participant_arr);
+		
 
 		// if (conversation.conversation_admin_arr.length == 1 && conversation.conversation_admin_arr[0] == user_id)
 		// 	throw new HttpException("No chance to leave a chat due to minimum amount of users in a conversation! Apologies!", HttpStatus.FORBIDDEN);
 		conversation.conversation_participant_arr.splice(req_user_idx, 1);
-		if (user_admin_idx > 0)
+		console.log("user_admin_idx = " + user_admin_idx);
+		
+		if (user_admin_idx >= 0)
 		{
 			conversation.conversation_admin_arr.splice(user_admin_idx, 1);
+			console.log("conv__admin_arr after splicing = " + conversation.conversation_admin_arr);
+			
+			
+		} else {
 			if (conversation.conversation_admin_arr.length == 0)
 			{
 				if (conversation.conversation_participant_arr.length > 0)
-					conversation.conversation_owner_arr.push(conversation.conversation_participant_arr[0]);
+					conversation.conversation_admin_arr.push(conversation.conversation_participant_arr[0]);
 			}
 		}
 		if (user_owner_idx > -1)
@@ -306,9 +318,9 @@ export class ConversationService {
 			console.log("we got into here ");
 
 			conversation.conversation_owner_arr.splice(user_owner_idx, 1);
-			if (conversation.conversation_admin_arr.length > 0)
-				conversation.conversation_owner_arr.push(conversation.conversation_admin_arr[0]);
-			else if (conversation.conversation_participant_arr.length > 0)
+			// if (conversation.conversation_admin_arr.length > 0)
+			// 	conversation.conversation_owner_arr.push(conversation.conversation_admin_arr[0]);
+			if (conversation.conversation_participant_arr.length > 0)
 				conversation.conversation_owner_arr.push(conversation.conversation_participant_arr[0]);
 		}
 		user.conversation_id_arr.splice(conversation_id_arr_from_user, 1);
@@ -335,6 +347,9 @@ export class ConversationService {
 			this.delete_conversation(conversation_id);
 			return null;
 		}
+		console.log("admin_array1 = " + conversation.conversation_admin_arr);
+		console.log("owner_array1 = " + conversation.conversation_owner_arr);
+		console.log("participant_array1 = " + conversation.conversation_participant_arr);
 		return conversation;
 	}
 

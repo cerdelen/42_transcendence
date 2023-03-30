@@ -1,25 +1,22 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Popup from "reactjs-popup"
+import { useMyContext } from "../contexts/InfoCardContext";
 import { UserContext } from "../contexts/UserContext";
-import { SocketContext, our_socket } from "../utils/context/SocketContext";
+import { our_socket } from "../utils/context/SocketContext";
 
 
+type Props = {
+  isInvited: boolean;
+  setIsInvited: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-const PopUp = () => {
+const PopUp = ({isInvited, setIsInvited} : Props) => {
     const navigate = useNavigate();
-    const { userId } = useContext(UserContext)
-    const [isInvited, setIsInvited] = useState(false);
+    // const {isInvited, setIsInvited} = useMyContext();
+    const {userId} = useContext(UserContext);
     const [inviterName, setinviterName] = useState("");
-    useEffect(() => 
-    {
-        our_socket.on("invitationPopUp", (invitingUserName) =>
-        {
-          console.log("You've been invited mate");
-          setinviterName(invitingUserName);
-          setIsInvited(true);
-        })
-    }, [])
+
     
     const  acceptInvite = () => {
       console.log("Invite accepted");
@@ -41,13 +38,14 @@ const PopUp = () => {
       setIsInvited(false);
     }
 
-
+    console.log(`POPUP status: ${isInvited}`);
+    
     return (
-        <Popup open={isInvited} position="right center" onClose={rejectInvite} >
-            <h2>You've been invited to the game by {inviterName}</h2>
+        <Popup open={isInvited} position="right center" onClose={() => rejectInvite()} >
+            <h2 style={{color: "black"}} >You've been invited to the game by {inviterName}</h2>
             <center>
-                <button className="game_buttons" onClick={acceptInvite}> Accept </button>
-                <button className="game_buttons" onClick={rejectInvite}> Reject </button>
+                <button className="game_buttons" onClick={() => acceptInvite()}> Accept </button>
+                <button className="game_buttons" onClick={() => rejectInvite()}> Reject </button>
             </center>
         </Popup>
     )

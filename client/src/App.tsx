@@ -25,6 +25,7 @@ import { emit } from "process";
 import { useNavigate } from 'react-router-dom';
 import PopUp from "./components/Popup";
 import Ladder from "./components/ladder/Ladder";
+import { createImportSpecifier } from "typescript";
 
 
 
@@ -34,6 +35,8 @@ export const ConversationContext = React.createContext<
 >([]);
 
 function App() {
+  // const { setIsInvited} = useMyContext();
+  const [isInvited, setIsInvited] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [userId, setUserId] = useState("");
   const [name, setName] = useState("");
@@ -142,7 +145,16 @@ function App() {
   //       setIsInvited(true);
   //     })
   // }, [])
+  useEffect(() => 
+  {
+      our_socket.on("invitationPopUp", (invitingUserName) =>
+      {
 
+        console.log("You've been invited mate");
+        setinviterName(invitingUserName);
+        setIsInvited(true);
+      })
+  }, [])
   return (
     <InfoCardProvider>
       <Displayed_Chat_Provider>
@@ -169,7 +181,7 @@ function App() {
           {/* <PopUp/> */}
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} >
+              <Route path="/" element={loggedIn ? <HomePage isInvited={isInvited} setIsInvited={setIsInvited}/> : <LoginPage />} >
                 <Route index element={<LandingPage/>} />
                 <Route path="/game" element={<Game userId={userId} />} />
                 <Route path="/community" element={<Community userId={userId} />} />

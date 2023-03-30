@@ -9,15 +9,21 @@ import UserPage from './user/UserPage'
 import { Outlet } from 'react-router-dom'
 import PopUp from './Popup'
 
-const HomePage = () => {
 
-	const { showUserInfo } = useMyContext();
+type Props = {
+    isInvited: boolean;
+    setIsInvited: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const HomePage = ({isInvited, setIsInvited} : Props) => {
+
+	const { showUserInfo, } = useMyContext();
   return (
 	<div className='game-page'>
 		<Header />
 		<Outlet />
 		{showUserInfo && <UserPage />}
-		<PopUp />
+		<PopUp isInvited={isInvited} setIsInvited={setIsInvited}/>
 		<Footer />
 	</div>
   )

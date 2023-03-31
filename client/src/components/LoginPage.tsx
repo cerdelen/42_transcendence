@@ -22,7 +22,7 @@ const LoginPage = () => {
       
       // const token = await response.text();
       // console.log('this is teh tokebn' + token);
-      JSCookies.set("accessToken", 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdGluZ3VzZXIiLCJzdWIiOjMyMiwibWFpbCI6InRlc3Rpbmd1c2VyQGVtYWlsLmNvbSIsImlzX3R3b19GQWVkIjpmYWxzZSwiaWF0IjoxNjc5NjczOTMwLCJleHAiOjE2ODAyNzg3MzB9.ZeC2lHOm8Tmm6Al4BnHY9xea1tF8QB0gWRMxcIbvPe0');
+      JSCookies.set("accessToken", 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdGluZ3VzZXIiLCJzdWIiOjMyMiwibWFpbCI6InRlc3Rpbmd1c2VyQGVtYWlsLmNvbSIsImlzX3R3b19GQWVkIjpmYWxzZSwiaWF0IjoxNjgwMjg3Mzk0LCJleHAiOjE2ODA4OTIxOTR9.ZYK3y01-j-Vck3OGx2J706JvC4PzaP48pkvVwv7AcY0');
       // console.log('this is cookie' + JSCookies.get("accessToken"));
       window.location.assign('http://localhost:3000/');
     }

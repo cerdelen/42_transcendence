@@ -14,6 +14,7 @@ import { userInfo } from 'os';
 import { request } from 'http';
 import { PrismaService } from '../prisma/prisma.service';
 import { conversationGateway } from './conversationSocket/conversation.gateway';
+import { Two_FA_Guard } from 'src/two_fa/guard/two_fa.guard';
 
 
 @Controller('conversation')
@@ -398,6 +399,17 @@ export class ConversationController {
 		) {
 			return this.conversationsService.remove_user_from_conversation(conversation_id, req.user.id, id_to_kick);
 		}
+
+		@Get('is_password_protected/:conv_id')
+		@UseGuards(Jwt_Auth_Guard)
+		@UseGuards(Two_FA_Guard)
+		async	is_password_protected(@Param('conv_id', new ParseIntPipe()) conv_id: number)
+		{
+			return (this.conversationsService.is_pass_protected(conv_id));
+		}
+
+
+
 }
 
 // async banUser(@Req() req : any, @Param('id', new ParseIntPipe()) id: number, @Param('bid', new ParseIntPipe()) bid: number){

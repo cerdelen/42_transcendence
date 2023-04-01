@@ -51,6 +51,15 @@ export class ConversationService {
 		
 	}
 
+	async	is_pass_protected(conv_id: number)
+	{
+		const conv = await this.prisma.conversation.findUnique({where: {conversation_id: conv_id}});
+
+		if (!conv)
+			return false;
+		return conv.conversation_pass_protected;
+	}
+
 	async	set_password(chat_id: number, user_id: number, password: string)
 	{
 		console.log(chat_id + "in setvice set password");

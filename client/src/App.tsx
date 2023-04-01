@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import PopUp from "./components/Popup";
 import Ladder from "./components/ladder/Ladder";
 import Profile_picture_Provider from "./contexts/Profile_picture_context";
+import { createImportSpecifier } from "typescript";
 
 
 
@@ -35,6 +36,8 @@ export const ConversationContext = React.createContext<
 >([]);
 
 function App() {
+  // const { setIsInvited} = useMyContext();
+  const [isInvited, setIsInvited] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [userId, setUserId] = useState("");
   const [name, setName] = useState("");
@@ -136,7 +139,25 @@ function App() {
     our_socket.emit("setupUserSocketId", userId);
   }, [userId])
  
+  // useEffect(() => 
+  // {
+  //     our_socket.on("invitationPopUp", (invitingUserName) =>
+  //     {
+  //       console.log("You've been invited mate");
+  //       setinviterName(invitingUserName);
+  //       setIsInvited(true);
+  //     })
+  // }, [])
+  useEffect(() => 
+  {
+      our_socket.on("invitationPopUp", (invitingUserName) =>
+      {
 
+        console.log("You've been invited mate");
+        setinviterName(invitingUserName);
+        setIsInvited(true);
+      })
+  }, [])
   return (
     <InfoCardProvider>
       <Displayed_Chat_Provider>
@@ -153,19 +174,25 @@ function App() {
             blocked_users: blcoked_users,
           }}
         >
-          <Profile_picture_Provider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} >
-                  <Route index element={<LandingPage/>} />
-                  <Route path="/game" element={<Game userId={userId} />} />
-                  <Route path="/community" element={<Community userId={userId} />} />
-                  <Route path="/ladder" element={<Ladder />} />
-                </Route>
-                <Route path="/auth" element={<SecondFactorPage />} />
-              </Routes>
-            </BrowserRouter>
-          </Profile_picture_Provider>
+          {/* <Popup open={isInvited} position="right center" onClose={rejectInvite} >
+          <h2>You've been invited to the game by {inviterName}</h2>
+          <center>
+          <button className="game_buttons" onClick={acceptInvite}> Accept </button>
+          <button className="game_buttons" onClick={rejectInvite}> Reject </button>
+          </center>
+          </Popup> */}
+          {/* <PopUp/> */}
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={loggedIn ? <HomePage setInviterName={setinviterName} inviterName={inviterName} isInvited={isInvited} setIsInvited={setIsInvited}/> : <LoginPage />} >
+                <Route index element={<LandingPage/>} />
+                <Route path="/game" element={<Game userId={userId} />} />
+                <Route path="/community" element={<Community userId={userId} />} />
+                <Route path="/ladder" element={<Ladder />} />
+              </Route>
+              <Route path="/auth" element={<SecondFactorPage />} />
+            </Routes>
+          </BrowserRouter>
         </UserContext.Provider>
       </Displayed_Chat_Provider>
     </InfoCardProvider>

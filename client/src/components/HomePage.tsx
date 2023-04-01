@@ -13,20 +13,26 @@ import PopUp from './Popup'
 import { useMyProfile_picture_Context } from '../contexts/Profile_picture_context'
 import { UserContext } from '../contexts/UserContext'
 
-const HomePage = () => {
 
-	const { showUserInfo } = useMyContext();
-	
-	return (
-		<div className='game-page'>
+type Props = {
+	setInviterName: any;
+	inviterName : any;
+    isInvited: boolean;
+    setIsInvited: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-			<Header />
-			<Outlet />
-			{showUserInfo && <UserPage />}
-			<PopUp />
-			<Footer />
-		</div>
-	)
+const HomePage = ({setInviterName, inviterName, isInvited, setIsInvited} : Props) => {
+
+	const { showUserInfo, } = useMyContext();
+  return (
+	<div className='game-page'>
+		<Header />
+		<Outlet />
+		{showUserInfo && <UserPage />}
+		<PopUp setInviterName={setInviterName} inviterName={inviterName} isInvited={isInvited} setIsInvited={setIsInvited}/>
+		<Footer />
+	</div>
+  )
 }
 
 export default HomePage

@@ -44,7 +44,7 @@ const Password_input = ({ setButton_state, chat_id }: { setButton_state: any; ch
 		}
 	};
 	return (
-		<SingleFieldInputForm handleSubmit={handleSubmit} buttonText="Set Password"/>
+		<SingleFieldInputForm handleSubmit={handleSubmit} fieldPlaceholder='Password' buttonText="Set Password"/>
 	);
 };
 

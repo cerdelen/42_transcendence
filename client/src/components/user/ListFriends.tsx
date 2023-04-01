@@ -15,8 +15,8 @@ const NameComponent = ({ name, pic }: NameProps) => {
         src={pic}
         alt="userPhoto"
         style={{ width: "64px", height: "64px" }}
-        />
-        <span>{name}</span>
+      />
+      <span>{name}</span>
     </li>
   );
 };
@@ -29,47 +29,48 @@ const ListFriends = ({ friendsList }: Props) => {
   // const { friendlist } = useContext(UserContext);
   const [friendsNames, setNames] = useState<string[]>([]);
   const [profilePictures, setProfilePictures] = useState<string[]>([]);
-	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
+  const { picture_map, set_picture_map, pushPictureToMap } =
+    useMyProfile_picture_Context();
   useEffect(() => {
     const fetchNames = async () => {
-    try {
-      const newlist = await Promise.all(
-        friendsList.map(async (id) => {
-          const response = await fetch("http://localhost:3003/user/user_name", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-            },
-            body: JSON.stringify({ user_id: id }),
-          });
-          const name = await response.text();
-          return name;
-        })
-      );
-      setNames(newlist);
-    } catch (error) {
-      console.error(`fetch Names in ListFriends failed: ${error}`);
-    }
-      
+      try {
+        const newlist = await Promise.all(
+          friendsList.map(async (id) => {
+            const response = await fetch(
+              "http://localhost:3003/user/user_name",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+                },
+                body: JSON.stringify({ user_id: id }),
+              }
+            );
+            const name = await response.text();
+            return name;
+          })
+        );
+        setNames(newlist);
+      } catch (error) {
+        console.error(`fetch Names in ListFriends failed: ${error}`);
+      }
     };
 
     const getUserPic = async () => {
       try {
         const newlist = await Promise.all(
-        friendsList.map(async (id) => {
-          if(picture_map.has(Number(id)))
-          {
-            return (picture_map.get(Number(id)) ?? '');
-          }
-          return pushPictureToMap(Number(id), picture_map, set_picture_map);
-        })
-      );
-      setProfilePictures(newlist);
+          friendsList.map(async (id) => {
+            if (picture_map.has(Number(id))) {
+              return picture_map.get(Number(id)) ?? "";
+            }
+            return pushPictureToMap(Number(id), picture_map, set_picture_map);
+          })
+        );
+        setProfilePictures(newlist);
       } catch (error) {
         console.error(`fetch getUserPic in ListFriends failed: ${error}`);
       }
-      
     };
 
     fetchNames();
@@ -80,9 +81,13 @@ const ListFriends = ({ friendsList }: Props) => {
     <ul className="user-info-lists">
       <div className="title-section">Friends:</div>
       <br />
-      {friendsNames.map((name, idx) => (
-        <NameComponent key={name} name={name} pic={profilePictures[idx]} />
-      ))}
+      {friendsNames.length === 0 ? (
+        <span>Go make some friends </span>
+      ) : (
+        friendsNames.map((name, idx) => (
+          <NameComponent key={name} name={name} pic={profilePictures[idx]} />
+        ))
+      )}
     </ul>
   );
 };

@@ -2,17 +2,32 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-  }
+}
 
 .right-shadow {
-    background-image: linear-gradient(to bottom left, rgb(0, 0, 0), rgb(96, 62, 135));
+	background-image: linear-gradient(to bottom left, rgb(0, 0, 0), rgb(96, 62, 135));
 }
 
 .popup {
-	display: flex;
+	display: grid;
+	grid-template-columns: 1fr .8fr;
+	column-gap: .5rem;
+	row-gap: .5rem;
 	justify-content: space-between;
 }
 
 #set-password {
 	font-size: 14px;
+}
+
+.popup input {
+	background: linear-gradient(to bottom right, rgb(134, 73, 127), rgb(129, 103, 146));
+}
+
+.popup input::placeholder {
+	color: purple;
+}
+
+.popup input:focus {
+	outline: auto;
 }

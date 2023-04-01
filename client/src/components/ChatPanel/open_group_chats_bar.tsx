@@ -13,21 +13,23 @@ const Chat_name_input = ({ setButton_state }: { setButton_state: any }) => {
   const {
     my_chats_ids,
     setmy_chats_ids,
-    not_joined_chats_ids,
-    setNot_joined_chats_ids,
   } = useMyChatCardsContext();
   const { setDisplayed_chat } = useMyDisplayedChatContext();
 
-  const handleSubmit = async (inputValue: string) => {
+  const handleSubmit = async (inputValue: string, password?: string) => {
+
+    console.log("HANDLE SUBMIT CREATE GROUP CHAT");
+    
     if (inputValue.length > 0) {
       const response = await fetch(
-        `http://localhost:3003/conversation/create_group_chat/${inputValue}`,
+        `http://localhost:3003/conversation/create_group_chat/create`,
         {
-          method: "Get",
+          method: "Post",
           headers: {
-            // "Content-Type": "application/json",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${JSCookies.get("accessToken")}`,
           },
+          body: JSON.stringify({ chat_name: inputValue, password: ""}),
         }
       );
 
@@ -40,7 +42,10 @@ const Chat_name_input = ({ setButton_state }: { setButton_state: any }) => {
   };
 
   return (
-    <SingleFieldInputForm handleSubmit={handleSubmit} buttonText="CREATE" />
+    <div>
+      <SingleFieldInputForm handleSubmit={handleSubmit} buttonText="CREATE" fieldPlaceholder="Chat name" passwordField={true}/>
+      
+    </div>
   );
 };
 
@@ -66,12 +71,15 @@ const Group_chat_preview_card = ({
 
   const handleSubmit = async (inputValue: string) => {
     const response = await fetch(
-      `http://localhost:3003/conversation/join_group_chat/${chat_id}`,
+      `http://localhost:3003/conversation/join_group_chat/join`,
       {
-        method: "Get",
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${JSCookies.get("accessToken")}`,
         },
+        body: JSON.stringify({ chat_id: 15, password: "password"}),
+        
       }
     );
     const data = await response.json();
@@ -89,13 +97,18 @@ const Group_chat_preview_card = ({
 
 
   const joinChat = async () => {
+    console.log(`JOIN CHAT`);
+    
     const response = await fetch(
-      `http://localhost:3003/conversation/join_group_chat/${chat_id}`,
+      `http://localhost:3003/conversation/join_group_chat/join`,
       {
-        method: "Get",
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${JSCookies.get("accessToken")}`,
         },
+        body: JSON.stringify({ chat_id: 15, password: "password"}),
+        
       }
     );
     const data = await response.json();
@@ -170,6 +183,7 @@ const Group_chat_preview_card = ({
       {hasPassword ? (
         <SingleFieldInputForm
           handleSubmit={handleSubmit}
+          fieldPlaceholder="Password needed"
           buttonText="Submit"
         />
       ) : (
@@ -277,7 +291,7 @@ const Open_group_cards = () => {
             className="purple-button"
             onClick={() => setButton_state(false)}
           >
-            CEATE GROUP CHAT
+            CREATE GROUP CHAT
           </button>
         ) : (
           <Chat_name_input setButton_state={setButton_state} />

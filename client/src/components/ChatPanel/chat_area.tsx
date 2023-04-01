@@ -6,6 +6,8 @@ import Display_full_chat from "./display_full_chat";
 import { UserContext } from "../../contexts/UserContext";
 import empty_chat_picture from "../../images/sleeping_cat.jpeg";
 import JSCookies from "js-cookie";
+// import CatSvg from "../../svg/peeking-cat.svg"
+import CatSvg from "../../svg/peeking-cat.svg"
 
 interface message {
   author_id: string;
@@ -109,7 +111,7 @@ const Chat_area = () => {
       {displayed_chat.conversation_id == -1 ? (
         <>
           <h2>You have no open chats {displayed_chat.conversation_name}</h2>
-          <img src={empty_chat_picture} />
+          <img src={CatSvg}/>
           <div></div>
         </>
       ) : (

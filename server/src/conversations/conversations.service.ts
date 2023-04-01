@@ -78,7 +78,7 @@ export class ConversationService {
 			},
 			data: {
 				conversation_password: password,
-				conversation_pass_protected: true,
+				ask_password: true,
 			}
 		})
 	}

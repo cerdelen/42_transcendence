@@ -69,11 +69,9 @@ const Chat_area = () => {
 
   our_socket.on("some_one_joined_group_chat", ({conv_id, joined_user_id} : {conv_id: number, joined_user_id: number}) =>
 		{	
-      console.log("hello this is subscriber to some_one_joined_group_chat");
 
 			if (joined_user_id == Number(userId))
 			{
-        console.log("HLELOOO IN THE IF, " + conv_id);
         set_reset_displayed_chat(conv_id);
 			}
 		});

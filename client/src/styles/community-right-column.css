@@ -7,3 +7,12 @@
 .right-shadow {
     background-image: linear-gradient(to bottom left, rgb(0, 0, 0), rgb(96, 62, 135));
 }
+
+.popup {
+	display: flex;
+	justify-content: space-between;
+}
+
+#set-password {
+	font-size: 14px;
+}

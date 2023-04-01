@@ -11,6 +11,7 @@ import { RiVolumeMuteFill } from "react-icons/ri";
 import themeAchievement from "../../images/changed-theme-achievement.png";
 import path from "path";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+import SingleFieldInputForm from "../SingleFieldInputForm/SingleFieldInputForm";
 
 const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<displayed_chat_class>>, userId: string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids: any, setNot_joined_chats_ids: any, group_chat: boolean | undefined) => {
 	console.log("calling this handleLeaveChat");
@@ -23,13 +24,7 @@ const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<Reac
 }
 
 const Password_input = ({ setButton_state, chat_id }: { setButton_state: any; chat_id: number }) => {
-	const [inputValue, setInputValue] = useState("");
-
-	const handleInputChange = (e: any) => {
-		setInputValue(e.target.value);
-	};
-
-	const handleButtonClick = async () => {
+	const handleSubmit = async (inputValue: string) => {
 		if (inputValue.length > 0) {
 			console.log(chat_id + "chat id i append to url");
 
@@ -49,10 +44,7 @@ const Password_input = ({ setButton_state, chat_id }: { setButton_state: any; ch
 		}
 	};
 	return (
-		<div className="popup">
-			<input type="text" value={inputValue} onChange={handleInputChange} />
-			<button onClick={handleButtonClick}>Set Password</button>
-		</div>
+		<SingleFieldInputForm handleSubmit={handleSubmit} buttonText="Set Password"/>
 	);
 };
 

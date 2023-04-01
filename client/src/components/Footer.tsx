@@ -1,5 +1,3 @@
-import React from 'react'
-import JSCookies from "js-cookie";
 // type Props = {}
 // I want to add our photos and githubs and linked ins
 function Creators() {
@@ -14,8 +12,7 @@ function Footer() {
 
   return (
 	<footer>
-		{/* <Creators /> */}
-		<button onClick={() => console.log(JSCookies.get('accessToken'))} >PRINT TOKEN</button>
+		<Creators />
 	</footer>
   )
 }

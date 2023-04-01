@@ -138,23 +138,22 @@ const UserPage = () => {
   function startAndinvitePlayers(userId: string, userName: string) {
     console.log(userId + " Inviting player " + userName);
     setShowUserInto(false);
-    let obj : any = {userId: userId, userName: userName};
-    
+    let obj: any = { userId: userId, userName: userName };
+
     our_socket.emit("createInvitationRoom", JSON.stringify(obj));
   }
   return (
-    <>
-      {true && (
-        <div id="userInfo">
-          <div id="stats">
-            <div>
-              <UserPhoto userId={userIdCard} />
-            </div>
-            <div id="generic-info">
-              <span>{`Player: ${userName}`}</span>
-              <span>{`Email: ${userEmail}`}</span>
-              {isMe ? <span>{`2FA enabled: ${TFA}`}</span> : <span></span>}
+    <div id="userInfo">
+      <div id="stats">
+        <div>
+          <UserPhoto userId={userIdCard} />
+        </div>
+        <div id="generic-info">
+          <span>{`Player: ${userName}`}</span>
+          <span>{`Email: ${userEmail}`}</span>
+          {isMe ? <span>{`2FA enabled: ${TFA}`}</span> : <span></span>}
 
+<<<<<<< HEAD
               {!isMe &&
                 <div id="buttons">
                   <button className="purple-button" onClick={startChat}>
@@ -176,19 +175,40 @@ const UserPage = () => {
                   </button>
                 </div>
               }
+=======
+          {!isMe && (
+            <div id="buttons">
+              <button className="purple-button" onClick={startChat}>
+                Chat
+              </button>
+              <Link to="/game">
+                <button
+                  className="purple-button"
+                  onClick={() => startAndinvitePlayers(userId, userName)}
+                >
+                  Play
+                </button>
+              </Link>
+              <button className="purple-button" onClick={updateFriendsList}>
+                {isFriend ? "Unfriend" : "Friend"}
+              </button>
+              <button className="purple-button" onClick={updateFriendsList}>
+                {is_blocked ? "Unblock" : "Block"}
+              </button>
+>>>>>>> 4dea3eccb32b5ef91175617a9978430d37048659
             </div>
-            <UserStats userId={userIdCard} />
-          </div>
-          <button id="exit-buttton" onClick={toggleVisibility}>
-            X
-          </button>
-          <div id="lists">
-            <ListFriends friendsList={friendsList} />
-            <GameHistory gamesList={gamesList} />
-          </div>
+          )}
         </div>
-      )}
-    </>
+        <UserStats userId={userIdCard} />
+      </div>
+      <button id="exit-buttton" onClick={toggleVisibility}>
+        X
+      </button>
+      <div id="lists">
+        <ListFriends friendsList={friendsList} />
+        <GameHistory gamesList={gamesList} />
+      </div>
+    </div>
   );
 };
 

@@ -66,31 +66,6 @@ export class PicturesController
 		});
 	}
 	
-
-	@UseGuards(Jwt_Auth_Guard)
-	@Get('turn_on_picture')
-	async	turn_on_picture(@Req() _req: any)
-	{
-		console.log("\n\nTURNO ON PICTURE");
-		return ( await this.userService.updateUser({where: {id: _req.user.id}, data: { show_default_image: true }}));
-	}
-	
-	@UseGuards(Jwt_Auth_Guard)
-	@Get('turn_off_picture')
-	async	turn_off_picture(@Req() _req: any)
-	{
-		console.log("\n\nTURNO OFF PICTURE");
-		return (await this.userService.updateUser({where: {id: _req.user.id}, data: { show_default_image: false }}));
-	}
-
-	@Get('is-image-default')
-	@UseGuards(Jwt_Auth_Guard)
-	async	status(@Req() req: any) : Promise<any>
-	{
-		const status = await this.userService.status_default_image(req.user.id);
-		return {'status': status};
-	}
-
 	// @UseGuards(Jwt_Auth_Guard)
 	@Get('group_chat')
 	async	get_group_chat(@Param('userId') userId, @Res() _res: any) : Promise<any>

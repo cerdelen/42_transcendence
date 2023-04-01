@@ -12,7 +12,6 @@ type UserContextType = {
 	friendlist: number[],
 	stats: any,
 	games: number[],				// ids of games??
-	show_default_image: boolean,
 	blocked_users: number[]
 };
 
@@ -25,7 +24,6 @@ export const UserContext = createContext<UserContextType>({
 	friendlist: [],
 	stats: {},
 	games: [],				// ids of games??
-	show_default_image: false,
 	blocked_users: []
 });
 

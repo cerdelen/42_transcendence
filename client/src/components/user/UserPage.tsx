@@ -40,10 +40,8 @@ const UserPage = () => {
     }
   };
 
-  const update_is_blocked = async () =>
-  {
-    if (!is_blocked)
-    {
+  const update_is_blocked = async () => {
+    if (!is_blocked) {
       try {
         const response = await fetch(
           `http://localhost:3003/user/block_user/${userIdCard}`,
@@ -60,8 +58,7 @@ const UserPage = () => {
         alert("Could not modify friends list");
       }
     }
-    else
-    {
+    else {
       try {
         const response = await fetch(`http://localhost:3003/user/unblock_user/${userIdCard}`, {
           method: "Get",
@@ -152,8 +149,6 @@ const UserPage = () => {
           <span>{`Player: ${userName}`}</span>
           <span>{`Email: ${userEmail}`}</span>
           {isMe ? <span>{`2FA enabled: ${TFA}`}</span> : <span></span>}
-
-<<<<<<< HEAD
               {!isMe &&
                 <div id="buttons">
                   <button className="purple-button" onClick={startChat}>
@@ -175,32 +170,9 @@ const UserPage = () => {
                   </button>
                 </div>
               }
-=======
-          {!isMe && (
-            <div id="buttons">
-              <button className="purple-button" onClick={startChat}>
-                Chat
-              </button>
-              <Link to="/game">
-                <button
-                  className="purple-button"
-                  onClick={() => startAndinvitePlayers(userId, userName)}
-                >
-                  Play
-                </button>
-              </Link>
-              <button className="purple-button" onClick={updateFriendsList}>
-                {isFriend ? "Unfriend" : "Friend"}
-              </button>
-              <button className="purple-button" onClick={updateFriendsList}>
-                {is_blocked ? "Unblock" : "Block"}
-              </button>
->>>>>>> 4dea3eccb32b5ef91175617a9978430d37048659
-            </div>
-          )}
+            </div>}
         </div>
         <UserStats userId={userIdCard} />
-      </div>
       <button id="exit-buttton" onClick={toggleVisibility}>
         X
       </button>
@@ -208,7 +180,7 @@ const UserPage = () => {
         <ListFriends friendsList={friendsList} />
         <GameHistory gamesList={gamesList} />
       </div>
-    </div>
+    </div >
   );
 };
 

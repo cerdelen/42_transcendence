@@ -3,17 +3,23 @@ import { Profile, Strategy, VerifyCallback } from 'passport-42';
 import { AuthService } from "../auth.service";
 import { Injectable } from "@nestjs/common";
 import { Prisma, User } from "@prisma/client";
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class Intra42Strategy extends PassportStrategy(Strategy, '42'){
-	constructor(private authService: AuthService) 
+	constructor(private authService: AuthService, private configService: ConfigService) 
 	{
 		super
 		({
 			clientID: "u-s4t2ud-ebe5af0f2962dca5114adf05b60c69a7cbbb6ec31e4cd146812b74d954feb284",
-			clientSecret: "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",
+			clientSecret: configService.get('client_secret'),
 			callbackURL: "http://localhost:3003/auth/login",
 		});
+		console.log("ENVVVV" + configService.get('client_secret'));
+		console.log("ENVVVV§" + configService.get('secret'));
+		
+		
+		
 	}
 
 	async	validate(

@@ -11,6 +11,8 @@ type MyContextType = {
     setShowUserInto: React.Dispatch<React.SetStateAction<boolean>>;
     userIdCard: string;
     setUserIdCard: React.Dispatch<React.SetStateAction<string>>;
+    // isInvited: boolean;
+    // setIsInvited: React.Dispatch<React.SetStateAction<boolean>>;
     images: any[];
     initial_state: pong_properties;
 };
@@ -20,6 +22,8 @@ const InfoCardContext = createContext<MyContextType>({
     setShowUserInto: () => {},
     userIdCard: '',
     setUserIdCard: () => {},
+    // isInvited: false,
+    // setIsInvited: () => {},
     images: [],
     initial_state: { keysPressed: [],
       player_1_score: 0,
@@ -63,6 +67,8 @@ type MyContextProviderProps = {
 export function InfoCardProvider({ children }: MyContextProviderProps) {
   const [showUserInfo, setShowUserInto] = useState(false);
   const [userIdCard, setUserIdCard] = useState('');
+  // const [isInvited, setIsInvited] = useState(false);
+
   let images : any[] = [];
   let pic = new Image();
   pic.src = Bulgaria
@@ -113,6 +119,9 @@ export function InfoCardProvider({ children }: MyContextProviderProps) {
     setUserIdCard,
     images,
     initial_state,
+  //  isInvited,
+  //  setIsInvited,
+
   };
 
   return (

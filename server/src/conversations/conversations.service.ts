@@ -402,7 +402,7 @@ export class ConversationService {
 
 	async	remove_user_from_conversation(chat_id: number, userId: number, id_to_kick: number)
 	{
-		
+
 		const conversation = await this.prisma.conversation.findUnique({
 			where: {
 				conversation_id: chat_id,

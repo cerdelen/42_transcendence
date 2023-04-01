@@ -15,6 +15,8 @@ import { request } from 'http';
 import { PrismaService } from '../prisma/prisma.service';
 import { conversationGateway } from './conversationSocket/conversation.gateway';
 import { Two_FA_Guard } from 'src/two_fa/guard/two_fa.guard';
+import { hashPassword } from 'src/utils/hash_passwrd';
+import { comparePassword } from '../utils/hash_passwrd';
 
 
 @Controller('conversation')
@@ -26,14 +28,12 @@ export class ConversationController {
 
 
 	@UseGuards(Jwt_Auth_Guard)
-	@Get('create_group_chat/:chat_name')
+	@Post('create_group_chat/create')
 	async createConversation(
 		@Req()
 		req : any,
-		@Param('chat_name') chat_name: string)
+		@Body() chat_name: string, password: string, askPassword?: boolean, )
 		{
-			// console.log("USERCONTENT" + userContent.participants);
-
 			if (typeof chat_name === "undefined")
 			{
 				console.log("not creating chat because of undefined chat_name");
@@ -41,6 +41,10 @@ export class ConversationController {
 			}
 			let array : number[] = [];
 			let user : User;
+			let pwd : string;
+			if(password.length != 0) {
+				pwd = hashPassword(password);
+			}
 			// for (let i = 0; i < chat_name.length; ++i)
 			// {
 			// 	let chat_member = this.conversationsService.findConversationByName(chat_name);
@@ -55,7 +59,9 @@ export class ConversationController {
 				conversation_participant_arr: [Number(req.user.id)],
 				conversation_owner_arr: [Number(req.user.id)],
 				conversation_admin_arr: [Number(req.user.id)],
-				group_chat: true
+				group_chat: true,
+				conversation_password: pwd,
+				ask_password: password.length != 0
 			})
 
 			for (let i = 0; i < array.length; ++i)
@@ -77,10 +83,10 @@ export class ConversationController {
 		}
 
 		@UseGuards(Jwt_Auth_Guard)
-		@Get('join_group_chat/:chat_id')
+		@Post('join_group_chat/:join')
 		async joinConversation(
 			@Req() req: any,	
-			@Param('chat_id') chat_id: number
+			@Body() chat_id: number, password: string
 		) {
 			console.log("CHAT_ID " + chat_id);
 			const existingConversation = await this.conversationsService.findConversation(chat_id)
@@ -88,6 +94,10 @@ export class ConversationController {
 				console.log("The conversation is not a group chat!");
 				return null;
 			}
+			if (existingConversation.ask_password == true || (existingConversation.ask_password == false && comparePassword(password, existingConversation.conversation_password))) {
+				console.log("wrong password");
+				
+			} 
 			const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);		//is he already part of the chat
 			if (userIdx > -1) return (false);			// this means he is already part of the chat and i dont want to add him again
 			await this.conversationsService.updateConversation({

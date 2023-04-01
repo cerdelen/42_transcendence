@@ -4,6 +4,9 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { userInfo } from 'os';
+import { ConfigService } from '@nestjs/config';
+
+
 
 @Injectable()
 export class AuthService 
@@ -11,9 +14,9 @@ export class AuthService
 	constructor(
 			// private prisma: PrismaService,
 			private userService: UserService,
-			private jwtService: JwtService
+			private jwtService: JwtService,
+			private configService: ConfigService
 	) {}
-
 
 	async	login(@Req() _req: any, @Res() _res: any) : Promise<any> 
 	{
@@ -66,7 +69,7 @@ export class AuthService
 		console.log('sign_jwt_token');
 		const	user	= await this.userService.findUserById(user_id);
 		const	payload	= { name: user.name, sub: user.id, mail: user.mail, is_two_FAed: is_two_FAed };
-		const	token	= this.jwtService.sign(payload, {secret: "generic secret"});
+		const	token	= this.jwtService.sign(payload, {secret: this.configService.get('secret')});
 		res.cookie('accessToken', token);
 		console.log('this is signed accessToken');
 		console.log(token);
@@ -78,7 +81,7 @@ export class AuthService
 		console.log('sign_jwt_token');
 		const	user	= await this.userService.findUserById(user_id);
 		const	payload	= { name: user.name, sub: user.id, mail: user.mail, is_two_FAed: is_two_FAed };
-		const	token	= this.jwtService.sign(payload, {secret: "generic secret"});
+		const	token	= this.jwtService.sign(payload, {secret: this.configService.get('secret')});
 		res.cookie('accessToken', token);
 		console.log('this is signed accessToken');
 		console.log(token);
@@ -90,7 +93,7 @@ export class AuthService
 		console.log('sign_jwt_token');
 		const	user	= await this.userService.findUserById(user_id);
 		const	payload	= { name: user.name, sub: user.id, mail: user.mail, is_two_FAed: is_two_FAed };
-		const	token	= this.jwtService.sign(payload, {secret: "generic secret"});
+		const	token	= this.jwtService.sign(payload, {secret: this.configService.get('secret')});
 		// res.clearCookie('accessToken');
 		res.cookie('accessToken', token);
 		// res.set('Authorization', 'Bearer ' + token);

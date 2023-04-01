@@ -9,6 +9,7 @@ datasource backend_database {
 }
 
 model User {
+
 	id								Int				@unique
 	name							String			@unique
 	mail							String
@@ -22,6 +23,7 @@ model User {
 	games							Int[]				// ids of games??
 	show_default_image				Boolean			@default(false)
 	blocked_users					Int[]			@default([])
+
 }
 
 model Stats {

@@ -101,6 +101,10 @@ export class ConversationController {
 			})
 			this.conversationsService.updateConversationIdInUser(req.user.id, chat_id);
 			this.convGateway.joined_chat(Number(chat_id), Number(req.user.id));
+
+		console.log("admin_array2 = " + existingConversation.conversation_admin_arr);
+		console.log("owner_array2 = " + existingConversation.conversation_owner_arr);
+		console.log("participant_array2 = " + existingConversation.conversation_participant_arr);			
 			return (true);
 		}
 

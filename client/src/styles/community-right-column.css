@@ -4,3 +4,6 @@
 	align-items: center;
   }
 
+.right-shadow {
+    background-image: linear-gradient(to bottom left, rgb(0, 0, 0), rgb(96, 62, 135));
+}

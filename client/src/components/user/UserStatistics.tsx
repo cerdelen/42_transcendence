@@ -51,11 +51,14 @@ const UserStats = ({ userId }: Props) => {
   return (
     
     <div id="user-statistics">
-      <div>{`Wins: ${wins}`}</div>
-      <div>{`Loses: ${loses}`}</div>
-      <div>{`Rank: ${mmr}`}</div>
-      <div>{`Wins Ratio: ${winRatio * 100}%`}</div>
-      <div>
+      <div id="stats-words">
+        <span>{`Wins: ${wins}`}</span>
+        <span>{`Loses: ${loses}`}</span>
+        <span>{`Rank: ${mmr}`}</span>
+        <span>{`Wins Ratio: ${winRatio * 100}%`}</span>
+
+      </div>
+      <div id="stats-achievements">
         {achievementOne ? <img src={themeAchievement} alt="achievement_0_true" title={achiev_0}/> : <div className="no-achievement" title={achiev_0}> </div>}
         {achievementTwo ? <img src={threeWinsAchievement} alt="achievement_1_true" title={achiev_1}/> : <div className="no-achievement" title={achiev_1}>  </div>}
         {achievementThree ? <img src={halfGamesAchievement} alt="achievement_2_true" title={achiev_2}/> : <div className="no-achievement" title={achiev_2}>  </div>}

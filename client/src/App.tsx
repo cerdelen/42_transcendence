@@ -4,7 +4,7 @@ import JSCookies from "js-cookie";
 import LoginPage from "./components/LoginPage";
 import HomePage from "./components/HomePage";
 import SecondFactorPage from "./components/second_factor_authentication/SecondFactorPage";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
   AuthContext,
   ConversationContextType,
@@ -21,8 +21,6 @@ import LandingPage from "./LandingPage";
 import 'reactjs-popup/dist/index.css';
 import { emit } from "process";
 
-
-import { useNavigate } from 'react-router-dom';
 import PopUp from "./components/Popup";
 import Ladder from "./components/ladder/Ladder";
 import Profile_picture_Provider from "./contexts/Profile_picture_context";
@@ -182,6 +180,7 @@ function App() {
           </center>
           </Popup> */}
           {/* <PopUp/> */}
+          <Profile_picture_Provider>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={loggedIn ? <HomePage setInviterName={setinviterName} inviterName={inviterName} isInvited={isInvited} setIsInvited={setIsInvited}/> : <LoginPage />} >
@@ -193,6 +192,7 @@ function App() {
               <Route path="/auth" element={<SecondFactorPage />} />
             </Routes>
           </BrowserRouter>
+          </Profile_picture_Provider>
         </UserContext.Provider>
       </Displayed_Chat_Provider>
     </InfoCardProvider>

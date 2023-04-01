@@ -44,7 +44,6 @@ function App() {
   const [friendlist, setFriendslist] = useState([]);
   const [stats, setStats] = useState({});
   const [games, setGames] = useState([]);
-  const [show_default_image, setHasPicture] = useState(false);
   const [inviterName, setinviterName] = useState("");
 	const [photo, setPhoto] = useState("");
   const [blcoked_users, set_blcoked_users] = useState([]);
@@ -107,7 +106,6 @@ function App() {
       setFriendslist(data["friendlist"]);
       setStats(data["stats"]);
       setGames(data["games"]);
-      setHasPicture(data["show_default_image"]);
       set_blcoked_users(data["blocked_users"]);
     } catch (error) {
       console.error(error);
@@ -147,7 +145,6 @@ function App() {
             userId: userId,
             friendlist: friendlist,
             games: games,
-            show_default_image: show_default_image,
             mail: mail,
             name: name,
             stats: stats,

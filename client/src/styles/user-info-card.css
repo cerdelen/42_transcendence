@@ -28,6 +28,10 @@
     align-items: center;
     justify-content: space-around;
     height: 40%;
+    border-bottom: 1px solid purple;
+    /* border-image: linear-gradient(to right, purple 90%, transparent 10%) 1;  */
+    border-image: linear-gradient(to right, transparent 5%, purple 5%, purple 95%, transparent 95%) 1; /* set the border image with a gradient */
+    border-image-slice: 1; /* ensure that the entire border image is displayed */
 }
 
 #userInfo #photo {

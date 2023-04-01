@@ -30,6 +30,7 @@
     "@nestjs/platform-socket.io": "^9.3.9",
     "@nestjs/websockets": "^9.3.9",
     "@prisma/client": "^4.11.0",
+    "@types/bcrypt": "^5.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "multer": "^1.4.5-lts.1",

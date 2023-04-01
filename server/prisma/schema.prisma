@@ -51,6 +51,7 @@ model Conversation {
 	conversation_black_list_arr		Int[]
 	conversation_mute_list_arr		Int[]
 	group_chat						Boolean			@default(false)
+	ask_password					Boolean			@default(false)
 }
 
 model Message {

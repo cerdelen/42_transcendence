@@ -170,7 +170,7 @@ const UserPage = () => {
                   </button>
                 </div>
               }
-            </div>}
+            </div>
         </div>
         <UserStats userId={userIdCard} />
       <button id="exit-buttton" onClick={toggleVisibility}>

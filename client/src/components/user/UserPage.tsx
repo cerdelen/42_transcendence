@@ -40,7 +40,38 @@ const UserPage = () => {
     }
   };
 
-  // const 
+  const update_is_blocked = async () => {
+    if (!is_blocked) {
+      try {
+        const response = await fetch(
+          `http://localhost:3003/user/block_user/${userIdCard}`,
+          {
+            method: "Get",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+            },
+          }
+        );
+        set_is_blocked(true);
+      } catch (error) {
+        alert("Could not modify friends list");
+      }
+    }
+    else {
+      try {
+        const response = await fetch(`http://localhost:3003/user/unblock_user/${userIdCard}`, {
+          method: "Get",
+          headers: {
+            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+          },
+        });
+        set_is_blocked(false);
+      } catch (error) {
+        alert("Could not modify friends list");
+      }
+    }
+  }
 
   const updateFriendsList = async () => {
     if (isFriend) {
@@ -104,23 +135,20 @@ const UserPage = () => {
   function startAndinvitePlayers(userId: string, userName: string) {
     console.log(userId + " Inviting player " + userName);
     setShowUserInto(false);
-    let obj : any = {userId: userId, userName: userName};
-    
+    let obj: any = { userId: userId, userName: userName };
+
     our_socket.emit("createInvitationRoom", JSON.stringify(obj));
   }
   return (
-    <>
-      {true && (
-        <div id="userInfo">
-          <div id="stats">
-            <div>
-              <UserPhoto userId={userIdCard} />
-            </div>
-            <div id="generic-info">
-              <span>{`Player: ${userName}`}</span>
-              <span>{`Email: ${userEmail}`}</span>
-              {isMe ? <span>{`2FA enabled: ${TFA}`}</span> : <span></span>}
-
+    <div id="userInfo">
+      <div id="stats">
+        <div>
+          <UserPhoto userId={userIdCard} />
+        </div>
+        <div id="generic-info">
+          <span>{`Player: ${userName}`}</span>
+          <span>{`Email: ${userEmail}`}</span>
+          {isMe ? <span>{`2FA enabled: ${TFA}`}</span> : <span></span>}
               {!isMe &&
                 <div id="buttons">
                   <button className="purple-button" onClick={startChat}>
@@ -137,24 +165,22 @@ const UserPage = () => {
                   <button className="purple-button" onClick={updateFriendsList}>
                     {isFriend ? "Unfriend" : "Friend"}
                   </button>
-                  <button className="purple-button" onClick={updateFriendsList}>
+                  <button className="purple-button" onClick={update_is_blocked}>
                     {is_blocked ? "Unblock" : "Block"}
                   </button>
                 </div>
               }
             </div>
-            <UserStats userId={userIdCard} />
-          </div>
-          <button id="exit-buttton" onClick={toggleVisibility}>
-            X
-          </button>
-          <div id="lists">
-            <ListFriends friendsList={friendsList} />
-            <GameHistory gamesList={gamesList} />
-          </div>
         </div>
-      )}
-    </>
+        <UserStats userId={userIdCard} />
+      <button id="exit-buttton" onClick={toggleVisibility}>
+        X
+      </button>
+      <div id="lists">
+        <ListFriends friendsList={friendsList} />
+        <GameHistory gamesList={gamesList} />
+      </div>
+    </div >
   );
 };
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Req, UseGuards, Inject } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Req, UseGuards, Inject, Param } from '@nestjs/common';
 import { Jwt_Auth_Guard } from 'src/auth/guards/jwt_auth.guard';
 import { Two_FA_Guard } from 'src/two_fa/guard/two_fa.guard';
 import { UserService } from './user.service';
@@ -133,5 +133,24 @@ export class UserController
 	async	get_ladder()
 	{
 		return (this.userService.get_ladder());
+	}
+	
+	@Get('block_user/:other_user')
+	@UseGuards(Jwt_Auth_Guard)
+	@UseGuards(Two_FA_Guard)
+	async	block_user(@Param('other_user') other_user: number, @Req() _req: any)
+	{
+		console.log("block user controller ");
+		
+		return this.userService.block_user(_req.user.id, Number(other_user));
+	}
+	
+	@Get('unblock_user/:other_user')
+	@UseGuards(Jwt_Auth_Guard)
+	@UseGuards(Two_FA_Guard)
+	async	unblock_user(@Param('other_user') other_user: number, @Req() _req: any)
+	{
+		console.log("UNBLOCKblock user controller ");
+		return this.userService.unblock_user(_req.user.id, Number(other_user));
 	}
 }

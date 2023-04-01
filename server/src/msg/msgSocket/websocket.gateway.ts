@@ -8,6 +8,7 @@ import { MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, W
 import { Server } from 'socket.io';
 import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
 import { MsgService } from 'src/msg/msg.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { io_server } from 'src/utils/Server';
 
 // import { Server } from '@nestjs/platform-socket.io';
@@ -24,7 +25,11 @@ export class MessagingGateway implements OnGatewayConnection {
 		// console.log(client);
 		
 	}
-	constructor (private msg: MsgService)
+	constructor (
+			private msg: MsgService,
+			private readonly prisma: PrismaService
+		
+		)
 	{
 	}
 
@@ -35,10 +40,20 @@ export class MessagingGateway implements OnGatewayConnection {
 		}
 
 		@SubscribeMessage('message')
-		handleCreateMessage(
+		async handleCreateMessage(
 			@MessageBody() data: any) {
 				console.log("here is msg subscriber");
 				console.log(JSON.stringify(data));
+
+				const conv = await this.prisma.conversation.findUnique({where: {conversation_id: data.conversation_id}});
+				if (conv)
+				{
+					console.log(conv.conversation_mute_list_arr.includes(data.author));
+					if(conv.conversation_mute_list_arr.includes(Number(data.author)))
+					{						
+						return ;
+					}
+				}
 				
 				this.msg.createMsg(data);
 				console.log(`From backend message subscriber: message = ${data.text}, author = ${data.author}`);
@@ -47,13 +62,18 @@ export class MessagingGateway implements OnGatewayConnection {
 		}
 
 		@SubscribeMessage('typing')
-		handle_is_typing(
+		async handle_is_typing(
 			@MessageBody() data: any) {
-				console.log("here is handle_is_typing subscriber");
-				console.log(JSON.stringify(data));
-				
+				const conv = await this.prisma.conversation.findUnique({where: {conversation_id: data.chat_id}});
+				if (conv)
+				{
+					if(conv.conversation_mute_list_arr.includes(Number(data.userId)))
+					{
+						console.log("returning because muted");
+						return ;
+					}
+				}
 				this.server.emit('typing', {isTyping: data.isTyping, name: data.userId, chat_id: data.chat_id})
-				// this.msg.createMsg(data);
 		}
 
 		@OnEvent('create.message')

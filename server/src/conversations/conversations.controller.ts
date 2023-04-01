@@ -120,6 +120,62 @@ export class ConversationController {
 		}
 
 		@UseGuards(Jwt_Auth_Guard)
+		@Post('change_password/')
+		async change_password(
+			@Req() req: any,
+			@Body() body: {chat_id, password: string}
+			) {
+				const existingConversation = await this.conversationsService.findConversation(body.chat_id);
+				let pwd = body.password;
+				if (body.password.length != 0) {
+					pwd = hashPassword(pwd);
+					const updatedConversation = this.conversationsService.updateConversation({
+						where: {
+							conversation_id: Number(body.chat_id),
+						},
+						data: {
+							conversation_password: pwd,
+							
+						}
+						
+					})
+					return updatedConversation;
+				}
+				else {
+					return this.conversationsService.updateConversation({
+						where: {
+							conversation_id: Number(body.chat_id),
+						},
+						data: {
+							conversation_password: pwd,
+							ask_password: false
+						}
+					})
+				}
+			}
+		// @UseGuards(Jwt_Auth_Guard) 
+		// @Post('remove_password/')
+		// async remove_password(
+		// 	@Req() req: any,
+		// 	@Body() body: {chat_id, password: string}
+		// 	) {
+		// 		const existingConversation = await this.conversationsService.findConversation(body.chat_id);
+		// 		let pwd = body.password;
+		// 		if (body.password.length == 0) {
+		// 			// pwd = hashPassword(pwd);
+		// 			return this.conversationsService.updateConversation({
+		// 				where: {
+		// 					conversation_id: Number(body.chat_id),
+		// 				},
+		// 				data: {
+		// 					conversation_password: pwd,
+							
+		// 				}
+		// 			})
+		// 		}
+		// 	}
+
+		@UseGuards(Jwt_Auth_Guard)
 		@Post('set_password/:chat_id')
 		async set_password(@Req() req: any, @Param('chat_id') chat_id: number, @Body('Password') password : string)
 		{

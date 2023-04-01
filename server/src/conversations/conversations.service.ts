@@ -202,23 +202,37 @@ export class ConversationService {
         return arr;
     }
 
-	async getMsgsByConversationID(conversationId: number) : Promise<Message[]> {
+	async getMsgsByConversationID(conversationId: number, user_id: number) : Promise<Message[]> {
+		// let Msg: Message[] = await this.prisma.message.findMany({
+		// 	where: {
+		// 		conversation_id: Number(conversationId)
+		// 	},
+		// 	orderBy: {
+		// 		created_at: 'desc'
+		// 	},
+		// })
+		const	user = await this.prisma.user.findUnique({where: {id: user_id}});
 		let Msg: Message[] = await this.prisma.message.findMany({
 			where: {
-				conversation_id: Number(conversationId)
+				conversation_id: Number(conversationId),
+				// NOT: {author: user.blocked_users.includes(author)}
 			},
 			orderBy: {
 				created_at: 'desc'
 			},
-			//in frontend i guess we will compare users id and logged in email for validation matter, if id is not the same, we know its not the user
-			// include: {
-			// 	user_relation: true
-					// select: {
-					//     id: true
-					// }
-				// }
-			// },
 		})
+
+		for(let i = 0; i < user.blocked_users.length; i++)
+		{
+			for (let index = 0; index < Msg.length; index++) {
+				if (user.blocked_users.includes(Msg[index].author))
+				{
+					Msg.splice(index, 1)
+					index--;
+				}
+			}
+		}
+
 		return Msg;
 	}
 

@@ -84,7 +84,6 @@ export class UserService {
 		const	add_friend = await this.prisma.user.findUnique({ where : { id: friend }});
 		const	index = user.friendlist.findIndex(x => x == friend);
 		const	index_2 = add_friend.friendlist.findIndex(x => x == friend);
-		// console.log(index);
 
 		if(add_friend && user && index == -1)
 		{
@@ -97,7 +96,6 @@ export class UserService {
 
 	async	rmv_friend(userId: number, friend: number)
 	{
-		// console.log(friend);
 		const	user = await this.prisma.user.findUnique({ where : { id: userId }});
 		const	rmv_friend = await this.prisma.user.findUnique({ where : { id: friend }});
 		const	index = user.friendlist.findIndex(x => x == friend);
@@ -357,7 +355,9 @@ export class UserService {
 		const idx = user.blocked_users.indexOf(user_to_block)
 		if (idx != -1)
 			return ;
+
 		user.blocked_users.push(user_to_block);
+		
 		await this.prisma.user.update({
 			where: {id: user_id},
 			data: { blocked_users: user.blocked_users}
@@ -367,12 +367,12 @@ export class UserService {
 	async	unblock_user(user_id: number, user_to_unblock: number)
 	{
 		const user = await this.prisma.user.findUnique({where: { id: user_id }});
-
+		
 		if (!user)
-			return ;
+		return ;
 		const idx = user.blocked_users.indexOf(user_to_unblock)
 		if (idx == -1)
-			return ;
+		return ;
 		user.blocked_users.splice(idx, 1);
 		await this.prisma.user.update({
 			where: {id: user_id},

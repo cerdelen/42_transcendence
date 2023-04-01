@@ -40,7 +40,41 @@ const UserPage = () => {
     }
   };
 
-  // const 
+  const update_is_blocked = async () =>
+  {
+    if (!is_blocked)
+    {
+      try {
+        const response = await fetch(
+          `http://localhost:3003/user/block_user/${userIdCard}`,
+          {
+            method: "Get",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+            },
+          }
+        );
+        set_is_blocked(true);
+      } catch (error) {
+        alert("Could not modify friends list");
+      }
+    }
+    else
+    {
+      try {
+        const response = await fetch(`http://localhost:3003/user/unblock_user/${userIdCard}`, {
+          method: "Get",
+          headers: {
+            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+          },
+        });
+        set_is_blocked(false);
+      } catch (error) {
+        alert("Could not modify friends list");
+      }
+    }
+  }
 
   const updateFriendsList = async () => {
     if (isFriend) {
@@ -137,7 +171,7 @@ const UserPage = () => {
                   <button className="purple-button" onClick={updateFriendsList}>
                     {isFriend ? "Unfriend" : "Friend"}
                   </button>
-                  <button className="purple-button" onClick={updateFriendsList}>
+                  <button className="purple-button" onClick={update_is_blocked}>
                     {is_blocked ? "Unblock" : "Block"}
                   </button>
                 </div>

@@ -201,9 +201,9 @@ export class ConversationController {
 
 		@UseGuards(Jwt_Auth_Guard)
     	@Get('/get_messages_from_conversation/:conversationID')
-    	getMsgsFromConversation(@AuthUser() user: User, @Param('conversationID') conversationId: number,)
+    	getMsgsFromConversation(@AuthUser() user: User, @Param('conversationID') conversationId: number, @Req() _req: any)
 		{
-    	    return this.conversationsService.getMsgsByConversationID(conversationId)
+    	    return this.conversationsService.getMsgsByConversationID(conversationId, _req.user.id);
 		}
 
 		@UseGuards(Jwt_Auth_Guard)

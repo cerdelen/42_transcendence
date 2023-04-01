@@ -139,12 +139,6 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
         set_messages(re_messages);
         return;
       }
-      // //console.log("this is the data i got " + await JSON.stringify(data));
-      //   for (let i = 0; i < data.length; i++) {
-      //     re_messages.push(
-      //       new display_message_info(data[i]["text"], data[i]["author"])
-      //     );
-      //   }
       for (let i = data.length - 1; i > -1; i--) {
         re_messages.push(
           new display_message_info(data[i]["text"], data[i]["author"])

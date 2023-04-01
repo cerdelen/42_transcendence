@@ -6,7 +6,7 @@ type Props = {
 };
 
 const StatusAndGamesWon = (props: Props) => {
-  console.log("wins = " + props.wins);
+  // console.log("wins = " + props.wins);
 
   return (
     <div id="status-games-won">

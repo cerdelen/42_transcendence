@@ -25,6 +25,7 @@ import { emit } from "process";
 import { useNavigate } from 'react-router-dom';
 import PopUp from "./components/Popup";
 import Ladder from "./components/ladder/Ladder";
+import Profile_picture_Provider from "./contexts/Profile_picture_context";
 
 
 
@@ -45,6 +46,8 @@ function App() {
   const [games, setGames] = useState([]);
   const [show_default_image, setHasPicture] = useState(false);
   const [inviterName, setinviterName] = useState("");
+	const [photo, setPhoto] = useState("");
+  const [blcoked_users, set_blcoked_users] = useState([]);
   async function getUser() {
     try {
       let response = await fetch("http://localhost:3003/user/get_id", {
@@ -105,6 +108,7 @@ function App() {
       setStats(data["stats"]);
       setGames(data["games"]);
       setHasPicture(data["show_default_image"]);
+      set_blcoked_users(data["blocked_users"]);
     } catch (error) {
       console.error(error);
     }
@@ -133,15 +137,7 @@ function App() {
     // console.log("User id on the frontend " , userId)
     our_socket.emit("setupUserSocketId", userId);
   }, [userId])
-  // useEffect(() => 
-  // {
-  //     our_socket.on("invitationPopUp", (invitingUserName) =>
-  //     {
-  //       console.log("You've been invited mate");
-  //       setinviterName(invitingUserName);
-  //       setIsInvited(true);
-  //     })
-  // }, [])
+ 
 
   return (
     <InfoCardProvider>
@@ -157,27 +153,22 @@ function App() {
             stats: stats,
             two_FA_enabled: two_FA_enabled,
             two_FA_secret: two_FA_secret,
+            blocked_users: blcoked_users,
           }}
         >
-          {/* <Popup open={isInvited} position="right center" onClose={rejectInvite} >
-          <h2>You've been invited to the game by {inviterName}</h2>
-          <center>
-          <button className="game_buttons" onClick={acceptInvite}> Accept </button>
-          <button className="game_buttons" onClick={rejectInvite}> Reject </button>
-          </center>
-          </Popup> */}
-          {/* <PopUp/> */}
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} >
-                <Route index element={<LandingPage/>} />
-                <Route path="/game" element={<Game userId={userId} />} />
-                <Route path="/community" element={<Community userId={userId} />} />
-                <Route path="/ladder" element={<Ladder />} />
-              </Route>
-              <Route path="/auth" element={<SecondFactorPage />} />
-            </Routes>
-          </BrowserRouter>
+          <Profile_picture_Provider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} >
+                  <Route index element={<LandingPage/>} />
+                  <Route path="/game" element={<Game userId={userId} />} />
+                  <Route path="/community" element={<Community userId={userId} />} />
+                  <Route path="/ladder" element={<Ladder />} />
+                </Route>
+                <Route path="/auth" element={<SecondFactorPage />} />
+              </Routes>
+            </BrowserRouter>
+          </Profile_picture_Provider>
         </UserContext.Provider>
       </Displayed_Chat_Provider>
     </InfoCardProvider>

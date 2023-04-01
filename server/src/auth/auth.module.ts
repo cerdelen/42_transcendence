@@ -19,4 +19,4 @@ import { UserService } from '../user/user.service';
   providers: [AuthService, Intra42Strategy, JwtStrategy, Two_FA_Strategy, UserService],
   exports: [AuthService]
 })
-export class AuthModule {}
+export class AuthModule { }

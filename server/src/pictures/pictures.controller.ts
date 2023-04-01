@@ -103,6 +103,8 @@ export class PicturesController
 	@Get(':userId')
 	async	get_my_picture_by_id(@Param('userId') userId, @Res() _res: any) : Promise<any>
 	{
+		console.log("this is get picture by id " + userId);
+		
 		const picture = `./uploads/profile_pictures/${userId}.jpeg`;
 		await fs.access(picture, (error) => {
 			if (error) 

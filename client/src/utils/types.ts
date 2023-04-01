@@ -14,15 +14,6 @@ export type displayed_chat_class =
 	conversation_black_list_arr?: number[];
 	conversation_mute_list_arr?: number[];
 	group_chat?: boolean;
-
-
-
-	// has_password?: boolean;
-	// participants?: number[];
-	// owner?: number;
-	// admins?: number[];
-	// banned?: number[];
-	// mute_list?: number[];
 }
 
 // conversation_id					Int					@unique  @id @default(autoincrement()) 
@@ -70,4 +61,3 @@ export type MessagesType = {
 	createdAt: string;
 	author: User;
 }
-

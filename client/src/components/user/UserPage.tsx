@@ -13,7 +13,7 @@ import { our_socket } from "../../utils/context/SocketContext";
 import { Link } from "react-router-dom";
 
 const UserPage = () => {
-  const { userId } = useContext(UserContext);
+  const { userId, blocked_users } = useContext(UserContext);
   const { userIdCard, setShowUserInto } = useMyContext();
   const [isVisible, setIsVisible] = useState(true);
   const [userName, setUserName] = useState("");
@@ -23,6 +23,7 @@ const UserPage = () => {
   const [gamesList, setGamesList] = useState([]);
   const isMe = userId === userIdCard;
   const [isFriend, setIsFriend] = useState(false);
+  const [is_blocked, set_is_blocked] = useState(false);
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
     setShowUserInto(false);
@@ -38,6 +39,8 @@ const UserPage = () => {
       alert("Could not go to chat");
     }
   };
+
+  // const 
 
   const updateFriendsList = async () => {
     if (isFriend) {
@@ -93,6 +96,7 @@ const UserPage = () => {
       setFriendsList(data["friendlist"]);
       setGamesList(data["games"]);
       setIsFriend(data["friendlist"].includes(Number(userId)));
+      set_is_blocked(blocked_users.includes(Number(userIdCard)));
     };
     if (userIdCard) getData();
   }, [userIdCard, isFriend]);
@@ -131,8 +135,10 @@ const UserPage = () => {
                     </button>
                   </Link>
                   <button className="purple-button" onClick={updateFriendsList}>
-                    {" "}
                     {isFriend ? "Unfriend" : "Friend"}
+                  </button>
+                  <button className="purple-button" onClick={updateFriendsList}>
+                    {is_blocked ? "Unblock" : "Block"}
                   </button>
                 </div>
               }

@@ -67,10 +67,10 @@ const ProfileCard = () => {
       setName(data["name"]);
       setStatusTFA(data["two_FA_enabled"]);
       let achievs: boolean[] = [];
-      console.log("this is data");
-      console.log(data);
-      console.log("this is stats");
-      console.log(stats);
+      // console.log("this is data");
+      // console.log(data);
+      // console.log("this is stats");
+      // console.log(stats);
 
       achievs.push(stats["achievement_0"]);
       achievs.push(stats["achievement_1"]);
@@ -79,8 +79,8 @@ const ProfileCard = () => {
       // :
       // false
       // achievement_"])
-      console.log("this is achiev array");
-      console.log(achievs);
+      // console.log("this is achiev array");
+      // console.log(achievs);
       set_achievementes(achievs);
       set_wins(stats["wins"]);
     };

@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import JSCookies from "js-cookie";
+import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 
 interface Props {
   userName: string;
@@ -15,24 +16,19 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
   const { showUserInfo, setShowUserInto, setUserIdCard } = useMyContext();
   const [photo, setPhoto] = useState("");
   const [newName, setNewName] = useState<string>("");
+  const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
   useEffect(() => {
     const get_user_photo = async () => {
-      const response_two = await fetch(
-        `http://localhost:3003/pictures/${userId}`,
-        {
-          method: "Get",
-          headers: {
-            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-          },
-        }
-      );
-      const path = await response_two.blob();
-      const url = URL.createObjectURL(path);
-      setPhoto(url);
+      if (userId == "")
+        return ;
+      if(picture_map.has(Number(userId)))
+        setPhoto(picture_map.get(Number(userId)) ?? '')
+      else
+        setPhoto(await pushPictureToMap(Number(userId), picture_map, set_picture_map));
     };
     get_user_photo();
     setNewName(userName);
-  }, [userName]);
+  }, [userName, userId]);
 
   const toggleInputField = async () => {
     setShowInput(!showInput);
@@ -63,11 +59,11 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
         setShowInput(false);
         setNewName(newName);
         // setUserName(newName);
-        alert("Name was changed successfully");
+        // alert("Name was changed successfully");
       }
     } catch (error) {
       console.error(error);
-      alert("Something went wrong");
+      // alert("Something went wrong");
     }
   };
 

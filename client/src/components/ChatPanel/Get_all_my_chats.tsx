@@ -7,6 +7,7 @@ import { displayed_chat_class } from "../../utils/types";
 import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
 import { UserContext } from "../../contexts/UserContext";
 import { useMyContext } from "../../contexts/InfoCardContext";
+import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 
 interface chat_props {
 	chat_id: number,
@@ -33,6 +34,7 @@ export class chat_card {
 
 const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
+	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
 	const handleOnClick = async () => 
 	{
 		if (displayed_chat.conversation_id != chat_id)
@@ -81,21 +83,24 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			}
 			setConversation_name(data["conversation_name"])
 		}
-		const getUserData = async (other_user_id : number) => {
-			const response = await fetch(`http://localhost:3003/pictures/${other_user_id}`, {
-				method: "Get",
-				headers: {
-					// "Content-Type": "application/json",
-					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-				},
-			}) 
-			const path = await response.blob();
-			const url = URL.createObjectURL(path);
-			setPhoto(url);
+		const getUserData = async (other_user_id : number) =>
+		{
+			
+			if(picture_map.has(Number(other_user_id)))
+			{
+				console.log("already included");
+				setPhoto(picture_map.get(Number(other_user_id)) ?? '');
+				return ;
+			}
+			console.log("was NOT already included");
+			setPhoto(await pushPictureToMap(Number(other_user_id), picture_map, set_picture_map));
 		}
 		get_conversation(chat_id);
 		}, []);
 
+
+		console.log(photo);
+		
 	return (
 		<li className='Chat_preview_cards' title={conversation_name} onClick={handleOnClick}>
 			<img src={photo} alt="" />

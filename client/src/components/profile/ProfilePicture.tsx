@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import defaultPicture from "../../images/default-picture.jpeg";
 import JSCookies from "js-cookie";
+import { UserContext } from "../../contexts/UserContext";
+import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 
 function hasJpegExtension(filename: string): boolean {
   return filename.endsWith('.jpeg');
@@ -12,6 +14,8 @@ const ProfilePicture = () => {
   const [showUploadButton, setShowUploadButton] = useState<boolean>(false);
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [profilePicture, setProfilePicture] = useState(defaultPicture);
+	const { picture_map, set_picture_map } = useMyProfile_picture_Context();
+  const { userId } = useContext(UserContext);
 
   useEffect(() => {
       getUserPic();
@@ -54,7 +58,13 @@ const ProfilePicture = () => {
     setUseDefaultImage(data['status']);
   }
 
-  const getUserPic = async () => {
+  const getUserPic = async () => 
+  {
+    // if (picture_map.has(Number(userId)))
+    // {
+    //   setProfilePicture(picture_map.get(Number(userId))?? '');
+    //   return ;
+    // }
     const response = await fetch("http://localhost:3003/pictures/me", {
       method: "Get",
       headers: {
@@ -65,6 +75,12 @@ const ProfilePicture = () => {
     const path = await response.blob();
     const url = URL.createObjectURL(path);
     setProfilePicture(url);
+    // const new_map : Map<number, string> = new Map(); 
+		// 	picture_map.forEach((value, key) => {
+		// 		new_map.set(key, value);
+		// 	});
+		// 	new_map.set(Number(userId), url);
+			// set_picture_map(new_map);
   }
 
   const handleImageUpload = async (

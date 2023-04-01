@@ -109,18 +109,27 @@ export class UserController
 		console.log("we newver got inside ");
 		
 	}
-
+	
 	@Get('get_all_other_user_ids')
 	@UseGuards(Jwt_Auth_Guard)
+	@UseGuards(Two_FA_Guard)
 	async	get_all_other_user_ids(@Req() req: any)
 	{
 		console.log(req.user.id);
 		
 		return (this.userService.get_all_other_user_ids(req.user.id));
 	}
-
+	
+	@Get('get_all_user_ids')
+	@UseGuards(Jwt_Auth_Guard)
+	@UseGuards(Two_FA_Guard)
+	async	name() {
+		return (this.userService.get_all_user_ids());
+	}
+	
 	@Get('get_ladder')
 	@UseGuards(Jwt_Auth_Guard)
+	@UseGuards(Two_FA_Guard)
 	async	get_ladder()
 	{
 		return (this.userService.get_ladder());

@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User, Prisma, Stats } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { FindUserParams, UserWhereUniqueInput } from '../utils/types';
-import { AuthUser } from '../utils/decorators';
-import { use } from 'passport';
-// import { FindUserParams } from 'src/utils/types';
+import { UserWhereUniqueInput } from '../utils/types';
 
 @Injectable()
 export class UserService {
@@ -395,4 +392,14 @@ export class UserService {
 		}
 		return (arr);
 	}
+
+	async	get_all_user_ids()
+	{
+		return this.prisma.user.findMany({
+			select: {
+				id: true
+			}
+		})
+	}
 }
+

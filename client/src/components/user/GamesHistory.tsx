@@ -3,6 +3,7 @@ import { UserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
 import defaultPicture from "../../images/default-picture.jpeg";
 import pic from "../../images/cat-stern.jpeg";
+import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 
 
 interface NameProps {
@@ -74,6 +75,7 @@ const GameHistory = ({ gamesList }: Props) => {
   const [playerTwos, setPlayerTwos] = useState<string[]>([]);
   const [profilePicturesPlayerOne, setPicturesPlayerOne] = useState<string[]>([]);
   const [profilePicturesPlayerTwo, setPicturesPlayerTwo] = useState<string[]>([]);
+	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
   useEffect(() => {
     const fetchGames = async () => {
 
@@ -139,18 +141,14 @@ const GameHistory = ({ gamesList }: Props) => {
       };
       const getPicturePlayerOne = async (gamesListy: any) => {
         const newlist = await Promise.all(
-          gamesListy.map(async (game: any) => {
-            const response = await fetch(`http://localhost:3003/pictures/${game['player_one']}`, {
-              method: "Get",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-              },
-            });
-            const path = await response.blob();
-            const url = URL.createObjectURL(path);
-            
-            return url;
+          gamesListy.map(async (game: any) =>
+          {
+            if(picture_map.has(Number(game['player_one'])))
+            {
+              return(picture_map.get(Number(game['player_one'])) ?? '');
+            }
+            return pushPictureToMap(Number(game['player_one']), picture_map, set_picture_map);
+
           })
         );
         setPicturesPlayerOne(newlist);
@@ -159,17 +157,11 @@ const GameHistory = ({ gamesList }: Props) => {
       const getPicturePlayerTwo= async (gamesListy: any) => {
         const newlist = await Promise.all(
           gamesListy.map(async (game: any) => {
-            const response = await fetch(`http://localhost:3003/pictures/${game['player_two']}`, {
-              method: "Get",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-              },
-            });
-            const path = await response.blob();
-            const url = URL.createObjectURL(path);
-            
-            return url;
+            if(picture_map.has(Number(game['player_two'])))
+            {
+              return(picture_map.get(Number(game['player_two'])) ?? '');
+            }
+            return pushPictureToMap(Number(game['player_two']), picture_map, set_picture_map);
           })
         );
         setPicturesPlayerTwo(newlist);

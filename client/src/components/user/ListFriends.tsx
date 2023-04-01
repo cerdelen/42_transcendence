@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
+import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 
 interface NameProps {
   name: string;
@@ -28,6 +29,7 @@ const ListFriends = ({ friendsList }: Props) => {
   // const { friendlist } = useContext(UserContext);
   const [friendsNames, setNames] = useState<string[]>([]);
   const [profilePictures, setProfilePictures] = useState<string[]>([]);
+	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
   useEffect(() => {
     const fetchNames = async () => {
     try {
@@ -56,16 +58,11 @@ const ListFriends = ({ friendsList }: Props) => {
       try {
         const newlist = await Promise.all(
         friendsList.map(async (id) => {
-          const response = await fetch(`http://localhost:3003/pictures/${id}`, {
-            method: "Get",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-            },
-          });
-          const path = await response.blob();
-          const url = URL.createObjectURL(path);
-          return url;
+          if(picture_map.has(Number(id)))
+          {
+            return (picture_map.get(Number(id)) ?? '');
+          }
+          return pushPictureToMap(Number(id), picture_map, set_picture_map);
         })
       );
       setProfilePictures(newlist);

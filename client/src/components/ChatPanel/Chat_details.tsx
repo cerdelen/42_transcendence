@@ -10,6 +10,7 @@ import { RiAdminLine } from "react-icons/ri";
 import { RiVolumeMuteFill } from "react-icons/ri";
 import themeAchievement from "../../images/changed-theme-achievement.png";
 import path from "path";
+import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 
 const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<displayed_chat_class>>, userId: string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids: any, setNot_joined_chats_ids: any, group_chat: boolean | undefined) => {
 	console.log("calling this handleLeaveChat");
@@ -88,6 +89,7 @@ const Participant_in_chat_detail_card = ({ user_id, set_user_ids_in_chat_details
 	const { userId } = useContext(UserContext);
 	const is_me = Number(userId) == user_id;
 	const [photo, setPhoto] = useState("");
+	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
 	useEffect(() => {
 		async function get_name() {
 			try {
@@ -114,17 +116,12 @@ const Participant_in_chat_detail_card = ({ user_id, set_user_ids_in_chat_details
 	useEffect(() => {
 		const getUserPic = async () => {
 			try {
-
-				const response = await fetch(`http://localhost:3003/pictures/${userId}`, {
-					method: "Get",
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-					},
-				});
-				const path = await response.blob();
-				const url = URL.createObjectURL(path);
-				setPhoto(url)
+				if(picture_map.has(Number(user_id)))
+				{
+					setPhoto(picture_map.get(Number(user_id)) ?? '');
+					return ;
+				}
+				return pushPictureToMap(Number(user_id), picture_map, set_picture_map);
 			} catch (error) {
 				console.error(`fetch getUserPic in ListFriends failed: ${error}`);
 			}
@@ -139,7 +136,6 @@ const Participant_in_chat_detail_card = ({ user_id, set_user_ids_in_chat_details
 	else if (!displayed_chat.conversation_owner_arr?.includes(user_id) && is_owner == true) {
 		set_is_owner(false)
 	}
-
 	if (displayed_chat.conversation_admin_arr?.includes(user_id) && is_admin == false) {
 		set_is_admin(true);
 	}

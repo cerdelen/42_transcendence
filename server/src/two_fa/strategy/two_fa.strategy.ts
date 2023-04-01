@@ -2,6 +2,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { Strategy, ExtractJwt } from "passport-jwt";
 import { UserService } from "src/user/user.service";
+import { ConfigService } from '@nestjs/config';
 
 export type JwtPayload = {
 	name: string,
@@ -14,14 +15,17 @@ export type JwtPayload = {
 export class Two_FA_Strategy extends PassportStrategy(Strategy, 'Two-FA')
 {
 	constructor(
-		private readonly userService: UserService
+		private readonly userService: UserService,
+		private configService: ConfigService
 	)
 	{
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			// ignoreExpiration: false,									// after testing enable again (disabled because testuser token hardcoded)
-			secretOrKey: "generic secret"
+			secretOrKey: configService.get('secret')
 		});
+		console.log("2faENV" + configService.get('secret'));
+		
 	}
 
 	async	validate(payload: JwtPayload)

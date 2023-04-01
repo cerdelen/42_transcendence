@@ -3,6 +3,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, ExtractJwt } from 'passport-jwt'
 import { AuthService } from "../auth.service";
 import { User } from '@prisma/client'
+import { ConfigService } from '@nestjs/config';
 
 export type JwtPayload = {
 	name: string,
@@ -14,13 +15,15 @@ export type JwtPayload = {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy)
 {
-	constructor(private readonly authService: AuthService)
+	constructor(
+		private readonly authService: AuthService,
+		private configService: ConfigService)
 	{
 		super
 		({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			// ignoreExpiration: false,									// after testing enable again (disabled because testuser token hardcoded)
-			secretOrKey: "generic secret"
+			secretOrKey: configService.get('secret'),
 		});
 	}
 

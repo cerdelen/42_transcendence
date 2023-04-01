@@ -38,7 +38,7 @@
     width: 200px;
     height: 200px;
     border-radius: 5px;
-    /* border: 2px solid red; */
+    border: 1mm ridge purple;
 }
 
 #userInfo #lists{

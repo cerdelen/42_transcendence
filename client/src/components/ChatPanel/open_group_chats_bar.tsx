@@ -64,7 +64,7 @@ const Group_chat_preview_card = ({
   const [conversation_name, setConversation_name] = useState("");
   const [hasPassword, setHasPassword] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (inputValue: string) => {
     const response = await fetch(
       `http://localhost:3003/conversation/join_group_chat/${chat_id}`,
       {
@@ -75,6 +75,7 @@ const Group_chat_preview_card = ({
       }
     );
     const data = await response.json();
+    
     if (data == true) {
       setmy_chats_ids([...my_chats_ids, chat_id]);
       let arr_2: number[] = [];
@@ -85,6 +86,30 @@ const Group_chat_preview_card = ({
       setNot_joined_chats_ids(arr_2);
     }
   };
+
+
+  const joinChat = async () => {
+    const response = await fetch(
+      `http://localhost:3003/conversation/join_group_chat/${chat_id}`,
+      {
+        method: "Get",
+        headers: {
+          Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+        },
+      }
+    );
+    const data = await response.json();
+    
+    if (data == true) {
+      setmy_chats_ids([...my_chats_ids, chat_id]);
+      let arr_2: number[] = [];
+      for (let i = 0; i < not_joined_chats_ids.length; i++) {
+        if (chat_id != not_joined_chats_ids[i])
+          arr_2.push(not_joined_chats_ids[i]);
+      }
+      setNot_joined_chats_ids(arr_2);
+    }
+  }
 
   const checkIfPasswordProtected = async () => {
     try {
@@ -98,8 +123,8 @@ const Group_chat_preview_card = ({
         }
       );
       const passwordStatus = await response.json();
-      console.log("Status");
-      console.log(passwordStatus);
+      // console.log("Status");
+      // console.log(passwordStatus);
 
       setHasPassword(passwordStatus);
       return passwordStatus;
@@ -112,9 +137,8 @@ const Group_chat_preview_card = ({
 
   const handleOnClick = async () => {
     const passwordIsSet = await checkIfPasswordProtected();
-    if (passwordIsSet)
-      return ;
-    await handleSubmit();
+    if (passwordIsSet) return ;
+    await joinChat();
   };
 
   const get_conversation = async (conversation_id: number) => {
@@ -145,7 +169,7 @@ const Group_chat_preview_card = ({
     <li className="Chat_preview_cards" onClick={handleOnClick}>
       {hasPassword ? (
         <SingleFieldInputForm
-          handleSubmit={handleOnClick}
+          handleSubmit={handleSubmit}
           buttonText="Submit"
         />
       ) : (

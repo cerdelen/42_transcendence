@@ -145,6 +145,7 @@ export class ConversationController {
 						},
 						data: {
 							conversation_password: pwd,
+							ask_password: true
 						}
 					})
 					return updatedConversation;

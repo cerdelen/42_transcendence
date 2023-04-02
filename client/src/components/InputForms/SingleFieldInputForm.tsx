@@ -1,5 +1,4 @@
 import { useState } from "react";
-import JSCookies from "js-cookie";
 
 type Props = {
   handleSubmit: (event: React.FormEvent<HTMLFormElement>, inputValue: string) => Promise<void>;

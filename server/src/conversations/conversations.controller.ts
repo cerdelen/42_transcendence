@@ -100,6 +100,8 @@ export class ConversationController {
 				return null;
 			}
 			//the condition here was incorrect, Krisi changed it, doublecheck if I missed something
+			console.log(existingConversation.ask_password == true);
+			
 			if (existingConversation.ask_password == true && !comparePassword(body.password, existingConversation.conversation_password)) {
 				
 				console.log("wrong password");
@@ -127,31 +129,30 @@ export class ConversationController {
 		}
 
 		@UseGuards(Jwt_Auth_Guard)
-		@Post('change_password/')
+		@Post('change_password/:chat_id')
 		async change_password(
 			@Req() req: any,
-			@Body() body: {chat_id, password: string}
+			@Param('chat_id') chat_id: number,
+			@Body() body: {password: string}
 			) {
-				const existingConversation = await this.conversationsService.findConversation(body.chat_id);
+				const existingConversation = await this.conversationsService.findConversation(chat_id);
 				let pwd = body.password;
 				if (body.password.length != 0) {
 					pwd = hashPassword(pwd);
 					const updatedConversation = this.conversationsService.updateConversation({
 						where: {
-							conversation_id: Number(body.chat_id),
+							conversation_id: Number(chat_id),
 						},
 						data: {
 							conversation_password: pwd,
-							
 						}
-						
 					})
 					return updatedConversation;
 				}
 				else {
 					return this.conversationsService.updateConversation({
 						where: {
-							conversation_id: Number(body.chat_id),
+							conversation_id: Number(chat_id),
 						},
 						data: {
 							conversation_password: pwd,
@@ -159,7 +160,8 @@ export class ConversationController {
 						}
 					})
 				}
-			}
+		}
+
 		@UseGuards(Jwt_Auth_Guard) 
 		@Get('remove_password/:chat_id')
 		async remove_password(

@@ -11,16 +11,12 @@ import { RiVolumeMuteFill } from "react-icons/ri";
 import themeAchievement from "../../images/changed-theme-achievement.png";
 import path from "path";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
-import SingleFieldInputForm from "../SingleFieldInputForm/SingleFieldInputForm";
+import SingleFieldInputForm from "../InputForms/SingleFieldInputForm";
+import InputFieldOrButton from "../InputForms/InputFIeldOrButton";
 
 const handleLeaveChat = (
   chat_id: number,
-  setDisplayed_chat: React.Dispatch<React.SetStateAction<displayed_chat_class>>,
   userId: string,
-  not_joined_chats_ids: number[],
-  my_chats_ids: number[],
-  setmy_chats_ids: any,
-  setNot_joined_chats_ids: any,
   group_chat: boolean | undefined
 ) => {
   console.log("calling this handleLeaveChat");
@@ -31,98 +27,6 @@ const handleLeaveChat = (
   }
 };
 
-const Password_input = ({
-  setButton_state,
-  chat_id,
-}: {
-  setButton_state: any;
-  chat_id: number;
-}) => {
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>,
-    inputValue: string
-  ) => {
-    event.preventDefault();
-
-    if (inputValue.length > 0) {
-      console.log(chat_id + "chat id i append to url");
-
-      await fetch(
-        `http://localhost:3003/conversation/set_password/${chat_id}`,
-        {
-          method: "Post",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-          },
-          // body: JSON.stringify({"Password": inputValue}),
-          body: JSON.stringify({ Password: inputValue }),
-        }
-      );
-      setButton_state(true);
-    }
-  };
-  return (
-    <SingleFieldInputForm
-      handleSubmit={handleSubmit}
-      fieldPlaceholder="Password"
-      buttonText="Set Password"
-    />
-  );
-};
-
-const handleSetPassword = (
-  set_show_button: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-  set_show_button(false);
-};
-
-const PasswordSetter = () => {
-  const { displayed_chat } = useMyDisplayedChatContext();
-  const [show_button, set_show_button] = useState(true);
-
-  return (
-    <>
-      {show_button ? (
-        <button
-          className="purple-button"
-          onClick={() => handleSetPassword(set_show_button)}
-        >
-          Set Password
-        </button>
-      ) : (
-        <Password_input
-          setButton_state={set_show_button}
-          chat_id={displayed_chat.conversation_id}
-        />
-      )}
-    </>
-  );
-};
-
-//TBD
-const PasswordResetter = () => {
-  const { displayed_chat } = useMyDisplayedChatContext();
-  const [show_button, set_show_button] = useState(true);
-
-  return (
-    <>
-      {show_button ? (
-        <button
-          className="purple-button"
-          onClick={() => handleSetPassword(set_show_button)}
-        >
-          Reset Password
-        </button>
-      ) : (
-        <Password_input
-          setButton_state={set_show_button}
-          chat_id={displayed_chat.conversation_id}
-        />
-      )}
-    </>
-  );
-};
 
 
 
@@ -214,7 +118,6 @@ const Participant_in_chat_detail_card = ({
     set_is_muted(false);
   }
 
-  //console.log(`USERNAME ${user_name}`);
   const open_admin_as = () => {
     if (Number(userId) != user_id && displayed_chat.group_chat == true)
       set_display_popup(!display_popup);
@@ -289,6 +192,81 @@ const Chat_details = ({
     }
   );
 
+  const handleSetPassword = async (
+    event: React.FormEvent<HTMLFormElement>,
+    inputValue: string
+  ) => {
+    if (inputValue.length > 0) {
+      console.log(displayed_chat.conversation_id + "chat id i append to url");
+      try {
+        
+        await fetch(
+          `http://localhost:3003/conversation/change_password/${displayed_chat.conversation_id }`,
+          {
+            method: "Post",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+            },
+            // body: JSON.stringify({"Password": inputValue}),
+            body: JSON.stringify({ password: inputValue }),
+          }
+        );
+        alert("You successfully set a password")
+      } catch (error) {
+        alert("The password could not be set")
+      }
+
+    }
+  };
+
+  const handleResetPassword = async (
+    event: React.FormEvent<HTMLFormElement>,
+    inputValue: string
+  ) => {
+    if (inputValue.length > 0) {
+      console.log(displayed_chat.conversation_id + "chat id i append to url");
+      try {
+        
+        await fetch(
+          `http://localhost:3003/conversation/change_password/${displayed_chat.conversation_id }`,
+          {
+            method: "Post",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+            },
+            // body: JSON.stringify({"Password": inputValue}),
+            body: JSON.stringify({ Password: inputValue }),
+          }
+        );
+        alert("You successfully set a password")
+      } catch (error) {
+        alert("The password could not be set")
+      }
+
+    }
+  };
+
+  const handleRemovePassword = async (chat_id: number) => {
+    try {
+      await fetch(
+        `http://localhost:3003/conversation/remove_password/${chat_id}`,
+        {
+          method: "Get",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+          },
+        }
+      );
+      alert("Passwort successfully removed")
+    } catch (error) {
+      console.error(error);
+      alert("Could not remove password")
+    }
+  }
+
   our_socket.on(
     "some_one_left_group_chat",
     ({
@@ -337,12 +315,7 @@ const Chat_details = ({
             onClick={() =>
               handleLeaveChat(
                 displayed_chat.conversation_id,
-                setDisplayed_chat,
                 userId,
-                not_joined_chats_ids,
-                my_chats_ids,
-                setmy_chats_ids,
-                setNot_joined_chats_ids,
                 displayed_chat.group_chat
               )
             }
@@ -353,9 +326,9 @@ const Chat_details = ({
         {displayed_chat.group_chat &&
           displayed_chat.conversation_owner_arr?.includes(Number(userId)) && (
 			<div className="password-buttons">
-				<PasswordSetter />
-				<PasswordResetter />
-				<button className="purple-button"> Remove Password</button>
+				<InputFieldOrButton buttonText="Set Password" fieldPlaceholder="Password" handleSubmit={handleSetPassword}/>
+				{/* <InputFieldOrButton buttonText="Reset Password" fieldPlaceholder="Password" handleSubmit={handleResetPassword}/> */}
+				<button className="purple-button" onClick={() => {handleRemovePassword(displayed_chat.conversation_id)}}> Remove Password</button>
 			</div>
           )}
       </div>

@@ -7,8 +7,8 @@ import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context
 import { json } from "react-router-dom";
 import { our_socket } from "../../utils/context/SocketContext";
 import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
-import SingleFieldInputForm from "../SingleFieldInputForm/SingleFieldInputForm";
-import TwoFieldInputForm from "../SingleFieldInputForm/TwoFieldInputForm";
+import SingleFieldInputForm from "../InputForms/SingleFieldInputForm";
+import TwoFieldInputForm from "../InputForms/TwoFieldInputForm";
 
 const Chat_name_input = ({ setButton_state }: { setButton_state: any }) => {
   const { my_chats_ids, setmy_chats_ids } = useMyChatCardsContext();
@@ -160,6 +160,8 @@ const Group_chat_preview_card = ({
 
   const handleOnClick = async () => {
     const passwordIsSet = await checkIfPasswordProtected();
+    console.log(`Password is set: ${passwordIsSet}`);
+    
     if (passwordIsSet) return;
     await joinChat();
   };

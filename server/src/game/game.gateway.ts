@@ -109,11 +109,11 @@ export class GameGateway {
   async playerAccepted(@MessageBody() obj, @ConnectedSocket() client)
   {
     let new_obj = JSON.parse(obj);
-    let user = await this.userService.findUserByName(new_obj.name)
-    
+    console.log("USer id of the inviter "  + new_obj.inviterName + "and of the invitee " + new_obj.userId);
+    let user = await this.userService.findUserById(Number.parseInt(new_obj.userId))
     let gameCode_;
     gameCode_ = invitationRoomsNames[0].roomName;
-    console.log("USer id of the inviter "  + user.name  + "and of the invitee " + new_obj.inviterName );
+    
     const room = this.server.sockets.adapter.rooms[gameCode_];
 
     let allUsers;
@@ -121,31 +121,33 @@ export class GameGateway {
     if (room) {
       allUsers = room.sockets;
     }
-
     let numOfClients = 0;
 
     const sockets = await this.server.in(gameCode_).fetchSockets();
     numOfClients = sockets.length;
 
-    if (numOfClients === 0) {
-      client.emit('unknownGame');
-      return;
-    } else if (numOfClients > 1) {
-      client.emit('tooManyPlayers')
-      return;
-    }
+    // if (numOfClients === 0) {
+    //   client.emit('unknownGame');
+    //   return;
+    // } else if (numOfClients > 1) {
+    //   client.emit('tooManyPlayers')
+    //   return;
+    // }
     
-    if (sockets[0].id === client.id || invitationRoomsNames[0].gameInstance.player_one == user.id) {
-      client.emit('sameUser');
-      return;
-    };
-
+    // if (sockets[0].id === client.id || invitationRoomsNames[0].gameInstance.player_one == user.id) {
+    //   client.emit('sameUser');
+    //   return;
+    // };
+    
+    console.log("Socket 0 id " + sockets[0].id + " client id " + client.id);
     invitationRooms[client.id] = gameCode_;
 
     client.join(gameCode_);
 
-    emitToTheUserSocket(user, this.server, 'init', "2");
-
+    console.log("User of nick ", user.name);
+    emitToTheUserSocket(user, this.server, 'invitationInit', "2");
+    
+    // console.log("this is client id " + user.id);
     await this.prisma.game.update({ where: { id: invitationRoomsNames[0].gameInstance.id }, data: { player_two: user.id } });
     let gameInstance = invitationRoomsNames[0].gameInstance;
     
@@ -269,9 +271,8 @@ export class GameGateway {
     clientRooms[client.id] = gameCode;
 
     client.join(gameCode);
-
     client.emit('init', 2);
-
+    
     await this.prisma.game.update({ where: { id: roomNames[0].gameInstance.id }, data: { player_two: Number.parseInt(userId) } });
     let gameInstance = roomNames[0].gameInstance;
     startGameInterval(this.userService, gameCode, state, this.server, gameInstance, this.prisma);
@@ -282,9 +283,12 @@ export class GameGateway {
   @SubscribeMessage('keydown')
   handleKeyDown(@MessageBody() keyobj,
     @ConnectedSocket() client) {
-    const roomName = clientRooms[client.id];
+    let roomName = clientRooms[client.id];
     if (!roomName) {
-      return;
+      console.log("Kurwa");
+      roomName = invitationRooms[client.id];
+      if(!roomName)
+        return ;
     }
     interface KeyInfo {
       key: number,

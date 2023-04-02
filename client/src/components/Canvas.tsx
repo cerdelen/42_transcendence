@@ -163,7 +163,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             console.log("Id of the user ", UserIndex_);
             let num: number = UserIndex_;
             setPlayerNumber(num);
-            our_socket.off("invitationInit");
+            // our_socket.off("invitationInit");
             console.log("Invitation init");
         });
         our_socket.on("gameCancelled", (rejectedUserName) => 
@@ -172,7 +172,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             alert("Game has been cancelled by " + rejectedUserName);
             setPlayerNumber(0);
             setGameActive(false);
-            our_socket.off("gameCancelled");
+            // our_socket.off("gameCancelled");
         })
     }, [])
     useEffect(() => {

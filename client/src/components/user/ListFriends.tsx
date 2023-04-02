@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../contexts/UserContext";
+import { useEffect, useState } from "react";
 import JSCookies from "js-cookie";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+import EverythingIsFine from "../../svg/everything-is-fine.svg"
 
 interface NameProps {
   name: string;
@@ -78,11 +78,11 @@ const ListFriends = ({ friendsList }: Props) => {
   }, [friendsList]);
 
   return (
-    <ul className="user-info-lists">
+    <ul className="user-info-lists right-border">
       <div className="title-section">Friends:</div>
       <br />
       {friendsNames.length === 0 ? (
-        <span>Go make some friends </span>
+        <img className="everything-is-fine-svg" src={EverythingIsFine} alt="" />
       ) : (
         friendsNames.map((name, idx) => (
           <NameComponent key={name} name={name} pic={profilePictures[idx]} />

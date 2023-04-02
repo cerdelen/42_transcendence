@@ -179,7 +179,8 @@ const Get_all_my_chats = () =>
 				
 			}
 		});
-	
+		console.log(my_chats_ids);
+		
 	return (
 		<div className="left-pane-column" >
 			<h2>My Chats</h2>

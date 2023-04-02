@@ -4,9 +4,9 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    min-width: 600px;
-    min-height: 400px;
-    aspect-ratio: 4 / 3;
+    min-width: 766px;
+    min-height: 654px;
+    /* aspect-ratio: 4 / 3; */
     width: 60%;
     height: 50%;
     max-width: calc(100vh * 4 / 3);
@@ -59,6 +59,9 @@
     padding: 1rem;
 }
 
+.right-border {
+    border-right: 1px solid purple;
+}
 
 .friend-card {
     display: flex;

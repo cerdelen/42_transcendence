@@ -174,7 +174,18 @@ span {
   margin-left: .5rem;
   margin-right: .5rem;
   border: 1mm ridge white;
+}
 
+
+#status-dot-other-players {
+  content: "";
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  margin-left: .5rem;
+  margin-right: .5rem;
+  border: 1mm outset black;
 }
 
 #achievements-box h3 {

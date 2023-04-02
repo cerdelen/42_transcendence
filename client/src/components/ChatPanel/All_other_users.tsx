@@ -15,7 +15,7 @@ const User_preview_card = ({other_user_id} : {other_user_id: number}) => {
 	const [photo, setPhoto] = useState("");
 	const [user_name, set_user_name] = useState("");
 	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
-	
+	const [status, setStatus] = useState(false);
 	useEffect(() => {
 			const get_user_info = async (other_user_id : number) => {
 				const response = await fetch("http://localhost:3003/user/user_name", {
@@ -39,9 +39,13 @@ const User_preview_card = ({other_user_id} : {other_user_id: number}) => {
 		}, []);
 
 	return (
-		<li className='Chat_preview_cards'  title={user_name} onClick={handleOnClick}>
+		<li className='Chat_preview_cards online-status'  title={user_name} onClick={handleOnClick}>
 			<img src={photo} alt="" />
 			<span id='user-name' >{user_name}</span>
+			<span
+				id="status-dot-other-players"
+				style={{ backgroundColor: true ? "purple" : "gray" }} //hardcoded
+			></span>
 		</li>
 	)
 }

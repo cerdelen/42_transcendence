@@ -39,6 +39,10 @@
 	max-width: 450px;
 }
 
+.online-status {
+	justify-content: space-between;
+}
+
 .Chat_preview_cards img {
 	border-top-left-radius: 25px;
 	border-bottom-left-radius: 25px;
@@ -55,4 +59,8 @@
 	align-items: center;
 	/* border: 1px solid white; */
 	padding-left: 35px;
+}
+
+.online-status #user-name{
+	max-width: 6.5rem;
 }

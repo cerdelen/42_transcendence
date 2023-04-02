@@ -57,7 +57,7 @@ export class ConversationService {
 
 		if (!conv)
 			return false;
-		return conv.conversation_pass_protected;
+		return conv.ask_password;
 	}
 
 	async	set_password(chat_id: number, user_id: number, password: string)

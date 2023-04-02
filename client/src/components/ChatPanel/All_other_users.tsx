@@ -28,6 +28,7 @@ const User_preview_card = ({other_user_id} : {other_user_id: number}) => {
 					body: JSON.stringify({ user_id: other_user_id }),
 				});
 				const data = await response.text();
+				
 				set_user_name(data);
 				if(picture_map.has(Number(other_user_id)))
 					setPhoto(picture_map.get(Number(other_user_id)) ?? '')

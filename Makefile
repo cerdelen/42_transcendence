@@ -1,5 +1,3 @@
-DEPENDENIES = NPM
-
 all:
 	docker compose up
 
@@ -10,6 +8,3 @@ down:
 	docker compose down
 
 re: down all
-
-$(DEPENDENIES):
-	cd server; npm i; cd ../client; npm i; cd ../

@@ -32,9 +32,9 @@ export class ConversationController {
 	async createConversation(
 		@Req()
 		req : any,
-		@Body() chat_name: string, password: string, askPassword?: boolean, )
+		@Body() bodyContent : {chat_name: string, password: string, askPassword?: boolean })
 		{
-			if (typeof chat_name === "undefined")
+			if (typeof bodyContent.chat_name === "undefined")
 			{
 				console.log("not creating chat because of undefined chat_name");
 				return null;
@@ -42,26 +42,30 @@ export class ConversationController {
 			let array : number[] = [];
 			let user : User;
 			let pwd : string;
-			if(password.length != 0) {
-				pwd = hashPassword(password);
+			console.log(`The chatName is: ${bodyContent.chat_name}`);
+			console.log(`The password is: ${bodyContent.password}`);
+			console.log(`The boolean is: ${bodyContent.askPassword}`);
+			
+			if(bodyContent.password.length != 0) {
+				pwd = hashPassword(bodyContent.password);
 			}
-			// for (let i = 0; i < chat_name.length; ++i)
+			// for (let i = 0; i < bodyContent.chat_name.length; ++i)
 			// {
-			// 	let chat_member = this.conversationsService.findConversationByName(chat_name);
+			// 	let chat_member = this.conversationsService.findConversationByName(bodyContent.chat_name);
 			// 	user = await this.userService.findUserById(req.user.id);
 			// 	if(user)
 			// }
 			array.push(req.user.id);
 
-			console.log("CHAT_NAME = " + chat_name);
+			console.log("CHAT_NAME = " + bodyContent.chat_name);
 			let newConversation : Conversation = await this.conversationsService.createConversation({
-				conversation_name: chat_name,
+				conversation_name: bodyContent.chat_name,
 				conversation_participant_arr: [Number(req.user.id)],
 				conversation_owner_arr: [Number(req.user.id)],
 				conversation_admin_arr: [Number(req.user.id)],
 				group_chat: true,
 				conversation_password: pwd,
-				ask_password: password.length != 0
+				ask_password: bodyContent.password.length != 0
 			})
 
 			for (let i = 0; i < array.length; ++i)
@@ -83,26 +87,29 @@ export class ConversationController {
 		}
 
 		@UseGuards(Jwt_Auth_Guard)
-		@Post('join_group_chat/:join')
+		@Post('join_group_chat/join')
 		async joinConversation(
 			@Req() req: any,	
-			@Body() chat_id: number, password: string
+			@Body() body : {chat_id: number, password: string}
 		) {
-			console.log("CHAT_ID " + chat_id);
-			const existingConversation = await this.conversationsService.findConversation(chat_id)
+			console.log("CHAT_ID " + body.chat_id);
+			console.log("Password " + body.password);
+			const existingConversation = await this.conversationsService.findConversation(body.chat_id)
 			if (!existingConversation.group_chat) {
 				console.log("The conversation is not a group chat!");
 				return null;
 			}
-			if (existingConversation.ask_password == true || (existingConversation.ask_password == false && comparePassword(password, existingConversation.conversation_password))) {
-				console.log("wrong password");
+			//the condition here was incorrect, Krisi changed it, doublecheck if I missed something
+			if (existingConversation.ask_password == true && !comparePassword(body.password, existingConversation.conversation_password)) {
 				
+				console.log("wrong password");
+				return (false);
 			} 
 			const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);		//is he already part of the chat
 			if (userIdx > -1) return (false);			// this means he is already part of the chat and i dont want to add him again
 			await this.conversationsService.updateConversation({
 				where: {
-					conversation_id: Number(chat_id)
+					conversation_id: Number(body.chat_id)
 				},
 				data: {
 					conversation_participant_arr: {
@@ -110,8 +117,8 @@ export class ConversationController {
 					}
 				}
 			})
-			this.conversationsService.updateConversationIdInUser(req.user.id, chat_id);
-			this.convGateway.joined_chat(Number(chat_id), Number(req.user.id));
+			this.conversationsService.updateConversationIdInUser(req.user.id, body.chat_id);
+			this.convGateway.joined_chat(Number(body.chat_id), Number(req.user.id));
 
 		console.log("admin_array2 = " + existingConversation.conversation_admin_arr);
 		console.log("owner_array2 = " + existingConversation.conversation_owner_arr);

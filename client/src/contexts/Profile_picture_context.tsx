@@ -57,12 +57,9 @@ export function Profile_picture_Provider({ children }: MyContextProviderProps) {
       {
         await pushPictureToMap(all_users[i].id, picture_map, set_picture_map);
       }
-      console.log("this do be news " + JSON.stringify(picture_map));
     }
       get_all_pictures();
   }, [])
-
-  console.log(picture_map);
   
   const value = {
     picture_map,

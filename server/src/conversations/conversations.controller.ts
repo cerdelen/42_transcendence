@@ -153,27 +153,27 @@ export class ConversationController {
 					})
 				}
 			}
-		// @UseGuards(Jwt_Auth_Guard) 
-		// @Post('remove_password/')
-		// async remove_password(
-		// 	@Req() req: any,
-		// 	@Body() body: {chat_id, password: string}
-		// 	) {
-		// 		const existingConversation = await this.conversationsService.findConversation(body.chat_id);
-		// 		let pwd = body.password;
-		// 		if (body.password.length == 0) {
-		// 			// pwd = hashPassword(pwd);
-		// 			return this.conversationsService.updateConversation({
-		// 				where: {
-		// 					conversation_id: Number(body.chat_id),
-		// 				},
-		// 				data: {
-		// 					conversation_password: pwd,
-							
-		// 				}
-		// 			})
-		// 		}
-		// 	}
+		@UseGuards(Jwt_Auth_Guard) 
+		@Get('remove_password/:chat_id')
+		async remove_password(
+			@Req() req: any,
+			@Param('chat_id') chat_id: number
+			) {
+				const existingConversation = await this.conversationsService.findConversation(chat_id);
+			
+				if (existingConversation.conversation_password.length != 0) {
+					// pwd = hashPassword(pwd);
+					return this.conversationsService.updateConversation({
+						where: {
+							conversation_id: Number(chat_id),
+						},
+						data: {
+							conversation_password: existingConversation.conversation_password,
+							ask_password: false
+						}
+					})
+				}
+			}
 
 		@UseGuards(Jwt_Auth_Guard)
 		@Post('set_password/:chat_id')

@@ -24,8 +24,8 @@ export class ConversationService {
 	) {}
 
 	async createConversation(data: Prisma.ConversationCreateInput): Promise<Conversation> {
-		console.log("PARTICIPANTS[] = " + data.conversation_participant_arr);
-		console.log("JSON_DATA = " + JSON.stringify(data));
+		//console.log("PARTICIPANTS[] = " + data.conversation_participant_arr);
+		//console.log("JSON_DATA = " + JSON.stringify(data));
 		
 		const newConversation = await this.prisma.conversation.create ({
 			data,
@@ -62,7 +62,7 @@ export class ConversationService {
 
 	async	set_password(chat_id: number, user_id: number, password: string)
 	{
-		console.log(chat_id + "in setvice set password");
+		//console.log(chat_id + "in setvice set password");
 		
 		const conv = await this.prisma.conversation.findUnique({where: {conversation_id: chat_id}});
 
@@ -116,7 +116,7 @@ export class ConversationService {
 	{
 		if (!conv)
 			return ;
-		console.log(" im trying to fix name for the this conv " + conv.conversation_id);
+		//console.log(" im trying to fix name for the this conv " + conv.conversation_id);
 		if (conv.group_chat == false)
 		{
 			const id_1 = conv.conversation_participant_arr[0];
@@ -143,11 +143,11 @@ export class ConversationService {
 	}	
 
 	async findConversation(id: number): Promise<Conversation | undefined> {
-		console.log("ID = " + id);
+		//console.log("ID = " + id);
 		if(Number.isNaN(Number(id)))
 			return null;
 		const foundConversation = await this.conversation({conversation_id: Number(id)});
-		console.log("ID = found" );
+		//console.log("ID = found" );
 		return foundConversation;
 	}	
 
@@ -251,21 +251,21 @@ export class ConversationService {
 		let user : User;
  
 		conversation = await this.findConversation(conversId);
-		console.log("CONVERSATION_ID = " + conversation.conversation_id);
+		//console.log("CONVERSATION_ID = " + conversation.conversation_id);
 
 		const index_of_user = conversation.conversation_admin_arr.findIndex(element => element === userId);
 		const index_of_admin = conversation.conversation_admin_arr.findIndex(element => element === adminId);
-		console.log("index_of_user = " + index_of_user);
+		//console.log("index_of_user = " + index_of_user);
 
-		console.log("index_of_admin = " + index_of_admin);
+		//console.log("index_of_admin = " + index_of_admin);
 
 		if (index_of_user == -1) {
-			console.log("no user with:\t" + index_of_user)
+			//console.log("no user with:\t" + index_of_user)
 			return conversation; 
 			
 		}
 		// if (index_of_admin == -1)  {
-		// 	console.log("current [user] is not an administrator");
+		// 	//console.log("current [user] is not an administrator");
 		// 	return conversation;
 		// }
 		else if (index_of_admin > -1) {
@@ -296,6 +296,8 @@ export class ConversationService {
 
 	async	leave_conversation(conversation_id: number, user_id: number) : Promise<Conversation>
 	{
+		console.log("calling leave conv id " + conversation_id + " user id " + user_id);
+		
 		const conversation : Conversation = await this.findConversation(conversation_id);
 		
 		if (!conversation)
@@ -313,20 +315,20 @@ export class ConversationService {
 		const user_admin_idx = conversation.conversation_admin_arr.indexOf(user_id);
 		const user_owner_idx = conversation.conversation_owner_arr.indexOf(user_id);
 
-		console.log("admin_array = " + conversation.conversation_admin_arr);
-		console.log("owner_array = " + conversation.conversation_owner_arr);
-		console.log("participant_array = " + conversation.conversation_participant_arr);
+		//console.log("admin_array = " + conversation.conversation_admin_arr);
+		//console.log("owner_array = " + conversation.conversation_owner_arr);
+		//console.log("participant_array = " + conversation.conversation_participant_arr);
 		
 
 		// if (conversation.conversation_admin_arr.length == 1 && conversation.conversation_admin_arr[0] == user_id)
 		// 	throw new HttpException("No chance to leave a chat due to minimum amount of users in a conversation! Apologies!", HttpStatus.FORBIDDEN);
 		conversation.conversation_participant_arr.splice(req_user_idx, 1);
-		console.log("user_admin_idx = " + user_admin_idx);
+		//console.log("user_admin_idx = " + user_admin_idx);
 		
 		if (user_admin_idx >= 0)
 		{
 			conversation.conversation_admin_arr.splice(user_admin_idx, 1);
-			console.log("conv__admin_arr after splicing = " + conversation.conversation_admin_arr);
+			//console.log("conv__admin_arr after splicing = " + conversation.conversation_admin_arr);
 			
 			
 		} else {
@@ -338,7 +340,7 @@ export class ConversationService {
 		}
 		if (user_owner_idx > -1)
 		{
-			console.log("we got into here ");
+			//console.log("we got into here ");
 
 			conversation.conversation_owner_arr.splice(user_owner_idx, 1);
 			// if (conversation.conversation_admin_arr.length > 0)
@@ -367,25 +369,28 @@ export class ConversationService {
 		})
 		if (conversation.conversation_participant_arr.length == 0)
 		{
-			this.delete_conversation(conversation_id);
+			await this.delete_conversation(conversation_id);
 			return null;
 		}
-		console.log("admin_array1 = " + conversation.conversation_admin_arr);
-		console.log("owner_array1 = " + conversation.conversation_owner_arr);
-		console.log("participant_array1 = " + conversation.conversation_participant_arr);
+		//console.log("admin_array1 = " + conversation.conversation_admin_arr);
+		//console.log("owner_array1 = " + conversation.conversation_owner_arr);
+		//console.log("participant_array1 = " + conversation.conversation_participant_arr);
 		return conversation;
 	}
 
 	async	delete_conversation(chat_id: number)
 	{
+		const conversation : Conversation = await this.prisma.conversation.findUnique({where: {conversation_id: chat_id}});
+		if(!conversation)
+			return;
 		return this.prisma.conversation.delete({where: {conversation_id: chat_id}});
 	}
 
 	async updateConversationIdInUser(user_id: number, conversationId: number): Promise<User> {
-		// console.log("HEEEEY");
+		// //console.log("HEEEEY");
 		
 		const conversation = await this.findConversation(conversationId);
-		// console.log("CONVERSATION " + conversation.conversation_id);
+		// //console.log("CONVERSATION " + conversation.conversation_id);
 		
 		const updatedUser = this.user.updateUser({
 			where: {
@@ -408,28 +413,28 @@ export class ConversationService {
 				conversation_id: chat_id,
 			}
 		})
-		console.log("CONVERSSS = " + conversation.conversation_id);
+		//console.log("CONVERSSS = " + conversation.conversation_id);
 		
 		if (!conversation) return ;
 
 		const admin_user_idx = conversation.conversation_admin_arr.indexOf(userId, 0);
 		// const idx_from_black_list = conversation.conversation_black_list_arr.findIndex(element => element == id_to_ban);
 		const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == id_to_kick);
-			console.log("ADMIN_USER_IDX = " + admin_user_idx);
-			// console.log("idx_from_black_list = " + idx_from_black_list);
-			console.log("owner_user_idx = " + owner_user_idx);
+			//console.log("ADMIN_USER_IDX = " + admin_user_idx);
+			// //console.log("idx_from_black_list = " + idx_from_black_list);
+			//console.log("owner_user_idx = " + owner_user_idx);
 
 			if (owner_user_idx >= 0) {
-				console.log("HEREEEE1");
+				//console.log("HEREEEE1");
 				throw new HttpException("Can't kick the conversation owner!!!", HttpStatus.FORBIDDEN);
 			}
 			else if (admin_user_idx < 0) {
-				console.log("HEREEEE2");
-				console.log("Current user is not considered to be an Administrator");
+				//console.log("HEREEEE2");
+				//console.log("Current user is not considered to be an Administrator");
 				return conversation;
 			}
 			// else if (idx_from_black_list >= 0) {
-			// 	console.log("HEREEEE3");
+			// 	//console.log("HEREEEE3");
 				// conversation.conversation_black_list_arr.splice(idx_from_black_list, 1);
 		const req_user_idx = conversation.conversation_participant_arr.indexOf(id_to_kick);
 		conversation.conversation_participant_arr.splice(req_user_idx, 1);
@@ -466,7 +471,7 @@ export class ConversationService {
 // // 		) {}
 		
 // 	// async createConversation(user: User, params: CreateConversationParams) {
-// 	// 	console.log("ERROR" + user.mail);
+// 	// 	//console.log("ERROR" + user.mail);
 // 	// 	const userDB = await this.UserService.findUserById(user.id);
 // 	// 	if (!userDB.chatPtsId) {
 // 	// 		const newParticipant = await this.ParticipantsService.createParticipant({ id: params.authorId})
@@ -498,11 +503,11 @@ export class ConversationService {
 // 				  // }
 // 				//   let userDB: User;
 // 				//   try {
-// 					console.log(user.id);
+// 					//console.log(user.id);
 					
 // 					const userDB = await this.UserService.findUserById(user.id)
-// 					console.log("AUTHOR " + conversationParams.authorId);
-// 					console.log("RECIPIENT " + conversationParams.recipientId);
+// 					//console.log("AUTHOR " + conversationParams.authorId);
+// 					//console.log("RECIPIENT " + conversationParams.recipientId);
 // 					if (!userDB.chatPtsId) {
 // 						const newParticipant = await this.ParticipantsService.createParticipant({id: conversationParams.authorId})
 // 						// await this.createParticipantSaveUser(userDB, conversationParams.authorId);
@@ -539,7 +544,7 @@ export class ConversationService {
 // 				// 	  userDB.chatPtsId = newParticipant.ChatPartId
 // 				// 	  await this.UserService.saveUser(userDB);
 // 				// 	}
-// 				// 	console.log(userDB);
+// 				// 	//console.log(userDB);
 
 
 // 			// const recipient = await this.ParticipantsService.findParticipant({id: conversationParams.recipientId});

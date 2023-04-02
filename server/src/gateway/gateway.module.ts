@@ -9,7 +9,8 @@ import { MessagingGateway } from "../msg/msgSocket/websocket.gateway";
 
 @Module({
 	imports: [MsgModule, ConversationModule, ConversationModule],
-	providers: [PrismaService, MessagingGateway, conversationGateway]
+	providers: [PrismaService, MessagingGateway, conversationGateway],
+	exports: [conversationGateway]
 })
 
 export class GatewayModule{}

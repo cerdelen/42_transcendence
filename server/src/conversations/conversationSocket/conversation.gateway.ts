@@ -19,18 +19,18 @@ export class conversationGateway implements OnGatewayConnection {
 		@WebSocketServer()
 		server;
 		onModuleInit() {
-			console.log("constructed conversationgatewat");
+			//console.log("constructed conversationgatewat");
 		}
 
 		@SubscribeMessage('leave_group_chat')
 		async handle_leaves_chat(
 			@MessageBody() data: any) {
-				console.log("this is leave_group_chat");
+				//console.log("this is leave_group_chat");
 				
 				
-				console.log(JSON.stringify(data));
+				//console.log(JSON.stringify(data));
 				const smth : conv_gateway_dto = data;
-				console.log(smth.chat_id);
+				//console.log(smth.chat_id);
 				const conv = await this.conversationService.leave_conversation(Number(data.chat_id), Number(data.userId));
 				if (conv == null)
 					this.server.emit('some_one_left_group_chat', {conv_id: Number(data.chat_id), left_user_id: Number(data.userId), conv_still_exists: false})

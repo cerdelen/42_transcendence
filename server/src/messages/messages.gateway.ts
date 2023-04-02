@@ -22,7 +22,7 @@ export class MessagesGateway {
     const message = await this.messagesService.create(createMessageDto);
 
 
-    this.server.on("disconnect", () => {console.log("disconnected");
+    this.server.on("disconnect", () => {//console.log("disconnected");
     })
     this.server.emit('message', message);
     return message;

@@ -43,7 +43,7 @@ async function emitToTheUserSocket(user: any, server: Server, event_name:string,
   });
   if(!found)
   {
-    console.log("Socket of invitee not found");
+    //console.log("Socket of invitee not found");
     return ;
   }
   final_socket.emit(event_name, message)
@@ -63,13 +63,13 @@ export class GameGateway {
 
   onModuleInit() {
     this.server.on('connection', (socket) => {
-      console.log(socket.id);
-      console.log("connected");
+      //console.log(socket.id);
+      //console.log("connected");
       setInterval(() => {
         socket.emit("online_check");
         if (response === 0) {
           //socket.id switch user offline with userID
-          // console.log("Is offline");
+          // //console.log("Is offline");
         }
         response = 0;
       }, 10000)
@@ -85,24 +85,24 @@ export class GameGateway {
   {
     if(!userId)
     {
-      console.log("socket id setting up error");
+      //console.log("socket id setting up error");
       return ;
     }
     await this.userService.updateUser({where: {id: Number.parseInt(userId)}, data: {socketId: socket.id}} );
-    console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
+    //console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
   }
   @SubscribeMessage("online_inform")
   async handle_online(@MessageBody() userId: string) {
     if (userId) {
       //make user online
       response = 1;
-      // console.log("User is online");
+      // //console.log("User is online");
     }
   }
   @SubscribeMessage('makeOnline')
   async makeOnline(@MessageBody() userId: string) {
 
-    console.log(userId + " Siemanko ");
+    //console.log(userId + " Siemanko ");
     //Make user online boolean
   }
 
@@ -110,9 +110,9 @@ export class GameGateway {
   async playerAccepted(@MessageBody() obj, @ConnectedSocket() client)
   {
     let new_obj = JSON.parse(obj);
-    console.log("USer id of the inviter "  + new_obj.inviterName + "and of the invitee " + new_obj.userId);
+    //console.log("USer id of the inviter "  + new_obj.inviterName + "and of the invitee " + new_obj.userId);
     let user = await this.userService.findUserById(Number.parseInt(new_obj.userId))
-    console.log("after finding work");
+    //console.log("after finding work");
     let gameCode_;
     gameCode_ = invitationRoomsNames[0].roomName;
     
@@ -141,20 +141,20 @@ export class GameGateway {
     //   return;
     // };
     
-    console.log("Socket 0 id " + sockets[0].id + " client id " + client.id + " roomName ", gameCode_);
+    //console.log("Socket 0 id " + sockets[0].id + " client id " + client.id + " roomName ", gameCode_);
     invitationRooms[client.id] = String(gameCode_);
 
     client.join(gameCode_);
 
-    console.log("User of nick ", user.name);
+    //console.log("User of nick ", user.name);
     emitToTheUserSocket(user, this.server, 'invitationInit', "2");
     
-    // console.log("this is client id " + user.id);
+    // //console.log("this is client id " + user.id);
     await this.prisma.game.update({ where: { id: invitationRoomsNames[0].gameInstance.id }, data: { player_two: user.id } });
     let gameInstance = invitationRoomsNames[0].gameInstance;
     
     startGameInterval(this.userService, gameCode_, inviteState, this.server, gameInstance, this.prisma);
-    // console.log("Ajajj");
+    // //console.log("Ajajj");
     invitationRoomsNames.shift();
   }
   @SubscribeMessage('rejectInvite')
@@ -167,12 +167,12 @@ export class GameGateway {
     let delindex = invites.indexOf(new_invitation_obj);
     if(!delindex)
     {
-      console.log("Index to delete not found in reject invite ");
+      //console.log("Index to delete not found in reject invite ");
       return ;
     }
     invites.splice(delindex, 1);
     let new_user = await this.userService.findUserById(new_obj.userId);
-    console.log("Game cancelled event sent");
+    //console.log("Game cancelled event sent");
     emitToTheUserSocket(user, this.server, "gameCancelled", new_user.name)
   }
   
@@ -184,7 +184,7 @@ export class GameGateway {
     let invitedUserId = object.userName;
     let user = await this.userService.findUserByName(invitedUserId);
     let unique : boolean = true;
-    console.log("Some weird stuff is happening ");
+    //console.log("Some weird stuff is happening ");
     if (!roomNames[0]) {
       let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: String(user.id)};
      
@@ -196,14 +196,14 @@ export class GameGateway {
       });
       // if(!unique)
       // {
-      //   console.log("Invitation already exist");
+      //   //console.log("Invitation already exist");
       //   return ;
       // }
       invites.push(new_invitation_obj);
       
 
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
-      console.log("HEREEEEEEE og one game code ", game.id);
+      //console.log("HEREEEEEEE og one game code ", game.id);
       invitationRooms[client.id] = game.id.toString();
  
       client.emit('gameCode', game.id.toString());
@@ -217,7 +217,7 @@ export class GameGateway {
       let creator = await this.userService.findUserById(Number.parseInt(userId));
       emitToTheUserSocket(user, this.server, "invitationPopUp", creator.name)
       invites.forEach(element => {
-        console.log("User number " + element.creator_id + " invited " + element.invitee_id);
+        //console.log("User number " + element.creator_id + " invited " + element.invitee_id);
       });
       return;
     }
@@ -227,11 +227,11 @@ export class GameGateway {
   async joinGame(@MessageBody() userId: string,
     @ConnectedSocket() client) {
     if (!userId) {
-      console.log("User is not logged " + userId);
+      //console.log("User is not logged " + userId);
       return;
     }
     if (!roomNames[0]) {
-      console.log("this is in the subscriber " + userId);
+      //console.log("this is in the subscriber " + userId);
 
       handleNewGame(client, this.server, Number.parseInt(userId), this.prisma);
       return;
@@ -274,7 +274,7 @@ export class GameGateway {
     await this.prisma.game.update({ where: { id: roomNames[0].gameInstance.id }, data: { player_two: Number.parseInt(userId) } });
     let gameInstance = roomNames[0].gameInstance;
     startGameInterval(this.userService, gameCode, state, this.server, gameInstance, this.prisma);
-    // console.log("Ajajj");
+    // //console.log("Ajajj");
     roomNames.shift();
   }
   
@@ -293,7 +293,7 @@ export class GameGateway {
       player_number: number;
     }
     keyobj = JSON.parse(keyobj);
-    console.log("Player number " + keyobj.player_number);
+    //console.log("Player number " + keyobj.player_number);
     if(keyobj.player_number === 0)
     {
       
@@ -305,7 +305,7 @@ export class GameGateway {
         state[roomName].keysPressed_p1[keyobj.key] = true;
       if(inviteState[roomName])
       {
-        console.log("Whyyyyy it doens't work");
+        //console.log("Whyyyyy it doens't work");
         inviteState[roomName].keysPressed_p2[keyobj.key] = true;
       }
     } else if (keyobj.player_number == 2) {
@@ -313,7 +313,7 @@ export class GameGateway {
         state[roomName].keysPressed_p2[keyobj.key] = true;
       if(inviteState[roomName])
       {
-        console.log("Whyyyyy it doens't work 4 ", inviteState[roomName]);
+        //console.log("Whyyyyy it doens't work 4 ", inviteState[roomName]);
         inviteState[roomName].keysPressed_p2[keyobj.key] = true;
       }
     }
@@ -346,7 +346,7 @@ export class GameGateway {
       }
       if(inviteState[roomName])
       {
-        console.log("Whyyyyy it doens't work 2 ");
+        //console.log("Whyyyyy it doens't work 2 ");
         inviteState[roomName].keysPressed_p1[keyobj.key] = false;
       }
     } else if (keyobj.player_number === 2) {
@@ -356,7 +356,7 @@ export class GameGateway {
       }
       if(inviteState[roomName])
       {
-        console.log("Whyyyyy it doens't work 3 ");
+        //console.log("Whyyyyy it doens't work 3 ");
         inviteState[roomName].keysPressed_p2[keyobj.key] = false;
       }
     }
@@ -400,14 +400,14 @@ async function emitGameOver(state_: any, userService: any, roomName: string, win
 }
 async function startGameInterval(userService: any, roomName: string, state_: any, server: Server, game: any, prisma: PrismaService) {
   let other_game = await prisma.game.findUnique({ where: { id: game.id } });
-  console.log("other games second player id " + other_game.player_two);
+  //console.log("other games second player id " + other_game.player_two);
 
   const intervalId = setInterval(() => {
     const winner: number = gameLoop(state_[roomName]);
     if (!winner) {
       emitGameState(roomName, state_[roomName], server);
     } else {
-      console.log("Game ended");
+      //console.log("Game ended");
       emitGameOver(state_ ,userService, roomName, winner, server, game, prisma, other_game.player_two);
       state_[roomName] = null;
       clearInterval(intervalId);
@@ -424,7 +424,7 @@ function makeid(length: number) {
   return result;
 }
 async function handleNewGame(client: any, server: Server, clientId: number, prisma: PrismaService) {
-  console.log('newgame player id 1 is' + clientId);
+  //console.log('newgame player id 1 is' + clientId);
 
   const game = await prisma.game.create({ data: { player_one: clientId } });
 
@@ -435,6 +435,6 @@ async function handleNewGame(client: any, server: Server, clientId: number, pris
   client.join(game.id.toString());
 
   client.emit('init', 1);
-  console.log("Emiting intialization");
+  //console.log("Emiting intialization");
   roomNames.push({ roomName: game.id.toString(), gameInstance: game });
 }

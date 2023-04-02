@@ -11,10 +11,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { MsgModule } from '../msg/msg.module';
 import { MsgService } from '../msg/msg.service';
 import { conversationGateway } from './conversationSocket/conversation.gateway';
+// import { conversationGateway } from './conversationSocket/conversation.gateway';
 
 @Module ({
 	imports: [PrismaModule, UserModule],
 	controllers: [ConversationController],
+	// providers: [PrismaService, UserService, ConversationService],
 	providers: [PrismaService, UserService, ConversationService, conversationGateway],
 	exports: [ConversationService]
 })

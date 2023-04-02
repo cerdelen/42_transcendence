@@ -19,7 +19,7 @@ const handleLeaveChat = (
   userId: string,
   group_chat: boolean | undefined
 ) => {
-  console.log("calling this handleLeaveChat");
+  console.log("%ccalling this handleLeaveChat", "color: pink");
 
   if (group_chat == false) return;
   if (chat_id != -1) {

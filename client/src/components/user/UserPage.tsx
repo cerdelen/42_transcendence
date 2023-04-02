@@ -33,6 +33,8 @@ const UserPage = () => {
     console.log("%cSTART CHAT", "color: green");
     
     try {
+      console.log("%cINSIDE TRY", "color: blue");
+      
       our_socket.emit("create_dialogue", {
         userid_creator: userId,
         other_user: userIdCard,

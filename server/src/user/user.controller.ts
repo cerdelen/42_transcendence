@@ -29,7 +29,7 @@ export class UserController
 	@UseGuards(Jwt_Auth_Guard)
 	async	removing_friend(@Req() req: any, @Body('removing_you') removing_you: string)
 	{
-		console.log(`ID of person to be added: ${removing_you}`);
+		//console.log(`ID of person to be added: ${removing_you}`);
 		if (!Number.isNaN(removing_you))
 		{	
 			this.userService.rmv_friend(req.user.id, Number(removing_you));
@@ -99,14 +99,14 @@ export class UserController
 	@UseGuards(Two_FA_Guard)
 	async	get_user_name(@Body('user_id') user_id : string)
 	{
-		console.log(user_id);
+		//console.log(user_id);
 		
 		if(!Number.isNaN(Number(user_id)))
 		{
 			// const name = await this.userService.get_user_name(Number(user_id));
 			return this.userService.get_user_name(Number(user_id));
 		}
-		console.log("we newver got inside ");
+		//console.log("we newver got inside ");
 		
 	}
 	
@@ -115,7 +115,7 @@ export class UserController
 	@UseGuards(Two_FA_Guard)
 	async	get_all_other_user_ids(@Req() req: any)
 	{
-		console.log(req.user.id);
+		//console.log(req.user.id);
 		
 		return (this.userService.get_all_other_user_ids(req.user.id));
 	}
@@ -140,7 +140,7 @@ export class UserController
 	@UseGuards(Two_FA_Guard)
 	async	block_user(@Param('other_user') other_user: number, @Req() _req: any)
 	{
-		console.log("block user controller ");
+		//console.log("block user controller ");
 		
 		return this.userService.block_user(_req.user.id, Number(other_user));
 	}
@@ -150,7 +150,7 @@ export class UserController
 	@UseGuards(Two_FA_Guard)
 	async	unblock_user(@Param('other_user') other_user: number, @Req() _req: any)
 	{
-		console.log("UNBLOCKblock user controller ");
+		//console.log("UNBLOCKblock user controller ");
 		return this.userService.unblock_user(_req.user.id, Number(other_user));
 	}
 }

@@ -31,7 +31,8 @@ import { config } from './config';
 		load: [config],
 		envFilePath: '.env'
 		// envFilePath: '.env'		
-	}), AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, MsgModule, ConversationModule, GatewayModule, EventEmitterModule, GameModule],
+	}), AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, MsgModule, ConversationModule, EventEmitterModule, GameModule],
+	// }), AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, MsgModule, ConversationModule, GatewayModule, EventEmitterModule, GameModule],
 	controllers: [AppController],
 	providers: [AppService, UserService],
 })

@@ -157,11 +157,11 @@ export function gameLoop(state: pong_properties) : number
     ball_update(state.Ball,state.Player1, state.Player2 ,state);
     if(state.player_1_score === win_condition)
     {
-        console.log("Player 1 won")
+        //console.log("Player 1 won")
         return 2;
     }else if(state.player_2_score === win_condition)
     {
-        console.log("Player 2 won")
+        //console.log("Player 2 won")
         return 1;
     }
     return 0;

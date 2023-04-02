@@ -233,6 +233,14 @@ span {
   box-shadow: 0 0 7px #d0cccc, 0 0 13px #d0cccc, 0 0 24px #d0cccc;
 }
 
+.big-button {
+  width: 400px;
+  height: 100px;
+}
+
+.big-button span {
+  font-size: 42px;
+}
 #user-dropdown * {
   margin: 6px 4px;
 }
@@ -276,7 +284,7 @@ footer {
 
 .login-page h1 {
   color: rgb(111, 35, 174);
-  font-size: 7rem;
+  font-size: 9rem;
 }
 
 .login-page a {

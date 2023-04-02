@@ -13,17 +13,10 @@ const LoginPage = () => {
 
   const fakeLogin = async() => {
     try {
-      // console.log('this is before fetch');
         await fetch("http://localhost:3003/auth/create_test_user", {
         method: "Get",
       })
-      // console.log('this is after fetch');
-
-      
-      // const token = await response.text();
-      // console.log('this is teh tokebn' + token);
       JSCookies.set("accessToken", 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdGluZ3VzZXIiLCJzdWIiOjMyMiwibWFpbCI6InRlc3Rpbmd1c2VyQGVtYWlsLmNvbSIsImlzX3R3b19GQWVkIjpmYWxzZSwiaWF0IjoxNjgwMjg3Mzk0LCJleHAiOjE2ODA4OTIxOTR9.ZYK3y01-j-Vck3OGx2J706JvC4PzaP48pkvVwv7AcY0');
-      // console.log('this is cookie' + JSCookies.get("accessToken"));
       window.location.assign('http://localhost:3000/');
     }
     catch (error) {
@@ -34,8 +27,8 @@ const LoginPage = () => {
   return (
     <div className="login-page">
       <h1> CatPong </h1>
-      <button onClick={handleLoginClick}>Login with 42</button>
-      <button onClick={fakeLogin}>Dummy login</button>
+      <button className="deep-purple-button big-button" onClick={handleLoginClick}> <span>Login with 42</span> </button>
+      <button className="deep-purple-button big-button" onClick={fakeLogin}> <span>Dummy login</span> </button>
     </div>
   );
 };

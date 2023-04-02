@@ -117,11 +117,12 @@ const Group_chat_preview_card = ({
           "Content-Type": "application/json",
           Authorization: `Bearer ${JSCookies.get("accessToken")}`,
         },
-        body: JSON.stringify({ chat_id: 15, password: "password" }),
+        body: JSON.stringify({ chat_id: chat_id, password: "" }),
       }
     );
     const data = await response.json();
-
+      console.log(`Status: ${data}`);
+      
     if (data == true) {
       setmy_chats_ids([...my_chats_ids, chat_id]);
       let arr_2: number[] = [];

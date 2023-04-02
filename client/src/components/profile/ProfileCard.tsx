@@ -42,7 +42,6 @@ const ProfileCard = () => {
 
   useEffect(() => {
     const getData = async () => {
-      // console.log("one more time");
       const response = await fetch("http://localhost:3003/user/user_data", {
         method: "Post",
         headers: {
@@ -67,20 +66,10 @@ const ProfileCard = () => {
       setName(data["name"]);
       setStatusTFA(data["two_FA_enabled"]);
       let achievs: boolean[] = [];
-      // console.log("this is data");
-      // console.log(data);
-      // console.log("this is stats");
-      // console.log(stats);
 
       achievs.push(stats["achievement_0"]);
       achievs.push(stats["achievement_1"]);
       achievs.push(stats["achievement_2"]);
-      // achievement_1
-      // :
-      // false
-      // achievement_"])
-      // console.log("this is achiev array");
-      // console.log(achievs);
       set_achievementes(achievs);
       set_wins(stats["wins"]);
     };

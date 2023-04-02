@@ -107,13 +107,12 @@ const Chat_area = () => {
   
 
   return (
-    <div id="chat-area" className="com-areas">
+    <div id="chat-area">
       {displayed_chat.conversation_id == -1 ? (
-        <>
+        <div className="no-open-chats">
           <h2>You have no open chats {displayed_chat.conversation_name}</h2>
           <img src={CatSvg}/>
-          <div></div>
-        </>
+        </div>
       ) : (
         <>
           <h2>Chat {displayed_chat.conversation_name}</h2>

@@ -71,8 +71,8 @@ const Get_all_other_users = () =>
 			<h2>All Players</h2>
 			<ul className='list-cards'>
 				{
-					other_users_ids.map((other_user_id, idx) => (
-						<User_preview_card key={idx} other_user_id={other_user_id} />
+					other_users_ids.map((other_user_id) => (
+						<User_preview_card key={other_user_id} other_user_id={other_user_id} />
 					))
 				}	
 			</ul>

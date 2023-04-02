@@ -1,7 +1,8 @@
 .rankings-ladder {
 	/* padding-top: 115px; */
-	border: 2px solid pink;
-	height: 60%;
+	/* border: 2px solid pink; */
+	/* height: 95%; */
+	max-height: 95%;
 	overflow: auto;
 	list-style-type: none;
 	padding: 0;
@@ -9,12 +10,30 @@
 }
 
 .ladder-card {
+	display: flex;
 	text-decoration: none;
-	background-color: purple;
+	background: linear-gradient(to bottom right, rgb(31, 13, 83), rgb(129, 103, 146));
 	margin-bottom: 15px;
-	/* justify-content: center; */
-	/* align-self: center; */
+	justify-content: center;
+	align-self: center;
 	text-align: center;
 	padding: 20px;
 	font-size: xx-large;
+	gap: 1rem;
+}
+
+.ladder-card img {
+	width: 64px;
+	height: 64px;
+	object-fit: cover;
+	border-radius: 50px;
+}
+
+.ladder-card * {
+	/* border: 1px solid red; */
+	align-self: center;
+}
+
+.special {
+	background: linear-gradient(to bottom right, rgba(25, 24, 24, 0.328), rgb(176, 21, 176));
 }

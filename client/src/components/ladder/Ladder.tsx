@@ -4,6 +4,7 @@ import "./Ladder.css";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 import defaultPicture from "../../images/default-picture.jpeg";
 import { UserContext } from "../../contexts/UserContext";
+
 const Ladder_card = ({
   rank,
   mmr,
@@ -15,12 +16,16 @@ const Ladder_card = ({
   mmr: number;
   name: string;
   picture: string;
-  playerId: string;
+  playerId: number;
 }) => {
   const { userId } = useContext(UserContext);
   return (
-    // <li key={rank} className={`ladder-card ${playerId === userId ? "special" : ""} `}>
-    <li key={rank} className={`ladder-card ${rank === 1 ? "special" : ""}`}>
+    <li
+      key={rank}
+      className={`ladder-card ${
+        playerId.toString() === userId ? "special" : ""
+      }`}
+    >
       <span>{rank}.</span>
       <img src={picture} alt="" />
       <span>{name}</span>
@@ -30,9 +35,10 @@ const Ladder_card = ({
 };
 
 const Ladder = () => {
-  const [ladder, set_ladder] = useState<{ mmr: number; name: string }[]>([]);
-  //   const { picture_map, set_picture_map, pushPictureToMap } =
-  //     useMyProfile_picture_Context();
+  const [ladder, set_ladder] = useState<
+    { mmr: number; name: string; userId: number }[]
+  >([]);
+
   useEffect(() => {
     const get_ladder = async () => {
       const response = await fetch("http://localhost:3003/user/get_ladder", {
@@ -41,26 +47,47 @@ const Ladder = () => {
           Authorization: `Bearer ${JSCookies.get("accessToken")}`,
         },
       });
-      const data: { mmr: number; name: string }[] = await response.json();
+      const data: { mmr: number; name: string; userId: number }[] =
+        await response.json();
       set_ladder(data);
     };
     get_ladder();
   }, []);
 
-  console.log(JSON.stringify(ladder));
+  // const [photo, setPhoto] = useState("");
+  const { picture_map, set_picture_map, pushPictureToMap } =
+    useMyProfile_picture_Context();
+
+  useEffect(() => {
+    const updateMap = async () => {
+      ladder.map(
+        async (player: { mmr: number; name: string; userId: number }) => {
+          if (!picture_map.has(Number(player.userId)))
+            await pushPictureToMap(
+              Number(player.userId),
+              picture_map,
+              set_picture_map
+            );
+        }
+      );
+    };
+    updateMap();
+  }, []);
 
   return (
     <ul className="rankings-ladder">
-      {ladder.map((player: { mmr: number; name: string }, idx) => (
-        <Ladder_card
-          key={player.name}
-          rank={idx + 1}
-          mmr={player.mmr}
-          name={player.name}
-          playerId="98450" //hardcoded
-          picture={defaultPicture} //hardcoded
-        />
-      ))}
+      {ladder.map(
+        (player: { mmr: number; name: string; userId: number }, idx) => (
+          <Ladder_card
+            key={player.name}
+            rank={idx + 1}
+            mmr={player.mmr}
+            name={player.name}
+            playerId={player.userId}
+            picture={picture_map.get(player.userId) ?? defaultPicture}
+          />
+        )
+      )}
     </ul>
   );
 };

@@ -379,10 +379,10 @@ export class UserService {
 		const ladder : Stats [] = await this.prisma.stats.findMany({
 			orderBy:[{mmr: 'desc'}],
 		});
-		let arr : {mmr: Number, name: String}[] = []
+		let arr : {mmr: Number, name: String, userId: Number}[] = []
 		for(let i = 0; i < ladder.length; i++)
 		{
-			arr.push({mmr: ladder[i].mmr, name: await this.get_user_name(ladder[i].stat_id)});
+			arr.push({mmr: ladder[i].mmr, name: await this.get_user_name(ladder[i].stat_id), userId: ladder[i].stat_id});
 		}
 		return (arr);
 	}

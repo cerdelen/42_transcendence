@@ -97,9 +97,6 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 		}
 		get_conversation(chat_id);
 		}, []);
-
-
-		console.log(photo);
 		
 	return (
 		<li className='Chat_preview_cards' title={conversation_name} onClick={handleOnClick}>
@@ -176,16 +173,13 @@ const Get_all_my_chats = () =>
 				const conv_indx = my_chats_ids.indexOf(conv_id);
 				if (conv_indx !== -1)
 				{
-					console.log("we want to splice id " + conv_id + " at idx " + conv_indx);
-					console.log(my_chats_ids);
 					my_chats_ids.splice(conv_indx, 1);
-					console.log(my_chats_ids);
 					setmy_chats_ids([...my_chats_ids]);
 				}
 				
 			}
 		});
-	
+		
 	return (
 		<div className="left-pane-column" >
 			<h2>My Chats</h2>

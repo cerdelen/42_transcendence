@@ -30,6 +30,8 @@ const UserPage = () => {
   };
 
   const startChat = async () => {
+    console.log("%cSTART CHAT", "color: green");
+    
     try {
       our_socket.emit("create_dialogue", {
         userid_creator: userId,
@@ -38,6 +40,8 @@ const UserPage = () => {
     } catch (error) {
       alert("Could not go to chat");
     }
+
+    //TO ADD if chat is already open, go to it
   };
 
   const update_is_blocked = async () => {
@@ -171,8 +175,8 @@ const UserPage = () => {
                 </div>
               }
             </div>
-        </div>
         <UserStats userId={userIdCard} />
+        </div>
       <button id="exit-buttton" onClick={toggleVisibility}>
         X
       </button>

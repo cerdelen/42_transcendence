@@ -6,5 +6,5 @@ export const hashPassword = (rawPassword: string) => {
 }
 
 export const comparePassword = (rawPassword: string, hash: string) => {
-	return bcrypt.compareSync(rawPassword, hash);
-}
+	return bcrypt.compareSync(rawPassword, hash); 
+}  

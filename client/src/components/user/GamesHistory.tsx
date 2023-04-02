@@ -176,7 +176,10 @@ const GameHistory = ({ gamesList }: Props) => {
     <ul className="user-info-lists">
       <div className="title-section">Games:</div>
       <br />
-      {games.map((game, idx) => (
+      {
+        games.length === 0 ? <span className="no-games">No games to show yet</span> :
+      
+      games.map((game, idx) => (
         <GameCard
           key={game['id']}
           photoOne={profilePicturesPlayerOne[idx]}

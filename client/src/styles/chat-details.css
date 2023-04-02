@@ -46,7 +46,7 @@
 	margin-right: 2rem;
 } */
 
-.icons{
+.icons {
 	margin-right: 1rem;
 	color: purple;
 }
@@ -68,7 +68,9 @@
 	padding-bottom: .6rem;
 }
 
-.admin-buttons {
+.admin-buttons,
+.password-buttons {
 	display: flex;
 	flex-direction: column;
+	gap: 5px;
 }

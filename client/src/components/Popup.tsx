@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Popup from "reactjs-popup"
-import { useMyContext } from "../contexts/InfoCardContext";
 import { UserContext } from "../contexts/UserContext";
 import { our_socket } from "../utils/context/SocketContext";
 
@@ -15,10 +14,8 @@ type Props = {
 
 const PopUp = ({setInviterName ,inviterName ,isInvited, setIsInvited} : Props) => {
     const navigate = useNavigate();
-    // const {isInvited, setIsInvited} = useMyContext();
     const {userId} = useContext(UserContext);
 
-    
     const  acceptInvite = () => {
       console.log("Invite accepted");
       setIsInvited(false);
@@ -39,8 +36,6 @@ const PopUp = ({setInviterName ,inviterName ,isInvited, setIsInvited} : Props) =
       setInviterName("");
       setIsInvited(false);
     }
-
-    console.log(`POPUP status: ${isInvited}`);
     
     return (
         <Popup open={isInvited} position="right center" onClose={() => rejectInvite()} >

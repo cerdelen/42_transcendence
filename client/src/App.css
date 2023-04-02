@@ -174,7 +174,18 @@ span {
   margin-left: .5rem;
   margin-right: .5rem;
   border: 1mm ridge white;
+}
 
+
+#status-dot-other-players {
+  content: "";
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  margin-left: .5rem;
+  margin-right: .5rem;
+  border: 1mm outset black;
 }
 
 #achievements-box h3 {
@@ -209,7 +220,18 @@ span {
   cursor: pointer;
 }
 
-.purple-button:hover:not(#userInfo button) {
+.deep-purple-button {
+  background-color: rgb(54, 19, 95);
+  color: white;
+  border-radius: 15px;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgb(134, 73, 127);
+  cursor: pointer;
+}
+
+.purple-button:hover:not(#userInfo button),
+.deep-purple-button:hover {
   box-shadow: 0 0 7px #d0cccc, 0 0 13px #d0cccc, 0 0 24px #d0cccc;
 }
 
@@ -318,10 +340,6 @@ footer {
 }
 
 /* CHAT AREA */
-
-.com-areas {
-  overflow: auto;
-}
 
 #friends-area,
 #lobby-area {

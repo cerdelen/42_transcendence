@@ -53,7 +53,7 @@ const ToggleBox: React.FC<Props> = ({ setBase64String, status2FA }) => {
 
   return (
     <label className="switch">
-      <span className="label-text">2FA</span>
+      <div className="label-text">2FA</div>
       <input
         type="checkbox"
         checked={checked}

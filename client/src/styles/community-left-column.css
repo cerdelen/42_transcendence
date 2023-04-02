@@ -46,3 +46,13 @@
 	height: 100px;
 	object-fit: cover;
 }
+
+.name-and-button {
+	display: flex;
+	flex-direction: column;
+	gap: 19px;
+	justify-content: center;
+	align-items: center;
+	/* border: 1px solid white; */
+	padding-left: 35px;
+}

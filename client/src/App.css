@@ -209,7 +209,18 @@ span {
   cursor: pointer;
 }
 
-.purple-button:hover:not(#userInfo button) {
+.deep-purple-button {
+  background-color: rgb(54, 19, 95);
+  color: white;
+  border-radius: 15px;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgb(134, 73, 127);
+  cursor: pointer;
+}
+
+.purple-button:hover:not(#userInfo button),
+.deep-purple-button:hover {
   box-shadow: 0 0 7px #d0cccc, 0 0 13px #d0cccc, 0 0 24px #d0cccc;
 }
 

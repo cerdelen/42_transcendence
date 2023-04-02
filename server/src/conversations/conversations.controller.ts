@@ -99,9 +99,11 @@ export class ConversationController {
 				console.log("The conversation is not a group chat!");
 				return null;
 			}
-			if (existingConversation.ask_password == true || (existingConversation.ask_password == false && comparePassword(body.password, existingConversation.conversation_password))) {
-				console.log("wrong password");
+			//the condition here was incorrect, Krisi changed it, doublecheck if I missed something
+			if (existingConversation.ask_password == true && !comparePassword(body.password, existingConversation.conversation_password)) {
 				
+				console.log("wrong password");
+				return (false);
 			} 
 			const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);		//is he already part of the chat
 			if (userIdx > -1) return (false);			// this means he is already part of the chat and i dont want to add him again

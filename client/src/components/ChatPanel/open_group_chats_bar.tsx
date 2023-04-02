@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, Fragment } from "react";
+import React, { useContext, useState, useEffect, Fragment } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
 import group_picture from "../../images/group_chat_picture.jpeg";
@@ -8,19 +8,22 @@ import { json } from "react-router-dom";
 import { our_socket } from "../../utils/context/SocketContext";
 import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
 import SingleFieldInputForm from "../SingleFieldInputForm/SingleFieldInputForm";
+import TwoFieldInputForm from "../SingleFieldInputForm/TwoFieldInputForm";
 
 const Chat_name_input = ({ setButton_state }: { setButton_state: any }) => {
-  const {
-    my_chats_ids,
-    setmy_chats_ids,
-  } = useMyChatCardsContext();
+  const { my_chats_ids, setmy_chats_ids } = useMyChatCardsContext();
   const { setDisplayed_chat } = useMyDisplayedChatContext();
 
-  const handleSubmit = async (inputValue: string, password?: string) => {
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+    inputValue: string,
+    password?: string
+  ) => {
+    event.preventDefault();
 
-    console.log("HANDLE SUBMIT CREATE GROUP CHAT");
-    
     if (inputValue.length > 0) {
+      console.log(`%cThis is the password: ${password}`, "color: blue");
+
       const response = await fetch(
         `http://localhost:3003/conversation/create_group_chat/create`,
         {
@@ -29,7 +32,7 @@ const Chat_name_input = ({ setButton_state }: { setButton_state: any }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${JSCookies.get("accessToken")}`,
           },
-          body: JSON.stringify({ chat_name: inputValue, password: ""}),
+          body: JSON.stringify({ chat_name: inputValue, password: password }),
         }
       );
 
@@ -43,8 +46,11 @@ const Chat_name_input = ({ setButton_state }: { setButton_state: any }) => {
 
   return (
     <div>
-      <SingleFieldInputForm handleSubmit={handleSubmit} buttonText="CREATE" fieldPlaceholder="Chat name" passwordField={true}/>
-      
+      <TwoFieldInputForm
+        handleSubmit={handleSubmit}
+        buttonText="CREATE"
+        fieldPlaceholder="name"
+      ></TwoFieldInputForm>
     </div>
   );
 };
@@ -69,7 +75,10 @@ const Group_chat_preview_card = ({
   const [conversation_name, setConversation_name] = useState("");
   const [hasPassword, setHasPassword] = useState(false);
 
-  const handleSubmit = async (inputValue: string) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, inputValue: string) => {
+		event.preventDefault();
+    console.log(`%cHANDLE SUBMIT`, 'color: blue');
+    
     const response = await fetch(
       `http://localhost:3003/conversation/join_group_chat/join`,
       {
@@ -78,12 +87,41 @@ const Group_chat_preview_card = ({
           "Content-Type": "application/json",
           Authorization: `Bearer ${JSCookies.get("accessToken")}`,
         },
-        body: JSON.stringify({ chat_id: 15, password: "password"}),
-        
+        body: JSON.stringify({ chat_id: chat_id, password: inputValue }),
       }
     );
     const data = await response.json();
-    
+      console.log(`Allowed to join: ${data}`);
+      
+    if (data == true) {
+      setmy_chats_ids([...my_chats_ids, chat_id]);
+      let arr_2: number[] = [];
+      for (let i = 0; i < not_joined_chats_ids.length; i++) {
+        if (chat_id != not_joined_chats_ids[i])
+          arr_2.push(not_joined_chats_ids[i]);
+      }
+      setNot_joined_chats_ids(arr_2);
+    } else {
+      alert("Wrong password");
+    }
+  };
+
+  const joinChat = async () => {
+    console.log(`JOIN CHAT`);
+
+    const response = await fetch(
+      `http://localhost:3003/conversation/join_group_chat/join`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+        },
+        body: JSON.stringify({ chat_id: 15, password: "password" }),
+      }
+    );
+    const data = await response.json();
+
     if (data == true) {
       setmy_chats_ids([...my_chats_ids, chat_id]);
       let arr_2: number[] = [];
@@ -94,35 +132,6 @@ const Group_chat_preview_card = ({
       setNot_joined_chats_ids(arr_2);
     }
   };
-
-
-  const joinChat = async () => {
-    console.log(`JOIN CHAT`);
-    
-    const response = await fetch(
-      `http://localhost:3003/conversation/join_group_chat/join`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-        },
-        body: JSON.stringify({ chat_id: 15, password: "password"}),
-        
-      }
-    );
-    const data = await response.json();
-    
-    if (data == true) {
-      setmy_chats_ids([...my_chats_ids, chat_id]);
-      let arr_2: number[] = [];
-      for (let i = 0; i < not_joined_chats_ids.length; i++) {
-        if (chat_id != not_joined_chats_ids[i])
-          arr_2.push(not_joined_chats_ids[i]);
-      }
-      setNot_joined_chats_ids(arr_2);
-    }
-  }
 
   const checkIfPasswordProtected = async () => {
     try {
@@ -136,8 +145,8 @@ const Group_chat_preview_card = ({
         }
       );
       const passwordStatus = await response.json();
-      // console.log("Status");
-      // console.log(passwordStatus);
+      console.log("Status");
+      console.log(passwordStatus);
 
       setHasPassword(passwordStatus);
       return passwordStatus;
@@ -150,7 +159,7 @@ const Group_chat_preview_card = ({
 
   const handleOnClick = async () => {
     const passwordIsSet = await checkIfPasswordProtected();
-    if (passwordIsSet) return ;
+    if (passwordIsSet) return;
     await joinChat();
   };
 
@@ -166,20 +175,14 @@ const Group_chat_preview_card = ({
       }
     );
     const data = await response.json();
-    const participants = data["conversation_participant_arr"];
     setConversation_name(data["conversation_name"]);
   };
-
-  // useEffect(() => {
-  //   if (hasPassword) return;
-  //   handleSubmit();
-  // }, [hasPassword]);
 
   useEffect(() => {
     get_conversation(chat_id);
   }, []);
   return (
-    <li className="Chat_preview_cards" onClick={handleOnClick}>
+    <li className="Chat_preview_cards">
       {hasPassword ? (
         <SingleFieldInputForm
           handleSubmit={handleSubmit}
@@ -189,9 +192,12 @@ const Group_chat_preview_card = ({
       ) : (
         <Fragment>
           <img src={group_picture} alt="" />
-          <span id="user-name" title={"chat_name"}>
-            {conversation_name}
-          </span>
+          <div className="name-and-button">
+            <span id="user-name" title={"chat_name"}>
+              {conversation_name}
+            </span>
+            <button className="deep-purple-button" onClick={handleOnClick}>JOIN</button>
+          </div>
         </Fragment>
       )}
     </li>
@@ -251,9 +257,9 @@ const Get_all_open_group_chats = ({
 
   return (
     <ul className="list-cards right-shadow">
-      {not_joined_chats_ids.map((chat_id, idx) => (
+      {not_joined_chats_ids.map((chat_id) => (
         <Group_chat_preview_card
-          key={idx}
+          key={chat_id}
           chat_id={chat_id}
           not_joined_chats_ids={not_joined_chats_ids}
           my_chats_ids={my_chats_ids}

@@ -66,29 +66,7 @@ function App() {
       console.error(error);
     }
   }
-  
 
-  // function acceptInvite()
-  // {
-  //   console.log("Invite accepted");
-  //   setIsInvited(false);
-  //   setinviterName("");
-  //   // navigate("/home");
-  //   let obj = {inviterName: inviterName, userId: userId}
-  //   our_socket.emit("playerAccepted", JSON.stringify(obj))
-  //   console.log("player accepted the invitation ");
-  // }
-
-  // function rejectInvite()
-  // {
-  //   if(isInvited === false)
-  //     return ;
-  //   console.log("Invite rejected");
-  //   let obj = {inviterName: inviterName, userId: userId}
-  //   our_socket.emit("rejectInvite", JSON.stringify(obj));
-  //   setinviterName("");
-  //   setIsInvited(false);
-  // }
   async function getData(userid: string) {
     try {
       let response = await fetch("http://localhost:3003/user/user_data", {

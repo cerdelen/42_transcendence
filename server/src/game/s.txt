@@ -1,0 +1,11 @@
+server       | Game ended
+server       | this is game{"id":19,"player_one":98586,"player_two":322,"winner":322,"loser":98586,"score_one":2,"score_two":0,"finished":true}
+server       | user one or user 2
+server       | user 1 [object Object]
+server       | user 2 [object Object]
+server       | this is user one{"id":98586,"name":"jkaczmar","mail":"jkaczmar@student.42wolfsburg.de","conversation_id_arr":[],"socketId":"jNSvMYaBR5f8Ae3-AAAH","two_FA_enabled":false,"online":false,"two_FA_secret":null,"friendlist":[322],"games":[11,12,13,14,15,18],"blocked_users":[]}
+server       | this is user two{"id":322,"name":"testinguser","mail":"testinguser@email.com","conversation_id_arr":[],"socketId":"HGFPCbGmSss-T2jzAAAF","two_FA_enabled":false,"online":false,"two_FA_secret":null,"friendlist":[98586],"games":[11,12,13,14,15,18],"blocked_users":[]}
+server       | this is index 1-1
+server       | this is index 2-1
+postgres_db  | 2023-04-02 13:15:50.876 UTC [27] LOG:  checkpoint starting: time
+postgres_db  | 2023-04-02 13:15:53.110 UTC [27] LOG:  checkpoint complete: wrote 23 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.226 s, sync=0.004 s, total=2.235 s; sync files=14, longest=0.003 s, average=0.001 s; distance=79 kB, estimate=79 kB

@@ -11,6 +11,7 @@ import GameHistory from "./GamesHistory";
 import UserStats from "./UserStatistics";
 import { our_socket } from "../../utils/context/SocketContext";
 import { Link } from "react-router-dom";
+import Incoming_friend_requests from "./Incoming_friend_requests";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 const UserPage = () => {
@@ -21,13 +22,19 @@ const UserPage = () => {
   const [userEmail, setUserEmail] = useState("");
   const [TFA, setTFA] = useState(false);
   const [friendsList, setFriendsList] = useState<string[]>([]);
+  const [out_going_friend_requests, set_outgoing_friend_requests] = useState<string[]>([]);
+  const [incoming_frined_requests, set_incoming_friend_requests] = useState<string[]>([]);
   const [gamesList, setGamesList] = useState([]);
   const isMe = userId === userIdCard;
   const [isFriend, setIsFriend] = useState(false);
   const [is_blocked, set_is_blocked] = useState(false);
+  const [show_friends, set_show_friends] = useState(true);
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
     setShowUserInto(false);
+  };
+  const toggle_friends_or_requests = () => {
+    set_show_friends(!show_friends)
   };
 
   const startChat = async () => {
@@ -101,7 +108,7 @@ const UserPage = () => {
       }
     } else {
       try {
-        const response = await fetch(`http://${ipAddress}:3003/user/add_friend`, {
+        const response = await fetch(`http://${ipAddress}:3003/user/send_friend_request`, {
           method: "Post",
           headers: {
             "Content-Type": "application/json",
@@ -110,7 +117,6 @@ const UserPage = () => {
           body: JSON.stringify({ adding_you: userIdCard }),
         });
         console.log(response);
-        setIsFriend(true);
       } catch (error) {
         alert("Could not modify friends list");
       }
@@ -132,6 +138,8 @@ const UserPage = () => {
       setUserEmail(data["mail"]);
       setTFA(data["two_FA_enabled"]);
       setFriendsList(data["friendlist"]);
+      set_outgoing_friend_requests(data["outgoing_friend_req"]);
+      set_incoming_friend_requests(data["incoming_friend_req"]);
       setGamesList(data["games"]);
       setIsFriend(data["friendlist"].includes(Number(userId)));
       set_is_blocked(blocked_users.includes(Number(userIdCard)));
@@ -183,10 +191,28 @@ const UserPage = () => {
       <button id="exit-buttton" onClick={toggleVisibility}>
         X
       </button>
-      <div id="lists">
-        <ListFriends friendsList={friendsList} />
-        <GameHistory gamesList={gamesList} />
-      </div>
+        {
+          userIdCard == userId ?
+          <>
+          <button className="purple-button"  onClick={toggle_friends_or_requests}> {show_friends ?"Show Friend Requests":"Show Your Friend"}</button>
+            <div id="lists">
+              {
+                show_friends ?
+                <ListFriends friendsList={friendsList} />
+                :
+                <Incoming_friend_requests incoming_friend_req={incoming_frined_requests} outgoing_friend_req={out_going_friend_requests}/>
+              }
+              <GameHistory gamesList={gamesList} />
+            </div>
+          </>
+          :
+          <>
+          <div id="lists">
+                <ListFriends friendsList={friendsList} />
+              <GameHistory gamesList={gamesList} />
+        </div >
+          </>
+        }
     </div >
   );
 };

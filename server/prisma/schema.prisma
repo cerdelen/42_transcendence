@@ -22,7 +22,8 @@ model User {
 	stats							Stats?
 	games							Int[]				// ids of games??
 	blocked_users					Int[]			@default([])
-
+	outgoing_friend_req				Int[]			@default([])
+	incoming_friend_req				Int[]			@default([])
 }
 
 model Stats {

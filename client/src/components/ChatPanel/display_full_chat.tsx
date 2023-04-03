@@ -21,7 +21,7 @@ interface typing {
 interface message {
   author_id: string;
   text: string;
-  chat_id: number
+  chat_id: number;
 }
 
 class display_message_info {
@@ -39,10 +39,11 @@ function DisplayTyping({ typingDisplay }: { typingDisplay: string }) {
 }
 
 const Display_message_in_chat = ({
-  message, name_map
+  message,
+  name_map,
 }: {
   message: display_message_info;
-  name_map: Map<number, string>
+  name_map: Map<number, string>;
 }) => {
   const { userId } = useContext(UserContext);
   const is_me: boolean = message.author_id == Number(userId);
@@ -63,58 +64,57 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
   const [typingDisplay, setTypingDisplay] = useState("");
   const [messages, set_messages] = useState<Array<display_message_info>>([]);
   const chatWindow = useRef<HTMLDivElement>(null);
-  const [ name_map, set_name_map ] = useState<Map<number, string>>(new Map);
-	const { displayed_chat } = useMyDisplayedChatContext();
+  const [name_map, set_name_map] = useState<Map<number, string>>(new Map());
+  const { displayed_chat } = useMyDisplayedChatContext();
+  const { userId } = useContext(UserContext);
 
   our_socket.on("message", (message: message) => {
-    if (message.chat_id == displayed_chat.conversation_id)
-    {
+    if (message.chat_id == displayed_chat.conversation_id) {
       let newMessage: display_message_info[] = [];
       for (let i = 0; i < messages.length; i++) {
         newMessage.push(messages[i]);
       }
       newMessage.push(
         new display_message_info(message.text, Number(message.author_id))
-        );
-        set_messages(newMessage);
-      }
-    });
-  our_socket.on("typing", (typing: typing) =>
-  {
-    if (typing.isTyping && typing.chat_id == displayed_chat.conversation_id)
-    {
+      );
+      set_messages(newMessage);
+    }
+  });
+  our_socket.on("typing", (typing: typing) => {
+    if (
+      typing.isTyping &&
+      typing.chat_id == displayed_chat.conversation_id &&
+      typing.name != userId
+    ) {
       const name = name_map.get(Number(typing.name));
       setTypingDisplay(`${name} is typing ...`);
-    }
-    else
-    {
+    } else {
       setTypingDisplay("");
     }
   });
-  useEffect(() =>
-  {
-    const prep_name_map = async (participants: number[]) =>
-    {
-      let temp_map : Map<number, string> = new Map;
-      for (let index = 0; index < participants.length; index++)
-      {
-        const response = await fetch(`http://${ipAddress}:3003/user/user_name`, {
-          method: "Post",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-          },
-          body: JSON.stringify({ user_id: participants[index]}),
-        });
+  useEffect(() => {
+    const prep_name_map = async (participants: number[]) => {
+      let temp_map: Map<number, string> = new Map();
+      for (let index = 0; index < participants.length; index++) {
+        const response = await fetch(
+          `http://${ipAddress}:3003/user/user_name`,
+          {
+            method: "Post",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+            },
+            body: JSON.stringify({ user_id: participants[index] }),
+          }
+        );
         const userName = await response.text();
-  
+
         temp_map.set(participants[index], userName);
       }
       set_name_map(temp_map);
-    }
-    const get_messages = async (chat_id: number) =>
-    {
+    };
+    const get_messages = async (chat_id: number) => {
       //console.log("GET MESSAGES");
 
       if (chat_id == -1) {
@@ -124,7 +124,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
         return;
       }
       // console.log("fetching all message");
-      
+
       const response = await fetch(
         `http://${ipAddress}:3003/conversation/get_messages_from_conversation/${chat_id}`,
         {
@@ -151,12 +151,11 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
     prep_name_map(displayed_chat.conversation_participant_arr);
   }, [chat_id, displayed_chat]);
 
-
-useLayoutEffect(() => {
-	  const windowRef = chatWindow.current;
-	  if (windowRef) {
-		windowRef.scrollTop = windowRef.scrollHeight + 500; 
-	  }
+  useLayoutEffect(() => {
+    const windowRef = chatWindow.current;
+    if (windowRef) {
+      windowRef.scrollTop = windowRef.scrollHeight + 500;
+    }
   }, []);
 
   useEffect(() => {
@@ -167,14 +166,19 @@ useLayoutEffect(() => {
     }
   }, [messages]);
 
-  
   // console.log("rendering full chat");
-  
+
   return (
-    <div ref={chatWindow} id="displayed-messages" className="whole-chat"> 
-      {messages.map((message, idx) => (
-        <Display_message_in_chat key={idx} message={message} name_map={name_map}/>
-      ))}
+    <div ref={chatWindow} id="displayed-messages" className="whole-chat">
+      {messages.map((message, idx) => {
+        return (
+          <Display_message_in_chat
+            key={idx}
+            message={message}
+            name_map={name_map}
+          />
+        );
+      })}
       <DisplayTyping typingDisplay={typingDisplay} />
     </div>
   );

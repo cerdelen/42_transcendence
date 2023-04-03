@@ -59,7 +59,8 @@ export function Profile_picture_Provider({ children }: MyContextProviderProps) {
         await pushPictureToMap(all_users[i].id, picture_map, set_picture_map);
       }
     }
-      get_all_pictures();
+    if (JSCookies.get("accessToken")) //workaround why does it run though? when we press logout
+    get_all_pictures();
   }, [])
   
   const value = {

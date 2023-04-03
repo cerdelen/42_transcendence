@@ -9,12 +9,13 @@ import { ConversationService } from '../conversations/conversations.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { EventEmitterModule, EventEmitter2 } from '@nestjs/event-emitter';
 import { GatewayModule } from '../gateway/gateway.module';
+import { MessagingGateway } from "./msgSocket/websocket.gateway";
 
 
 @Module({
 	imports: [ConversationModule, PrismaModule, UserModule],
 	// controllers: [MsgController],
-	providers: [ PrismaService, MsgService, UserService, EventEmitter2],
+	providers: [ PrismaService, MsgService, UserService, EventEmitter2, MessagingGateway],
 	exports: [MsgService]
 })
 

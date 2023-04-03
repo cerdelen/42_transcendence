@@ -23,7 +23,7 @@ export class UserService {
 		}
 		return (check);
 	}
-	
+
 	async	deleteUser(where: Prisma.UserWhereUniqueInput)
 	{
 		const check = await this.prisma.user.findUnique({where});
@@ -91,6 +91,100 @@ export class UserService {
 			add_friend.friendlist.push(userId);
 			await	this.prisma.user.update({where: { id: userId}, data: { friendlist: user.friendlist}});
 			await	this.prisma.user.update({where: { id: friend}, data: { friendlist: add_friend.friendlist}});
+		}
+	}
+
+	async	send_friend_request(userId: number, friend: number)
+	{
+		const	user = await this.prisma.user.findUnique({ where : { id: userId }});				//me
+		const	user_two = await this.prisma.user.findUnique({ where : { id: friend }});			//target
+
+		if(user_two && user)
+		{
+			if (user.friendlist.includes(friend) && user_two.friendlist.includes(friend))
+			{
+					return ;
+			}
+			if(user.incoming_friend_req.includes(friend) && user_two.outgoing_friend_req.includes(userId))		// in case the other one sent me alreadt friend invite
+			{
+				console.log("got into exeption where there is already f_r sent the other way around");
+				
+				return (this.accept_friend_request(friend, userId));
+			}
+			if (!user.outgoing_friend_req.includes(friend))
+				user.outgoing_friend_req.push(friend);
+			if (!user_two.incoming_friend_req.includes(userId))
+				user_two.incoming_friend_req.push(userId);
+			await	this.prisma.user.update({
+				where: { id: userId},
+				data: {
+					outgoing_friend_req: user.outgoing_friend_req
+				}});
+			await	this.prisma.user.update({
+				where: { id: friend},
+				data: {
+					incoming_friend_req: user_two.incoming_friend_req
+				}});
+		}
+	}
+
+	async	accept_friend_request(userId: number, friend: number)
+	{
+		const	user = await this.prisma.user.findUnique({ where : { id: userId }});
+		const	user_two = await this.prisma.user.findUnique({ where : { id: friend }});
+
+		if(user_two && user)
+		{
+				console.log("got here too");
+				
+				const	incoming_request = user.incoming_friend_req.findIndex(x => x == friend);
+				const	outgoing_request = user_two.outgoing_friend_req.findIndex(x => x == userId);
+				if (incoming_request != -1)
+					user.incoming_friend_req.splice(incoming_request, 1);
+				if (outgoing_request != -1)
+					user_two.outgoing_friend_req.splice(outgoing_request, 1);
+				if (!user.friendlist.includes(friend))
+					user.friendlist.push(friend);
+				if (!user_two.friendlist.includes(userId))
+					user_two.friendlist.push(userId);
+				await	this.prisma.user.update({
+					where: { id: userId}, 
+					data: {
+						friendlist: user.friendlist, 
+						incoming_friend_req: user.incoming_friend_req
+					}});
+				await	this.prisma.user.update({
+					where: { id: friend},
+					data: {
+						friendlist: user_two.friendlist,
+						outgoing_friend_req: user_two.outgoing_friend_req
+					}});
+		}
+	}
+
+	async	reject_friend_request(userId: number, friend: number)
+	{
+		const	user = await this.prisma.user.findUnique({ where : { id: userId }});
+		const	user_two = await this.prisma.user.findUnique({ where : { id: friend }});
+
+		if(user_two && user)
+		{	
+			const	incoming_request = user.incoming_friend_req.findIndex(x => x == friend);
+			const	outgoing_request = user_two.outgoing_friend_req.findIndex(x => x == userId);
+			if (incoming_request != -1)
+				user.incoming_friend_req.splice(incoming_request, 1);
+			if (outgoing_request != -1)
+				user_two.outgoing_friend_req.splice(outgoing_request, 1);
+			await	this.prisma.user.update({
+				where: { id: userId}, 
+				data: {
+					incoming_friend_req: user.incoming_friend_req
+				}});
+			await	this.prisma.user.update({
+				where: { id: friend},
+				data: {
+					outgoing_friend_req: user_two.outgoing_friend_req
+				}});
 		}
 	}
 

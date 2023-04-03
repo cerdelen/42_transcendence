@@ -56,7 +56,7 @@ const UserStats = ({ userId }: Props) => {
         <span>{`Wins: ${wins}`}</span>
         <span>{`Loses: ${loses}`}</span>
         <span>{`Rank: ${mmr}`}</span>
-        <span>{`Wins Ratio: ${winRatio * 100}%`}</span>
+        <span>{`Wins Ratio: ${(winRatio * 100).toFixed(2)}%`}</span>
 
       </div>
       <div id="stats-achievements">

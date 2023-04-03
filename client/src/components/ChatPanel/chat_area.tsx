@@ -20,20 +20,23 @@ const Chat_input_filed_and_send_button = () => {
   const { displayed_chat } = useMyDisplayedChatContext();
   const { userId } = useContext(UserContext);
 
-  const sendMessage = () => {;
+  const sendMessage = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("Send message");
+    
     our_socket.emit( "message", {
         author: Number(userId),
         text: input,
         conversation_id: displayed_chat.conversation_id,
         created_at: Date.now(),
       },
-      () => {}
+      // () => {}
     );
     setInput("");
   };
   let timeout: any;
   const emitTyping = () => {
-    //   console.log("i am emitting typing");
+      console.log("i am emitting typing");
     our_socket.emit("typing", { isTyping: true, userId: userId, chat_id: displayed_chat.conversation_id });
     timeout = setTimeout(() => {
       our_socket.emit("typing", { isTyping: false, userId: userId, chat_id: displayed_chat.conversation_id });
@@ -41,25 +44,26 @@ const Chat_input_filed_and_send_button = () => {
   };
 
   return (
-    <>
+    <form onSubmit={(e) => {
+      if (input) sendMessage(e);
+    }}>
       <input
         id="chat-input"
         type="text"
         value={input}
         onInput={emitTyping}
         onChange={(e) => {
+          console.log(e.target.value);
+          
           setInput(e.target.value);
         }}
       />
       <button
-        type="submit"
-        onClick={(e) => {
-          if (input) sendMessage();
-        }}
+        // type="submit"
       >
         Send
       </button>
-    </>
+    </form>
   );
 };
 
@@ -119,13 +123,13 @@ const Chat_area = () => {
         <>
           <h2>Chat {displayed_chat.conversation_name}</h2>
           <Display_full_chat chat_id={displayed_chat.conversation_id} />
-          <form
+          {/* <form
             onSubmit={(e) => {
               e.preventDefault();
             }}
-          >
+          > */}
             <Chat_input_filed_and_send_button />
-          </form>
+          {/* </form> */}
         </>
       )}
     </div>

@@ -58,7 +58,6 @@ async function emitToTheUserSocket(user: any, server: Server, event_name:string,
   });
   if(!found)
   {
-    //console.log("Socket of invitee not found");
     return ;
   }
   final_socket.emit(event_name, message)
@@ -214,6 +213,10 @@ export class GameGateway {
   @SubscribeMessage('createInvitationRoom')
   async handleInvitation(@MessageBody() obj , @ConnectedSocket() client)
   {
+    if(!clientRooms)
+    {
+      return ;
+    }
     if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
     {
       console.log("game ongoing " );
@@ -247,9 +250,7 @@ export class GameGateway {
         return ;
       }
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
-      //console.log("HEREEEEEEE og one game code ", game.id);
       invitationRooms[client.id] = game.id.toString();
- 
       client.emit('gameCode', game.id.toString());
       let pair : state_type = {participants: [], state: getInitialState()};
 
@@ -262,9 +263,6 @@ export class GameGateway {
 
       let creator = await this.userService.findUserById(Number.parseInt(userId));
       emitToTheUserSocket(user, this.server, "invitationPopUp", creator.name)
-      invites.forEach(element => {
-        //console.log("User number " + element.creator_id + " invited " + element.invitee_id);
-      });
       return;
     }
   }
@@ -273,10 +271,8 @@ export class GameGateway {
   async joinGame(@MessageBody() userId: string,
     @ConnectedSocket() client) {
     if (!userId) {
-      //console.log("User is not logged " + userId);
       return;
     }
-    // console.log("Client id ", clientRooms[client.id]);
     if(!(clientRooms[client.id] == undefined || clientRooms[client.id] == null))
     {
       console.log("game ongoing " );
@@ -284,7 +280,6 @@ export class GameGateway {
       return ;
     }
     if (!roomNames[0]) {
-      //console.log("this is in the subscriber " + userId);
       handleNewGame(client, this.server, Number.parseInt(userId), this.prisma);
       return;
     }
@@ -424,13 +419,11 @@ async function emitGameOver(state_: any, userService: any, roomName: string, win
 }
 async function startGameInterval(userService: any, roomName: string, state_: any, server: Server, game: any, prisma: PrismaService) {
   let other_game = await prisma.game.findUnique({ where: { id: game.id } });
-  //console.log("other games second player id " + other_game.player_two);
   const intervalId = setInterval(() => {
     const winner: number = gameLoop(state_);
     if (!winner) {
       emitGameState(roomName, state_, server);
     } else {
-      //console.log("Game ended");
       emitGameOver(state_ ,userService, roomName, winner, server, game, prisma, other_game.player_two);
       clientRooms[stateArr[roomName].participants[0]] = null;
       clientRooms[stateArr[roomName].participants[1]] = null;

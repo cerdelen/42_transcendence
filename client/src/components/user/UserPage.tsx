@@ -22,8 +22,12 @@ const UserPage = () => {
   const [userEmail, setUserEmail] = useState("");
   const [TFA, setTFA] = useState(false);
   const [friendsList, setFriendsList] = useState<string[]>([]);
-  const [out_going_friend_requests, set_outgoing_friend_requests] = useState<string[]>([]);
-  const [incoming_frined_requests, set_incoming_friend_requests] = useState<string[]>([]);
+  const [out_going_friend_requests, set_outgoing_friend_requests] = useState<
+    string[]
+  >([]);
+  const [incoming_frined_requests, set_incoming_friend_requests] = useState<
+    number[]
+  >([]);
   const [gamesList, setGamesList] = useState([]);
   const isMe = userId === userIdCard;
   const [isFriend, setIsFriend] = useState(false);
@@ -34,15 +38,15 @@ const UserPage = () => {
     setShowUserInto(false);
   };
   const toggle_friends_or_requests = () => {
-    set_show_friends(!show_friends)
+    set_show_friends(!show_friends);
   };
 
   const startChat = async () => {
     console.log("%cSTART CHAT", "color: green");
-    
+
     try {
       console.log("%cINSIDE TRY", "color: blue");
-      
+
       our_socket.emit("create_dialogue", {
         userid_creator: userId,
         other_user: userIdCard,
@@ -71,21 +75,23 @@ const UserPage = () => {
       } catch (error) {
         alert("Could not modify friends list");
       }
-    }
-    else {
+    } else {
       try {
-        const response = await fetch(`http://${ipAddress}:3003/user/unblock_user/${userIdCard}`, {
-          method: "Get",
-          headers: {
-            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-          },
-        });
+        const response = await fetch(
+          `http://${ipAddress}:3003/user/unblock_user/${userIdCard}`,
+          {
+            method: "Get",
+            headers: {
+              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+            },
+          }
+        );
         set_is_blocked(false);
       } catch (error) {
         alert("Could not modify friends list");
       }
     }
-  }
+  };
 
   const updateFriendsList = async () => {
     if (isFriend) {
@@ -108,15 +114,20 @@ const UserPage = () => {
       }
     } else {
       try {
-        const response = await fetch(`http://${ipAddress}:3003/user/send_friend_request`, {
-          method: "Post",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-          },
-          body: JSON.stringify({ adding_you: userIdCard }),
-        });
-        console.log(response);
+        const response = await fetch(
+          `http://${ipAddress}:3003/user/send_friend_request`,
+          {
+            method: "Post",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+            },
+            body: JSON.stringify({ adding_you: userIdCard }),
+          }
+        );
+        // console.log(response);
+      alert("Friend request has been sent")
+
       } catch (error) {
         alert("Could not modify friends list");
       }
@@ -164,56 +175,64 @@ const UserPage = () => {
           <span>{`Player: ${userName}`}</span>
           <span>{`Email: ${userEmail}`}</span>
           {isMe ? <span>{`2FA enabled: ${TFA}`}</span> : <span></span>}
-              {!isMe &&
-                <div id="buttons">
-                  <button className="purple-button" onClick={startChat}>
-                    Chat
-                  </button>
-                  <Link to="/game">
-                    <button
-                      className="purple-button"
-                      onClick={() => startAndinvitePlayers(userId, userName)}
-                    >
-                      Play
-                    </button>
-                  </Link>
-                  <button className="purple-button" onClick={updateFriendsList}>
-                    {isFriend ? "Unfriend" : "Friend"}
-                  </button>
-                  <button className="purple-button" onClick={update_is_blocked}>
-                    {is_blocked ? "Unblock" : "Block"}
-                  </button>
-                </div>
-              }
+          {!isMe && (
+            <div id="buttons">
+              <button className="purple-button" onClick={startChat}>
+                Chat
+              </button>
+              <Link to="/game">
+                <button
+                  className="purple-button"
+                  onClick={() => startAndinvitePlayers(userId, userName)}
+                >
+                  Play
+                </button>
+              </Link>
+              <button className="purple-button" onClick={updateFriendsList}>
+                {isFriend ? "Unfriend" : "Friend"}
+              </button>
+              <button className="purple-button" onClick={update_is_blocked}>
+                {is_blocked ? "Unblock" : "Block"}
+              </button>
             </div>
-        <UserStats userId={userIdCard} />
+          )}
         </div>
+        <UserStats userId={userIdCard} />
+      </div>
       <button id="exit-buttton" onClick={toggleVisibility}>
         X
       </button>
-        {
-          userIdCard == userId ?
-          <>
-          <button className="purple-button"  onClick={toggle_friends_or_requests}> {show_friends ?"Show Friend Requests":"Show Your Friend"}</button>
-            <div id="lists">
-              {
-                show_friends ?
-                <ListFriends friendsList={friendsList} />
-                :
-                <Incoming_friend_requests incoming_friend_req={incoming_frined_requests} outgoing_friend_req={out_going_friend_requests}/>
-              }
-              <GameHistory gamesList={gamesList} />
-            </div>
-          </>
-          :
-          <>
+      {userIdCard == userId ? (
+        <>
+          <button
+            className="purple-button"
+            onClick={toggle_friends_or_requests}
+          >
+            {show_friends ? "Show Friend Requests" : "Show Your Friend"}
+          </button>
           <div id="lists">
-                <ListFriends friendsList={friendsList} />
-              <GameHistory gamesList={gamesList} />
-        </div >
-          </>
-        }
-    </div >
+            {show_friends ? (
+              <ListFriends friendsList={friendsList} setIsFriend={setIsFriend} />
+            ) : (
+              <Incoming_friend_requests
+                incoming_friend_req={incoming_frined_requests}
+                set_incoming_friend_requests={set_incoming_friend_requests}
+                friendsList={friendsList}
+                setFriendsList={setFriendsList}
+              />
+            )}
+            <GameHistory gamesList={gamesList} />
+          </div>
+        </>
+      ) : (
+        <>
+          <div id="lists">
+            <ListFriends friendsList={friendsList} setIsFriend={setIsFriend}/>
+            <GameHistory gamesList={gamesList} />
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 

@@ -162,6 +162,32 @@ export class UserService {
 		}
 	}
 
+	async	reject_friend_request(userId: number, friend: number)
+	{
+		const	user = await this.prisma.user.findUnique({ where : { id: userId }});
+		const	user_two = await this.prisma.user.findUnique({ where : { id: friend }});
+
+		if(user_two && user)
+		{	
+			const	incoming_request = user.incoming_friend_req.findIndex(x => x == friend);
+			const	outgoing_request = user_two.outgoing_friend_req.findIndex(x => x == userId);
+			if (incoming_request != -1)
+				user.incoming_friend_req.splice(incoming_request, 1);
+			if (outgoing_request != -1)
+				user_two.outgoing_friend_req.splice(outgoing_request, 1);
+			await	this.prisma.user.update({
+				where: { id: userId}, 
+				data: {
+					incoming_friend_req: user.incoming_friend_req
+				}});
+			await	this.prisma.user.update({
+				where: { id: friend},
+				data: {
+					outgoing_friend_req: user_two.outgoing_friend_req
+				}});
+		}
+	}
+
 	async	rmv_friend(userId: number, friend: number)
 	{
 		const	user = await this.prisma.user.findUnique({ where : { id: userId }});

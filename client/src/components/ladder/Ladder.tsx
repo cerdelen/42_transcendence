@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import JSCookies from "js-cookie";
 import "./Ladder.css"
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 
 const Ladder_card = ({ rank, mmr, name }: { rank: number, mmr: number, name: string }) =>
@@ -14,11 +15,12 @@ const Ladder_card = ({ rank, mmr, name }: { rank: number, mmr: number, name: str
 const Ladder = () =>
 {
 	const [ladder, set_ladder] = useState<{mmr: number, name: string}[]>([])
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
 
 	useEffect(() => {
 		const get_ladder = async () =>
 		{
-			const response = await fetch("http://localhost:3003/user/get_ladder", {
+			const response = await fetch(`http://${serv_ip}:3003/user/get_ladder`, {
 				method: "Get",
 				headers: {
 				Authorization: `Bearer ${JSCookies.get("accessToken")}`,

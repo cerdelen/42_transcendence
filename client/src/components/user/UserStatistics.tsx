@@ -4,6 +4,7 @@ import threeWinsAchievement from "../../images/three-wins-achievement.png";
 import halfGamesAchievement from "../../images/won-half-of-your-games-achievement.png";
 import { UserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 interface Props {
   userId: string;
@@ -17,11 +18,12 @@ const UserStats = ({ userId }: Props) => {
   const [achievementOne, setAchievementOne] = useState(false);
   const [achievementTwo, setAchievementTwo] = useState(false);
   const [achievementThree, setAchievementThree] = useState(false);
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
 
 
   useEffect(() => {
     const fetchStats = async () => {
-      const response = await fetch(`http://localhost:3003/user/user_stats`, {
+      const response = await fetch(`http://${serv_ip}:3003/user/user_stats`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

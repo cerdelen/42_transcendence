@@ -11,6 +11,7 @@ import { RiVolumeMuteFill } from "react-icons/ri";
 import themeAchievement from "../../images/changed-theme-achievement.png";
 import path from "path";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<React.SetStateAction<displayed_chat_class>>, userId: string, not_joined_chats_ids: number[], my_chats_ids: number[], setmy_chats_ids: any, setNot_joined_chats_ids: any, group_chat: boolean | undefined) => {
 	console.log("calling this handleLeaveChat");
@@ -24,6 +25,7 @@ const handleLeaveChat = (chat_id: number, setDisplayed_chat: React.Dispatch<Reac
 
 const Password_input = ({ setButton_state, chat_id }: { setButton_state: any; chat_id: number }) => {
 	const [inputValue, setInputValue] = useState("");
+	const {serv_ip} = useContext(Serv_context);
 
 	const handleInputChange = (e: any) => {
 		setInputValue(e.target.value);
@@ -34,7 +36,7 @@ const Password_input = ({ setButton_state, chat_id }: { setButton_state: any; ch
 			console.log(chat_id + "chat id i append to url");
 
 			await fetch(
-				`http://localhost:3003/conversation/set_password/${chat_id}`,
+				`http://${serv_ip}:3003/conversation/set_password/${chat_id}`,
 				{
 					method: "Post",
 					headers: {
@@ -89,11 +91,12 @@ const Participant_in_chat_detail_card = ({ user_id, set_user_ids_in_chat_details
 	const { userId } = useContext(UserContext);
 	const is_me = Number(userId) == user_id;
 	const [photo, setPhoto] = useState("");
+	const {serv_ip} = useContext(Serv_context);
 	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
 	useEffect(() => {
 		async function get_name() {
 			try {
-				const response = await fetch(`http://localhost:3003/user/user_name`, {
+				const response = await fetch(`http://${serv_ip}:3003/user/user_name`, {
 					method: "POST",
 					body: JSON.stringify({ user_id: user_id.toString() }),
 					headers: {

@@ -10,6 +10,7 @@ import { UserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
 import { our_socket } from "../../utils/context/SocketContext";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 interface typing {
   name: string;
@@ -64,6 +65,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
   const chatWindow = useRef<HTMLDivElement>(null);
   const [ name_map, set_name_map ] = useState<Map<number, string>>(new Map);
 	const { displayed_chat } = useMyDisplayedChatContext();
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
 
   our_socket.on("message", (message: message) => {
     if (message.chat_id == displayed_chat.conversation_id)
@@ -97,7 +99,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
       let temp_map : Map<number, string> = new Map;
       for (let index = 0; index < participants.length; index++)
       {
-        const response = await fetch("http://localhost:3003/user/user_name", {
+        const response = await fetch(`http://${serv_ip}:3003/user/user_name`, {
           method: "Post",
           headers: {
             "Content-Type": "application/json",
@@ -125,7 +127,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
       // console.log("fetching all message");
       
       const response = await fetch(
-        `http://localhost:3003/conversation/get_messages_from_conversation/${chat_id}`,
+        `http://${serv_ip}:3003/conversation/get_messages_from_conversation/${chat_id}`,
         {
           method: "Get",
           headers: {

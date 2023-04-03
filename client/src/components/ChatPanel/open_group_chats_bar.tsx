@@ -7,12 +7,14 @@ import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context
 import { json } from "react-router-dom";
 import { our_socket } from "../../utils/context/SocketContext";
 import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 const Chat_name_input = ({ setButton_state }: { setButton_state: any; }) => {
 
   const { my_chats_ids, setmy_chats_ids, not_joined_chats_ids, setNot_joined_chats_ids } = useMyChatCardsContext();
   const [inputValue, setInputValue] = useState("");
   const { setDisplayed_chat } = useMyDisplayedChatContext();
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
 
   const handleInputChange = (e: any) => {
     setInputValue(e.target.value);
@@ -21,7 +23,7 @@ const Chat_name_input = ({ setButton_state }: { setButton_state: any; }) => {
   const handleButtonClick = async () => {
     if (inputValue.length > 0) {
       const response = await fetch(
-        `http://localhost:3003/conversation/create_group_chat/${inputValue}`,
+        `http://${serv_ip}:3003/conversation/create_group_chat/${inputValue}`,
         {
           method: "Get",
           headers: {
@@ -65,11 +67,12 @@ const Group_chat_preview_card = ({
   setNot_joined_chats_ids: any;
 }) => {
   const [conversation_name, setConversation_name] = useState("");
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
 
   const handleOnClick = async () => {
     // console.log("handleOnClick of group chat card for chat id " + chat_id);
     const response = await fetch(
-      `http://localhost:3003/conversation/join_group_chat/${chat_id}`,
+      `http://${serv_ip}:3003/conversation/join_group_chat/${chat_id}`,
       {
         method: "Get",
         headers: {
@@ -101,7 +104,7 @@ const Group_chat_preview_card = ({
   useEffect(() => {
     const get_conversation = async (conversation_id: number) => {
       const response = await fetch(
-        `http://localhost:3003/conversation/getConversationById/${conversation_id}`,
+        `http://${serv_ip}:3003/conversation/getConversationById/${conversation_id}`,
         {
           method: "Get",
           headers: {
@@ -139,11 +142,12 @@ const Get_all_open_group_chats = ({
   setmy_chats_ids: any;
   setNot_joined_chats_ids: any;
 }) => {
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
   const { userId } = useContext(UserContext);
   useEffect(() => {
     async function get_ids() {
       const response = await fetch(
-        "http://localhost:3003/conversation/getAllChatsWithoutUser",
+        `http://${serv_ip}:3003/conversation/getAllChatsWithoutUser`,
         {
           method: "Get",
           headers: {

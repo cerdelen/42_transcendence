@@ -1,6 +1,7 @@
-import { useEffect } from "react"
+import { useContext, useEffect } from "react"
 import JSCookies from "js-cookie";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 // kick, mute, ban, make admin
 type administraion_props =
@@ -26,6 +27,7 @@ type administraion_props =
 const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_user_ids_in_chat_details} : administraion_props) =>
 {
 	const { displayed_chat } = useMyDisplayedChatContext();
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
 	const handle_kick = async (user_id: number, is_banned_click: boolean) =>
 	{
 		console.log(" called handle_kick or ban ");
@@ -34,7 +36,7 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 		{
 			try
 			{
-				const respone = await fetch(`http://localhost:3003/conversation/${displayed_chat.conversation_id}/setBan/${user_id}`,{
+				const respone = await fetch(`http://${serv_ip}:3003/conversation/${displayed_chat.conversation_id}/setBan/${user_id}`,{
 				method: "PUT",
 					headers: {
 						// "Content-Type": "application/json",
@@ -69,7 +71,7 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 		{
 			try
 			{
-				const respone = await fetch(`http://localhost:3003/conversation/${displayed_chat.conversation_id}/setKick/${user_id}`,{
+				const respone = await fetch(`http://${serv_ip}:3003/conversation/${displayed_chat.conversation_id}/setKick/${user_id}`,{
 				method: "PUT",
 					headers: {
 						// "Content-Type": "application/json",
@@ -105,7 +107,7 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 		// :conversation_id/setMute/:id_to_mute
 		try
 		{
-			const respone = await fetch(`http://localhost:3003/conversation/${displayed_chat.conversation_id}/setMute/${user_id}`,{
+			const respone = await fetch(`http://${serv_ip}:3003/conversation/${displayed_chat.conversation_id}/setMute/${user_id}`,{
 			method: "PUT",
 				headers: {
 					// "Content-Type": "application/json",
@@ -128,7 +130,7 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 	{
 		try
 		{
-			const respone = await fetch(`http://localhost:3003/conversation/${displayed_chat.conversation_id}/setAdmin/${user_id}`,{
+			const respone = await fetch(`http://${serv_ip}:3003/conversation/${displayed_chat.conversation_id}/setAdmin/${user_id}`,{
 			method: "PUT",
 				headers: {
 					// "Content-Type": "application/json",

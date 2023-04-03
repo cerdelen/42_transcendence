@@ -16,7 +16,7 @@ export class TwoFaController {
 	@UseGuards(Jwt_Auth_Guard)
 	async	register(@Req() req: any) : Promise<any>
 	{
-		console.log("2fa/generate");
+		//console.log("2fa/generate");
 		const	otpauthUrl = await this.two_FA_Service.generate_secret(req.user);
 		
 		return	this.two_FA_Service.pipeQrCodeStream(otpauthUrl);
@@ -26,14 +26,14 @@ export class TwoFaController {
 	@UseGuards(Jwt_Auth_Guard)
 	async	turn_on_2fa(@Req() req: any, @Body('two_FA_code') code : string, @Res({passthrough: true}) res: any) : Promise<any>
 	{
-		console.log("2-fa/turn-on");
+		//console.log("2-fa/turn-on");
 		const	valid_code = await this.two_FA_Service.verifyCode(req.user.id, code);
 		if(!valid_code)
 		{
-			// console.log("invalid 2fa code");
+			// //console.log("invalid 2fa code");
 			throw new UnauthorizedException('Wrong authentication code');
 		}
-		// console.log("valid 2fa code");
+		// //console.log("valid 2fa code");
 		await	this.two_FA_Service.turn_on(req.user.id);
 		return (this.authService.sign_jwt_token(req.user.id, res, true));
 	}
@@ -42,7 +42,7 @@ export class TwoFaController {
 	@UseGuards(Jwt_Auth_Guard)
 	async	turn_off_2fa(@Req() req: any, @Res({passthrough: true}) res: any) : Promise<any>
 	{
-		console.log("2-fa/turn-off");
+		//console.log("2-fa/turn-off");
 		await this.two_FA_Service.turn_off(req.user.id);
 		return this.authService.sign_jwt_token(req.user.id, res);
 	}
@@ -50,12 +50,12 @@ export class TwoFaController {
 	@Post('authenticate')
 	async	authenticate(@Body('userId') _userId: number, @Body('two_FA_code') code : string, @Res({passthrough: true}) res: any) : Promise<any>
 	{
-		console.log("2-fa/authenticate");
-		console.log(_userId);
+		//console.log("2-fa/authenticate");
+		//console.log(_userId);
 		const	valid_code = await this.two_FA_Service.verifyCode(_userId, code);
 		if(!valid_code)
 		{
-			console.log("invalid 2fa code");
+			//console.log("invalid 2fa code");
 			throw new UnauthorizedException('Wrong authentication code');
 		}
 		return (this.authService.sign_jwt_token(_userId, res, true));
@@ -87,14 +87,14 @@ export class TwoFaController {
 		res.clearCookie('accessToken');
 	}
 	
-	@Get('test')
-	yesp(@Res({passthrough: true}) res: any)
-	{
-		this.two_FA_Service.test(98455);
-		// const p_user = this.prisma.user.findUnique({where: { id: user.id}});
-		// console.log((await p_user).two_FA_secret);
-		// res.clearCookie('accessToken');
-	}
+	// @Get('test')
+	// yesp(@Res({passthrough: true}) res: any)
+	// {
+	// 	this.two_FA_Service.test(98455);
+	// 	// const p_user = this.prisma.user.findUnique({where: { id: user.id}});
+	// 	// //console.log((await p_user).two_FA_secret);
+	// 	// res.clearCookie('accessToken');
+	// }
 
 }
 

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import JSCookies from "js-cookie";
+import { Serv_context } from "../../contexts/Server_host_context.";
 export{}
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 const ToggleBox: React.FC<Props> = ({ setBase64String, status2FA }) => {
   const [checked, setChecked] = useState<boolean>(false);
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
   useEffect(() => {
     setChecked(status2FA);
   }, [status2FA]);
@@ -20,7 +22,7 @@ const ToggleBox: React.FC<Props> = ({ setBase64String, status2FA }) => {
       // console.log(`In here again.. ${checked}`);
       const myCookieValue = JSCookies.get("accessToken");
       //request a Base64String to create a QR code
-      const response = await fetch("http://localhost:3003/2-fa/generate", {
+      const response = await fetch(`http://${serv_ip}:3003/2-fa/generate`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -38,7 +40,7 @@ const ToggleBox: React.FC<Props> = ({ setBase64String, status2FA }) => {
       setBase64String("");
       //disable 2f at backend
       const myCookieValue = JSCookies.get("accessToken");
-      const response = await fetch("http://localhost:3003/2-fa/turn-off", {
+      const response = await fetch(`http://${serv_ip}:3003/2-fa/turn-off`, {
         method: "POST",
         headers: {
           Accept: "application/json",

@@ -13,19 +13,13 @@ import Game from "./components/Game";
 import { UserContext } from "./contexts/UserContext";
 import InfoCardProvider, { useMyContext } from "./contexts/InfoCardContext";
 import Displayed_Chat_Provider from "./contexts/Displayed_Chat_Context";
-import { Socket } from "socket.io";
-import { io } from "socket.io-client";
 import { SocketContext, our_socket } from "./utils/context/SocketContext";
 import Community from "./components/community/CommunityPage";
 import LandingPage from "./LandingPage";
 import 'reactjs-popup/dist/index.css';
-import { emit } from "process";
-
-
-import { useNavigate } from 'react-router-dom';
-import PopUp from "./components/Popup";
 import Ladder from "./components/ladder/Ladder";
 import Profile_picture_Provider from "./contexts/Profile_picture_context";
+import { Serv_context } from "./contexts/Server_host_context.";
 
 
 
@@ -47,9 +41,11 @@ function App() {
   const [inviterName, setinviterName] = useState("");
 	const [photo, setPhoto] = useState("");
   const [blcoked_users, set_blcoked_users] = useState([]);
-  async function getUser() {
+  const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
+  async function getUser()
+  {
     try {
-      let response = await fetch("http://localhost:3003/user/get_id", {
+      let response = await fetch(`http://${serv_ip}:3003/user/get_id`, {
         method: "Post",
         headers: {
           "Content-Type": "application/json",
@@ -65,32 +61,10 @@ function App() {
       console.error(error);
     }
   }
-  
 
-  // function acceptInvite()
-  // {
-  //   console.log("Invite accepted");
-  //   setIsInvited(false);
-  //   setinviterName("");
-  //   // navigate("/home");
-  //   let obj = {inviterName: inviterName, userId: userId}
-  //   our_socket.emit("playerAccepted", JSON.stringify(obj))
-  //   console.log("player accepted the invitation ");
-  // }
-
-  // function rejectInvite()
-  // {
-  //   if(isInvited === false)
-  //     return ;
-  //   console.log("Invite rejected");
-  //   let obj = {inviterName: inviterName, userId: userId}
-  //   our_socket.emit("rejectInvite", JSON.stringify(obj));
-  //   setinviterName("");
-  //   setIsInvited(false);
-  // }
   async function getData(userid: string) {
     try {
-      let response = await fetch("http://localhost:3003/user/user_data", {
+      let response = await fetch(`http://${serv_ip}/user/user_data`, {
         method: "Post",
         headers: {
           "Content-Type": "application/json",
@@ -137,6 +111,10 @@ function App() {
   }, [userId])
  
 
+
+  console.log(process.env.REACT_APP_Server_host_ip);
+  
+
   return (
     <InfoCardProvider>
       <Displayed_Chat_Provider>
@@ -153,19 +131,25 @@ function App() {
             blocked_users: blcoked_users,
           }}
         >
-          <Profile_picture_Provider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} >
-                  <Route index element={<LandingPage/>} />
-                  <Route path="/game" element={<Game userId={userId} />} />
-                  <Route path="/community" element={<Community userId={userId} />} />
-                  <Route path="/ladder" element={<Ladder />} />
-                </Route>
-                <Route path="/auth" element={<SecondFactorPage />} />
-              </Routes>
-            </BrowserRouter>
-          </Profile_picture_Provider>
+          <Serv_context.Provider 
+            value={{
+              serv_ip: serv_ip,
+            }}
+            >
+            <Profile_picture_Provider>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={loggedIn ? <HomePage /> : <LoginPage />} >
+                    <Route index element={<LandingPage/>} />
+                    <Route path="/game" element={<Game userId={userId} />} />
+                    <Route path="/community" element={<Community userId={userId} />} />
+                    <Route path="/ladder" element={<Ladder />} />
+                  </Route>
+                  <Route path="/auth" element={<SecondFactorPage />} />
+                </Routes>
+              </BrowserRouter>
+            </Profile_picture_Provider>
+          </Serv_context.Provider>
         </UserContext.Provider>
       </Displayed_Chat_Provider>
     </InfoCardProvider>

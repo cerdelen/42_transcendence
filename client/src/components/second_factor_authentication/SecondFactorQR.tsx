@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import JSCookies from 'js-cookie'
+import { Serv_context } from '../../contexts/Server_host_context.';
 
 type Props = {
     qrString: string;
@@ -8,6 +9,7 @@ const SecondFactorQR = ({qrString}: Props) => {
   
   const [code, setCode] = useState('');
   const [success, setSuccess] = useState(false);
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
   //gets the string from the input
   const handleCodeChange = (event: any) => {
     const inputValue = event.target.value.replace(/\D/g, '').slice(0, 6);
@@ -19,7 +21,7 @@ const SecondFactorQR = ({qrString}: Props) => {
     event.preventDefault();
     if (code.length === 6) {
       const myCookieValue = JSCookies.get('accessToken');
-      fetch('http://localhost:3003/2-fa/turn-on', {
+      fetch(`http://${serv_ip}:3003/2-fa/turn-on`, {
         method: 'POST',
         body: JSON.stringify({ "two_FA_code": code }),
         headers: {

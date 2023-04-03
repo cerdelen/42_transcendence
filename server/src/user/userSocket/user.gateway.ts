@@ -18,7 +18,7 @@ export class userGateway implements OnGatewayConnection
 		@WebSocketServer()
 		server;
 		onModuleInit() {
-			console.log("constructed ");
+			//console.log("constructed ");
 		}
 
 		@SubscribeMessage('block_user')

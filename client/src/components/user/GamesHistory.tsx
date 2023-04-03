@@ -4,6 +4,7 @@ import JSCookies from "js-cookie";
 import defaultPicture from "../../images/default-picture.jpeg";
 import pic from "../../images/cat-stern.jpeg";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 
 interface NameProps {
@@ -75,12 +76,13 @@ const GameHistory = ({ gamesList }: Props) => {
   const [playerTwos, setPlayerTwos] = useState<string[]>([]);
   const [profilePicturesPlayerOne, setPicturesPlayerOne] = useState<string[]>([]);
   const [profilePicturesPlayerTwo, setPicturesPlayerTwo] = useState<string[]>([]);
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
 	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
   useEffect(() => {
     const fetchGames = async () => {
 
       try {
-           const gamesListy = await fetch(`http://localhost:3003/game/many_games_data`, {
+           const gamesListy = await fetch(`http://${serv_ip}:3003/game/many_games_data`, {
         method: "Post",
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +108,7 @@ const GameHistory = ({ gamesList }: Props) => {
       const newlist = await Promise.all(
         gamesListy.map(async (game: any) => {
           const id = game['player_one'];
-          const response = await fetch(`http://localhost:3003/user/user_name`, {
+          const response = await fetch(`http://${serv_ip}:3003/user/user_name`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -125,7 +127,7 @@ const GameHistory = ({ gamesList }: Props) => {
       const newlist = await Promise.all(
         gamesListy.map(async (game: any) => {
           const id = game['player_two'];
-          const response = await fetch(`http://localhost:3003/user/user_name`, {
+          const response = await fetch(`http://${serv_ip}:3003/user/user_name`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

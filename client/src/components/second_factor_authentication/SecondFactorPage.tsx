@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import JSCookies from "js-cookie";
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 const SecondFactorPage = () => {
   //gets the user id from the url
   const userId = new URLSearchParams(window.location.search).get("2fa");
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
   
   //gets the string from the input
   const [code, setCode] = useState("");
@@ -20,7 +22,7 @@ const SecondFactorPage = () => {
       const myCookieValue = JSCookies.get("accessToken");
       try {
 
-        const response = await fetch("http://localhost:3003/2-fa/authenticate", {
+        const response = await fetch(`http://${serv_ip}:3003/2-fa/authenticate`, {
           method: "POST",
           body: JSON.stringify({ two_FA_code: code, userId: userId }),
           headers: {
@@ -30,7 +32,7 @@ const SecondFactorPage = () => {
         });
         
         if (response.ok) {
-          window.location.assign("http://localhost:3000/");
+          window.location.assign(`http://${serv_ip}:3000/`);
           const token = await response.text();
           JSCookies.set("accessToken", token);
         }

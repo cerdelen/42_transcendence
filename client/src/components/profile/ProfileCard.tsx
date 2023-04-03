@@ -7,6 +7,7 @@ import StatusAndGamesWon from "./StatusAndGamesWon";
 import LevelImageAndUsername from "./LevelImageAndUsername";
 import ToggleBox from "./ToggleBox";
 import { UserContext } from "../../contexts/UserContext";
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 const ProfileCard = () => {
   const [base64String, setBase64String] = useState("");
@@ -31,7 +32,7 @@ const ProfileCard = () => {
     //change the state to logged out
     // setLoggedIn(false);
     //redirect to the main screen
-    window.location.replace("http://localhost:3000");
+    window.location.replace(`http://${serv_ip}:3000`);
   }
   const { userId } = useContext(UserContext);
   // console.log(userId);
@@ -39,11 +40,12 @@ const ProfileCard = () => {
   const [statusTFA, setStatusTFA] = useState(false);
   const [wins, set_wins] = useState(0);
   const [achievements, set_achievementes] = useState<boolean[]>([]);
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
 
   useEffect(() => {
     const getData = async () => {
       // console.log("one more time");
-      const response = await fetch("http://localhost:3003/user/user_data", {
+      const response = await fetch(`http://${serv_ip}:3003/user/user_data`, {
         method: "Post",
         headers: {
           "Content-Type": "application/json",
@@ -52,7 +54,7 @@ const ProfileCard = () => {
         body: JSON.stringify({ user_id: userId }),
       });
       const response_stats = await fetch(
-        "http://localhost:3003/user/user_stats",
+        `http://${serv_ip}:3003/user/user_stats`,
         {
           method: "Post",
           headers: {

@@ -191,27 +191,27 @@ export class UserService {
 
 	async	add_game_to_history(game_id: number)
 	{
-		// console.log(game.player_one + " " + game.player_two);
+		// //console.log(game.player_one + " " + game.player_two);
 		
 		const	game		= await this.prisma.game.findUnique({ where: { id: game_id }});
 		const	user_one	= await this.prisma.user.findUnique({ where: { id: game.player_one } });
 		const	user_two	= await this.prisma.user.findUnique({ where: { id: game.player_two } });
-		console.log('this is game' + JSON.stringify(game));
+		//console.log('this is game' + JSON.stringify(game));
 
 		let index_one;
 		let index_two;
 		if (!user_one || !user_two)
 		{
-			console.log("user one or user 2 is undefined");
-			console.log("user 1 " + user_one);
-			console.log("user 2 " + user_two);
+			//console.log("user one or user 2 is undefined");
+			//console.log("user 1 " + user_one);
+			//console.log("user 2 " + user_two);
 			
 			return ;
 
 		}
-		console.log("user one or user 2");
-		console.log("user 1 " + user_one);
-		console.log("user 2 " + user_two);
+		//console.log("user one or user 2");
+		//console.log("user 1 " + user_one);
+		//console.log("user 2 " + user_two);
 		if(!user_one.games == null)
 			index_one = user_one.games.findIndex(x => x == game.id);
 		else
@@ -220,10 +220,10 @@ export class UserService {
 			index_two = user_two.games.findIndex(x => x == game.id);
 		else
 			index_two = -1;
-		console.log("this is user one" + JSON.stringify(user_one));
-		console.log("this is user two" + JSON.stringify(user_two));
-		console.log("this is index 1" + index_one);
-		console.log("this is index 2" + index_two);
+		//console.log("this is user one" + JSON.stringify(user_one));
+		//console.log("this is user two" + JSON.stringify(user_two));
+		//console.log("this is index 1" + index_one);
+		//console.log("this is index 2" + index_two);
 		if(user_two && user_one && index_one == -1 && index_two == -1)
 		{
 			await	this.add_loss(game.loser);
@@ -258,7 +258,7 @@ export class UserService {
 				
 			}
 		})
-		console.log("findExisitngUSer = " + existingUser);
+		//console.log("findExisitngUSer = " + existingUser);
 		
 		return existingUser;
 	}

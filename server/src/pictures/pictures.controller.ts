@@ -44,10 +44,10 @@ export class PicturesController
 	{
 		if(file != undefined)
 		{
-			console.log("Uploading picture was successful");
+			//console.log("Uploading picture was successful");
 			return ;
 		}
-		console.log("Uploading picture was unsuccessful");
+		//console.log("Uploading picture was unsuccessful");
 	}
 
 	@UseGuards(Jwt_Auth_Guard)
@@ -58,11 +58,11 @@ export class PicturesController
 		await fs.access(picture, (error) => {
 			if (error) 
 			{
-			//   console.log("file does not exist");
+			//   //console.log("file does not exist");
 				return _res.sendFile("default_picture.jpeg", {root: './uploads/profile_pictures'});
 			}
 			_res.sendFile(picture, {root: '.'});
-			// console.log("File Exists!");
+			// //console.log("File Exists!");
 		});
 	}
 	
@@ -78,7 +78,7 @@ export class PicturesController
 	@Get(':userId')
 	async	get_my_picture_by_id(@Param('userId') userId, @Res() _res: any) : Promise<any>
 	{
-		console.log("this is get picture by id " + userId);
+		//console.log("this is get picture by id " + userId);
 		
 		const picture = `./uploads/profile_pictures/${userId}.jpeg`;
 		await fs.access(picture, (error) => {

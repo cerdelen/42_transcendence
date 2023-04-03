@@ -3,6 +3,7 @@ import defaultPicture from "../../images/default-picture.jpeg";
 import JSCookies from "js-cookie";
 import { UserContext } from "../../contexts/UserContext";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 function hasJpegExtension(filename: string): boolean {
   return filename.endsWith('.jpeg');
@@ -14,6 +15,7 @@ const ProfilePicture = () => {
   const [showUploadButton, setShowUploadButton] = useState<boolean>(false);
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [profilePicture, setProfilePicture] = useState(defaultPicture);
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
   // const { userId } = useContext(UserContext);
 
   useEffect(() => {
@@ -45,7 +47,7 @@ const ProfilePicture = () => {
 
   const getUserPic = async () => 
   {
-    const response = await fetch("http://localhost:3003/pictures/me", {
+    const response = await fetch(`http://${serv_ip}:3003/pictures/me`, {
       method: "Get",
       headers: {
         "Content-Type": "application/json",
@@ -68,7 +70,7 @@ const ProfilePicture = () => {
       }
       const formData = new FormData();
       formData.append("file", file);
-      const response = await fetch("http://localhost:3003/pictures/upload", {
+      const response = await fetch(`http://${serv_ip}:3003/pictures/upload`, {
         method: "POST",
         headers: {
         //   "Content-Type": "multipart/form-data",

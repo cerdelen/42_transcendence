@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 interface NameProps {
   name: string;
@@ -30,12 +31,13 @@ const ListFriends = ({ friendsList }: Props) => {
   const [friendsNames, setNames] = useState<string[]>([]);
   const [profilePictures, setProfilePictures] = useState<string[]>([]);
 	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
   useEffect(() => {
     const fetchNames = async () => {
     try {
       const newlist = await Promise.all(
         friendsList.map(async (id) => {
-          const response = await fetch("http://localhost:3003/user/user_name", {
+          const response = await fetch(`http://${serv_ip}:3003/user/user_name`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

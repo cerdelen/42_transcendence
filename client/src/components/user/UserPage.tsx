@@ -11,6 +11,7 @@ import GameHistory from "./GamesHistory";
 import UserStats from "./UserStatistics";
 import { our_socket } from "../../utils/context/SocketContext";
 import { Link } from "react-router-dom";
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 const UserPage = () => {
   const { userId, blocked_users } = useContext(UserContext);
@@ -24,6 +25,7 @@ const UserPage = () => {
   const isMe = userId === userIdCard;
   const [isFriend, setIsFriend] = useState(false);
   const [is_blocked, set_is_blocked] = useState(false);
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
     setShowUserInto(false);
@@ -44,7 +46,7 @@ const UserPage = () => {
     if (!is_blocked) {
       try {
         const response = await fetch(
-          `http://localhost:3003/user/block_user/${userIdCard}`,
+          `http://${serv_ip}:3003/user/block_user/${userIdCard}`,
           {
             method: "Get",
             headers: {
@@ -60,7 +62,7 @@ const UserPage = () => {
     }
     else {
       try {
-        const response = await fetch(`http://localhost:3003/user/unblock_user/${userIdCard}`, {
+        const response = await fetch(`http://${serv_ip}:3003/user/unblock_user/${userIdCard}`, {
           method: "Get",
           headers: {
             Authorization: `Bearer ${JSCookies.get("accessToken")}`,
@@ -77,7 +79,7 @@ const UserPage = () => {
     if (isFriend) {
       try {
         const response = await fetch(
-          "http://localhost:3003/user/remove_friend",
+          "http://${serv_ip}:3003/user/remove_friend",
           {
             method: "Put",
             headers: {
@@ -94,7 +96,7 @@ const UserPage = () => {
       }
     } else {
       try {
-        const response = await fetch("http://localhost:3003/user/add_friend", {
+        const response = await fetch("http://${serv_ip}:3003/user/add_friend", {
           method: "Post",
           headers: {
             "Content-Type": "application/json",
@@ -112,7 +114,7 @@ const UserPage = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const response = await fetch("http://localhost:3003/user/user_data", {
+      const response = await fetch("http://${serv_ip}:3003/user/user_data", {
         method: "Post",
         headers: {
           "Content-Type": "application/json",

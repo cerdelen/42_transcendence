@@ -42,7 +42,7 @@ async function emitToTheUserSocket(user: any, server: Server, event_name:string,
   });
   if(!found)
   {
-    console.log("Socket of invitee not found");
+    //console.log("Socket of invitee not found");
     return ;
   }
   
@@ -63,13 +63,13 @@ export class GameGateway {
 
   onModuleInit() {
     this.server.on('connection', (socket) => {
-      console.log(socket.id);
-      console.log("connected");
+      //console.log(socket.id);
+      //console.log("connected");
       setInterval(() => {
         socket.emit("online_check");
         if (response === 0) {
           //socket.id switch user offline with userID
-          // console.log("Is offline");
+          // //console.log("Is offline");
         }
         response = 0;
       }, 10000)
@@ -85,24 +85,24 @@ export class GameGateway {
   {
     if(!userId)
     {
-      console.log("socket id setting up error");
+      //console.log("socket id setting up error");
       return ;
     }
     await this.userService.updateUser({where: {id: Number.parseInt(userId)}, data: {socketId: socket.id}} );
-    console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
+    //console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
   }
   @SubscribeMessage("online_inform")
   async handle_online(@MessageBody() userId: string) {
     if (userId) {
       //make user online
       response = 1;
-      // console.log("User is online");
+      // //console.log("User is online");
     }
   }
   @SubscribeMessage('makeOnline')
   async makeOnline(@MessageBody() userId: string) {
 
-    console.log(userId + " Siemanko ");
+    //console.log(userId + " Siemanko ");
     //Make user online boolean
   }
 
@@ -111,7 +111,7 @@ export class GameGateway {
   {
     let new_obj = JSON.parse(obj);
     let user = await this.userService.findUserByName(new_obj.inviterName)
-    console.log("Game screen lodade");
+    //console.log("Game screen lodade");
   }
   @SubscribeMessage('rejectInvite')
   async rejectInvitation(@MessageBody() obj, @ConnectedSocket() socket)
@@ -122,7 +122,7 @@ export class GameGateway {
     let delindex = invites.indexOf(new_invitation_obj);
     if(!delindex)
     {
-      console.log("Index to delete not found in reject invite ");
+      //console.log("Index to delete not found in reject invite ");
       return ;
     }
     invites.splice(delindex, 1);
@@ -149,7 +149,7 @@ export class GameGateway {
       });
       if(!unique)
       {
-        console.log("Invitation already exist");
+        //console.log("Invitation already exist");
         return ;
       }
       invites.push(new_invitation_obj);
@@ -166,12 +166,12 @@ export class GameGateway {
       invitationRoomsNames.push({ roomName: game.id.toString(), gameInstance: game });
 
       //find invited user socket Id
-      console.log(userId + " Inviting user " , invitedUserId);
+      //console.log(userId + " Inviting user " , invitedUserId);
       let creator = await this.userService.findUserById(Number.parseInt(userId));
-      console.log("Sending event here" , user.socketId);
+      //console.log("Sending event here" , user.socketId);
       emitToTheUserSocket(user, this.server, "invitationPopUp", creator.name)
       invites.forEach(element => {
-        console.log("User number " + element.creator_id + " invited " + element.invitee_id);
+        //console.log("User number " + element.creator_id + " invited " + element.invitee_id);
       });
     
       return;
@@ -182,11 +182,11 @@ export class GameGateway {
   async joinGame(@MessageBody() userId: string,
     @ConnectedSocket() client) {
     if (!userId) {
-      console.log("User is not logged " + userId);
+      //console.log("User is not logged " + userId);
       return;
     }
     if (!roomNames[0]) {
-      console.log("this is in the subscriber " + userId);
+      //console.log("this is in the subscriber " + userId);
 
       handleNewGame(client, this.server, Number.parseInt(userId), this.prisma);
       return;
@@ -230,7 +230,7 @@ export class GameGateway {
     await this.prisma.game.update({ where: { id: roomNames[0].gameInstance.id }, data: { player_two: Number.parseInt(userId) } });
     let gameInstance = roomNames[0].gameInstance;
     startGameInterval(this.userService, gameCode, state, this.server, gameInstance, this.prisma);
-    // console.log("Ajajj");
+    // //console.log("Ajajj");
     roomNames.shift();
   }
 
@@ -326,14 +326,14 @@ async function emitGameOver(userService: any, roomName: string, winner: number, 
 }
 async function startGameInterval(userService: any, roomName: string, state: any, server: Server, game: any, prisma: PrismaService) {
   let other_game = await prisma.game.findUnique({ where: { id: game.id } });
-  console.log("other games second player id " + other_game.player_two);
+  //console.log("other games second player id " + other_game.player_two);
 
   const intervalId = setInterval(() => {
     const winner: number = gameLoop(state[roomName]);
     if (!winner) {
       emitGameState(roomName, state[roomName], server);
     } else {
-      console.log("Game ended");
+      //console.log("Game ended");
       emitGameOver(userService, roomName, winner, server, game, prisma, other_game.player_two);
       state[roomName] = null;
       clearInterval(intervalId);
@@ -350,7 +350,7 @@ function makeid(length: number) {
   return result;
 }
 async function handleNewGame(client: any, server: Server, clientId: number, prisma: PrismaService) {
-  console.log('newgame player id 1 is' + clientId);
+  //console.log('newgame player id 1 is' + clientId);
 
   const game = await prisma.game.create({ data: { player_one: clientId } });
 
@@ -361,6 +361,6 @@ async function handleNewGame(client: any, server: Server, clientId: number, pris
   client.join(game.id.toString());
 
   client.emit('init', 1);
-  console.log("Emiting intialization");
+  //console.log("Emiting intialization");
   roomNames.push({ roomName: game.id.toString(), gameInstance: game });
 }

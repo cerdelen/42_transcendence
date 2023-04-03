@@ -4,6 +4,7 @@ import { UserContext } from "../../contexts/UserContext";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import JSCookies from "js-cookie";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+import { Serv_context } from "../../contexts/Server_host_context.";
 
 interface Props {
   userName: string;
@@ -16,6 +17,7 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
   const { showUserInfo, setShowUserInto, setUserIdCard } = useMyContext();
   const [photo, setPhoto] = useState("");
   const [newName, setNewName] = useState<string>("");
+	 const serv_ip : string = process.env.REACT_APP_Server_host_ip ?? 'localhost';
   const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
   useEffect(() => {
     const get_user_photo = async () => {
@@ -47,7 +49,7 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
   const changeName = async () => {
     // console.log("changeName called");
     try {
-      const response = await fetch("http://localhost:3003/user/change_name", {
+      const response = await fetch(`http://${serv_ip}:3003/user/change_name`, {
         method: "POST",
         body: JSON.stringify({ new_name: newName }),
         headers: {

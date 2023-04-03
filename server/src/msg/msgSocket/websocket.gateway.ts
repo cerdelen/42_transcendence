@@ -36,13 +36,13 @@ export class MessagingGateway implements OnGatewayConnection {
 		@WebSocketServer()
 		server;
 		onModuleInit() {
-			//console.log("constructed this shit");
+			console.log("constructed this shit");
 		}
 
 		@SubscribeMessage('message')
 		async handleCreateMessage(
 			@MessageBody() data: any) {
-				//console.log("here is msg subscriber");
+				console.log("here is msg subscriber");
 				//console.log(JSON.stringify(data));
 
 				const conv = await this.prisma.conversation.findUnique({where: {conversation_id: data.conversation_id}});

@@ -25,6 +25,7 @@ const inviteState = {};
 const clientRooms = {};
 let gameCode: string = "";
 
+
 let response: number = 0;
 
 
@@ -83,12 +84,11 @@ export class GameGateway {
   async setupUserSocketId(@MessageBody() userId: string,
   @ConnectedSocket() socket)
   {
-    if(!userId)
-    {
+    // if(!userId)
+    // {
       //console.log("socket id setting up error");
-      return ;
-    }
-    await this.userService.updateUser({where: {id: Number.parseInt(userId)}, data: {socketId: socket.id}} );
+      // return ;
+    // await this.userService.updateUser({where: {id: Number.parseInt(userId)}, data: {socketId: socket.id}} );
     //console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
   }
   @SubscribeMessage("online_inform")
@@ -200,8 +200,11 @@ export class GameGateway {
       //   return ;
       // }
       invites.push(new_invitation_obj);
-      
-
+      console.log("Co tu się odkurwia" + userId);
+      if(!userId)
+      {
+        return ;
+      }
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
       //console.log("HEREEEEEEE og one game code ", game.id);
       invitationRooms[client.id] = game.id.toString();
@@ -296,26 +299,27 @@ export class GameGateway {
     //console.log("Player number " + keyobj.player_number);
     if(keyobj.player_number === 0)
     {
-      
+      console.log("Player number not provided error");
       return ;  
     }
+
 
     if (keyobj.player_number == 1) {
       if (state[roomName])
         state[roomName].keysPressed_p1[keyobj.key] = true;
-      if(inviteState[roomName])
-      {
-        //console.log("Whyyyyy it doens't work");
-        inviteState[roomName].keysPressed_p2[keyobj.key] = true;
-      }
+      // if(inviteState[roomName])
+      // {
+      //   //console.log("Whyyyyy it doens't work");
+      //   inviteState[roomName].keysPressed_p2[keyobj.key] = true;
+      // }
     } else if (keyobj.player_number == 2) {
       if (state[roomName])
         state[roomName].keysPressed_p2[keyobj.key] = true;
-      if(inviteState[roomName])
-      {
-        //console.log("Whyyyyy it doens't work 4 ", inviteState[roomName]);
-        inviteState[roomName].keysPressed_p2[keyobj.key] = true;
-      }
+      // if(inviteState[roomName])
+      // {
+      //   //console.log("Whyyyyy it doens't work 4 ", inviteState[roomName]);
+      //   inviteState[roomName].keysPressed_p2[keyobj.key] = true;
+      // }
     }
   }
 
@@ -330,35 +334,38 @@ export class GameGateway {
     let roomName = clientRooms[client.id];
 
     if (!roomName) {
-      roomName = invitationRooms[client.id];
-      if(!roomName)
+      // roomName = invitationRooms[client.id];
+      // if(!roomName)
         return ;
     }
 
     keyobj = JSON.parse(keyobj);
     if(keyobj.player_number === 0)
     {
+      console.log("Player number not provided error");
       return ;  
     }
     if (keyobj.player_number === 1) {
       if (state[roomName]) {
         state[roomName].keysPressed_p1[keyobj.key] = false;
       }
-      if(inviteState[roomName])
-      {
-        //console.log("Whyyyyy it doens't work 2 ");
-        inviteState[roomName].keysPressed_p1[keyobj.key] = false;
-      }
+      // if(inviteState[roomName])
+      // {
+      //   //console.log("Whyyyyy it doens't work 2 ");
+      //   inviteState[roomName].keysPressed_p1[keyobj.key] = false;
+      // }
     } else if (keyobj.player_number === 2) {
 
       if (state[roomName]) {
         state[roomName].keysPressed_p2[keyobj.key] = false;
       }
-      if(inviteState[roomName])
-      {
-        //console.log("Whyyyyy it doens't work 3 ");
-        inviteState[roomName].keysPressed_p2[keyobj.key] = false;
-      }
+      //connect state and roomPressed with socketid of the user in the game
+      
+      // if(inviteState[roomName])
+      // {
+      //   //console.log("Whyyyyy it doens't work 3 ");
+      //   inviteState[roomName].keysPressed_p2[keyobj.key] = false;
+      // }
     }
   }
 }

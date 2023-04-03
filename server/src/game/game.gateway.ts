@@ -1,18 +1,26 @@
 import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket } from '@nestjs/websockets';
 import { GameService } from './game.service';
 import { Server, Socket as socket_io } from 'socket.io';
-import { getInitialState, gameLoop } from './make_game_state'
+import { getInitialState, gameLoop} from './make_game_state'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { io_server } from 'src/utils/Server';
 import { interval } from 'rxjs';
 import { Socket } from 'dgram';
 import { emit } from 'process';
+import pong_properties from './make_game_state'
+
+
 let roomNames: { roomName: string, gameInstance: any }[] = [];
 
 let invitationRooms = {};
 let invitationRoomsNames : { roomName: string, gameInstance: any}[] = [];
-
+interface KeyInfo
+{
+    key: number,
+    player_number: number;
+    socket_id: string;
+}
 interface invitesType
 {
   creator_id: string;
@@ -20,7 +28,13 @@ interface invitesType
 };
 let invites : invitesType[] = [];
 
-const state = {};
+interface state_type
+{
+  participants : string[],
+  state : pong_properties,
+}
+const stateArr : state_type[] = [];
+
 const inviteState = {};
 const clientRooms = {};
 let gameCode: string = "";
@@ -202,9 +216,10 @@ export class GameGateway {
       //   return ;
       // }
       invites.push(new_invitation_obj);
-      console.log("Co tu się odkurwia" + userId);
+      
       if(!userId)
       {
+        console.log("Co tu się odkurwia" + userId);
         return ;
       }
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
@@ -214,6 +229,7 @@ export class GameGateway {
       client.emit('gameCode', game.id.toString());
       inviteState[game.id] = getInitialState();
     
+
       client.join(game.id.toString());
     
       client.emit('invitationInit', 1);
@@ -278,9 +294,10 @@ export class GameGateway {
     {
       return ;
     }
+    stateArr[gameCode].participants[1] = String(client.id);
     await this.prisma.game.update({ where: { id: roomNames[0].gameInstance.id }, data: { player_two: Number.parseInt(userId) } });
     let gameInstance = roomNames[0].gameInstance;
-    startGameInterval(this.userService, gameCode, state, this.server, gameInstance, this.prisma);
+    startGameInterval(this.userService, gameCode, stateArr[gameCode].state, this.server, gameInstance, this.prisma);
     // //console.log("Ajajj");
     roomNames.shift();
   }
@@ -295,11 +312,7 @@ export class GameGateway {
       if(!roomName)
         return ;
     }
-    interface KeyInfo {
-      key: number,
-      player_number: number;
-    }
-    keyobj = JSON.parse(keyobj);
+    let pure_keyObj : KeyInfo = JSON.parse(keyobj);
     //console.log("Player number " + keyobj.player_number);
     if(keyobj.player_number === 0)
     {
@@ -308,17 +321,17 @@ export class GameGateway {
     }
 
 
-    if (keyobj.player_number == 1) {
-      if (state[roomName])
-        state[roomName].keysPressed_p1[keyobj.key] = true;
+    if (pure_keyObj.player_number == 1 && pure_keyObj.socket_id == stateArr[roomName].participants[0]) {
+      if (stateArr[roomName].state)
+        stateArr[roomName].state.keysPressed_p1[pure_keyObj.key] = true;
       // if(inviteState[roomName])
       // {
       //   //console.log("Whyyyyy it doens't work");
       //   inviteState[roomName].keysPressed_p2[keyobj.key] = true;
       // }
-    } else if (keyobj.player_number == 2) {
-      if (state[roomName])
-        state[roomName].keysPressed_p2[keyobj.key] = true;
+    } else if (pure_keyObj.player_number == 2 && pure_keyObj.socket_id == stateArr[roomName].participants[1]) {
+      if (stateArr[roomName].state)
+        stateArr[roomName].state.keysPressed_p2[pure_keyObj.key] = true;
       // if(inviteState[roomName])
       // {
       //   //console.log("Whyyyyy it doens't work 4 ", inviteState[roomName]);
@@ -330,11 +343,6 @@ export class GameGateway {
   @SubscribeMessage('keyup')
   handleKeyUp(@MessageBody() keyobj,
     @ConnectedSocket() client) {
-    interface KeyInfo {
-      key: number,
-      player_number: number;
-
-    }
     let roomName = clientRooms[client.id];
 
     if (!roomName) {
@@ -343,25 +351,25 @@ export class GameGateway {
         return ;
     }
 
-    keyobj = JSON.parse(keyobj);
-    if(keyobj.player_number === 0)
+    let pure_keyObj : KeyInfo = JSON.parse(keyobj);
+    if(pure_keyObj.player_number === 0)
     {
       console.log("Player number not provided error");
       return ;  
     }
-    if (keyobj.player_number === 1) {
-      if (state[roomName]) {
-        state[roomName].keysPressed_p1[keyobj.key] = false;
+    if (pure_keyObj.player_number === 1 && pure_keyObj.socket_id == stateArr[roomName].participants[0]) {
+      if (stateArr[roomName].state) {
+        stateArr[roomName].state.keysPressed_p1[pure_keyObj.key] = false;
       }
       // if(inviteState[roomName])
       // {
       //   //console.log("Whyyyyy it doens't work 2 ");
       //   inviteState[roomName].keysPressed_p1[keyobj.key] = false;
       // }
-    } else if (keyobj.player_number === 2) {
+    } else if (pure_keyObj.player_number === 2 && pure_keyObj.socket_id == stateArr[roomName].participants[1]) {
 
-      if (state[roomName]) {
-        state[roomName].keysPressed_p2[keyobj.key] = false;
+      if (stateArr[roomName].state) {
+        stateArr[roomName].state.keysPressed_p2[pure_keyObj.key] = false;
       }
       //connect state and roomPressed with socketid of the user in the game
       
@@ -375,8 +383,8 @@ export class GameGateway {
 }
 
 
-function emitGameState(roomName: string, state: any, server: Server) {
-  server.sockets.in(roomName).emit('gameState', JSON.stringify(state));
+function emitGameState(roomName: string, state_: any, server: Server) {
+  server.sockets.in(roomName).emit('gameState', JSON.stringify(state_));
 
 }
 
@@ -392,8 +400,8 @@ async function emitGameOver(state_: any, userService: any, roomName: string, win
     server.sockets.in(roomName).emit('gameOver', (Number.parseInt(game.player_two)));
   }
   if (!game.score_one) {
-    game.score_one = state_[roomName].player_1_score;
-    game.score_two = state_[roomName].player_2_score;
+    game.score_one = state_.player_1_score;
+    game.score_two = state_.player_2_score;
     game.finished = true;
     await prisma.game.update({
       where: { id: game.id },
@@ -412,15 +420,14 @@ async function emitGameOver(state_: any, userService: any, roomName: string, win
 async function startGameInterval(userService: any, roomName: string, state_: any, server: Server, game: any, prisma: PrismaService) {
   let other_game = await prisma.game.findUnique({ where: { id: game.id } });
   //console.log("other games second player id " + other_game.player_two);
-
   const intervalId = setInterval(() => {
-    const winner: number = gameLoop(state_[roomName]);
+    const winner: number = gameLoop(state_);
     if (!winner) {
-      emitGameState(roomName, state_[roomName], server);
+      emitGameState(roomName, state_, server);
     } else {
       //console.log("Game ended");
       emitGameOver(state_ ,userService, roomName, winner, server, game, prisma, other_game.player_two);
-      state_[roomName] = null;
+      stateArr[roomName] = null;
       clearInterval(intervalId);
     }
   }, 1000 / 50);
@@ -445,8 +452,14 @@ async function handleNewGame(client: any, server: Server, clientId: number, pris
 
   clientRooms[client.id] = game.id.toString();
   client.emit('gameCode', game.id.toString());
-  state[game.id] = getInitialState();
-
+  let pair : state_type = {participants: [], state: getInitialState()};
+  
+  
+  stateArr[game.id] = pair;
+  
+  // stateArr[game.id].state = getInitialState();
+  stateArr[game.id].participants[0] = String(client.id);
+  console.log("state " ,  stateArr[game.id]);
   client.join(game.id.toString());
 
   client.emit('init', 1);

@@ -14,6 +14,7 @@ interface KeyInfo
 {
     key: number,
     player_number: number;
+    socket_id: string;
 }
 
 interface Ball{

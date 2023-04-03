@@ -224,7 +224,8 @@ const Canvas = ({ userId }: { userId: string }) => {
             let obj: KeyInfo =
             {
                 key: e.keyCode,
-                player_number: playerNumber
+                player_number: playerNumber,
+                socket_id: our_socket.id
             };
             our_socket.emit('keydown', JSON.stringify(obj));
         })
@@ -234,7 +235,8 @@ const Canvas = ({ userId }: { userId: string }) => {
             let obj: KeyInfo =
             {
                 key: e.keyCode,
-                player_number: playerNumber
+                player_number: playerNumber,
+                socket_id: our_socket.id
             };
             our_socket.emit('keyup', JSON.stringify(obj));
         })

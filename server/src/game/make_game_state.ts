@@ -166,3 +166,5 @@ export function gameLoop(state: pong_properties) : number
     }
     return 0;
 }
+
+export default  pong_properties

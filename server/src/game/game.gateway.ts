@@ -84,11 +84,13 @@ export class GameGateway {
   async setupUserSocketId(@MessageBody() userId: string,
   @ConnectedSocket() socket)
   {
-    // if(!userId)
-    // {
-      //console.log("socket id setting up error");
-      // return ;
-    // await this.userService.updateUser({where: {id: Number.parseInt(userId)}, data: {socketId: socket.id}} );
+    if(!Number.parseInt(userId))
+    {
+
+      console.log("socket id setting up error ", Number.parseInt(userId));
+      return ;
+    }
+    await this.userService.updateUser({where: {id: Number.parseInt(userId)}, data: {socketId: socket.id}} );
     //console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
   }
   @SubscribeMessage("online_inform")
@@ -235,7 +237,6 @@ export class GameGateway {
     }
     if (!roomNames[0]) {
       //console.log("this is in the subscriber " + userId);
-
       handleNewGame(client, this.server, Number.parseInt(userId), this.prisma);
       return;
     }
@@ -273,7 +274,10 @@ export class GameGateway {
 
     client.join(gameCode);
     client.emit('init', 2);
-    
+    if(!Number.parseInt(userId))
+    {
+      return ;
+    }
     await this.prisma.game.update({ where: { id: roomNames[0].gameInstance.id }, data: { player_two: Number.parseInt(userId) } });
     let gameInstance = roomNames[0].gameInstance;
     startGameInterval(this.userService, gameCode, state, this.server, gameInstance, this.prisma);
@@ -432,7 +436,11 @@ function makeid(length: number) {
 }
 async function handleNewGame(client: any, server: Server, clientId: number, prisma: PrismaService) {
   //console.log('newgame player id 1 is' + clientId);
-
+  if(!clientId)
+  {
+    console.log("Siemanko");
+    return ;
+  }
   const game = await prisma.game.create({ data: { player_one: clientId } });
 
   clientRooms[client.id] = game.id.toString();

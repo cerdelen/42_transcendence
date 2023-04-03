@@ -7,6 +7,7 @@ import StatusAndGamesWon from "./StatusAndGamesWon";
 import LevelImageAndUsername from "./LevelImageAndUsername";
 import ToggleBox from "./ToggleBox";
 import { UserContext } from "../../contexts/UserContext";
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 const ProfileCard = () => {
   const [base64String, setBase64String] = useState("");
@@ -31,7 +32,7 @@ const ProfileCard = () => {
     //change the state to logged out
     // setLoggedIn(false);
     //redirect to the main screen
-    window.location.replace("http://localhost:3000");
+    window.location.replace(`http://${ipAddress}:3000`);
   }
   const { userId } = useContext(UserContext);
   // console.log(userId);
@@ -42,7 +43,7 @@ const ProfileCard = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const response = await fetch("http://localhost:3003/user/user_data", {
+      const response = await fetch(`http://${ipAddress}:3003/user/user_data`, {
         method: "Post",
         headers: {
           "Content-Type": "application/json",
@@ -51,7 +52,7 @@ const ProfileCard = () => {
         body: JSON.stringify({ user_id: userId }),
       });
       const response_stats = await fetch(
-        "http://localhost:3003/user/user_stats",
+        `http://${ipAddress}:3003/user/user_stats`,
         {
           method: "Post",
           headers: {

@@ -13,21 +13,15 @@ import Game from "./components/Game";
 import { UserContext } from "./contexts/UserContext";
 import InfoCardProvider, { useMyContext } from "./contexts/InfoCardContext";
 import Displayed_Chat_Provider from "./contexts/Displayed_Chat_Context";
-import { Socket } from "socket.io";
-import { io } from "socket.io-client";
 import { SocketContext, our_socket } from "./utils/context/SocketContext";
 import Community from "./components/community/CommunityPage";
 import LandingPage from "./LandingPage";
 import 'reactjs-popup/dist/index.css';
-import { emit } from "process";
-
-import PopUp from "./components/Popup";
 import Ladder from "./components/ladder/Ladder";
 import Profile_picture_Provider from "./contexts/Profile_picture_context";
-import { createImportSpecifier } from "typescript";
 
 
-
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 export const ConversationContext = React.createContext<
   ConversationContextType[]
@@ -50,7 +44,7 @@ function App() {
   const [blcoked_users, set_blcoked_users] = useState([]);
   async function getUser() {
     try {
-      let response = await fetch("http://localhost:3003/user/get_id", {
+      let response = await fetch(`http://${ipAddress}:3003/user/get_id`, {
         method: "Post",
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +63,7 @@ function App() {
 
   async function getData(userid: string) {
     try {
-      let response = await fetch("http://localhost:3003/user/user_data", {
+      let response = await fetch(`http://${ipAddress}:3003/user/user_data`, {
         method: "Post",
         headers: {
           "Content-Type": "application/json",

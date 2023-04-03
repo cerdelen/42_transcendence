@@ -10,6 +10,7 @@ import { UserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
 import { our_socket } from "../../utils/context/SocketContext";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 interface typing {
   name: string;
@@ -97,7 +98,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
       let temp_map : Map<number, string> = new Map;
       for (let index = 0; index < participants.length; index++)
       {
-        const response = await fetch("http://localhost:3003/user/user_name", {
+        const response = await fetch(`http://${ipAddress}:3003/user/user_name`, {
           method: "Post",
           headers: {
             "Content-Type": "application/json",
@@ -125,7 +126,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
       // console.log("fetching all message");
       
       const response = await fetch(
-        `http://localhost:3003/conversation/get_messages_from_conversation/${chat_id}`,
+        `http://${ipAddress}:3003/conversation/get_messages_from_conversation/${chat_id}`,
         {
           method: "Get",
           headers: {

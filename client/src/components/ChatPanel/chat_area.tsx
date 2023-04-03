@@ -8,6 +8,7 @@ import empty_chat_picture from "../../images/sleeping_cat.jpeg";
 import JSCookies from "js-cookie";
 // import CatSvg from "../../svg/peeking-cat.svg"
 import CatSvg from "../../svg/peeking-cat.svg"
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 interface message {
   author_id: string;
@@ -69,6 +70,7 @@ const Chat_area = () => {
 
 // console.log("I WANNA RESET EVERTHNG HERE" + reset_displayed_chat);
 
+
   our_socket.on("some_one_joined_group_chat", ({conv_id, joined_user_id} : {conv_id: number, joined_user_id: number}) =>
 		{	
 
@@ -85,7 +87,7 @@ const Chat_area = () => {
         // console.log("tryin so hard");
         
 				if (reset_displayed_chat !== -1){
-					const response = await fetch(`http://localhost:3003/conversation/getConversationById/${reset_displayed_chat}`, {
+					const response = await fetch(`http://${ipAddress}:3003/conversation/getConversationById/${reset_displayed_chat}`, {
 						method: "Get",
 						headers: {
 							// "Content-Type": "application/json",

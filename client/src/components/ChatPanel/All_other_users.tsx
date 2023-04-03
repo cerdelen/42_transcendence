@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import JSCookies from "js-cookie";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 const User_preview_card = ({other_user_id} : {other_user_id: number}) => {
 	const { setUserIdCard, setShowUserInto} = useMyContext();
@@ -18,7 +19,7 @@ const User_preview_card = ({other_user_id} : {other_user_id: number}) => {
 	const [status, setStatus] = useState(false);
 	useEffect(() => {
 			const get_user_info = async (other_user_id : number) => {
-				const response = await fetch("http://localhost:3003/user/user_name", {
+				const response = await fetch(`http://${ipAddress}:3003/user/user_name`, {
 					method: "Post",
 					headers: {
 						'Content-Type': 'application/json',
@@ -56,7 +57,7 @@ const Get_all_other_users = () =>
 
 	useEffect(() => {
 		async function get_all_user_ids(){
-			const response = await fetch("http://localhost:3003/user/get_all_other_user_ids", {
+			const response = await fetch(`http://${ipAddress}:3003/user/get_all_other_user_ids`, {
 				method: "Get",
 				headers: {
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,

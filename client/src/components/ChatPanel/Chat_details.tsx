@@ -11,6 +11,7 @@ import { RiVolumeMuteFill } from "react-icons/ri";
 import themeAchievement from "../../images/changed-theme-achievement.png";
 import path from "path";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 import InputFieldOrButton from "../InputForms/InputFIeldOrButton";
 
@@ -51,7 +52,7 @@ const Participant_in_chat_detail_card = ({
   useEffect(() => {
     async function get_name() {
       try {
-        const response = await fetch(`http://localhost:3003/user/user_name`, {
+        const response = await fetch(`http://${ipAddress}:3003/user/user_name`, {
           method: "POST",
           body: JSON.stringify({ user_id: user_id.toString() }),
           headers: {
@@ -201,7 +202,7 @@ const Chat_details = ({
       try {
         
         await fetch(
-          `http://localhost:3003/conversation/change_password/${displayed_chat.conversation_id }`,
+          `http://${ipAddress}:3003/conversation/change_password/${displayed_chat.conversation_id }`,
           {
             method: "Post",
             headers: {
@@ -229,7 +230,7 @@ const Chat_details = ({
       try {
         
         await fetch(
-          `http://localhost:3003/conversation/change_password/${displayed_chat.conversation_id }`,
+          `http://${ipAddress}:3003/conversation/change_password/${displayed_chat.conversation_id }`,
           {
             method: "Post",
             headers: {
@@ -251,7 +252,7 @@ const Chat_details = ({
   const handleRemovePassword = async (chat_id: number) => {
     try {
       await fetch(
-        `http://localhost:3003/conversation/remove_password/${chat_id}`,
+        `http://${ipAddress}:3003/conversation/remove_password/${chat_id}`,
         {
           method: "Get",
           headers: {

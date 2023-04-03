@@ -1,5 +1,6 @@
 import { useState } from "react";
 import JSCookies from "js-cookie";
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 const SecondFactorPage = () => {
   //gets the user id from the url
@@ -20,7 +21,7 @@ const SecondFactorPage = () => {
       const myCookieValue = JSCookies.get("accessToken");
       try {
 
-        const response = await fetch("http://localhost:3003/2-fa/authenticate", {
+        const response = await fetch(`http://${ipAddress}:3003/2-fa/authenticate`, {
           method: "POST",
           body: JSON.stringify({ two_FA_code: code, userId: userId }),
           headers: {
@@ -30,7 +31,7 @@ const SecondFactorPage = () => {
         });
         
         if (response.ok) {
-          window.location.assign("http://localhost:3000/");
+          window.location.assign(`http://${ipAddress}:3000/`);
           const token = await response.text();
           JSCookies.set("accessToken", token);
         }

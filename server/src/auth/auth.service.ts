@@ -22,11 +22,12 @@ export class AuthService
 	{
 		//console.log("fhiuewgjiorejofiewiojfwe" + _req.user.id);
 		var user = await this.userService.findUserById(_req.user.id);
+		const	serv_ip = this.configService.get('serv_ip');
 		//console.log(user.id);
 		if(user.two_FA_enabled)
 		{
 			//console.log("2fa enabled, redirecting to 2fa");
-			return _res.redirect('http://localhost:3000/auth?2fa=' + String(_req.user.id));
+			return _res.redirect(`http://${serv_ip}:3000/auth?2fa=` + String(_req.user.id));
 		}
 		//console.log("2fa NOT enabled signing token");
 		return (this.sign_42_jwt_token(user.id, _res));
@@ -35,6 +36,7 @@ export class AuthService
 	async	login_test_user(test_user_id: number, @Res() _res: any) : Promise<any> 
 	{
 		var user = await this.userService.findUserById(test_user_id);
+		const	serv_ip = this.configService.get('serv_ip');
 		// //console.log(user.id);
 		if(!user)
 		await this.create_test_user();
@@ -42,7 +44,7 @@ export class AuthService
 		if(user.two_FA_enabled)
 		{
 			//console.log("2fa enabled, redirecting to 2fa");
-			return _res.redirect('http://localhost:3000/auth?2fa=' + String(test_user_id));
+			return _res.redirect(`http://${serv_ip}:3000/auth?2fa=` + String(test_user_id));
 		}
 		//console.log("2fa NOT enabled signing token");
 		return (this.sign_42_jwt_token_test_user(test_user_id, _res));
@@ -51,6 +53,7 @@ export class AuthService
 	async	get_token_test_user(test_user_id: number, @Res() _res: any) : Promise<any> 
 	{
 		var user = await this.userService.findUserById(test_user_id);
+		const	serv_ip = this.configService.get('serv_ip');
 		// //console.log(user.id);
 		if(!user)
 		await this.create_test_user();
@@ -58,7 +61,7 @@ export class AuthService
 		if(user.two_FA_enabled)
 		{
 			//console.log("2fa enabled, redirecting to 2fa");
-			return _res.redirect('http://localhost:3000/auth?2fa=' + String(test_user_id));
+			return _res.redirect(`http://${serv_ip}:3000/auth?2fa=` + String(test_user_id));
 		}
 		//console.log("2fa NOT enabled signing token");
 		return (this.sign_42_jwt_token_test_user(test_user_id, _res));
@@ -78,6 +81,7 @@ export class AuthService
 
 	async	sign_42_jwt_token(user_id: number, res: any, is_two_FAed = false)
 	{
+		const	serv_ip = this.configService.get('serv_ip');
 		//console.log('sign_jwt_token');
 		const	user	= await this.userService.findUserById(user_id);
 		const	payload	= { name: user.name, sub: user.id, mail: user.mail, is_two_FAed: is_two_FAed };
@@ -85,7 +89,7 @@ export class AuthService
 		res.cookie('accessToken', token);
 		//console.log('this is signed accessToken');
 		//console.log(token);
-		res.redirect('http://localhost:3000/');
+		res.redirect(`http://${serv_ip}:3000/`);
 	}
 
 	async	sign_jwt_token(user_id: number, res: any, is_two_FAed = false)

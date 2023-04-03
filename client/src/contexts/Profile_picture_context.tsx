@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { createContext } from "react";
 import JSCookies from "js-cookie";
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 const pushPictureToMap = async (user_id: number, picture_map: Map<number, string>, set_picture_map:  React.Dispatch<React.SetStateAction<Map<number, string>>>) => {
   try {
     if (picture_map.has(user_id))
       return ;
-    const response = await fetch(`http://localhost:3003/pictures/${user_id}`, {
+    const response = await fetch(`http://${ipAddress}:3003/pictures/${user_id}`, {
       method: "Get",
       headers: {
         Authorization: `Bearer ${JSCookies.get("accessToken")}`,
@@ -46,7 +47,7 @@ export function Profile_picture_Provider({ children }: MyContextProviderProps) {
   
   useEffect(() => {
     const get_all_pictures = async () => {
-      const res = await fetch(`http://localhost:3003/user/get_all_user_ids`, {
+      const res = await fetch(`http://${ipAddress}:3003/user/get_all_user_ids`, {
         method: "Get",
         headers: {
           Authorization: `Bearer ${JSCookies.get("accessToken")}`,

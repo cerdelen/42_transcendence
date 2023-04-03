@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import JSCookies from "js-cookie";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 import EverythingIsFine from "../../svg/everything-is-fine.svg"
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 interface NameProps {
   name: string;
@@ -37,7 +38,7 @@ const ListFriends = ({ friendsList }: Props) => {
         const newlist = await Promise.all(
           friendsList.map(async (id) => {
             const response = await fetch(
-              "http://localhost:3003/user/user_name",
+              `http://${ipAddress}:3003/user/user_name`,
               {
                 method: "POST",
                 headers: {

@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import JSCookies from "js-cookie";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 // kick, mute, ban, make admin
 type administraion_props =
@@ -34,7 +35,7 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 		{
 			try
 			{
-				const respone = await fetch(`http://localhost:3003/conversation/${displayed_chat.conversation_id}/setBan/${user_id}`,{
+				const respone = await fetch(`http://${ipAddress}:3003/conversation/${displayed_chat.conversation_id}/setBan/${user_id}`,{
 				method: "PUT",
 					headers: {
 						// "Content-Type": "application/json",
@@ -69,7 +70,7 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 		{
 			try
 			{
-				const respone = await fetch(`http://localhost:3003/conversation/${displayed_chat.conversation_id}/setKick/${user_id}`,{
+				const respone = await fetch(`http://${ipAddress}:3003/conversation/${displayed_chat.conversation_id}/setKick/${user_id}`,{
 				method: "PUT",
 					headers: {
 						// "Content-Type": "application/json",
@@ -105,7 +106,7 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 		// :conversation_id/setMute/:id_to_mute
 		try
 		{
-			const respone = await fetch(`http://localhost:3003/conversation/${displayed_chat.conversation_id}/setMute/${user_id}`,{
+			const respone = await fetch(`http://${ipAddress}:3003/conversation/${displayed_chat.conversation_id}/setMute/${user_id}`,{
 			method: "PUT",
 				headers: {
 					// "Content-Type": "application/json",
@@ -128,7 +129,7 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 	{
 		try
 		{
-			const respone = await fetch(`http://localhost:3003/conversation/${displayed_chat.conversation_id}/setAdmin/${user_id}`,{
+			const respone = await fetch(`http://${ipAddress}:3003/conversation/${displayed_chat.conversation_id}/setAdmin/${user_id}`,{
 			method: "PUT",
 				headers: {
 					// "Content-Type": "application/json",

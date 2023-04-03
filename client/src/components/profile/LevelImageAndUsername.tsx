@@ -4,6 +4,7 @@ import { UserContext } from "../../contexts/UserContext";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import JSCookies from "js-cookie";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 interface Props {
   userName: string;
@@ -47,7 +48,7 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
   const changeName = async () => {
     // console.log("changeName called");
     try {
-      const response = await fetch("http://localhost:3003/user/change_name", {
+      const response = await fetch(`http://${ipAddress}:3003/user/change_name`, {
         method: "POST",
         body: JSON.stringify({ new_name: newName }),
         headers: {

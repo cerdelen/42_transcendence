@@ -4,6 +4,7 @@ import JSCookies from "js-cookie";
 import defaultPicture from "../../images/default-picture.jpeg";
 import pic from "../../images/cat-stern.jpeg";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 
 interface NameProps {
@@ -80,7 +81,7 @@ const GameHistory = ({ gamesList }: Props) => {
     const fetchGames = async () => {
 
       try {
-           const gamesListy = await fetch(`http://localhost:3003/game/many_games_data`, {
+           const gamesListy = await fetch(`http://${ipAddress}:3003/game/many_games_data`, {
         method: "Post",
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +107,7 @@ const GameHistory = ({ gamesList }: Props) => {
       const newlist = await Promise.all(
         gamesListy.map(async (game: any) => {
           const id = game['player_one'];
-          const response = await fetch(`http://localhost:3003/user/user_name`, {
+          const response = await fetch(`http://${ipAddress}:3003/user/user_name`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -125,7 +126,7 @@ const GameHistory = ({ gamesList }: Props) => {
       const newlist = await Promise.all(
         gamesListy.map(async (game: any) => {
           const id = game['player_two'];
-          const response = await fetch(`http://localhost:3003/user/user_name`, {
+          const response = await fetch(`http://${ipAddress}:3003/user/user_name`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

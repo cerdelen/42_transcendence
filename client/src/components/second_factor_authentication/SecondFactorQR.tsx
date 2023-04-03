@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import JSCookies from 'js-cookie'
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 type Props = {
     qrString: string;
@@ -19,7 +20,7 @@ const SecondFactorQR = ({qrString}: Props) => {
     event.preventDefault();
     if (code.length === 6) {
       const myCookieValue = JSCookies.get('accessToken');
-      fetch('http://localhost:3003/2-fa/turn-on', {
+      fetch('http://${ipAddress}:3003/2-fa/turn-on', {
         method: 'POST',
         body: JSON.stringify({ "two_FA_code": code }),
         headers: {

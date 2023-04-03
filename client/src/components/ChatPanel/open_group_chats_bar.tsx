@@ -9,6 +9,7 @@ import { our_socket } from "../../utils/context/SocketContext";
 import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
 import SingleFieldInputForm from "../InputForms/SingleFieldInputForm";
 import TwoFieldInputForm from "../InputForms/TwoFieldInputForm";
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 const Chat_name_input = ({ setButton_state }: { setButton_state: any }) => {
   const { my_chats_ids, setmy_chats_ids } = useMyChatCardsContext();
@@ -25,7 +26,7 @@ const Chat_name_input = ({ setButton_state }: { setButton_state: any }) => {
       console.log(`%cThis is the password: ${password}`, "color: blue");
 
       const response = await fetch(
-        `http://localhost:3003/conversation/create_group_chat/create`,
+        `http://${ipAddress}:3003/conversation/create_group_chat/create`,
         {
           method: "Post",
           headers: {
@@ -80,7 +81,7 @@ const Group_chat_preview_card = ({
     console.log(`%cHANDLE SUBMIT`, 'color: blue');
     
     const response = await fetch(
-      `http://localhost:3003/conversation/join_group_chat/join`,
+      `http://${ipAddress}:3003/conversation/join_group_chat/join`,
       {
         method: "POST",
         headers: {
@@ -110,7 +111,7 @@ const Group_chat_preview_card = ({
     console.log(`JOIN CHAT`);
 
     const response = await fetch(
-      `http://localhost:3003/conversation/join_group_chat/join`,
+      `http://${ipAddress}:3003/conversation/join_group_chat/join`,
       {
         method: "POST",
         headers: {
@@ -137,7 +138,7 @@ const Group_chat_preview_card = ({
   const checkIfPasswordProtected = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3003/conversation/is_password_protected/${chat_id}`,
+        `http://${ipAddress}:3003/conversation/is_password_protected/${chat_id}`,
         {
           method: "Get",
           headers: {
@@ -168,7 +169,7 @@ const Group_chat_preview_card = ({
 
   const get_conversation = async (conversation_id: number) => {
     const response = await fetch(
-      `http://localhost:3003/conversation/getConversationById/${conversation_id}`,
+      `http://${ipAddress}:3003/conversation/getConversationById/${conversation_id}`,
       {
         method: "Get",
         headers: {
@@ -222,7 +223,7 @@ const Get_all_open_group_chats = ({
   useEffect(() => {
     async function get_ids() {
       const response = await fetch(
-        "http://localhost:3003/conversation/getAllChatsWithoutUser",
+        `http://${ipAddress}:3003/conversation/getAllChatsWithoutUser`,
         {
           method: "Get",
           headers: {

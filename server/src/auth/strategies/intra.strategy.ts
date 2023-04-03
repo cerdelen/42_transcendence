@@ -13,7 +13,7 @@ export class Intra42Strategy extends PassportStrategy(Strategy, '42'){
 		({
 			clientID: "u-s4t2ud-ebe5af0f2962dca5114adf05b60c69a7cbbb6ec31e4cd146812b74d954feb284",
 			clientSecret: configService.get('client_secret'),
-			callbackURL: "http://localhost:3003/auth/login",
+			callbackURL: `http://${configService.get('serv_ip')}:3003/auth/login`,
 		});
 		//console.log("ENVVVV" + configService.get('client_secret'));
 		//console.log("ENVVVV§" + configService.get('secret'));

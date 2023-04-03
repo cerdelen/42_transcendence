@@ -8,6 +8,7 @@ import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
 import { UserContext } from "../../contexts/UserContext";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 interface chat_props {
 	chat_id: number,
@@ -39,7 +40,7 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 	{
 		if (displayed_chat.conversation_id != chat_id)
 		{
-			const response = await fetch(`http://localhost:3003/conversation/getConversationById/${chat_id}`, {
+			const response = await fetch(`http://${ipAddress}:3003/conversation/getConversationById/${chat_id}`, {
 				method: "Get",
 				headers: {
 					// "Content-Type": "application/json",
@@ -56,7 +57,7 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 	const [group_chat, set_group_chat] = useState(false);
 	useEffect(() => {
 			const get_conversation = async (conversation_id : number) => {
-				const response = await fetch(`http://localhost:3003/conversation/getConversationById/${conversation_id}`, {
+				const response = await fetch(`http://${ipAddress}:3003/conversation/getConversationById/${conversation_id}`, {
 				method: "Get",
 				headers: {
 					// "Content-Type": "application/json",
@@ -115,7 +116,7 @@ const Get_all_my_chats = () =>
 	const { setShowUserInto } = useMyContext();
 	useEffect(() => {
 		async function get_ids(){
-			const response = await fetch("http://localhost:3003/conversation/GetMyChats", {
+			const response = await fetch(`http://${ipAddress}:3003/conversation/GetMyChats`, {
 				method: "Get",
 				headers: {
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
@@ -133,7 +134,7 @@ const Get_all_my_chats = () =>
 		{
 			try {
 				if (reset_displayed_chat !== -1){
-					const response = await fetch(`http://localhost:3003/conversation/getConversationById/${reset_displayed_chat}`, {
+					const response = await fetch(`http://${ipAddress}:3003/conversation/getConversationById/${reset_displayed_chat}`, {
 						method: "Get",
 						headers: {
 							// "Content-Type": "application/json",

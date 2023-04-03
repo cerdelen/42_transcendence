@@ -4,6 +4,7 @@ import "./Ladder.css";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 import defaultPicture from "../../images/default-picture.jpeg";
 import { UserContext } from "../../contexts/UserContext";
+const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 const Ladder_card = ({
   rank,
@@ -41,7 +42,7 @@ const Ladder = () => {
 
   useEffect(() => {
     const get_ladder = async () => {
-      const response = await fetch("http://localhost:3003/user/get_ladder", {
+      const response = await fetch(`http://${ipAddress}:3003/user/get_ladder`, {
         method: "Get",
         headers: {
           Authorization: `Bearer ${JSCookies.get("accessToken")}`,

@@ -89,6 +89,21 @@ function App() {
   }
 
   useEffect(() => {
+    function handleBeforeUnload(event: any) {
+      event.preventDefault();
+      console.log("Are you sure you want to leave");
+      return (event.returnValue = 'Are you sure you want to leave?');
+      // Optionally, you can perform cleanup or notifications here
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+  useEffect(() => {
     our_socket.on("online_check", () => {
       our_socket.emit("online_inform", { userId });
     });

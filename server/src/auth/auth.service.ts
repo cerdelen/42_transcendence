@@ -54,7 +54,7 @@ export class AuthService
 	{
 		var user = await this.userService.findUserById(test_user_id);
 		const	serv_ip = this.configService.get('serv_ip');
-		// //console.log(user.id);
+		console.log(user.id);
 		if(!user)
 		await this.create_test_user();
 		user = await this.userService.findUserById(test_user_id);
@@ -63,7 +63,7 @@ export class AuthService
 			//console.log("2fa enabled, redirecting to 2fa");
 			return _res.redirect(`http://${serv_ip}:3000/auth?2fa=` + String(test_user_id));
 		}
-		//console.log("2fa NOT enabled signing token");
+		console.log("2fa NOT enabled signing token");
 		return (this.sign_42_jwt_token_test_user(test_user_id, _res));
 	}
 
@@ -75,7 +75,7 @@ export class AuthService
 		const	token	= this.jwtService.sign(payload, {secret: this.configService.get('secret')});
 		res.cookie('accessToken', token);
 		//console.log('this is signed accessToken');
-		//console.log(token);
+		console.log(token);
 		return token;
 	}
 

@@ -53,8 +53,11 @@ function App() {
       });
       const id = await response.text();
 
-      setUserId(id);
+      
       await getData(id);
+      let userId_  = {statusCode:401,message:"Unauthorized"};
+      setUserId(id);
+
       our_socket.emit("makeOnline", id);
     } catch (error) {
       console.error(error);
@@ -105,8 +108,11 @@ function App() {
   })
   useEffect(() =>
   {
-    // console.log("User id on the frontend " , userId)
-    our_socket.emit("setupUserSocketId", userId);
+    if(userId)
+    {
+      console.log("User id setted up " , userId)
+      our_socket.emit("setupUserSocketId", userId);
+    }
   }, [userId])
  
   // useEffect(() => 
@@ -170,5 +176,4 @@ function App() {
     </InfoCardProvider>
   );
 }
-
 export default App;

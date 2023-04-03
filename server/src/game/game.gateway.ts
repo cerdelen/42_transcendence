@@ -126,6 +126,24 @@ export class GameGateway {
   @SubscribeMessage('playerAccepted')
   async playerAccepted(@MessageBody() obj, @ConnectedSocket() client)
   {
+    if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
+    {
+      let new_obj = JSON.parse(obj);
+
+      let user = await this.userService.findUserByName(new_obj.inviterName);
+      let new_invitation_obj : invitesType = {creator_id: String(user.id), invitee_id: new_obj.userId};
+      let delindex = invites.indexOf(new_invitation_obj);
+      if(!delindex)
+      {
+        //console.log("Index to delete not found in reject invite ");
+        return ;
+      }
+      invites.splice(delindex, 1);
+      let new_user = await this.userService.findUserById(new_obj.userId);
+      //console.log("Game cancelled event sent");
+      emitToTheUserSocket(user, this.server, "gameCancelled", new_user.name)
+      return ;
+    }
     let new_obj = JSON.parse(obj);
     //console.log("USer id of the inviter "  + new_obj.inviterName + "and of the invitee " + new_obj.userId);
     let user = await this.userService.findUserById(Number.parseInt(new_obj.userId))
@@ -196,6 +214,12 @@ export class GameGateway {
   @SubscribeMessage('createInvitationRoom')
   async handleInvitation(@MessageBody() obj , @ConnectedSocket() client)
   {
+    if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
+    {
+      console.log("game ongoing " );
+      client.emit("gameOngoing");
+      return ;
+    }
     let object = JSON.parse(obj);
     let userId = object.userId;
     let invitedUserId = object.userName;
@@ -251,6 +275,13 @@ export class GameGateway {
     if (!userId) {
       //console.log("User is not logged " + userId);
       return;
+    }
+    // console.log("Client id ", clientRooms[client.id]);
+    if(!(clientRooms[client.id] == undefined || clientRooms[client.id] == null))
+    {
+      console.log("game ongoing " );
+      client.emit("gameOngoing");
+      return ;
     }
     if (!roomNames[0]) {
       //console.log("this is in the subscriber " + userId);
@@ -390,7 +421,6 @@ async function emitGameOver(state_: any, userService: any, roomName: string, win
     });
     userService.add_game_to_history(game.id);
   }
-
 }
 async function startGameInterval(userService: any, roomName: string, state_: any, server: Server, game: any, prisma: PrismaService) {
   let other_game = await prisma.game.findUnique({ where: { id: game.id } });
@@ -402,6 +432,8 @@ async function startGameInterval(userService: any, roomName: string, state_: any
     } else {
       //console.log("Game ended");
       emitGameOver(state_ ,userService, roomName, winner, server, game, prisma, other_game.player_two);
+      clientRooms[stateArr[roomName].participants[0]] = null;
+      clientRooms[stateArr[roomName].participants[1]] = null;
       stateArr[roomName] = null;
       clearInterval(intervalId);
     }

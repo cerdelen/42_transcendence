@@ -92,6 +92,8 @@ function App() {
     function handleBeforeUnload(event: any) {
       event.preventDefault();
       console.log("Are you sure you want to leave");
+      our_socket.emit("userOffline", userId);
+      //Add implementatione
       return (event.returnValue = 'Are you sure you want to leave?');
       // Optionally, you can perform cleanup or notifications here
     }
@@ -104,10 +106,9 @@ function App() {
   }, []);
 
   useEffect(() => {
-    our_socket.on("online_check", () => {
-      our_socket.emit("online_inform", { userId });
-    });
-  },[] );
+    our_socket.emit("online_inform", userId);
+    console.log("User online")
+  },[userId] );
   
   useEffect(() => {
     const myCookie = JSCookies.get("accessToken");
@@ -117,10 +118,6 @@ function App() {
     }
   }, []);
 
-  useEffect( () => 
-  {
-    our_socket
-  })
   useEffect(() =>
   {
     if(userId)
@@ -129,16 +126,7 @@ function App() {
       our_socket.emit("setupUserSocketId", userId);
     }
   }, [userId])
- 
-  // useEffect(() => 
-  // {
-  //     our_socket.on("invitationPopUp", (invitingUserName) =>
-  //     {
-  //       console.log("You've been invited mate");
-  //       setinviterName(invitingUserName);
-  //       setIsInvited(true);
-  //     })
-  // }, [])
+
   useEffect(() => 
   {
       our_socket.on("invitationPopUp", (invitingUserName) =>

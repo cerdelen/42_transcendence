@@ -75,20 +75,20 @@ export class GameGateway {
   @WebSocketServer()
   server: Server;
 
-  onModuleInit() {
-    this.server.on('connection', (socket) => {
-      //console.log(socket.id);
-      //console.log("connected");
-      setInterval(() => {
-        socket.emit("online_check");
-        if (response === 0) {
-          //socket.id switch user offline with userID
-          // //console.log("Is offline");
-        }
-        response = 0;
-      }, 10000)
-    })
-  }
+  // onModuleInit() {
+  //   this.server.on('connection', (socket) => {
+  //     //console.log(socket.id);
+  //     //console.log("connected");
+  //     setInterval(() => {
+  //       socket.emit("online_check");
+  //       if (response === 0) {
+  //         //socket.id switch user offline with userID
+  //         // //console.log("Is offline");
+  //       }
+  //       response = 0;
+  //     }, 10000)
+  //   })
+  // }
 
   constructor(private readonly gameService: GameService, private prisma: PrismaService, private userService: UserService) {
   }
@@ -109,17 +109,20 @@ export class GameGateway {
   }
   @SubscribeMessage("online_inform")
   async handle_online(@MessageBody() userId: string) {
-    if (userId) {
-      //make user online
-      response = 1;
-      // //console.log("User is online");
+    if (Number.parseInt(userId)) {
+      this.userService.set_user_online(Number.parseInt(userId) ,true);
+      console.log("userOnline", userId);
     }
   }
-  @SubscribeMessage('makeOnline')
+  @SubscribeMessage('userOffline')
   async makeOnline(@MessageBody() userId: string) {
-
-    //console.log(userId + " Siemanko ");
-    //Make user online boolean
+    console.log("UserOffline", userId);
+    if(!Number.parseInt(userId))
+    {
+      return ;
+    }
+    this.userService.set_user_online(Number.parseInt(userId) ,false);
+    
   }
 
   @SubscribeMessage('playerAccepted')

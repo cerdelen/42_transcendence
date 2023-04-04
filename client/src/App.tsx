@@ -13,6 +13,7 @@ import Game from "./components/Game";
 import { UserContext } from "./contexts/UserContext";
 import InfoCardProvider, { useMyContext } from "./contexts/InfoCardContext";
 import Displayed_Chat_Provider from "./contexts/Displayed_Chat_Context";
+import Online_users_Provider from "./contexts/Online_users_context";
 import { SocketContext, our_socket } from "./utils/context/SocketContext";
 import Community from "./components/community/CommunityPage";
 import LandingPage from "./LandingPage";
@@ -153,6 +154,7 @@ function App() {
             blocked_users: blcoked_users,
           }}
         >
+          <Online_users_Provider>
           {/* <Popup open={isInvited} position="right center" onClose={rejectInvite} >
           <h2>You've been invited to the game by {inviterName}</h2>
           <center>
@@ -174,6 +176,7 @@ function App() {
             </Routes>
           </BrowserRouter>
           </Profile_picture_Provider>
+          </Online_users_Provider>
         </UserContext.Provider>
       </Displayed_Chat_Provider>
     </InfoCardProvider>

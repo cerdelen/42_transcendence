@@ -2,8 +2,30 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Popup from "reactjs-popup"
 import { UserContext } from "../contexts/UserContext";
+import { CounterContext } from "../utils/context/CounterContext";
 import { our_socket } from "../utils/context/SocketContext";
 
+function CustomizationFields({ setMapNumber }: { setMapNumber: any }) {
+
+  return (
+      <>
+          <br />
+          <br />
+          <button className="game_buttons" onClick={(e) => {
+              e.preventDefault();
+              setMapNumber(0);
+          }}> Bulgaria </button>
+          <button className="game_buttons" onClick={(e) => {
+              e.preventDefault();
+              setMapNumber(1);
+          }}> Paris </button>
+          <button className="game_buttons" onClick={(e) => {
+              e.preventDefault();
+              setMapNumber(2);
+          }}> Cat Valley </button>
+      </>
+  )
+}
 
 type Props = {
   setInviterName: any;
@@ -15,7 +37,7 @@ type Props = {
 const PopUp = ({setInviterName ,inviterName ,isInvited, setIsInvited} : Props) => {
     const navigate = useNavigate();
     const {userId} = useContext(UserContext);
-
+    const {mapNumber, setMapNumber} = useContext(CounterContext);
     const  acceptInvite = () => {
       console.log("Invite accepted");
       setIsInvited(false);
@@ -44,6 +66,9 @@ const PopUp = ({setInviterName ,inviterName ,isInvited, setIsInvited} : Props) =
         <Popup open={isInvited} position="right center" onClose={() => rejectInvite()} >
             <h2 style={{color: "black"}} >You've been invited to the game by {inviterName}</h2>
             <center>
+                <CustomizationFields setMapNumber={setMapNumber} />
+                <br/>
+                <br/>
                 <button className="game_buttons" onClick={() => acceptInvite()}> Accept </button>
                 <button className="game_buttons" onClick={() => rejectInvite()}> Reject </button>
             </center>

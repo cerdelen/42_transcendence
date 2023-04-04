@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import JSCookies from "js-cookie";
 import LoginPage from "./components/LoginPage";
 import HomePage from "./components/HomePage";
+import {CounterProvider} from "./utils/context/CounterContext"
 import SecondFactorPage from "./components/second_factor_authentication/SecondFactorPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
@@ -19,7 +20,6 @@ import LandingPage from "./LandingPage";
 import 'reactjs-popup/dist/index.css';
 import Ladder from "./components/ladder/Ladder";
 import Profile_picture_Provider from "./contexts/Profile_picture_context";
-
 
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
@@ -153,14 +153,7 @@ function App() {
             blocked_users: blcoked_users,
           }}
         >
-          {/* <Popup open={isInvited} position="right center" onClose={rejectInvite} >
-          <h2>You've been invited to the game by {inviterName}</h2>
-          <center>
-          <button className="game_buttons" onClick={acceptInvite}> Accept </button>
-          <button className="game_buttons" onClick={rejectInvite}> Reject </button>
-          </center>
-          </Popup> */}
-          {/* <PopUp/> */}
+        <CounterProvider>
           <Profile_picture_Provider>
           <BrowserRouter>
             <Routes>
@@ -174,8 +167,10 @@ function App() {
             </Routes>
           </BrowserRouter>
           </Profile_picture_Provider>
+          </CounterProvider>
         </UserContext.Provider>
       </Displayed_Chat_Provider>
+      
     </InfoCardProvider>
   );
 }

@@ -1,10 +1,10 @@
-import React, { useRef, useEffect, useState, useId } from "react";
+import React, { useRef, useContext ,useEffect, useState, useId } from "react";
 import drawPong from './Pong'
 import { pong_properties, KeyInfo, Player } from './Pong_types'
 import {our_socket} from '../utils/context/SocketContext';
-
+import { CounterContext } from "../utils/context/CounterContext";
 import { useMyContext } from '../contexts/InfoCardContext'
-
+// import { gameContext } from '../contexts/gameContext'
 const Canvas = ({ userId }: { userId: string }) => {
     const { images, initial_state } = useMyContext();
     function Custmization_fields({ setMapNumber }: { setMapNumber: any }) {
@@ -15,14 +15,17 @@ const Canvas = ({ userId }: { userId: string }) => {
                 <br />
                 <button className="game_buttons" onClick={(e) => {
                     e.preventDefault();
+                    console.log("Map number is " + mapNumber);
                     setMapNumber(0);
                 }}> Bulgaria </button>
                 <button className="game_buttons" onClick={(e) => {
                     e.preventDefault();
                     setMapNumber(1);
+                    console.log("Map number is " + mapNumber);
                 }}> Paris </button>
                 <button className="game_buttons" onClick={(e) => {
                     e.preventDefault();
+                    console.log("Map number is " + mapNumber);
                     setMapNumber(2);
                 }}> Cat Valley </button>
             </>
@@ -50,14 +53,14 @@ const Canvas = ({ userId }: { userId: string }) => {
         }
 
     }
-    console.log("Just user id" + userId);
     const [gameInfo, setGameInfo] = useState<pong_properties>(initial_state);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [gameActive, setGameActive] = useState(false);
+    
     const [gameCode, setGameCode] = useState("");
+    const {mapNumber, setMapNumber} = useContext(CounterContext);
     const [codeInput, setCodeInput] = useState("");
     const [playerNumber, setPlayerNumber] = useState(0);
-    const [mapNumber, setMapNumber] = useState(0);
     const [animationFrameNum, setAnimationFrameNum] = useState(0);
 
     let ctx: any;

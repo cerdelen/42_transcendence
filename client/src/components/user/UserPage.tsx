@@ -11,10 +11,34 @@ import GameHistory from "./GamesHistory";
 import UserStats from "./UserStatistics";
 import { our_socket } from "../../utils/context/SocketContext";
 import { Link } from "react-router-dom";
+import { CounterContext } from "../../utils/context/CounterContext";
 import Incoming_friend_requests from "./Incoming_friend_requests";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
+function CustomizationFields({ setMapNumber }: { setMapNumber: any }) {
+
+  return (
+      <>
+          <br />
+          <br />
+          <button className="purple-button_" onClick={(e) => {
+              e.preventDefault();
+              setMapNumber(0);
+          }}> Bulgaria </button>
+          <button className="purple-button_" onClick={(e) => {
+              e.preventDefault();
+              setMapNumber(1);
+          }}> Paris </button>
+          <button className="purple-button_" onClick={(e) => {
+              e.preventDefault();
+              setMapNumber(2);
+          }}> Cat Valley </button>
+      </>
+  )
+}
+
 const UserPage = () => {
+  const {mapNumber, setMapNumber} = useContext(CounterContext);
   const { userId, blocked_users } = useContext(UserContext);
   const { userIdCard, setShowUserInto } = useMyContext();
   const [isVisible, setIsVisible] = useState(true);
@@ -162,7 +186,7 @@ const UserPage = () => {
     console.log(userId + " Inviting player " + userName);
     setShowUserInto(false);
     let obj: any = { userId: userId, userName: userName };
-
+    
     our_socket.emit("createInvitationRoom", JSON.stringify(obj));
   }
   return (
@@ -194,6 +218,7 @@ const UserPage = () => {
               <button className="purple-button" onClick={update_is_blocked}>
                 {is_blocked ? "Unblock" : "Block"}
               </button>
+              
             </div>
           )}
         </div>

@@ -13,7 +13,7 @@ import Game from "./components/Game";
 import { UserContext } from "./contexts/UserContext";
 import InfoCardProvider, { useMyContext } from "./contexts/InfoCardContext";
 import Displayed_Chat_Provider from "./contexts/Displayed_Chat_Context";
-import { SocketContext, our_socket } from "./utils/context/SocketContext";
+import { our_socket } from "./utils/context/SocketContext";
 import Community from "./components/community/CommunityPage";
 import LandingPage from "./LandingPage";
 import 'reactjs-popup/dist/index.css';

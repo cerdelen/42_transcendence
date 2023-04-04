@@ -28,7 +28,10 @@ const PopUp = ({setInviterName ,inviterName ,isInvited, setIsInvited} : Props) =
     
     const rejectInvite = () => {
       if(isInvited === false)
+      {
+        console.log("Is invited ");
         return ;
+      }
       console.log("Invite rejected");
       let obj = {inviterName: inviterName, userId: userId}
       console.log("Inviter name == " , inviterName);

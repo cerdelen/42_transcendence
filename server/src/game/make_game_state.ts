@@ -147,7 +147,7 @@ function ball_update(ball: Ball,player_1 : Player, player_2 : Player,state: pong
 }
 export function gameLoop(state: pong_properties) : number
 {
-    const win_condition = 10;
+    const win_condition = 2;
     if(!state)
     {
         return 0;

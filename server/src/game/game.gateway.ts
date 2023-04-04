@@ -293,7 +293,7 @@ export class GameGateway {
     if (!userId) {
       return;
     }
-    if(!(clientRooms[client.id] == undefined || clientRooms[client.id] == null))
+    if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
     {
       console.log("game ongoing " );
       client.emit("gameOngoing");
@@ -445,10 +445,13 @@ async function startGameInterval(userService: any, roomName: string, state_: any
       emitGameState(roomName, state_, server);
     } else {
       emitGameOver(state_ ,userService, roomName, winner, server, game, prisma, other_game.player_two);
-      console.log("breaks here ? ");
-      clientRooms[stateArr[roomName].participants[0]] = null;
-      clientRooms[stateArr[roomName].participants[1]] = null;
-      console.log("breaks here ? check");
+      // console.log("breaks here ? ");
+      if(stateArr[roomName].participants)
+      {
+        clientRooms[stateArr[roomName].participants[0]] = null;
+        clientRooms[stateArr[roomName].participants[1]] = null;
+      }
+      // console.log("breaks here ? check");
       stateArr[roomName] = null;
       clearInterval(intervalId);
     }

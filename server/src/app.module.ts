@@ -20,6 +20,7 @@ import { GameModule } from './game/game.module';
 import { ConfigModule } from '@nestjs/config';
 // import * as dotenv from 'dotenv';
 import { config } from './config';
+import { UserGatewayModule } from './user/userSocket/user.gateway.module';
 
 // dotenv.config();
 
@@ -31,7 +32,7 @@ import { config } from './config';
 		load: [config],
 		envFilePath: '.env'
 		// envFilePath: '.env'		
-	}), AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, MsgModule, ConversationModule, EventEmitterModule, GameModule],
+	}), AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, MsgModule, ConversationModule, EventEmitterModule, GameModule, UserGatewayModule],
 	// }), AuthModule, PrismaModule, UserModule, TwoFaModule, PicturesModule, MsgModule, ConversationModule, GatewayModule, EventEmitterModule, GameModule],
 	controllers: [AppController],
 	providers: [AppService, UserService],

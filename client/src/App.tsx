@@ -14,7 +14,8 @@ import Game from "./components/Game";
 import { UserContext } from "./contexts/UserContext";
 import InfoCardProvider, { useMyContext } from "./contexts/InfoCardContext";
 import Displayed_Chat_Provider from "./contexts/Displayed_Chat_Context";
-import { our_socket } from "./utils/context/SocketContext";
+import Online_users_Provider from "./contexts/Online_users_context";
+import { SocketContext, our_socket } from "./utils/context/SocketContext";
 import Community from "./components/community/CommunityPage";
 import LandingPage from "./LandingPage";
 import 'reactjs-popup/dist/index.css';
@@ -88,26 +89,31 @@ function App() {
     }
   }
 
+  // useEffect(() => {
+  //   function handleBeforeUnload(event: any) {
+  //     event.preventDefault();
+  //     console.log("Are you sure you want to leave");
+  //     our_socket.emit("userOffline", userId);
+  //     //Add implementatione
+  //     return (event.returnValue = 'Are you sure you want to leave?');
+  //     // Optionally, you can perform cleanup or notifications here
+  //   }
+
+  //   window.addEventListener('beforeunload', handleBeforeUnload);
+
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleBeforeUnload);
+  //   };
+  // }, []);
+
   useEffect(() => {
-    function handleBeforeUnload(event: any) {
-      event.preventDefault();
-      console.log("Are you sure you want to leave");
-      our_socket.emit("userOffline", userId);
-      //Add implementatione
-      return (event.returnValue = 'Are you sure you want to leave?');
-      // Optionally, you can perform cleanup or notifications here
+    if(userId !== '')
+    {
+      console.log("this is user id " + userId);
+      
+      our_socket.emit("online_inform", userId);
+      console.log("User online")
     }
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
-
-  useEffect(() => {
-    our_socket.emit("online_inform", userId);
-    console.log("User online")
   },[userId] );
   
   useEffect(() => {
@@ -153,20 +159,22 @@ function App() {
             blocked_users: blcoked_users,
           }}
         >
-        <CounterProvider>
-          <Profile_picture_Provider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={loggedIn ? <HomePage setInviterName={setinviterName} inviterName={inviterName} isInvited={isInvited} setIsInvited={setIsInvited}/> : <LoginPage />} >
-                <Route index element={<LandingPage/>} />
-                <Route path="/game" element={<Game userId={userId} />} />
-                <Route path="/community" element={<Community userId={userId} />} />
-                <Route path="/ladder" element={<Ladder />} />
-              </Route>
-              <Route path="/auth" element={<SecondFactorPage />} />
-            </Routes>
-          </BrowserRouter>
-          </Profile_picture_Provider>
+  <CounterProvider>
+          <Online_users_Provider>
+            <Profile_picture_Provider>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={loggedIn ? <HomePage setInviterName={setinviterName} inviterName={inviterName} isInvited={isInvited} setIsInvited={setIsInvited}/> : <LoginPage />} >
+                    <Route index element={<LandingPage/>} />
+                    <Route path="/game" element={<Game userId={userId} />} />
+                    <Route path="/community" element={<Community userId={userId} />} />
+                    <Route path="/ladder" element={<Ladder />} />
+                  </Route>
+                  <Route path="/auth" element={<SecondFactorPage />} />
+                </Routes>
+              </BrowserRouter>
+            </Profile_picture_Provider>
+          </Online_users_Provider>
           </CounterProvider>
         </UserContext.Provider>
       </Displayed_Chat_Provider>

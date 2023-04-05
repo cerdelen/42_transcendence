@@ -15,4 +15,3 @@ export type ConversationContextType = {
 	name: string;
 	mail: string;
 }
-

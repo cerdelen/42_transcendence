@@ -1,14 +1,12 @@
-import React, { useRef, useEffect, useState, useId } from "react";
+import React, { useRef, useContext ,useEffect, useState, useId } from "react";
 import drawPong from './Pong'
 import { pong_properties, KeyInfo, Player } from './Pong_types'
-import { SocketContext, our_socket } from '../utils/context/SocketContext';
-
+import {our_socket} from '../utils/context/SocketContext';
+import { CounterContext } from "../utils/context/CounterContext";
 import { useMyContext } from '../contexts/InfoCardContext'
-import { Socket } from "socket.io-client";
-
+// import { gameContext } from '../contexts/gameContext'
 const Canvas = ({ userId }: { userId: string }) => {
     const { images, initial_state } = useMyContext();
-
     function Custmization_fields({ setMapNumber }: { setMapNumber: any }) {
 
         return (
@@ -17,14 +15,17 @@ const Canvas = ({ userId }: { userId: string }) => {
                 <br />
                 <button className="game_buttons" onClick={(e) => {
                     e.preventDefault();
+                    console.log("Map number is " + mapNumber);
                     setMapNumber(0);
                 }}> Bulgaria </button>
                 <button className="game_buttons" onClick={(e) => {
                     e.preventDefault();
                     setMapNumber(1);
+                    console.log("Map number is " + mapNumber);
                 }}> Paris </button>
                 <button className="game_buttons" onClick={(e) => {
                     e.preventDefault();
+                    console.log("Map number is " + mapNumber);
                     setMapNumber(2);
                 }}> Cat Valley </button>
             </>
@@ -52,14 +53,14 @@ const Canvas = ({ userId }: { userId: string }) => {
         }
 
     }
-    console.log("Just user id" + userId);
     const [gameInfo, setGameInfo] = useState<pong_properties>(initial_state);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [gameActive, setGameActive] = useState(false);
+    
     const [gameCode, setGameCode] = useState("");
+    const {mapNumber, setMapNumber} = useContext(CounterContext);
     const [codeInput, setCodeInput] = useState("");
     const [playerNumber, setPlayerNumber] = useState(0);
-    const [mapNumber, setMapNumber] = useState(0);
     const [animationFrameNum, setAnimationFrameNum] = useState(0);
 
     let ctx: any;
@@ -114,15 +115,20 @@ const Canvas = ({ userId }: { userId: string }) => {
             reset();
             setGameActive(false);
             alert("Same user wanted to connect to one game");
-        })
+        })       
+    }, [gameActive])
 
+    useEffect(() => 
+    {
         our_socket.on("handleTooManyPlayers", () => {
             our_socket.off("handleTooManyPlayers");
             reset();
             setGameActive(false);
             alert("This game has too many players");
         })
-
+    }, [gameActive])
+    useEffect(() => 
+    {
         our_socket.on('gameOver', (data: number) => {
             if (!gameActive) {
                 our_socket.off('gameOver');
@@ -142,7 +148,6 @@ const Canvas = ({ userId }: { userId: string }) => {
             setGameActive(false);
             our_socket.off('gameOver');
         })
-
     }, [gameActive])
     function handleGameCode(data: string) {
         setGameCode(data);
@@ -159,6 +164,7 @@ const Canvas = ({ userId }: { userId: string }) => {
     useEffect(() => 
     {
         our_socket.on('invitationInit', (UserIndex_: number) => {
+            our_socket.off("gameCancelled");
             setGameActive(true);
             console.log("Id of the user ", UserIndex_);
             let num: number = UserIndex_;
@@ -166,15 +172,22 @@ const Canvas = ({ userId }: { userId: string }) => {
             // our_socket.off("invitationInit");
             console.log("Invitation init");
         });
+   
+    }, [gameActive])
+
+    useEffect(() => 
+    {
         our_socket.on("gameCancelled", (rejectedUserName) => 
         {
+            our_socket.off("gameCancelled");
             console.log("Game cancelled invoked");   
             alert("Game has been cancelled by " + rejectedUserName);
             setPlayerNumber(0);
             setGameActive(false);
-            // our_socket.off("gameCancelled");
+            
         })
-    }, [])
+    }, [gameActive])
+    
     useEffect(() => {
         our_socket.on('init', (UserIndex_: number) => {
             if(!gameActive)

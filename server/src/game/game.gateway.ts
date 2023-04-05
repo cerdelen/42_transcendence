@@ -5,9 +5,6 @@ import { getInitialState, gameLoop} from './make_game_state'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { io_server } from 'src/utils/Server';
-import { interval } from 'rxjs';
-import { Socket } from 'dgram';
-import { emit } from 'process';
 import pong_properties from './make_game_state'
 
 
@@ -54,15 +51,18 @@ async function emitToTheUserSocket(user: any, server: Server, event_name:string,
     {
       final_socket = e;
       found = true;
+      if(event_name == 'gameCancelled')
+        console.log("Kurwa jebana mać");
     }
   });
   if(!found)
   {
     return ;
   }
+  if(event_name == 'gameCancelled')
+    console.log("emitting cancelled ");
   final_socket.emit(event_name, message)
 }
-
 @WebSocketGateway(
   {
     cors: {
@@ -75,7 +75,9 @@ export class GameGateway {
   @WebSocketServer()
   server: Server;
 
-  // onModuleInit() {
+  onModuleInit() {
+    console.log("Instantiation");
+  }
   //   this.server.on('connection', (socket) => {
   //     //console.log(socket.id);
   //     //console.log("connected");
@@ -124,7 +126,7 @@ export class GameGateway {
     this.userService.set_user_online(Number.parseInt(userId) ,false);
     
   }
-
+//tldr Rooms
   @SubscribeMessage('playerAccepted')
   async playerAccepted(@MessageBody() obj, @ConnectedSocket() client)
   {
@@ -177,7 +179,15 @@ export class GameGateway {
     //   client.emit('sameUser');
     //   return;
     // };
-    
+    let user_1 = await this.userService.findUserByName(new_obj.inviterName);
+    let new_invitation_obj : invitesType = {creator_id: String(user_1.id), invitee_id: new_obj.userId};
+    let delindex = invites.indexOf(new_invitation_obj);
+    if(!delindex)
+    {
+      //console.log("Index to delete not found in reject invite ");
+      return ;
+    }
+    invites.splice(delindex, 1);
     //console.log("Socket 0 id " + sockets[0].id + " client id " + client.id + " roomName ", gameCode_);
     invitationRooms[client.id] = String(gameCode_);
     stateArr[gameCode_].participants[1] = client.id;
@@ -210,12 +220,14 @@ export class GameGateway {
     invites.splice(delindex, 1);
     let new_user = await this.userService.findUserById(new_obj.userId);
     //console.log("Game cancelled event sent");
+    
     emitToTheUserSocket(user, this.server, "gameCancelled", new_user.name)
   }
   
   @SubscribeMessage('createInvitationRoom')
   async handleInvitation(@MessageBody() obj , @ConnectedSocket() client)
   {
+    
     if(!clientRooms)
     {
       return ;
@@ -226,30 +238,34 @@ export class GameGateway {
       client.emit("gameOngoing");
       return ;
     }
+    console.log("Wha the shell 0");
     let object = JSON.parse(obj);
     let userId = object.userId;
     let invitedUserId = object.userName;
+    console.log("Wha the shell -1");
     let user = await this.userService.findUserByName(invitedUserId);
     let unique : boolean = true;
 
     if (!roomNames[0]) {
       let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: String(user.id)};
-     
+      console.log("Wha the shell -2");
       invites.forEach((entry) => {
         if(entry.creator_id == userId && entry.invitee_id == String(user.id) || entry.creator_id == String(user.id)  && entry.invitee_id  == userId)
         {
           unique = false;
         }
       });
-      if(!unique)
-      {
-        //console.log("Invitation already exist");
-        return ;
-      }
+      // if(!unique)
+      // {
+      //   console.log("Wha the shell -3");
+      //   console.log("Invitation already exist");
+      //   return ;
+      // }
       invites.push(new_invitation_obj);
       
       if(!userId)
       {
+        console.log("Something broken 0");
         return ;
       }
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
@@ -260,11 +276,12 @@ export class GameGateway {
       stateArr[game.id] = pair;
       stateArr[game.id].participants[0] = client.id;
       client.join(game.id.toString());
-    
+      console.log("Something broken 1");
       client.emit('invitationInit', 1);
       invitationRoomsNames.push({ roomName: game.id.toString(), gameInstance: game });
 
       let creator = await this.userService.findUserById(Number.parseInt(userId));
+      console.log("Something broken 2");
       emitToTheUserSocket(user, this.server, "invitationPopUp", creator.name)
       return;
     }
@@ -276,7 +293,7 @@ export class GameGateway {
     if (!userId) {
       return;
     }
-    if(!(clientRooms[client.id] == undefined || clientRooms[client.id] == null))
+    if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
     {
       console.log("game ongoing " );
       client.emit("gameOngoing");
@@ -361,7 +378,6 @@ export class GameGateway {
   handleKeyUp(@MessageBody() keyobj,
     @ConnectedSocket() client) {
     let roomName = clientRooms[client.id];
-
     if (!roomName) {
       roomName = invitationRooms[client.id];
       if(!roomName)
@@ -389,7 +405,6 @@ export class GameGateway {
 
 function emitGameState(roomName: string, state_: any, server: Server) {
   server.sockets.in(roomName).emit('gameState', JSON.stringify(state_));
-
 }
 
 async function emitGameOver(state_: any, userService: any, roomName: string, winner: number, server: Server, game: any, prisma: PrismaService, player_two: number) {
@@ -402,6 +417,7 @@ async function emitGameOver(state_: any, userService: any, roomName: string, win
     game.winner = player_two;
     game.loser = game.player_one;
     server.sockets.in(roomName).emit('gameOver', (Number.parseInt(game.player_two)));
+    
   }
   if (!game.score_one) {
     game.score_one = state_.player_1_score;
@@ -420,6 +436,7 @@ async function emitGameOver(state_: any, userService: any, roomName: string, win
     userService.add_game_to_history(game.id);
   }
 }
+
 async function startGameInterval(userService: any, roomName: string, state_: any, server: Server, game: any, prisma: PrismaService) {
   let other_game = await prisma.game.findUnique({ where: { id: game.id } });
   const intervalId = setInterval(() => {
@@ -428,8 +445,13 @@ async function startGameInterval(userService: any, roomName: string, state_: any
       emitGameState(roomName, state_, server);
     } else {
       emitGameOver(state_ ,userService, roomName, winner, server, game, prisma, other_game.player_two);
-      clientRooms[stateArr[roomName].participants[0]] = null;
-      clientRooms[stateArr[roomName].participants[1]] = null;
+      // console.log("breaks here ? ");
+      if(stateArr[roomName].participants)
+      {
+        clientRooms[stateArr[roomName].participants[0]] = null;
+        clientRooms[stateArr[roomName].participants[1]] = null;
+      }
+      // console.log("breaks here ? check");
       stateArr[roomName] = null;
       clearInterval(intervalId);
     }

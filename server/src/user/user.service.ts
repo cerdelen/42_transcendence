@@ -5,6 +5,7 @@ import { UserWhereUniqueInput } from '../utils/types';
 
 @Injectable()
 export class UserService {
+	
 	constructor(
 		private prisma: PrismaService
 		) {}

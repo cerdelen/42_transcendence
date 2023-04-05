@@ -24,8 +24,8 @@ export class ConversationController {
 	constructor (
 		private readonly conversationsService: ConversationService,
 		private readonly userService: UserService,
+		private readonly convGateway: conversationGateway
 ) {}
-		// private readonly convGateway: conversationGateway) {}
 
 
 	@UseGuards(Jwt_Auth_Guard)
@@ -121,7 +121,8 @@ export class ConversationController {
 				}
 			})
 			this.conversationsService.updateConversationIdInUser(req.user.id, body.chat_id);
-			// this.convGateway.joined_chat(Number(body.chat_id), Number(req.user.id));
+	
+			this.convGateway.joined_chat(Number(body.chat_id), Number(req.user.id));
 
 		//console.log("admin_array2 = " + existingConversation.conversation_admin_arr);
 		//console.log("owner_array2 = " + existingConversation.conversation_owner_arr);

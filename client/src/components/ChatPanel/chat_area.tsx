@@ -131,13 +131,7 @@ const Chat_area = () => {
         <>
           <h2>Chat {displayed_chat.conversation_name}</h2>
           <Display_full_chat chat_id={displayed_chat.conversation_id} />
-          {/* <form
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-          > */}
             <Chat_input_filed_and_send_button />
-          {/* </form> */}
         </>
       )}
     </div>

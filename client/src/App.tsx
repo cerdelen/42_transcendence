@@ -89,26 +89,31 @@ function App() {
     }
   }
 
+  // useEffect(() => {
+  //   function handleBeforeUnload(event: any) {
+  //     event.preventDefault();
+  //     console.log("Are you sure you want to leave");
+  //     our_socket.emit("userOffline", userId);
+  //     //Add implementatione
+  //     return (event.returnValue = 'Are you sure you want to leave?');
+  //     // Optionally, you can perform cleanup or notifications here
+  //   }
+
+  //   window.addEventListener('beforeunload', handleBeforeUnload);
+
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleBeforeUnload);
+  //   };
+  // }, []);
+
   useEffect(() => {
-    function handleBeforeUnload(event: any) {
-      event.preventDefault();
-      console.log("Are you sure you want to leave");
-      our_socket.emit("userOffline", userId);
-      //Add implementatione
-      return (event.returnValue = 'Are you sure you want to leave?');
-      // Optionally, you can perform cleanup or notifications here
+    if(userId !== '')
+    {
+      console.log("this is user id " + userId);
+      
+      our_socket.emit("online_inform", userId);
+      console.log("User online")
     }
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
-
-  useEffect(() => {
-    our_socket.emit("online_inform", userId);
-    console.log("User online")
   },[userId] );
   
   useEffect(() => {
@@ -155,27 +160,19 @@ function App() {
           }}
         >
           <Online_users_Provider>
-          {/* <Popup open={isInvited} position="right center" onClose={rejectInvite} >
-          <h2>You've been invited to the game by {inviterName}</h2>
-          <center>
-          <button className="game_buttons" onClick={acceptInvite}> Accept </button>
-          <button className="game_buttons" onClick={rejectInvite}> Reject </button>
-          </center>
-          </Popup> */}
-          {/* <PopUp/> */}
-          <Profile_picture_Provider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={loggedIn ? <HomePage setInviterName={setinviterName} inviterName={inviterName} isInvited={isInvited} setIsInvited={setIsInvited}/> : <LoginPage />} >
-                <Route index element={<LandingPage/>} />
-                <Route path="/game" element={<Game userId={userId} />} />
-                <Route path="/community" element={<Community userId={userId} />} />
-                <Route path="/ladder" element={<Ladder />} />
-              </Route>
-              <Route path="/auth" element={<SecondFactorPage />} />
-            </Routes>
-          </BrowserRouter>
-          </Profile_picture_Provider>
+            <Profile_picture_Provider>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={loggedIn ? <HomePage setInviterName={setinviterName} inviterName={inviterName} isInvited={isInvited} setIsInvited={setIsInvited}/> : <LoginPage />} >
+                    <Route index element={<LandingPage/>} />
+                    <Route path="/game" element={<Game userId={userId} />} />
+                    <Route path="/community" element={<Community userId={userId} />} />
+                    <Route path="/ladder" element={<Ladder />} />
+                  </Route>
+                  <Route path="/auth" element={<SecondFactorPage />} />
+                </Routes>
+              </BrowserRouter>
+            </Profile_picture_Provider>
           </Online_users_Provider>
         </UserContext.Provider>
       </Displayed_Chat_Provider>

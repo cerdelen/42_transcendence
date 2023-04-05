@@ -4,12 +4,12 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { Services } from 'src/utils/consts';
 import { PrismaModule } from '../prisma/prisma.module';
-import { userGateway } from './userSocket/user.gateway';
+import { forwardRef } from '@nestjs/common';
 
 @Module({
   imports: [PrismaModule],
   providers: [
-    {provide: Services.USERS,useClass: UserService}, userGateway
+    {provide: Services.USERS,useClass: UserService},
   ],
   exports: [
     {

@@ -7,6 +7,7 @@ import StatusAndGamesWon from "./StatusAndGamesWon";
 import LevelImageAndUsername from "./LevelImageAndUsername";
 import ToggleBox from "./ToggleBox";
 import { UserContext } from "../../contexts/UserContext";
+import { our_socket } from "../../utils/context/SocketContext";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 const ProfileCard = () => {
@@ -29,6 +30,7 @@ const ProfileCard = () => {
   function logOut() {
     //remove the cookie
     JSCookies.remove("accessToken");
+    our_socket.emit("logging out");
     //change the state to logged out
     // setLoggedIn(false);
     //redirect to the main screen
@@ -92,7 +94,7 @@ const ProfileCard = () => {
           userName={name}
           setIsDropdownOpen={setIsDropdownOpen}
         />
-        <StatusAndGamesWon wins={wins} />
+        <StatusAndGamesWon wins={wins}/>
         <Achievements achievements={achievements} />
         <ToggleBox setBase64String={setBase64String} status2FA={statusTFA} />
 

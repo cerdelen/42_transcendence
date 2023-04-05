@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import JSCookies from "js-cookie";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+import { Online_users_context } from "../../contexts/Online_users_context";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
-const User_preview_card = ({other_user_id} : {other_user_id: number}) => {
+const User_preview_card = ({other_user_id, online} : {other_user_id: number, online: boolean}) => {
 	const { setUserIdCard, setShowUserInto} = useMyContext();
 
 	const handleOnClick = () => 
@@ -16,7 +17,9 @@ const User_preview_card = ({other_user_id} : {other_user_id: number}) => {
 	const [photo, setPhoto] = useState("");
 	const [user_name, set_user_name] = useState("");
 	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
+	const { online_users } = useContext(Online_users_context);
 	const [status, setStatus] = useState(false);
+
 	useEffect(() => {
 			const get_user_info = async (other_user_id : number) => {
 				const response = await fetch(`http://${ipAddress}:3003/user/user_name`, {
@@ -37,7 +40,13 @@ const User_preview_card = ({other_user_id} : {other_user_id: number}) => {
 					setPhoto(await pushPictureToMap(Number(other_user_id), picture_map, set_picture_map));
 		}
 		get_user_info(other_user_id);
-		}, []);
+		console.log("this is inside useeffect " + JSON.stringify(online_users));
+		
+		}, [online_users]);
+
+		// console.log("this is online users in the cards " + JSON.stringify(online_users));
+		console.log("this is online boolean for id " + other_user_id + " " + online);
+		
 
 	return (
 		<li className='Chat_preview_cards online-status'  title={user_name} onClick={handleOnClick}>
@@ -45,7 +54,7 @@ const User_preview_card = ({other_user_id} : {other_user_id: number}) => {
 			<span id='user-name' >{user_name}</span>
 			<span
 				id="status-dot-other-players"
-				style={{ backgroundColor: true ? "purple" : "gray" }} //hardcoded
+				style={{ backgroundColor: online ? "purple" : "gray" }} //hardcoded
 			></span>
 		</li>
 	)
@@ -54,6 +63,7 @@ const User_preview_card = ({other_user_id} : {other_user_id: number}) => {
 const Get_all_other_users = () =>
 {
 	const [other_users_ids, set_other_users_id] = useState<number[]>([]);
+	const { online_users } = useContext(Online_users_context);
 
 	useEffect(() => {
 		async function get_all_user_ids(){
@@ -70,14 +80,15 @@ const Get_all_other_users = () =>
 			}
 		}
 		get_all_user_ids();
-	  }, []);
+	  }, [online_users]);
+
 	return (
 		<div className="left-pane-column" >
 			<h2>All Players</h2>
 			<ul className='list-cards'>
 				{
 					other_users_ids.map((other_user_id) => (
-						<User_preview_card key={other_user_id} other_user_id={other_user_id} />
+						<User_preview_card key={other_user_id} other_user_id={other_user_id} online={online_users.includes(other_user_id)}/>
 					))
 				}	
 			</ul>

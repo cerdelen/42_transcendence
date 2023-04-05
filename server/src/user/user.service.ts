@@ -411,6 +411,20 @@ export class UserService {
 		return (user.socketId);
 	}
 
+	async find_user_by_sock_id(sock_id: string)
+	{
+		const user = await this.prisma.user.findMany({where: {socketId: sock_id}});
+
+		if(user.length > 0)
+			return (user[0].id);
+		return (undefined)
+	}
+
+	async reset_sock_id(user_id: number)
+	{
+		await this.set_user_socket_id(user_id, "");
+	}
+
 	async set_user_socket_id(user_id: number, s_id: string)
 	{
 		return this.prisma.user.update({

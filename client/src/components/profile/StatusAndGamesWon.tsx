@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { Online_users_context } from "../../contexts/Online_users_context";
 import { players, Player } from "../../models/temp-players";
 const player: Player = players[0];
 
@@ -6,16 +8,16 @@ type Props = {
 };
 
 const StatusAndGamesWon = (props: Props) => {
-  // console.log("wins = " + props.wins);
+	const { online_users } = useContext(Online_users_context);
 
   return (
     <div id="status-games-won">
       <span
         id="status-dot"
-        style={{ backgroundColor: player.availability ? "purple" : "gray" }}
+        style={{backgroundColor: "purple"}}
       ></span>
       <span id="availability">
-        {player.availability ? "ONLINE" : "OFFLINE"}
+        {"ONLINE" }
       </span>
       <span style={{ fontWeight: "bolder" }}>WINS {props.wins} </span>
     </div>

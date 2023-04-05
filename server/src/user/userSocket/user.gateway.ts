@@ -17,10 +17,6 @@ export class userGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	handleConnection(client: any, ...args: any[])
 	{
-		// this.online_users.push(client);
-		// console.log(client);
-		
-		// this.server.emit("online users update", this.get_online_users());
 	}
 	async handleDisconnect(client: any) {
 		console.log("someone is disconnecting ");
@@ -28,9 +24,9 @@ export class userGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if(user_id != undefined)
 		{
 			this.userService.reset_sock_id(user_id);
-			// this.online_users.filter(c => c !== user_id);
 			const idx = this.online_users.indexOf(user_id);
-			this.online_users.splice(idx, 1);
+			if (idx != -1)
+				this.online_users.splice(idx, 1);
 			this.server.emit("online users update", this.get_online_users());
 		}
 	}
@@ -55,13 +51,13 @@ export class userGateway implements OnGatewayConnection, OnGatewayDisconnect
 			if (!this.online_users.includes(Number(data)))
 			{
 				this.userService.set_user_socket_id(Number(data), client.id)
+				console.log("before push " + JSON.stringify(this.online_users));
 				this.online_users.push(Number(data));
-				console.log(JSON.stringify(this.online_users));
+				console.log("after push " + JSON.stringify(this.online_users));
 				this.server.emit("online users update", this.get_online_users());
 			}
 		}
 	}
-
 
 	@SubscribeMessage('logging out')
 	async someone_logged_out(@ConnectedSocket() client)
@@ -82,17 +78,4 @@ export class userGateway implements OnGatewayConnection, OnGatewayDisconnect
 			this.server.emit("online users update", this.get_online_users());
 		}
 	}
-	// @SubscribeMessage('block_user')
-	// async block_user(@MessageBody() data: any)
-	// {
-	// 	console.log("block user called");
-		
-	// 	await this.userService.block_user(data.user_id, data.user_to_block);
-	// }
-	
-	// @SubscribeMessage('unblock_user')
-	// async unblock_user(@MessageBody() data: any)
-	// {
-	// 	await this.userService.unblock_user(data.user_id, data.user_to_unblock);
-	// }
 }

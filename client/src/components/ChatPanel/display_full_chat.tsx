@@ -117,15 +117,11 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
       set_name_map(temp_map);
     };
     const get_messages = async (chat_id: number) => {
-      //console.log("GET MESSAGES");
-
       if (chat_id == -1) {
-        //console.log("chat_id == -1 cleaning messages");
         const empty: display_message_info[] = [];
         set_messages(empty);
         return;
       }
-      // console.log("fetching all message");
 
       const response = await fetch(
         `http://${ipAddress}:3003/conversation/get_messages_from_conversation/${chat_id}`,

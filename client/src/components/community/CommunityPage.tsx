@@ -3,15 +3,15 @@ import Open_group_cards from '../ChatPanel/open_group_chats_bar';
 import Chat_area from '../ChatPanel/chat_area';
 import ChatCardsContextProvider from "../../contexts/chatCardsContext";
 
-const Community = ({ userId }: { userId: string }) => {
+const Community = () => {
 
   return (
     <ChatCardsContextProvider>
-      <main id='community'>
+      <div id='community'>
         <Community_left_collumn />
         <Chat_area />
         <Open_group_cards />
-      </main>
+      </div>
     </ChatCardsContextProvider>
   )
 }

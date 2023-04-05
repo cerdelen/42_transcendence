@@ -10,10 +10,8 @@ function hasJpegExtension(filename: string): boolean {
 
 
 const ProfilePicture = () => {
-  // const [showMenu, setShowMenu] = useState<boolean>(false);
   const {showMenu, setShowMenu} = useMyContext();
   const [profilePicture, setProfilePicture] = useState(defaultPicture);
-  // const { userId } = useContext(UserContext);
 
   useEffect(() => {
       getUserPic();

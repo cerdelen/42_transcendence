@@ -89,23 +89,6 @@ function App() {
     }
   }
 
-  // useEffect(() => {
-  //   function handleBeforeUnload(event: any) {
-  //     event.preventDefault();
-  //     console.log("Are you sure you want to leave");
-  //     our_socket.emit("userOffline", userId);
-  //     //Add implementatione
-  //     return (event.returnValue = 'Are you sure you want to leave?');
-  //     // Optionally, you can perform cleanup or notifications here
-  //   }
-
-  //   window.addEventListener('beforeunload', handleBeforeUnload);
-
-  //   return () => {
-  //     window.removeEventListener('beforeunload', handleBeforeUnload);
-  //   };
-  // }, []);
-
   useEffect(() => {
     if(userId !== '')
     {
@@ -167,7 +150,7 @@ function App() {
                   <Route path="/" element={loggedIn ? <HomePage setInviterName={setinviterName} inviterName={inviterName} isInvited={isInvited} setIsInvited={setIsInvited}/> : <LoginPage />} >
                     <Route index element={<LandingPage/>} />
                     <Route path="/game" element={<Game userId={userId} />} />
-                    <Route path="/community" element={<Community userId={userId} />} />
+                    <Route path="/community" element={<Community/>} />
                     <Route path="/ladder" element={<Ladder />} />
                   </Route>
                   <Route path="/auth" element={<SecondFactorPage />} />

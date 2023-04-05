@@ -252,10 +252,10 @@ span {
   grid-template-rows: .5fr 8fr .5fr;
   height: 100vh;
 }
-
+/* 
 main {
   display: grid;
-}
+} */
 
 /* FOOTER */
 

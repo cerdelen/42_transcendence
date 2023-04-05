@@ -1,29 +1,17 @@
-import React from "react";
 import ProfileCard from "./profile/ProfileCard";
 import logo from "../images/logo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useMyContext } from "../contexts/InfoCardContext";
 
-type Props = {
-  setGamePage: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
 const Header = () => {
-  // const navigate = useNavigate();
-  const { setShowUserInto, setIsDropdownOpen } = useMyContext();
-  // const {setShowUserInto} = useMyContext();
+  const { setShowUserInto, setIsDropdownOpen, setShowMenu } = useMyContext();
 
   const closePopUps = () => {
     setShowUserInto(false);
     setIsDropdownOpen(false);
-
-    // navigate("/game")
+    setShowMenu(false);
   }
 
-  // const closePopUpsTwo = () => {
-  //   setShowUserInto(false);
-  //   navigate("/game")
-  // }
   return (
     <header>
       <Link to="/">

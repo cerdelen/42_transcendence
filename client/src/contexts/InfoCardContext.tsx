@@ -7,6 +7,8 @@ import Cat_valley from "../images/Cat_valley.jpeg";
 import { pong_properties } from "../components/Pong_types";
 
 type MyContextType = {
+  showMenu: boolean;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
   isDropdownOpen: boolean;
   setIsDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
   showUserInfo: boolean;
@@ -15,6 +17,7 @@ type MyContextType = {
   setUserIdCard: React.Dispatch<React.SetStateAction<string>>;
   // isInvited: boolean;
   // setIsInvited: React.Dispatch<React.SetStateAction<boolean>>;
+  
   images: any[];
   initial_state: pong_properties;
 };
@@ -22,6 +25,8 @@ type MyContextType = {
 const InfoCardContext = createContext<MyContextType>({
   showUserInfo: false,
   setShowUserInto: () => {},
+  showMenu: false,
+  setShowMenu: () => {},
   isDropdownOpen: false,
   setIsDropdownOpen: () => {},
   userIdCard: "",
@@ -74,6 +79,7 @@ export function InfoCardProvider({ children }: MyContextProviderProps) {
   const [showUserInfo, setShowUserInto] = useState(false);
   const [userIdCard, setUserIdCard] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   // const [isInvited, setIsInvited] = useState(false);
 
   let images: any[] = [];
@@ -130,6 +136,8 @@ export function InfoCardProvider({ children }: MyContextProviderProps) {
     initial_state,
     isDropdownOpen,
     setIsDropdownOpen,
+    showMenu,
+    setShowMenu,
     //  isInvited,
     //  setIsInvited,
   };

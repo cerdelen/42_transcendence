@@ -308,20 +308,20 @@ footer {
 
 
 
-.scrollable-list,
-.all_open_group_chats-ul {
+/* .scrollable-list, */
+/* .all_open_group_chats-ul {
   list-style-type: none;
   padding: 0;
   max-height: 77vh;
   overflow-x: auto;
   width: 100%;
   flex-shrink: 0;
-}
+} */
 
 
-.open-chats {
+/* .open-chats {
   max-height: 37vh;
-}
+} */
 
 #user-name {
   overflow: hidden;

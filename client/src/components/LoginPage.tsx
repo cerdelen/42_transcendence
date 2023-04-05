@@ -33,7 +33,7 @@ const LoginPage = () => {
     <div className="login-page">
       <h1> CatPong </h1>
       <button className="deep-purple-button big-button" onClick={handleLoginClick}> <span>Login with 42</span> </button>
-      <button className="deep-purple-button big-button" onClick={fakeLogin}> <span>Dummy login</span> </button>
+      {/* <button className="deep-purple-button big-button" onClick={fakeLogin}> <span>Dummy login</span> </button> */}
     </div>
   );
 };

@@ -232,12 +232,12 @@ export class GameGateway {
     {
       return ;
     }
-    if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
-    {
-      console.log("game ongoing " );
-      client.emit("gameOngoing");
-      return ;
-    }
+    // if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
+    // {
+    //   console.log("game ongoing " );
+    //   client.emit("gameOngoing");
+    //   return ;
+    // }
     console.log("Wha the shell 0");
     let object = JSON.parse(obj);
     let userId = object.userId;

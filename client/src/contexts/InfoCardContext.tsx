@@ -1,62 +1,68 @@
 import React, { useContext, useState } from "react";
 import { createContext } from "react";
-import Tochka from "../images/tochka.jpg"
-import Bulgaria from "../images/bulgaria.jpeg"
-import Paris from "../images/paris.jpeg"
-import Cat_valley from "../images/Cat_valley.jpeg"
+import Tochka from "../images/tochka.jpg";
+import Bulgaria from "../images/bulgaria.jpeg";
+import Paris from "../images/paris.jpeg";
+import Cat_valley from "../images/Cat_valley.jpeg";
 import { pong_properties } from "../components/Pong_types";
 
 type MyContextType = {
-    showUserInfo: boolean;
-    setShowUserInto: React.Dispatch<React.SetStateAction<boolean>>;
-    userIdCard: string;
-    setUserIdCard: React.Dispatch<React.SetStateAction<string>>;
-    // isInvited: boolean;
-    // setIsInvited: React.Dispatch<React.SetStateAction<boolean>>;
-    images: any[];
-    initial_state: pong_properties;
+  isDropdownOpen: boolean;
+  setIsDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  showUserInfo: boolean;
+  setShowUserInto: React.Dispatch<React.SetStateAction<boolean>>;
+  userIdCard: string;
+  setUserIdCard: React.Dispatch<React.SetStateAction<string>>;
+  // isInvited: boolean;
+  // setIsInvited: React.Dispatch<React.SetStateAction<boolean>>;
+  images: any[];
+  initial_state: pong_properties;
 };
 
 const InfoCardContext = createContext<MyContextType>({
-    showUserInfo: false,
-    setShowUserInto: () => {},
-    userIdCard: '',
-    setUserIdCard: () => {},
-    // isInvited: false,
-    // setIsInvited: () => {},
-    images: [],
-    initial_state: { keysPressed: [],
-      player_1_score: 0,
-      player_2_score: 0,
-      Ball: {
-          speed: 5,
-          x: 700 / 2 - 10 / 2,
-          y: 400 / 2 - 10 / 2,
-          width: 50,
-          height: 50,
-          xVel: 1,
-          yVel: 1,
-          direction: 0,
-      },
-      Player1: {
-          speed: 10,
-          x: 20,
-          y: 400 / 2 - 60 / 2,
-          width: 20,
-          height: 60,
-          xVel: 0,
-          yVel: 0,
-      },
-      Player2: {
-          speed: 10,
-          x: 700 - (20 + 20),
-          y: 400 / 2 - 60 / 2,
-          width: 20,
-          height: 60,
-          xVel: 0,
-          yVel: 0,
-      }}
-  });
+  showUserInfo: false,
+  setShowUserInto: () => {},
+  isDropdownOpen: false,
+  setIsDropdownOpen: () => {},
+  userIdCard: "",
+  setUserIdCard: () => {},
+  // isInvited: false,
+  // setIsInvited: () => {},
+  images: [],
+  initial_state: {
+    keysPressed: [],
+    player_1_score: 0,
+    player_2_score: 0,
+    Ball: {
+      speed: 5,
+      x: 700 / 2 - 10 / 2,
+      y: 400 / 2 - 10 / 2,
+      width: 50,
+      height: 50,
+      xVel: 1,
+      yVel: 1,
+      direction: 0,
+    },
+    Player1: {
+      speed: 10,
+      x: 20,
+      y: 400 / 2 - 60 / 2,
+      width: 20,
+      height: 60,
+      xVel: 0,
+      yVel: 0,
+    },
+    Player2: {
+      speed: 10,
+      x: 700 - (20 + 20),
+      y: 400 / 2 - 60 / 2,
+      width: 20,
+      height: 60,
+      xVel: 0,
+      yVel: 0,
+    },
+  },
+});
 
 export const useMyContext = () => useContext(InfoCardContext);
 
@@ -66,52 +72,55 @@ type MyContextProviderProps = {
 
 export function InfoCardProvider({ children }: MyContextProviderProps) {
   const [showUserInfo, setShowUserInto] = useState(false);
-  const [userIdCard, setUserIdCard] = useState('');
+  const [userIdCard, setUserIdCard] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   // const [isInvited, setIsInvited] = useState(false);
 
-  let images : any[] = [];
+  let images: any[] = [];
   let pic = new Image();
-  pic.src = Bulgaria
+  pic.src = Bulgaria;
   let pic1 = new Image();
   pic1.src = Paris;
   let pic2 = new Image();
   pic2.src = Cat_valley;
-  let initial_state = { keysPressed: [],
+  let initial_state = {
+    keysPressed: [],
     player_1_score: 0,
     player_2_score: 0,
     Ball: {
-        speed: 5,
-        x: 700 / 2 - 10 / 2,
-        y: 400 / 2 - 10 / 2,
-        width: 50,
-        height: 50,
-        xVel: 1,
-        yVel: 1,
-        direction: 0,
+      speed: 5,
+      x: 700 / 2 - 10 / 2,
+      y: 400 / 2 - 10 / 2,
+      width: 50,
+      height: 50,
+      xVel: 1,
+      yVel: 1,
+      direction: 0,
     },
     Player1: {
-        speed: 10,
-        x: 20,
-        y: 400 / 2 - 60 / 2,
-        width: 20,
-        height: 60,
-        xVel: 0,
-        yVel: 0,
+      speed: 10,
+      x: 20,
+      y: 400 / 2 - 60 / 2,
+      width: 20,
+      height: 60,
+      xVel: 0,
+      yVel: 0,
     },
     Player2: {
-        speed: 10,
-        x: 700 - (20 + 20),
-        y: 400 / 2 - 60 / 2,
-        width: 20,
-        height: 60,
-        xVel: 0,
-        yVel: 0,
-}};
-  let pic_ : any[] = [...images];
+      speed: 10,
+      x: 700 - (20 + 20),
+      y: 400 / 2 - 60 / 2,
+      width: 20,
+      height: 60,
+      xVel: 0,
+      yVel: 0,
+    },
+  };
+  let pic_: any[] = [...images];
   pic_.push(pic);
   pic_.push(pic1);
   pic_.push(pic2);
-  images = [...pic_]
+  images = [...pic_];
   const value = {
     showUserInfo,
     setShowUserInto,
@@ -119,9 +128,10 @@ export function InfoCardProvider({ children }: MyContextProviderProps) {
     setUserIdCard,
     images,
     initial_state,
-  //  isInvited,
-  //  setIsInvited,
-
+    isDropdownOpen,
+    setIsDropdownOpen,
+    //  isInvited,
+    //  setIsInvited,
   };
 
   return (

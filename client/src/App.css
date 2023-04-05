@@ -400,7 +400,7 @@ footer {
 }
 
 @media (min-width: 768px) {
-  button {
+  button:not(#chat-button) {
     padding: 0.25em 0.75em;
   }
 }

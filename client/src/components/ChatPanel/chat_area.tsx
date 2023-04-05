@@ -4,16 +4,9 @@ import { our_socket } from "../../utils/context/SocketContext";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 import Display_full_chat from "./display_full_chat";
 import { UserContext } from "../../contexts/UserContext";
-import empty_chat_picture from "../../images/sleeping_cat.jpeg";
 import JSCookies from "js-cookie";
-// import CatSvg from "../../svg/peeking-cat.svg"
 import CatSvg from "../../svg/peeking-cat.svg"
 const ipAddress = process.env.REACT_APP_Server_host_ip;
-
-interface message {
-  author_id: string;
-  text: string;
-}
 
 const Chat_input_filed_and_send_button = () => {
   const [input, setInput] = useState("");
@@ -55,7 +48,7 @@ const Chat_input_filed_and_send_button = () => {
           setInput(e.target.value);
         }}
       />
-      <button>Send</button>
+      <button id="chat-button">Send</button>
     </form>
   );
 };
@@ -64,9 +57,6 @@ const Chat_area = () => {
   const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 	const { userId } = useContext(UserContext);
 	const [ reset_displayed_chat, set_reset_displayed_chat] = useState(displayed_chat.conversation_id);
-
-// console.log("I WANNA RESET EVERTHNG HERE" + reset_displayed_chat);
-
 
   our_socket.on("some_one_joined_group_chat", ({conv_id, joined_user_id} : {conv_id: number, joined_user_id: number}) =>
 		{	

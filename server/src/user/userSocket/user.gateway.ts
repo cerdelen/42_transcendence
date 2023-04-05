@@ -37,7 +37,7 @@ export class userGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	get_online_users()
 	{
-		return (JSON.stringify( this.online_users))
+		return ( this.online_users)
 	}
 
 	@WebSocketServer()

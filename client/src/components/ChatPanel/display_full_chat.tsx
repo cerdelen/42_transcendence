@@ -10,6 +10,7 @@ import { UserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
 import { our_socket } from "../../utils/context/SocketContext";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
+import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 interface typing {
@@ -40,15 +41,18 @@ function DisplayTyping({ typingDisplay }: { typingDisplay: string }) {
 
 const Display_message_in_chat = ({
   message,
-  name_map,
+  // name_map,
 }: {
   message: display_message_info;
-  name_map: Map<number, string>;
+  // name_map: Map<number, string>;
 }) => {
   const { userId } = useContext(UserContext);
   const is_me: boolean = message.author_id == Number(userId);
+  const { name_map, set_name_map, pushNameToMap } =
+    useMyProfile_picture_Context();
 
-  // console.log("display message called");
+  if (!name_map.has(message.author_id))
+    pushNameToMap(message.author_id, name_map, set_name_map);
 
   return (
     <>
@@ -146,16 +150,14 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
       set_messages(re_messages);
     };
     get_messages(chat_id);
-    our_socket.on("some_one_joined_group_chat", ({conv_id, joined_user_id} : {conv_id: number, joined_user_id: number}) =>
-		{	
+    our_socket.on("some_one_joined_group_chat", ({ conv_id, joined_user_id }: { conv_id: number, joined_user_id: number }) => {
       console.log("someone joined");
-      
-			if (joined_user_id != Number(userId) && displayed_chat.conversation_id == conv_id)
-			{
+
+      if (joined_user_id != Number(userId) && displayed_chat.conversation_id == conv_id) {
         displayed_chat.conversation_participant_arr.push(joined_user_id);
-			}
+      }
       prep_name_map(displayed_chat.conversation_participant_arr);
-		});
+    });
     prep_name_map(displayed_chat.conversation_participant_arr);
   }, [chat_id, displayed_chat]);
 
@@ -183,7 +185,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
           <Display_message_in_chat
             key={idx}
             message={message}
-            name_map={name_map}
+          // name_map={name_map}
           />
         );
       })}

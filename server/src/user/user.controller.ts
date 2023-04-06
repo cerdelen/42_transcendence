@@ -50,6 +50,8 @@ export class UserController
 	@UseGuards(Jwt_Auth_Guard)
 	async	removing_friend(@Req() req: any, @Body('removing_you') removing_you: string)
 	{
+		console.log(`remove_friend_controller: ${removing_you}`);
+		
 		if (!Number.isNaN(removing_you))
 		{	
 			this.userService.rmv_friend(req.user.id, Number(removing_you));

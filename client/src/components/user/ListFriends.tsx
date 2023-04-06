@@ -17,6 +17,7 @@ const NameComponent = ({ name, pic, setIsFriend }: NameProps) => {
   const { userId } = useContext(UserContext);
 
   const remove_friend = async () => {
+    console.log("remove friend");
     try {
       const response = await fetch(
         `http://${ipAddress}:3003/user/remove_friend`,
@@ -31,6 +32,7 @@ const NameComponent = ({ name, pic, setIsFriend }: NameProps) => {
       );
       console.log(response);
       setIsFriend(false);
+      alert("Friend successfully removed");
     } catch (error) {
       alert("Could not modify friends list");
     }

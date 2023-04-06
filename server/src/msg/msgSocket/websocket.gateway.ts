@@ -5,8 +5,6 @@ import { MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, W
 // import { ConversationService } from 'src/conversations/conversations.service';
 // import { AuthService } from '../auth/auth.service';
 // import { UserService } from '../user/user.service';
-import { Server } from 'socket.io';
-import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
 import { MsgService } from 'src/msg/msg.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { io_server } from 'src/utils/Server';

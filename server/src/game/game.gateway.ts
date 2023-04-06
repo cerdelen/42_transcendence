@@ -60,7 +60,7 @@ async function emitToTheUserSocket(user: any, server: Server, event_name:string,
     return ;
   }
   if(event_name == 'gameCancelled')
-    //console.log("emitting cancelled ");
+    console.log("emitting cancelled ");
   final_socket.emit(event_name, message)
 }
 @WebSocketGateway(
@@ -95,15 +95,15 @@ export class GameGateway implements OnGatewayConnection{
   async setupUserSocketId(@MessageBody() userId: string,
   @ConnectedSocket() socket)
   {
-    //console.log("This is what user id data i got " , userId);
+    console.log("This is what user id data i got " , userId);
     if(!Number.parseInt(userId))
     {
 
-      //console.log("socket id setting up error ", Number.parseInt(userId));
+      console.log("socket id setting up error ", Number.parseInt(userId));
       return ;
     }
     await this.userService.updateUser({where: {id: Number.parseInt(userId)}, data: {socketId: socket.id}} );
-    ////console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
+    console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
   }
   @SubscribeMessage("online_inform")
   async handle_online(@MessageBody() userId: string) {
@@ -241,7 +241,7 @@ export class GameGateway implements OnGatewayConnection{
     let invitedUserId = object.userName;
     //console.log("Wha the shell -1");
     let user = await this.userService.findUserByName(invitedUserId);
-    console.log("User name before online check ", user.name, user.online);
+    console.log("user ", userId , " invited " , invitedUserId, " is ", user.socketId);
     if(user.online == false)
     {
       console.log("User is offline");
@@ -269,11 +269,13 @@ export class GameGateway implements OnGatewayConnection{
       
       if(!userId)
       {
-        //console.log("Something broken 0");
+        console.log("Something broken 0");
+        
         return ;
       }
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
       invitationRooms[client.id] = game.id.toString();
+      console.log("Inviting 1");
       client.emit('gameCode', game.id.toString());
       let pair : state_type = {participants: [], state: getInitialState()};
 
@@ -281,11 +283,14 @@ export class GameGateway implements OnGatewayConnection{
       stateArr[game.id].participants[0] = client.id;
       client.join(game.id.toString());
       //console.log("Something broken 1");
+      console.log("Inviting 2");
       client.emit('invitationInit', 1);
       invitationRoomsNames.push({ roomName: game.id.toString(), gameInstance: game });
 
       let creator = await this.userService.findUserById(Number.parseInt(userId));
       //console.log("Something broken 2");
+      console.log("Inviting 3");
+      console.log("user socket id", user.socketId);
       emitToTheUserSocket(user, this.server, "invitationPopUp", creator.name)
       return;
   }
@@ -480,6 +485,7 @@ async function handleNewGame(client: any, server: Server, clientId: number, pris
 
   clientRooms[client.id] = game.id.toString();
   client.emit('gameCode', game.id.toString());
+  console.log("Inviting");
   let pair : state_type = {participants: [], state: getInitialState()};  
   stateArr[game.id] = pair;
   stateArr[game.id].participants[0] = String(client.id);

@@ -127,7 +127,6 @@ function App() {
   {
       our_socket.on("invitationPopUp", (invitingUserName) =>
       {
-
         console.log("You've been invited mate");
         setinviterName(invitingUserName);
         setIsInvited(true);

@@ -77,9 +77,9 @@ const Group_chat_preview_card = ({
   const [hasPassword, setHasPassword] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, inputValue: string) => {
-		event.preventDefault();
+    event.preventDefault();
     console.log(`%cHANDLE SUBMIT`, 'color: blue');
-    
+
     const response = await fetch(
       `http://${ipAddress}:3003/conversation/join_group_chat/join`,
       {
@@ -92,8 +92,8 @@ const Group_chat_preview_card = ({
       }
     );
     const data = await response.json();
-      console.log(`Allowed to join: ${data}`);
-      
+    console.log(`Allowed to join: ${data}`);
+
     if (data == true) {
       setmy_chats_ids([...my_chats_ids, chat_id]);
       let arr_2: number[] = [];
@@ -123,8 +123,8 @@ const Group_chat_preview_card = ({
       }
     );
     const data = await response.json();
-      console.log(`Status: ${data}`);
-      
+    console.log(`Status: ${data}`);
+
     if (data == true) {
       setmy_chats_ids([...my_chats_ids, chat_id]);
       let arr_2: number[] = [];
@@ -133,7 +133,7 @@ const Group_chat_preview_card = ({
           arr_2.push(not_joined_chats_ids[i]);
       }
       setNot_joined_chats_ids(arr_2);
-    }else{
+    } else {
       alert("Banned from chat");
     }
   };
@@ -165,14 +165,14 @@ const Group_chat_preview_card = ({
   const handleOnClick = async () => {
     const passwordIsSet = await checkIfPasswordProtected();
     console.log(`Password is set: ${passwordIsSet}`);
-    
+
     if (passwordIsSet) return;
     await joinChat();
   };
 
   const get_conversation = async (conversation_id: number) => {
     const response = await fetch(
-      `http://${ipAddress}:3003/conversation/getConversationById/${conversation_id}`,
+      `http://${ipAddress}:3003/conversation/getConversationNameById/${conversation_id}`,
       {
         method: "Get",
         headers: {
@@ -181,8 +181,8 @@ const Group_chat_preview_card = ({
         },
       }
     );
-    const data = await response.json();
-    setConversation_name(data["conversation_name"]);
+    const data = await response.text();
+    setConversation_name(data);
   };
 
   useEffect(() => {
@@ -242,23 +242,54 @@ const Get_all_open_group_chats = ({
     get_ids();
   }, []);
 
-  our_socket.on(
-    "some_one_left_group_chat",
-    ({
-      conv_id,
-      left_user_id,
-      conv_still_exists,
-    }: {
-      conv_id: number;
-      left_user_id: number;
-      conv_still_exists: boolean;
-    }) => {
-      if (left_user_id == Number(userId) && conv_still_exists) {
-        if (!not_joined_chats_ids.includes(conv_id))
-          setNot_joined_chats_ids([...not_joined_chats_ids, conv_id]);
-      }
+  useEffect(() => {
+    if (userId !== '') {
+
+      our_socket.on(
+        "some_one_left_group_chat",
+        ({
+          conv_id,
+          left_user_id,
+          conv_still_exists,
+        }: {
+          conv_id: number;
+          left_user_id: number;
+          conv_still_exists: boolean;
+        }) => {
+          if (left_user_id == Number(userId) && conv_still_exists) {
+            if (!not_joined_chats_ids.includes(conv_id))
+              setNot_joined_chats_ids([...not_joined_chats_ids, conv_id]);
+          } else if (left_user_id !== Number(userId) && !conv_still_exists) {
+            console.log("else if");
+            const updatedChats = not_joined_chats_ids;
+            const idx = updatedChats.indexOf(conv_id);
+            if (idx != -1) {
+              console.log("else if -1");
+              console.log(updatedChats);
+              updatedChats.splice(idx, 1);
+              console.log(updatedChats);
+              setNot_joined_chats_ids([...updatedChats]);
+            }
+          }
+        }
+      );
     }
-  );
+
+  }, [userId, not_joined_chats_ids])
+
+  useEffect(() => {
+    if (userId !== '') {
+
+      our_socket.on("created_group_chat", ({ chat_id, creator_id }: { chat_id: number, creator_id: number }) => {
+        if (Number(userId) !== creator_id) {
+          console.log("Created group chat", chat_id, creator_id);
+          if (!not_joined_chats_ids.includes(chat_id))
+            setNot_joined_chats_ids([...not_joined_chats_ids, chat_id]);
+        }
+      })
+    }
+
+  }, [userId, not_joined_chats_ids])
 
   return (
     <ul className="list-cards right-shadow">

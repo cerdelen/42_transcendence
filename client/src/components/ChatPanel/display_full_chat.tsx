@@ -41,10 +41,8 @@ function DisplayTyping({ typingDisplay }: { typingDisplay: string }) {
 
 const Display_message_in_chat = ({
   message,
-  // name_map,
 }: {
   message: display_message_info;
-  // name_map: Map<number, string>;
 }) => {
   const { userId } = useContext(UserContext);
   const is_me: boolean = message.author_id == Number(userId);
@@ -172,7 +170,6 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
     }
   }, [messages]);
 
-  // console.log("rendering full chat");
 
   return (
     <div ref={chatWindow} id="displayed-messages" className="whole-chat">
@@ -181,7 +178,6 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
           <Display_message_in_chat
             key={idx}
             message={message}
-          // name_map={name_map}
           />
         );
       })}

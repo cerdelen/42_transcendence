@@ -97,13 +97,13 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
 			});
-			const conv = await respone.json();
-			const admin_arr : number []= conv["conversation_mute_list_arr"];
-			if(admin_arr.includes(user_id))
-			{
-				displayed_chat.conversation_mute_list_arr?.push();
-				setmuted(true);
-			}
+			// const conv = await respone.json();
+			// const admin_arr : number []= conv["conversation_mute_list_arr"];
+			// if(admin_arr.includes(user_id))
+			// {
+			// 	displayed_chat.conversation_mute_list_arr?.push();
+			// 	setmuted(true);
+			// }
 		}
 		catch(error)
 		{
@@ -119,13 +119,6 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
 			});
-			const conv = await respone.json();
-			const admin_arr : number []= conv["conversation_admin_arr"];
-			if(admin_arr.includes(user_id))
-			{
-				displayed_chat.conversation_admin_arr?.push();
-				setadmin(true);
-			}
 		}
 		catch(error)
 		{

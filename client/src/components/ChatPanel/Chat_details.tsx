@@ -82,48 +82,73 @@ const Participant_in_chat_detail_card = ({
     getUserPic();
   }, []);
 
-  if (
-    displayed_chat.conversation_owner_arr?.includes(user_id) &&
-    is_owner == false
-  ) {
-    set_is_owner(true);
-  } else if (
-    !displayed_chat.conversation_owner_arr?.includes(user_id) &&
-    is_owner == true
-  ) {
-    set_is_owner(false);
-  }
-  if (
-    displayed_chat.conversation_admin_arr?.includes(user_id) &&
-    is_admin == false
-  ) {
-    set_is_admin(true);
-  } else if (
-    !displayed_chat.conversation_admin_arr?.includes(user_id) &&
-    is_admin == true
-  ) {
-    set_is_admin(false);
-  }
-  if (
-    displayed_chat.conversation_mute_list_arr?.includes(user_id) &&
-    is_muted == false
-  ) {
-    set_is_muted(true);
-  } else if (
-    !displayed_chat.conversation_mute_list_arr?.includes(user_id) &&
-    is_muted == true
-  ) {
-    set_is_muted(false);
-  }
+  useEffect(() => {
+    our_socket.on('new_admin_has_been_set', ({ chat_id, admin_id }: { chat_id: number, admin_id: number }) => {
+      if (admin_id === user_id && chat_id === displayed_chat.conversation_id)
+        set_is_admin(true);
+    })
+  }, [user_id, displayed_chat])
+
+  useEffect(() => {
+    our_socket.on('new_owner_has_been_set', ({ chat_id, owner_id }: { chat_id: number, owner_id: number }) => {
+      if (owner_id === user_id && chat_id === displayed_chat.conversation_id)
+        set_is_owner(true);
+    })
+  }, [user_id, displayed_chat])
+
+  useEffect(() => {
+    our_socket.on('mute_user', ({ chat_id, muted_user_id }: { chat_id: number, muted_user_id: number }) => {
+      if (muted_user_id === user_id && chat_id === displayed_chat.conversation_id)
+        set_is_muted(true);
+    })
+  }, [user_id, displayed_chat])
+
+  useEffect(() => {
+    if (
+      displayed_chat.conversation_owner_arr?.includes(user_id) &&
+      is_owner == false
+    ) {
+      set_is_owner(true);
+    } else if (
+      !displayed_chat.conversation_owner_arr?.includes(user_id) &&
+      is_owner == true
+    ) {
+      set_is_owner(false);
+    }
+    if (
+      displayed_chat.conversation_admin_arr?.includes(user_id) &&
+      is_admin == false
+    ) {
+      set_is_admin(true);
+    } else if (
+      !displayed_chat.conversation_admin_arr?.includes(user_id) &&
+      is_admin == true
+    ) {
+      set_is_admin(false);
+    }
+    if (
+      displayed_chat.conversation_mute_list_arr?.includes(user_id) &&
+      is_muted == false
+    ) {
+      set_is_muted(true);
+    } else if (
+      !displayed_chat.conversation_mute_list_arr?.includes(user_id) &&
+      is_muted == true
+    ) {
+      set_is_muted(false);
+    }
+  }, [displayed_chat])
+
 
   const open_admin_as = () => {
     if (Number(userId) != user_id && displayed_chat.group_chat == true)
       set_display_popup(!display_popup);
   };
-  const canOpenChatAdministration: boolean = 
-        ((displayed_chat.conversation_owner_arr?.includes(Number(userId)) ?? false) ||
-          ((displayed_chat.conversation_admin_arr?.includes(Number(userId)) ?? false)&& !is_admin) 
-        )
+  const canOpenChatAdministration: boolean =
+    ((displayed_chat.conversation_owner_arr?.includes(Number(userId)) ?? false) ||
+      ((displayed_chat.conversation_admin_arr?.includes(Number(userId)) ?? false) && !is_admin)
+    )
+    
   return (
     <div className="participant-card" onClick={() => open_admin_as()}>
       <img src={photo} alt="" />
@@ -200,9 +225,9 @@ const Chat_details = ({
     if (inputValue.length > 0) {
       console.log(displayed_chat.conversation_id + "chat id i append to url");
       try {
-        
+
         await fetch(
-          `http://${ipAddress}:3003/conversation/change_password/${displayed_chat.conversation_id }`,
+          `http://${ipAddress}:3003/conversation/change_password/${displayed_chat.conversation_id}`,
           {
             method: "Post",
             headers: {
@@ -227,9 +252,9 @@ const Chat_details = ({
     if (inputValue.length > 0) {
       console.log(displayed_chat.conversation_id + "chat id i append to url");
       try {
-        
+
         await fetch(
-          `http://${ipAddress}:3003/conversation/change_password/${displayed_chat.conversation_id }`,
+          `http://${ipAddress}:3003/conversation/change_password/${displayed_chat.conversation_id}`,
           {
             method: "Post",
             headers: {
@@ -325,11 +350,11 @@ const Chat_details = ({
         )}
         {displayed_chat.group_chat &&
           displayed_chat.conversation_owner_arr?.includes(Number(userId)) && (
-			<div className="password-buttons">
-				<InputFieldOrButton buttonText="Set Password" fieldPlaceholder="Password" handleSubmit={handleSetPassword}/>
-				{/* <InputFieldOrButton buttonText="Reset Password" fieldPlaceholder="Password" handleSubmit={handleResetPassword}/> */}
-				<button className="purple-button" onClick={() => {handleRemovePassword(displayed_chat.conversation_id)}}> Remove Password</button>
-			</div>
+            <div className="password-buttons">
+              <InputFieldOrButton buttonText="Set Password" fieldPlaceholder="Password" handleSubmit={handleSetPassword} />
+              {/* <InputFieldOrButton buttonText="Reset Password" fieldPlaceholder="Password" handleSubmit={handleResetPassword}/> */}
+              <button className="purple-button" onClick={() => { handleRemovePassword(displayed_chat.conversation_id) }}> Remove Password</button>
+            </div>
           )}
       </div>
     </div>

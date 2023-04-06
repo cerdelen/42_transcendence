@@ -225,10 +225,11 @@ export class GameGateway implements OnGatewayConnection{
   {
     
     
-    if(!clientRooms)
-    {
-      return ;
-    }
+    // if(!clientRooms)
+    // {
+      // console.log("Kurwa")
+      // return ;
+    // }
     // if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
     // {
     //   //console.log("game ongoing " );
@@ -267,12 +268,11 @@ export class GameGateway implements OnGatewayConnection{
       // }
       invites.push(new_invitation_obj);
       
-      if(!userId)
-      {
-        console.log("Something broken 0");
-        
-        return ;
-      }
+      // if(!userId)
+      // {
+      //   console.log("Something broken 0");
+      //   return ;
+      // }
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
       invitationRooms[client.id] = game.id.toString();
       console.log("Inviting 1");
@@ -303,10 +303,11 @@ export class GameGateway implements OnGatewayConnection{
     }
     if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
     {
-      //console.log("game ongoing " );
+      console.log("game ongoing " );
       client.emit("gameOngoing");
       return ;
     }
+
     if (!roomNames[0]) {
       handleNewGame(client, this.server, Number.parseInt(userId), this.prisma);
       return;
@@ -454,6 +455,7 @@ async function startGameInterval(userService: any, roomName: string, state_: any
     } else {
       emitGameOver(state_ ,userService, roomName, winner, server, game, prisma, other_game.player_two);
       // //console.log("breaks here ? ");
+      if(stateArr[roomName])
       if(stateArr[roomName].participants)
       {
         console.log("Here");

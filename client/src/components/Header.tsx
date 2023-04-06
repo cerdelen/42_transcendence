@@ -15,7 +15,7 @@ const Header = () => {
   return (
     <header>
       <Link to="/">
-        <img src={logo} alt="" id="logo" />
+        <img src={logo} alt="" onClick={closePopUps}  id="logo" />
       </Link>
       <nav>
         <ul>

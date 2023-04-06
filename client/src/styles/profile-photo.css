@@ -11,7 +11,7 @@
     min-width: 400px;
     max-width: 800px;
     display: flex;
-
+    z-index: 2;
 }
 
 .image-options h2,

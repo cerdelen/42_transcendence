@@ -14,7 +14,6 @@ import { GameModule } from './game/game.module';
 import { ConfigModule } from '@nestjs/config';
 import { config } from './config';
 import { UserGatewayModule } from './user/userSocket/user.gateway.module';
-import { New_user_gateway } from './user/userSocket/new_userr_gatewat';
 import { new_user_gateway_module } from './user/userSocket/new_user.gateway.module';
 
 @Module({
@@ -23,7 +22,6 @@ import { new_user_gateway_module } from './user/userSocket/new_user.gateway.modu
 		load: [config],
 		envFilePath: '.env'
 	}), UserModule.forRoot(),
-	AuthModule, PrismaModule, TwoFaModule, PicturesModule, MsgModule, ConversationModule, EventEmitterModule, GameModule, UserGatewayModule],
-	providers: [UserService, New_user_gateway],
+	AuthModule, PrismaModule, TwoFaModule, PicturesModule, MsgModule, ConversationModule, GameModule, UserGatewayModule, new_user_gateway_module],
 })
 export class AppModule {}

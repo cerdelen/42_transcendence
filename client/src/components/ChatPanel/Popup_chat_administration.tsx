@@ -3,7 +3,6 @@ import JSCookies from "js-cookie";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
-// kick, mute, ban, make admin
 type administraion_props =
 {
 	user_id: number;

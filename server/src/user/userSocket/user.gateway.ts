@@ -41,6 +41,7 @@ export class userGateway implements OnGatewayConnection, OnGatewayDisconnect
 	server;
 	onModuleInit()
 	{
+			console.log("created this usergateway");
 			this.server.sockets.setMaxListeners(20);
 	}
 

@@ -11,6 +11,7 @@ import { ConversationService } from '../conversations.service';
 export class conversationGateway implements OnGatewayConnection{
 	constructor (private conversationService: ConversationService)
 	{
+
 	}
 
 
@@ -21,6 +22,7 @@ export class conversationGateway implements OnGatewayConnection{
 		@WebSocketServer()
 		server;
 		onModuleInit() {
+			console.log("created this conversation gatway");
 			this.server.sockets.setMaxListeners(20);
 		}
 
@@ -38,7 +40,7 @@ export class conversationGateway implements OnGatewayConnection{
 		}
 
 		@SubscribeMessage('create_dialogue')
-		async create_dialogue(
+ 		async create_dialogue(
 			@MessageBody() data: any) {
 
 				const userid_creator : number = Number(data.userid_creator);

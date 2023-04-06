@@ -1,6 +1,4 @@
-import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Inject, forwardRef } from '@nestjs/common';
-import { ConnectedSocket } from '@nestjs/websockets';
+import { OnGatewayConnection, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 
 @WebSocketGateway((
 	{
@@ -18,13 +16,15 @@ export class New_user_gateway implements OnGatewayConnection
 	onModuleInit() {
 	}
 
-	handleConnection(client: any, ...args: any[])
+	handleConnection(client: any)
 	{
 		client.setMaxListeners(20);
 	}
 
 	async emit_new_user(id: string)
 	{
+		console.log("emittttting new usuususuerr");
+		
 		this.server.emit("new_user", id);
 	}
 }

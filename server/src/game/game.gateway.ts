@@ -81,6 +81,7 @@ export class GameGateway implements OnGatewayConnection{
 	}
 
   onModuleInit() {
+			console.log("created this game gateway");
 			this.server.sockets.setMaxListeners(20);
   }
 

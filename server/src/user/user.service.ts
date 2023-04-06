@@ -13,10 +13,8 @@ export class UserService {
 		private readonly new_user_gatewaysss: New_user_gateway,
 		) {}
 
-
 	async	createUser(data: Prisma.UserCreateInput) : Promise<User>
 	{
-
 		const check = await this.prisma.user.findUnique({ where: { id: data.id }});
 		if (!check)
 		{
@@ -24,7 +22,6 @@ export class UserService {
 			await this.prisma.stats.create({
 				data: { stat_id: data.id },
 			});
-			//console.log("i am before the call of emit new user");
 			this.new_user_gatewaysss.emit_new_user(data.id.toString());
 			return (user);
 		}
@@ -142,30 +139,24 @@ export class UserService {
 
 		if(user_two && user)
 		{
-				//console.log("got here too");
-				
 				const	incoming_request_indx = user.incoming_friend_req.findIndex(x => x == friend);
 				const	outgoing_req_user_one_idx = user.outgoing_friend_req.findIndex(x => x == friend);
 				const	outgoing_request_idx = user_two.outgoing_friend_req.findIndex(x => x == userId);
 				const	incoming_req_user_two_idx = user_two.incoming_friend_req.findIndex(x => x == userId);
 				if (incoming_request_indx != -1)
 				{
-					//console.log("if one accept f_r");
 					user.incoming_friend_req.splice(incoming_request_indx, 1);
 				}
 				if (outgoing_req_user_one_idx != -1)
 				{
-					//console.log("if two accept f_r");
 					user.outgoing_friend_req.splice(outgoing_req_user_one_idx, 1);
 				}
 				if (outgoing_request_idx != -1)
 				{
-					//console.log("if trhee accept f_r");
 					user_two.outgoing_friend_req.splice(outgoing_request_idx, 1);
 				}
 				if (incoming_req_user_two_idx != -1)
 				{
-					//console.log("if four accept f_r");
 					user_two.incoming_friend_req.splice(incoming_req_user_two_idx, 1);
 				}
 				if (!user.friendlist.includes(friend))
@@ -531,4 +522,3 @@ export class UserService {
 		})
 	}
 }
-

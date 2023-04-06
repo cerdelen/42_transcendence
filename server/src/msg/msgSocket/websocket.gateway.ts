@@ -18,7 +18,6 @@ export class MessagingGateway implements OnGatewayConnection {
 	constructor (
 			private msg: MsgService,
 			private readonly prisma: PrismaService
-		
 		)
 	{
 	}
@@ -26,6 +25,7 @@ export class MessagingGateway implements OnGatewayConnection {
 		@WebSocketServer()
 		server;
 		onModuleInit() {
+			console.log("created this message gateway");
 			this.server.sockets.setMaxListeners(20);
 		}
 		@SubscribeMessage('message')

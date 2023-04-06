@@ -233,47 +233,37 @@ export class ConversationService {
 	}
 
 	async leave_conversation(conversation_id: number, user_id: number): Promise<Conversation> {
-
 		const conversation: Conversation = await this.findConversation(conversation_id);
-
 		if (!conversation)
 			return null;
-
 		if (conversation.group_chat == false)
 			return (conversation);
-
 		if (!conversation.conversation_participant_arr.includes(user_id))
 			return conversation;
-
 		const req_user_idx = conversation.conversation_participant_arr.indexOf(user_id, 0);
 		const user: User = await this.user.findUserById(user_id);
 		const conversation_id_arr_from_user = user.conversation_id_arr.indexOf(conversation_id);
 		const user_admin_idx = conversation.conversation_admin_arr.indexOf(user_id);
 		const user_owner_idx = conversation.conversation_owner_arr.indexOf(user_id);
-
 		conversation.conversation_participant_arr.splice(req_user_idx, 1);
-
-
 		if (user_admin_idx >= 0) {
 			conversation.conversation_admin_arr.splice(user_admin_idx, 1);
-
-
-
-		} else {
 			if (conversation.conversation_admin_arr.length == 0) {
 				if (conversation.conversation_participant_arr.length > 0)
 					conversation.conversation_admin_arr.push(conversation.conversation_participant_arr[0]);
 			}
 		}
 		if (user_owner_idx > -1) {
-
 			conversation.conversation_owner_arr.splice(user_owner_idx, 1);
-
-
 			if (conversation.conversation_participant_arr.length > 0)
+			{
+				console.log("updating owner array");
 				conversation.conversation_owner_arr.push(conversation.conversation_participant_arr[0]);
+			}
 		}
 		user.conversation_id_arr.splice(conversation_id_arr_from_user, 1);
+		console.log("this is here");
+		
 		await this.updateConversation({
 			where: {
 				conversation_id: Number(conversation_id),
@@ -333,26 +323,15 @@ export class ConversationService {
 				conversation_id: chat_id,
 			}
 		})
-
-
 		if (!conversation) return;
-
 		const admin_user_idx = conversation.conversation_admin_arr.indexOf(userId, 0);
-
 		const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == id_to_kick);
-
 		if (owner_user_idx >= 0) {
-
 			throw new HttpException("Can't kick the conversation owner!!!", HttpStatus.FORBIDDEN);
 		}
 		else if (admin_user_idx < 0) {
-
-
 			return conversation;
 		}
-
-
-
 		const req_user_idx = conversation.conversation_participant_arr.indexOf(id_to_kick);
 		conversation.conversation_participant_arr.splice(req_user_idx, 1);
 		await this.prisma.conversation.update({

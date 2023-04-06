@@ -60,7 +60,7 @@ const ToggleBox: React.FC<Props> = ({ setBase64String, status2FA }) => {
         checked={checked}
         onChange={handleCheckboxChange}
       />
-      <span className="slider round"></span>
+      <span id="slider-button" className="slider round"></span>
     </label>
   );
 };

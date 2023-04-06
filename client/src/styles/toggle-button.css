@@ -21,6 +21,11 @@
     transition: background-color 0.2s;
   }
   
+  #slider-button {
+    overflow-x: unset;
+    
+  }
+  
   .slider:before {
     content: "";
     position: absolute;
@@ -34,7 +39,7 @@
     border: 1mm ridge white;
   }
   
-  
+ 
   .switch input:checked + .slider {
     background-color: rgb(144, 121, 154);
   }

@@ -17,6 +17,7 @@ export class userGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	handleConnection(client: any, ...args: any[])
 	{
+		client.setMaxListeners(20);
 	}
 	async handleDisconnect(client: any) {
 		//console.log("someone is disconnecting ");
@@ -39,6 +40,9 @@ export class userGateway implements OnGatewayConnection, OnGatewayDisconnect
 	@WebSocketServer()
 	server;
 	onModuleInit() {
+			this.server.sockets.setMaxListeners(20);
+			// this.server.setMaxListeners(20);
+		// this.server.emitter.setMaxListeners(20)
 		//console.log("constructed this usergateway (only for online/offline status)");
 	}
 

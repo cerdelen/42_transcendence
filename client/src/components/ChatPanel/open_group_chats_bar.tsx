@@ -103,7 +103,8 @@ const Group_chat_preview_card = ({
       }
       setNot_joined_chats_ids(arr_2);
     } else {
-      alert("Wrong password");
+
+      alert("Wrong password or banned from chat");
     }
   };
 
@@ -132,6 +133,8 @@ const Group_chat_preview_card = ({
           arr_2.push(not_joined_chats_ids[i]);
       }
       setNot_joined_chats_ids(arr_2);
+    }else{
+      alert("Banned from chat");
     }
   };
 

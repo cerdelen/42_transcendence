@@ -9,14 +9,18 @@ import { ConnectedSocket } from '@nestjs/websockets';
 	  },
 	}
 ))
-export class New_user_gateway
+export class New_user_gateway implements OnGatewayConnection
 {
 	constructor () {}
 
 	@WebSocketServer()
 	server;
 	onModuleInit() {
-		// console.log("constructed this new_user_gateway (only for update profile picture map)");
+	}
+
+	handleConnection(client: any, ...args: any[])
+	{
+		client.setMaxListeners(20);
 	}
 
 	async emit_new_user(id: string)

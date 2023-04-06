@@ -8,14 +8,20 @@ import { ConversationService } from '../conversations.service';
 	  },
 	}
   ))
-export class conversationGateway{
+export class conversationGateway implements OnGatewayConnection{
 	constructor (private conversationService: ConversationService)
 	{
 	}
 
+
+	handleConnection(client: any, ...args: any[])
+	{
+		client.setMaxListeners(20);
+	}
 		@WebSocketServer()
 		server;
 		onModuleInit() {
+			this.server.sockets.setMaxListeners(20);
 		}
 
 		@SubscribeMessage('leave_group_chat')

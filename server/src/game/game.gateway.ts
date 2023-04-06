@@ -1,4 +1,4 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket } from '@nestjs/websockets';
+import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayConnection} from '@nestjs/websockets';
 import { GameService } from './game.service';
 import { Server, Socket as socket_io } from 'socket.io';
 import { getInitialState, gameLoop} from './make_game_state'
@@ -71,26 +71,22 @@ async function emitToTheUserSocket(user: any, server: Server, event_name:string,
   }
 )
 
-export class GameGateway {
+export class GameGateway implements OnGatewayConnection{
   @WebSocketServer()
   server: Server;
 
+	handleConnection(client: any, ...args: any[])
+	{
+		client.setMaxListeners(20);
+	}
+
   onModuleInit() {
-    //console.log("Instantiation");
+			this.server.sockets.setMaxListeners(20);
+      //console.log("Instantiation");
+		// this.server.emitter.setMaxListeners(20)
+    // this.server.setMaxListeners(20);
+
   }
-  //   this.server.on('connection', (socket) => {
-  //     ////console.log(socket.id);
-  //     ////console.log("connected");
-  //     setInterval(() => {
-  //       socket.emit("online_check");
-  //       if (response === 0) {
-  //         //socket.id switch user offline with userID
-  //         // ////console.log("Is offline");
-  //       }
-  //       response = 0;
-  //     }, 10000)
-  //   })
-  // }
 
   constructor(private readonly gameService: GameService, private prisma: PrismaService, private userService: UserService) {
   }

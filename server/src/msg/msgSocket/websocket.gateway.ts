@@ -1,15 +1,7 @@
 import { OnEvent } from '@nestjs/event-emitter';
 import { MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-// import { JwtPayload } from '../../dist/auth/strategies/jwt.strategy';
-// import { Conversation } from '@prisma/client';
-// import { ConversationService } from 'src/conversations/conversations.service';
-// import { AuthService } from '../auth/auth.service';
-// import { UserService } from '../user/user.service';
 import { MsgService } from 'src/msg/msg.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { io_server } from 'src/utils/Server';
-
-// import { Server } from '@nestjs/platform-socket.io';
 
 @WebSocketGateway((
 	{
@@ -19,9 +11,9 @@ import { io_server } from 'src/utils/Server';
 	}
   ))
 export class MessagingGateway implements OnGatewayConnection {
-	handleConnection(client: any, ...args: any[]) {
-		// ////console.log(client);
-		
+	handleConnection(client: any, ...args: any[])
+	{
+		client.setMaxListeners(20);
 	}
 	constructor (
 			private msg: MsgService,
@@ -34,9 +26,11 @@ export class MessagingGateway implements OnGatewayConnection {
 		@WebSocketServer()
 		server;
 		onModuleInit() {
+			this.server.sockets.setMaxListeners(20);
 			//console.log("constructed this shit");
+		// this.server.emitter.setMaxListeners(20)
+		// this.server.setMaxListeners(20);
 		}
-
 		@SubscribeMessage('message')
 		async handleCreateMessage(
 			@MessageBody() data: any) {

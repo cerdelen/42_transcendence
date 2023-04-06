@@ -71,7 +71,8 @@ export class ConversationController {
 		if (!existingConversation.group_chat) {
 			return null;
 		}
-
+		if(existingConversation.conversation_black_list_arr.includes(req.user.id))
+			throw new HttpException("Can't join chat because you are banned!!!", HttpStatus.FORBIDDEN);
 		if (existingConversation.ask_password == true && !comparePassword(body.password, existingConversation.conversation_password)) {
 
 			return (false);
@@ -306,12 +307,15 @@ export class ConversationController {
 		const idx_from_black_list = conversation.conversation_black_list_arr.findIndex(element => element == id_to_ban);
 		const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == id_to_ban);
 		if (owner_user_idx >= 0) {
+			console.log("in if");
 			throw new HttpException("Can't mute the conversation owner!!!", HttpStatus.FORBIDDEN);
 		}
 		else if (admin_user_idx < 0) {
+			console.log("else if 1");
 			return conversation;
 		}
 		else if (idx_from_black_list >= 0) {
+			console.log("else if 2");
 			conversation.conversation_black_list_arr.splice(idx_from_black_list, 1);
 			return this.conversationsService.updateConversation({
 				where: {
@@ -323,8 +327,10 @@ export class ConversationController {
 			})
 		}
 		else {
-			const black_list_idx = conversation.conversation_participant_arr.indexOf(id_to_ban);
-			conversation.conversation_black_list_arr.splice(black_list_idx, 1);
+			console.log("last else");
+
+			const idx_in_participant_arr = conversation.conversation_participant_arr.indexOf(id_to_ban);
+			conversation.conversation_participant_arr.splice(idx_in_participant_arr, 1);
 			const user: User = await this.userService.findUserById(id_to_ban);
 
 			const convers_idx_arr_from_user = user.conversation_id_arr.indexOf(conversation_id);
@@ -344,7 +350,8 @@ export class ConversationController {
 				data: {
 					conversation_black_list_arr: {
 						push: Number(id_to_ban),
-					}
+					},
+					conversation_participant_arr : conversation.conversation_participant_arr
 				}
 			})
 			return updatedConversationWithoutBannedUser;

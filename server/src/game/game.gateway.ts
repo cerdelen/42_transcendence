@@ -82,10 +82,6 @@ export class GameGateway implements OnGatewayConnection{
 
   onModuleInit() {
 			this.server.sockets.setMaxListeners(20);
-      //console.log("Instantiation");
-		// this.server.emitter.setMaxListeners(20)
-    // this.server.setMaxListeners(20);
-
   }
 
   constructor(private readonly gameService: GameService, private prisma: PrismaService, private userService: UserService) {

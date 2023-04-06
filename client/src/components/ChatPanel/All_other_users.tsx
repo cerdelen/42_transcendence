@@ -24,9 +24,7 @@ const User_preview_card = ({
   const { picture_map, set_picture_map, pushPictureToMap} =
     useMyProfile_picture_Context();
   const { online_users } = useContext(Online_users_context);
-  const [status, setStatus] = useState(false);
-  
-  
+
   useEffect(() => {
     const get_user_info = async (other_user_id: number) => {
       const response = await fetch(`http://${ipAddress}:3003/user/user_name`, {
@@ -39,8 +37,6 @@ const User_preview_card = ({
         body: JSON.stringify({ user_id: other_user_id }),
       });
       const data = await response.text();
-      // console.log("this is name map " + JSON.stringify(name_map));
-      // console.log("this is picture map " + JSON.stringify(picture_map));
       set_user_name(data);
       if (picture_map.has(Number(other_user_id)))
         setPhoto(picture_map.get(Number(other_user_id)) ?? "");
@@ -54,11 +50,7 @@ const User_preview_card = ({
         );
     };
     get_user_info(other_user_id);
-    // console.log("this is inside useeffect " + online_users);
   }, [online_users]);
-
-  // console.log("this is online users in the cards " + JSON.stringify(online_users));
-  //   console.log("this is online boolean for id " + other_user_id + " " + online);
 
   return (
     <li

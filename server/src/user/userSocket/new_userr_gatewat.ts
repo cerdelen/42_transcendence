@@ -25,7 +25,6 @@ export class New_user_gateway implements OnGatewayConnection
 
 	async emit_new_user(id: string)
 	{
-		//console.log("i am emitting new user");
 		this.server.emit("new_user", id);
 	}
 }

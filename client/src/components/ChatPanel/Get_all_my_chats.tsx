@@ -43,7 +43,6 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			const response = await fetch(`http://${ipAddress}:3003/conversation/getConversationById/${chat_id}`, {
 				method: "Get",
 				headers: {
-					// "Content-Type": "application/json",
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
 			});
@@ -60,7 +59,6 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 				const response = await fetch(`http://${ipAddress}:3003/conversation/getConversationById/${conversation_id}`, {
 				method: "Get",
 				headers: {
-					// "Content-Type": "application/json",
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
 			}) 
@@ -137,7 +135,6 @@ const Get_all_my_chats = () =>
 					const response = await fetch(`http://${ipAddress}:3003/conversation/getConversationById/${reset_displayed_chat}`, {
 						method: "Get",
 						headers: {
-							// "Content-Type": "application/json",
 							Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 						},
 					});

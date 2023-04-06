@@ -253,14 +253,12 @@ const Get_all_open_group_chats = ({
       left_user_id: number;
       conv_still_exists: boolean;
     }) => {
-      // console.log("this is the on subscriber");
       if (left_user_id == Number(userId) && conv_still_exists) {
         if (!not_joined_chats_ids.includes(conv_id))
           setNot_joined_chats_ids([...not_joined_chats_ids, conv_id]);
       }
     }
   );
-  // console.log(not_joined_chats_ids);
 
   return (
     <ul className="list-cards right-shadow">

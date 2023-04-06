@@ -13,17 +13,6 @@ type administraion_props =
 	set_user_ids_in_chat_details: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
-	// "conversation_owner_arr":[322]
-	// "conversation_admin_arr":[322,98455]
-	// "conversation_black_list_arr":[]
-	// "conversation_mute_list_arr":[]
-	
-	
-	
-	
-	// (':conversation_id/setKick/:id_to_kick')
-	// (':conversation_id/setBan/:id_to_ban')
-
 const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_user_ids_in_chat_details} : administraion_props) =>
 {
 	const { displayed_chat } = useMyDisplayedChatContext();
@@ -38,7 +27,6 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 				const respone = await fetch(`http://${ipAddress}:3003/conversation/${displayed_chat.conversation_id}/setBan/${user_id}`,{
 				method: "PUT",
 					headers: {
-						// "Content-Type": "application/json",
 						Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 					},
 				});
@@ -73,7 +61,6 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 				const respone = await fetch(`http://${ipAddress}:3003/conversation/${displayed_chat.conversation_id}/setKick/${user_id}`,{
 				method: "PUT",
 					headers: {
-						// "Content-Type": "application/json",
 						Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 					},
 				});
@@ -103,13 +90,11 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 	}
 	const handle_mute = async (user_id: number) =>
 	{
-		// :conversation_id/setMute/:id_to_mute
 		try
 		{
 			const respone = await fetch(`http://${ipAddress}:3003/conversation/${displayed_chat.conversation_id}/setMute/${user_id}`,{
 			method: "PUT",
 				headers: {
-					// "Content-Type": "application/json",
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
 			});
@@ -132,7 +117,6 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 			const respone = await fetch(`http://${ipAddress}:3003/conversation/${displayed_chat.conversation_id}/setAdmin/${user_id}`,{
 			method: "PUT",
 				headers: {
-					// "Content-Type": "application/json",
 					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 				},
 			});
@@ -148,11 +132,6 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 		{
 		}
 	}
-
-	// "conversation_owner_arr":[322]
-	// "conversation_admin_arr":[322,98455]
-	// "conversation_black_list_arr":[]
-	// "conversation_mute_list_arr":[]
 
 	return (
 		<div id="admin-buttons">

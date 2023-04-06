@@ -28,9 +28,6 @@ const handleLeaveChat = (
   }
 };
 
-
-
-
 const Participant_in_chat_detail_card = ({
   user_id,
   set_user_ids_in_chat_details,
@@ -123,7 +120,10 @@ const Participant_in_chat_detail_card = ({
     if (Number(userId) != user_id && displayed_chat.group_chat == true)
       set_display_popup(!display_popup);
   };
-
+  const canOpenChatAdministration: boolean = 
+        ((displayed_chat.conversation_owner_arr?.includes(Number(userId)) ?? false) ||
+          ((displayed_chat.conversation_admin_arr?.includes(Number(userId)) ?? false)&& !is_admin) 
+        )
   return (
     <div className="participant-card" onClick={() => open_admin_as()}>
       <img src={photo} alt="" />
@@ -132,7 +132,7 @@ const Participant_in_chat_detail_card = ({
         {is_owner && <FaCrown title="owner" />}
         {is_admin && <RiAdminLine title="admin" />}
         {is_muted && <RiVolumeMuteFill title="muted" />}
-        {display_popup && (
+        {display_popup && canOpenChatAdministration && (
           <Popup_chat_administration
             user_id={user_id}
             setmuted={set_is_muted}
@@ -209,7 +209,6 @@ const Chat_details = ({
               "Content-Type": "application/json",
               Authorization: `Bearer ${JSCookies.get("accessToken")}`,
             },
-            // body: JSON.stringify({"Password": inputValue}),
             body: JSON.stringify({ password: inputValue }),
           }
         );

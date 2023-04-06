@@ -39,11 +39,9 @@ export class userGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	@WebSocketServer()
 	server;
-	onModuleInit() {
+	onModuleInit()
+	{
 			this.server.sockets.setMaxListeners(20);
-			// this.server.setMaxListeners(20);
-		// this.server.emitter.setMaxListeners(20)
-		//console.log("constructed this usergateway (only for online/offline status)");
 	}
 
 	@SubscribeMessage('online_inform')

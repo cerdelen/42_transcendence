@@ -27,9 +27,6 @@ export class MessagingGateway implements OnGatewayConnection {
 		server;
 		onModuleInit() {
 			this.server.sockets.setMaxListeners(20);
-			//console.log("constructed this shit");
-		// this.server.emitter.setMaxListeners(20)
-		// this.server.setMaxListeners(20);
 		}
 		@SubscribeMessage('message')
 		async handleCreateMessage(

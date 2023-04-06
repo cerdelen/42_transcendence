@@ -70,10 +70,10 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
   const chatWindow = useRef<HTMLDivElement>(null);
   const [name_map, set_name_map] = useState<Map<number, string>>(new Map());
   const { displayed_chat } = useMyDisplayedChatContext();
-  const { userId } = useContext(UserContext);
+  const { userId, blocked_users } = useContext(UserContext);
 
   our_socket.on("message", (message: message) => {
-    if (message.chat_id == displayed_chat.conversation_id) {
+    if (message.chat_id == displayed_chat.conversation_id && !blocked_users.includes(Number(message.author_id))) {
       let newMessage: display_message_info[] = [];
       for (let i = 0; i < messages.length; i++) {
         newMessage.push(messages[i]);
@@ -85,11 +85,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
     }
   });
   our_socket.on("typing", (typing: typing) => {
-    if (
-      typing.isTyping &&
-      typing.chat_id == displayed_chat.conversation_id &&
-      typing.name != userId
-    ) {
+    if (typing.isTyping && typing.chat_id == displayed_chat.conversation_id && typing.name != userId && !blocked_users.includes(Number(typing.name))) {
       const name = name_map.get(Number(typing.name));
       setTypingDisplay(`${name} is typing ...`);
     } else {

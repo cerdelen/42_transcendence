@@ -13,7 +13,6 @@ interface NameProps {
   set_incoming_friend_requests: React.Dispatch<React.SetStateAction<number[]>>;
   friendsList: string[];
   setFriendsList: React.Dispatch<React.SetStateAction<string[]>>;
-
 }
 
 const NameComponent = ({
@@ -93,13 +92,17 @@ type Props = {
   set_incoming_friend_requests: React.Dispatch<React.SetStateAction<number[]>>;
   friendsList: string[];
   setFriendsList: React.Dispatch<React.SetStateAction<string[]>>;
+  toggle_friends_or_requests: () => void;
+  show_friends: boolean;
 };
 
 const Incoming_friend_requests = ({
   incoming_friend_req,
   set_incoming_friend_requests,
   friendsList,
-  setFriendsList
+  setFriendsList,
+  show_friends,
+  toggle_friends_or_requests
 }: Props) => {
   const [friendsNames, setNames] = useState<string[]>([]);
   const [profilePictures, setProfilePictures] = useState<string[]>([]);
@@ -177,10 +180,12 @@ const Incoming_friend_requests = ({
             incoming_friend_req={incoming_friend_req}
             set_incoming_friend_requests={set_incoming_friend_requests}
             setFriendsList={setFriendsList}
-
           />
         ))
       )}
+      <button className="purple-button" onClick={toggle_friends_or_requests}>
+        {show_friends ? "Show Friend Requests" : "Show Your Friend"}
+      </button>
     </ul>
   );
 };

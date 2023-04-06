@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { createContext } from "react";
 import JSCookies from "js-cookie";
+import { our_socket } from "../utils/context/SocketContext";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 const pushPictureToMap = async (user_id: number, picture_map: Map<number, string>, set_picture_map:  React.Dispatch<React.SetStateAction<Map<number, string>>>) => {
@@ -62,6 +63,17 @@ export function Profile_picture_Provider({ children }: MyContextProviderProps) {
     if (JSCookies.get("accessToken")) //workaround why does it run though? when we press logout
     get_all_pictures();
   }, [])
+
+  useEffect(() => {
+    const update_new_picture = async (id: string) => {
+      await pushPictureToMap(Number(id), picture_map, set_picture_map);
+
+    }
+    our_socket.on("new_user", (new_user: string) => {
+      update_new_picture(new_user);
+      our_socket.off("new_user");
+    });
+  }, []);
   
   const value = {
     picture_map,

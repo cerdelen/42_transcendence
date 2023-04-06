@@ -5,11 +5,14 @@ import { UserController } from './user.controller';
 import { Services } from 'src/utils/consts';
 import { PrismaModule } from '../prisma/prisma.module';
 import { forwardRef } from '@nestjs/common';
+import { new_user_gateway_module } from './userSocket/new_user.gateway.module';
+import { New_user_gateway } from './userSocket/new_userr_gatewat';
+
 
 @Module({
   imports: [PrismaModule],
   providers: [
-    {provide: Services.USERS,useClass: UserService},
+    {provide: Services.USERS,useClass: UserService}, New_user_gateway
   ],
   exports: [
     {
@@ -19,4 +22,19 @@ import { forwardRef } from '@nestjs/common';
   ],
   controllers: [UserController]
 })
-export class UserModule {}
+export class UserModule {
+
+static forRoot(): any {
+    return {
+      module: UserModule,
+      providers: [
+        {
+          provide: new_user_gateway_module,
+          useValue: new new_user_gateway_module(),
+        },
+        UserService,
+      ],
+      exports: [UserService],
+    };
+  }
+}

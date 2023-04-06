@@ -4,10 +4,10 @@ import { userGateway } from './user.gateway';
 import { UserModule } from '../user.module';
 import { UserService } from '../user.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { new_user_gateway_module } from './new_user.gateway.module';
+import { New_user_gateway } from './new_userr_gatewat';
 
 @Module({
-  imports: [UserModule, PrismaModule, new_user_gateway_module],
-  providers: [userGateway, UserService]
+  providers: [New_user_gateway],
+  exports: [New_user_gateway]
 })
-export class UserGatewayModule {}
+export class new_user_gateway_module {}

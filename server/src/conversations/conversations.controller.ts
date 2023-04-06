@@ -37,15 +37,15 @@ export class ConversationController {
 		{
 			if (typeof bodyContent.chat_name === "undefined")
 			{
-				//console.log("not creating chat because of undefined chat_name");
+				////console.log("not creating chat because of undefined chat_name");
 				return null;
 			}
 			let array : number[] = [];
 			let user : User;
 			let pwd : string;
-			//console.log(`The chatName is: ${bodyContent.chat_name}`);
-			//console.log(`The password is: ${bodyContent.password}`);
-			//console.log(`The boolean is: ${bodyContent.askPassword}`);
+			////console.log(`The chatName is: ${bodyContent.chat_name}`);
+			////console.log(`The password is: ${bodyContent.password}`);
+			////console.log(`The boolean is: ${bodyContent.askPassword}`);
 			
 			if(bodyContent.password.length != 0) {
 				pwd = hashPassword(bodyContent.password);
@@ -58,7 +58,7 @@ export class ConversationController {
 			// }
 			array.push(req.user.id);
 
-			//console.log("CHAT_NAME = " + bodyContent.chat_name);
+			////console.log("CHAT_NAME = " + bodyContent.chat_name);
 			let newConversation : Conversation = await this.conversationsService.createConversation({
 				conversation_name: bodyContent.chat_name,
 				conversation_participant_arr: [Number(req.user.id)],
@@ -72,7 +72,7 @@ export class ConversationController {
 			for (let i = 0; i < array.length; ++i)
 			{
 				user = await this.userService.findUserById(array[i]);
-				//console.log("CONVERSATION_ID_ARR = " + user.conversation_id_arr);
+				////console.log("CONVERSATION_ID_ARR = " + user.conversation_id_arr);
 				await user.conversation_id_arr.push(newConversation.conversation_id);
 				await this.userService.updateUser({
 					where: {
@@ -93,19 +93,19 @@ export class ConversationController {
 			@Req() req: any,	
 			@Body() body : {chat_id: number, password: string}
 		) {
-			//console.log("CHAT_ID " + body.chat_id);
-			//console.log("Password " + body.password);
+			////console.log("CHAT_ID " + body.chat_id);
+			////console.log("Password " + body.password);
 			const existingConversation = await this.conversationsService.findConversation(body.chat_id)
 			if (!existingConversation.group_chat) {
-				//console.log("The conversation is not a group chat!");
+				////console.log("The conversation is not a group chat!");
 				return null;
 			}
 			//the condition here was incorrect, Krisi changed it, doublecheck if I missed something
-			//console.log(existingConversation.ask_password == true);
+			////console.log(existingConversation.ask_password == true);
 			
 			if (existingConversation.ask_password == true && !comparePassword(body.password, existingConversation.conversation_password)) {
 				
-				//console.log("wrong password");
+				////console.log("wrong password");
 				return (false);
 			} 
 			const userIdx = existingConversation.conversation_participant_arr.indexOf(req.user.id);		//is he already part of the chat
@@ -124,9 +124,9 @@ export class ConversationController {
 	
 			this.convGateway.joined_chat(Number(body.chat_id), Number(req.user.id));
 
-		//console.log("admin_array2 = " + existingConversation.conversation_admin_arr);
-		//console.log("owner_array2 = " + existingConversation.conversation_owner_arr);
-		//console.log("participant_array2 = " + existingConversation.conversation_participant_arr);			
+		////console.log("admin_array2 = " + existingConversation.conversation_admin_arr);
+		////console.log("owner_array2 = " + existingConversation.conversation_owner_arr);
+		////console.log("participant_array2 = " + existingConversation.conversation_participant_arr);			
 			return (true);
 		}
 
@@ -191,8 +191,8 @@ export class ConversationController {
 		@Post('set_password/:chat_id')
 		async set_password(@Req() req: any, @Param('chat_id') chat_id: number, @Body('Password') password : string)
 		{
-			// //console.log("this is password in controller " + JSON.stringify( password));
-			// //console.log("this is password in controller " + password);
+			// ////console.log("this is password in controller " + JSON.stringify( password));
+			// ////console.log("this is password in controller " + password);
 
 			await this.conversationsService.set_password(Number(chat_id), Number(req.user.id), password);
 		}
@@ -211,7 +211,7 @@ export class ConversationController {
 				const new_dialogue = await this.conversationsService.createConversation({
 					conversation_participant_arr: arr,
 				})
-				//console.log("NEW_DIALOGUE + " + new_dialogue.conversation_id);
+				////console.log("NEW_DIALOGUE + " + new_dialogue.conversation_id);
  
 				this.conversationsService.updateConversationIdInUser(Number(anotherUserId), new_dialogue.conversation_id);
 				this.conversationsService.updateConversationIdInUser(Number(req.user.id), new_dialogue.conversation_id);
@@ -220,7 +220,7 @@ export class ConversationController {
 				return ret;
 				// let conversation: Conversation;
 				// conversation.conversation_participant_arr.push(req.user.id);
-				// //console.log("after push " + conversation.conversation_participant_arr);
+				// ////console.log("after push " + conversation.conversation_participant_arr);
 				 
 				
 				// if (!existingConversation) return null;
@@ -250,15 +250,15 @@ export class ConversationController {
 			
 			
 			// const currUser = await this.userService.findUserById();
-			// //console.log("convParticipant: " + convParticipant);
+			// ////console.log("convParticipant: " + convParticipant);
 			
 			// let existingConversation: Conversation;
-			// //console.log(existingConversation.conversation_id);
+			// ////console.log(existingConversation.conversation_id);
 			
 			// existingConversation = await this.conversationsService.findConversation(existingConversation.conversation_id);
-			// //console.log("existingChatID " + existingConversation.conversation_id);
+			// ////console.log("existingChatID " + existingConversation.conversation_id);
 			
-			// //console.log("existingChatID " + existingConversation.conversation_id);
+			// ////console.log("existingChatID " + existingConversation.conversation_id);
 			
 			// if (!existingConversation) return null;
 			// // const arr = new Array<number>(2);
@@ -274,7 +274,7 @@ export class ConversationController {
 		async getMyConversations(
 			@Req() req: any,
 		) {
-			//console.log();
+			////console.log();
 			return this.conversationsService.findAllConversationsByUser(req.user.id);
 		}
 
@@ -290,11 +290,11 @@ export class ConversationController {
 		async getConversationName(
 			@Param('conversation_id') conversation_id
 		) {
-			//console.log("getconversation name "+ JSON.stringify(conversation_id));
+			////console.log("getconversation name "+ JSON.stringify(conversation_id));
 			const conv = await this.conversationsService.findConversation(conversation_id);
 			if(conv)
 			{
-				//console.log("i will be returning this "+ conv.conversation_name);
+				////console.log("i will be returning this "+ conv.conversation_name);
 				return (conv.conversation_name);
 			}
 			else
@@ -307,7 +307,7 @@ export class ConversationController {
 			@Req() req: any,
 			@Param('conversation_id') conversation_id
 		) {
-			//console.log();
+			////console.log();
 			const conv = await this.conversationsService.findConversation(conversation_id);
 			return this.conversationsService.name_fix(conv, req.user.id);
 		}
@@ -336,8 +336,8 @@ export class ConversationController {
 			@Param('conversationId', new ParseIntPipe()) conversId: number,
 			@Param('adminId', new ParseIntPipe()) admId: number
 		) : Promise<Conversation> {
-			//console.log("ADMIN_ID = " + admId);
-			//console.log("User_ID = " + req.user.id);
+			////console.log("ADMIN_ID = " + admId);
+			////console.log("User_ID = " + req.user.id);
 
 			return this.conversationsService.setAdministratorOfConversation(conversId, admId, req.user.id);
 		}
@@ -368,7 +368,7 @@ export class ConversationController {
 			if (owner_user_idx >= 0)
 				throw new HttpException("Can't mute the conversation owner!!!", HttpStatus.FORBIDDEN);
 			else if (admin_user_idx < 0) {
-				//console.log("Current user is not considered to be an Administrator");
+				////console.log("Current user is not considered to be an Administrator");
 				return conversation;
 			} 
 			else if (idx_from_mute_list >= 0) {
@@ -406,26 +406,26 @@ export class ConversationController {
 			@Param('id_to_ban', new ParseIntPipe()) id_to_ban: number,
 		) {
 			const conversation = await this.conversationsService.findConversation(conversation_id);
-			//console.log("CONVERSATION_ID = " + conversation.conversation_id);
+			////console.log("CONVERSATION_ID = " + conversation.conversation_id);
 
 			const admin_user_idx = conversation.conversation_admin_arr.indexOf(req.user.id, 0);
 			const idx_from_black_list = conversation.conversation_black_list_arr.findIndex(element => element == id_to_ban);
 			const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == id_to_ban);
-			//console.log("ADMIN_USER_IDX = " + admin_user_idx);
-			//console.log("idx_from_black_list = " + idx_from_black_list);
-			//console.log("owner_user_idx = " + owner_user_idx);
+			////console.log("ADMIN_USER_IDX = " + admin_user_idx);
+			////console.log("idx_from_black_list = " + idx_from_black_list);
+			////console.log("owner_user_idx = " + owner_user_idx);
 
 			if (owner_user_idx >= 0) {
-				//console.log("HEREEEE1");
+				////console.log("HEREEEE1");
 				throw new HttpException("Can't mute the conversation owner!!!", HttpStatus.FORBIDDEN);
 			}
 			else if (admin_user_idx < 0) {
-				//console.log("HEREEEE2");
-				//console.log("Current user is not considered to be an Administrator");
+				////console.log("HEREEEE2");
+				////console.log("Current user is not considered to be an Administrator");
 				return conversation;
 			}
 			else if (idx_from_black_list >= 0) {
-				//console.log("HEREEEE3");
+				////console.log("HEREEEE3");
 				
 				conversation.conversation_black_list_arr.splice(idx_from_black_list, 1);
 				return this.conversationsService.updateConversation({
@@ -439,7 +439,7 @@ export class ConversationController {
 			}
 			else {
 				const black_list_idx = conversation.conversation_participant_arr.indexOf(id_to_ban);
-				//console.log("black_list_idx" + black_list_idx);
+				////console.log("black_list_idx" + black_list_idx);
 				
 				conversation.conversation_black_list_arr.splice(black_list_idx, 1);
 				const user : User = await this.userService.findUserById(id_to_ban);
@@ -496,7 +496,7 @@ export class ConversationController {
 //     const index1 = chat.blackList.findIndex(x => x == bid)
 //     const index2 = chat.owner.findIndex(x => x == bid)
 //     if (index == -1){
-//       //console.log("User not admin");
+//       ////console.log("User not admin");
 //       return chat;
 //     }
 //     else if (index2 > -1) {
@@ -513,7 +513,7 @@ export class ConversationController {
 //     }
 //     else{
 //       const index1 = chat.participants.indexOf(bid);
-//       //console.log(index1);
+//       ////console.log(index1);
 //       chat.participants.splice(index1, 1);
 //       const user : User = await this.userService.findOne(bid);
 //       const index2 = user.chatId.indexOf(id);
@@ -522,7 +522,7 @@ export class ConversationController {
 //         where: {id: Number(bid)},
 //         data: {chatId: user.chatId},
 //       })
-//       // //console.log(participants);
+//       // ////console.log(participants);
 //       return this.chatService.updateChat({
 //         where: { id: Number(id) },
 //         data: {
@@ -555,23 +555,23 @@ export class ConversationController {
 // 	async createConversation(@Req() _req: any,
 // 		@AuthUser() user: User,
 // 		@Body() createConversationPayload: CreateConversationDto) { 
-// 			//console.log("USER = " + user);
-// 			//console.log("USERfrom request = " + _req.user.id);
-// 			//console.log(createConversationPayload);
+// 			////console.log("USER = " + user);
+// 			////console.log("USERfrom request = " + _req.user.id);
+// 			////console.log(createConversationPayload);
 			
 // 			this.conversationsService.createConversation(user, createConversationPayload)
-// 			// //console.log("USER " + user.name);
+// 			// ////console.log("USER " + user.name);
 // 		// if (!user || !user.id)
 // 		// 	throw new Error("Invalid user ID")
 // 		// try {
 // 		// 	const userDB = await this.UserService.findUserById(user.id)
-// 		// 	//console.log(userDB);    
+// 		// 	////console.log(userDB);    
 // 			// this.conversationsService.createConversation(user, createConversationPayload);
 // 			// this.conversationsService.createConversation(createConversationPayload);
 // 		// }
 // 		// catch( err )
 // 		// {
-// 		// 	//console.log(err);
+// 		// 	////console.log(err);
 // 		// 	throw new Error('An error occurred while creating a conversation');
 // 		// }   
 // 	} 

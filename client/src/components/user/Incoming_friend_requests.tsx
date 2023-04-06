@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import JSCookies from "js-cookie";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 import EverythingIsFine from "../../svg/everything-is-fine.svg";
 import { json } from "node:stream/consumers";
+import { useMyContext } from "../../contexts/InfoCardContext";
+import { UserContext } from "../../contexts/UserContext";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 interface NameProps {
@@ -45,7 +47,7 @@ const NameComponent = ({
       let new_friendlist: string[] = friendsList;
       new_friendlist.push(other_user_id);
       setFriendsList(new_friendlist);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const reject_friend_request = async () => {
@@ -66,7 +68,7 @@ const NameComponent = ({
       const idx = new_incoming_friend_request.indexOf(Number(other_user_id));
       new_incoming_friend_request.splice(idx, 1);
       set_incoming_friend_requests([...new_incoming_friend_request]);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   return (
@@ -108,6 +110,8 @@ const Incoming_friend_requests = ({
   const [profilePictures, setProfilePictures] = useState<string[]>([]);
   const { picture_map, set_picture_map, pushPictureToMap } =
     useMyProfile_picture_Context();
+  const { userIdCard } = useMyContext();
+  const { userId } = useContext(UserContext);
   useEffect(() => {
     const fetchNames = async () => {
       try {
@@ -183,9 +187,13 @@ const Incoming_friend_requests = ({
           />
         ))
       )}
-      <button className="purple-button" onClick={toggle_friends_or_requests}>
-        {show_friends ? "Show Friend Requests" : "Show Your Friend"}
-      </button>
+      {userId == userIdCard ?
+        <button className="purple-button" onClick={toggle_friends_or_requests}>
+          {show_friends ? "Show Friend Requests" : "Show Your Friend"}
+        </button>
+        :
+        <></>
+      }
     </ul>
   );
 };

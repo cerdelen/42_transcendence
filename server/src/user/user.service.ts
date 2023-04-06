@@ -138,12 +138,30 @@ export class UserService {
 		{
 				console.log("got here too");
 				
-				const	incoming_request = user.incoming_friend_req.findIndex(x => x == friend);
-				const	outgoing_request = user_two.outgoing_friend_req.findIndex(x => x == userId);
-				if (incoming_request != -1)
-					user.incoming_friend_req.splice(incoming_request, 1);
-				if (outgoing_request != -1)
-					user_two.outgoing_friend_req.splice(outgoing_request, 1);
+				const	incoming_request_indx = user.incoming_friend_req.findIndex(x => x == friend);
+				const	outgoing_req_user_one_idx = user.outgoing_friend_req.findIndex(x => x == friend);
+				const	outgoing_request_idx = user_two.outgoing_friend_req.findIndex(x => x == userId);
+				const	incoming_req_user_two_idx = user_two.incoming_friend_req.findIndex(x => x == userId);
+				if (incoming_request_indx != -1)
+				{
+					console.log("if one accept f_r");
+					user.incoming_friend_req.splice(incoming_request_indx, 1);
+				}
+				if (outgoing_req_user_one_idx != -1)
+				{
+					console.log("if two accept f_r");
+					user.outgoing_friend_req.splice(outgoing_req_user_one_idx, 1);
+				}
+				if (outgoing_request_idx != -1)
+				{
+					console.log("if trhee accept f_r");
+					user_two.outgoing_friend_req.splice(outgoing_request_idx, 1);
+				}
+				if (incoming_req_user_two_idx != -1)
+				{
+					console.log("if four accept f_r");
+					user_two.incoming_friend_req.splice(incoming_req_user_two_idx, 1);
+				}
 				if (!user.friendlist.includes(friend))
 					user.friendlist.push(friend);
 				if (!user_two.friendlist.includes(userId))
@@ -152,14 +170,16 @@ export class UserService {
 					where: { id: userId}, 
 					data: {
 						friendlist: user.friendlist, 
-						incoming_friend_req: user.incoming_friend_req
-					}});
+						incoming_friend_req: user.incoming_friend_req,
+						outgoing_friend_req: user.outgoing_friend_req
+				}});
 				await	this.prisma.user.update({
 					where: { id: friend},
 					data: {
 						friendlist: user_two.friendlist,
-						outgoing_friend_req: user_two.outgoing_friend_req
-					}});
+						outgoing_friend_req: user_two.outgoing_friend_req,
+						incoming_friend_req: user_two.incoming_friend_req
+				}});
 		}
 	}
 

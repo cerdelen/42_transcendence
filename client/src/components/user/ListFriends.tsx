@@ -10,14 +10,20 @@ interface NameProps {
   name: string;
   pic: string;
   setIsFriend: React.Dispatch<React.SetStateAction<boolean>>;
+  id: string
+  friendsList: string[];
+
+  setFriendsList: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-const NameComponent = ({ name, pic, setIsFriend }: NameProps) => {
+const NameComponent = ({ name, pic, setIsFriend, id, setFriendsList, friendsList}: NameProps) => {
   const { userIdCard } = useMyContext();
   const { userId } = useContext(UserContext);
 
   const remove_friend = async () => {
-    console.log("remove friend");
+    console.log("remove friend removing id " + userIdCard);
+    console.log("this is the new id parameter i pass " + id);
+
     try {
       const response = await fetch(
         `http://${ipAddress}:3003/user/remove_friend`,
@@ -27,11 +33,18 @@ const NameComponent = ({ name, pic, setIsFriend }: NameProps) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${JSCookies.get("accessToken")}`,
           },
-          body: JSON.stringify({ removing_you: userIdCard }),
+          body: JSON.stringify({ removing_you: id }),
         }
       );
       console.log(response);
       setIsFriend(false);
+      const new_friendlost = [...friendsList];
+      const idx = new_friendlost.indexOf(id);
+      if(idx != -1)
+      {
+        new_friendlost.splice(idx, 1)
+        setFriendsList(new_friendlost)
+      }
       alert("Friend successfully removed");
     } catch (error) {
       alert("Could not modify friends list");
@@ -62,6 +75,7 @@ type Props = {
   setIsFriend: React.Dispatch<React.SetStateAction<boolean>>;
   toggle_friends_or_requests: () => void;
   show_friends: boolean;
+  setFriendsList: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 const ListFriends = ({
@@ -69,12 +83,17 @@ const ListFriends = ({
   setIsFriend,
   toggle_friends_or_requests,
   show_friends,
+  setFriendsList,
 }: Props) => {
   // const { friendlist } = useContext(UserContext);
   const [friendsNames, setNames] = useState<string[]>([]);
   const [profilePictures, setProfilePictures] = useState<string[]>([]);
   const { picture_map, set_picture_map, pushPictureToMap } =
     useMyProfile_picture_Context();
+
+  const { userIdCard } = useMyContext();
+  const { userId } = useContext(UserContext);
+
   useEffect(() => {
     const fetchNames = async () => {
       try {
@@ -134,12 +153,19 @@ const ListFriends = ({
             name={name}
             pic={profilePictures[idx]}
             setIsFriend={setIsFriend}
+            setFriendsList={setFriendsList}
+            id={friendsList[idx]}
+            friendsList={friendsList}
           />
         ))
       )}
-      <button className="purple-button" onClick={toggle_friends_or_requests}>
-        {show_friends ? "Show Friend Requests" : "Show Your Friend"}
-      </button>
+      {userId == userIdCard ?
+        <button className="purple-button" onClick={toggle_friends_or_requests}>
+          {show_friends ? "Show Friend Requests" : "Show Your Friend"}
+        </button>
+        :
+        <></>
+      }
     </ul>
   );
 };

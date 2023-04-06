@@ -249,6 +249,7 @@ const UserPage = () => {
               <ListFriends
                 friendsList={friendsList}
                 setIsFriend={setIsFriend}
+                setFriendsList={setFriendsList}
                 toggle_friends_or_requests={toggle_friends_or_requests}
                 show_friends={show_friends}
               />
@@ -269,6 +270,7 @@ const UserPage = () => {
         <>
           <div id="lists">
             <ListFriends
+              setFriendsList={setFriendsList}
               friendsList={friendsList}
               setIsFriend={setIsFriend}
               toggle_friends_or_requests={toggle_friends_or_requests}

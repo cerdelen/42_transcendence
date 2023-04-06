@@ -135,6 +135,13 @@ function App() {
 
   useEffect(() => 
   {
+    our_socket.on("invitedUserIsOffline", () =>
+    {
+      alert("Invited user is offline try again later");
+    })
+  })
+  useEffect(() => 
+  {
       our_socket.on("invitationPopUp", (invitingUserName) =>
       {
 

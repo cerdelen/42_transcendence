@@ -228,6 +228,7 @@ export class GameGateway {
   async handleInvitation(@MessageBody() obj , @ConnectedSocket() client)
   {
     
+    
     if(!clientRooms)
     {
       return ;
@@ -244,9 +245,16 @@ export class GameGateway {
     let invitedUserId = object.userName;
     console.log("Wha the shell -1");
     let user = await this.userService.findUserByName(invitedUserId);
+    console.log("User name before online check ", user.name, user.online);
+    if(user.online == false)
+    {
+      console.log("User is offline");
+      client.emit("invitedUserIsOffline");
+      return ;
+    }
     let unique : boolean = true;
 
-    if (!roomNames[0]) {
+
       let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: String(user.id)};
       console.log("Wha the shell -2");
       invites.forEach((entry) => {
@@ -284,7 +292,6 @@ export class GameGateway {
       console.log("Something broken 2");
       emitToTheUserSocket(user, this.server, "invitationPopUp", creator.name)
       return;
-    }
   }
   
   @SubscribeMessage('joinGame')
@@ -448,9 +455,12 @@ async function startGameInterval(userService: any, roomName: string, state_: any
       // console.log("breaks here ? ");
       if(stateArr[roomName].participants)
       {
+        console.log("Here");
         clientRooms[stateArr[roomName].participants[0]] = null;
         clientRooms[stateArr[roomName].participants[1]] = null;
+        console.log("Here!  ")
       }
+
       // console.log("breaks here ? check");
       stateArr[roomName] = null;
       clearInterval(intervalId);

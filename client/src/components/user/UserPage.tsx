@@ -184,9 +184,9 @@ const UserPage = () => {
 
   function startAndinvitePlayers(userId: string, userName: string) {
     console.log(userId + " Inviting player " + userName);
+
     setShowUserInto(false);
     let obj: any = { userId: userId, userName: userName };
-    
     our_socket.emit("createInvitationRoom", JSON.stringify(obj));
   }
   return (

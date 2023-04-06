@@ -11,13 +11,3 @@ export const AuthUser = createParamDecorator(
 			return data ? user && user[data] : user
 		}
 )
-
-
-// export const AuthUser = createParamDecorator(
-// 	(
-// 	data: unknown,
-// 	ctx: ExecutionContext) => {
-// 		const request = <AuthenticatedRequest>ctx.switchToHttp().getRequest()
-// 		return request.user;
-// 	}
-// )

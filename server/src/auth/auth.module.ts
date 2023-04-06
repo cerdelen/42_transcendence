@@ -19,7 +19,6 @@ import { new_user_gateway_module } from 'src/user/userSocket/new_user.gateway.mo
     useFactory: async (configService: ConfigService) => ({
       secret: configService.get('secret')
     })
-    // signOptions: { expiresIn: '7d' }, 
   })],
   controllers: [AuthController],
   providers: [AuthService, Intra42Strategy, JwtStrategy, Two_FA_Strategy, UserService],

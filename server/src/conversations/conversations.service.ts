@@ -232,25 +232,39 @@ export class ConversationService {
 		}
 	}
 
-	async leave_conversation(conversation_id: number, user_id: number): Promise<Conversation> {
+	async leave_conversation(conversation_id: number, user_id: number): Promise<number> {
+		const enum Status {
+			NO_CHAT,
+			NO_CHANGE,
+			NEW_OWNER_AND_ADMIN,
+			NEW_OWNER,
+			NEW_ADMIN,
+			LEFT_CHAT,
+		}
+		let new_owner: boolean = false;
+		let new_admin: boolean = false;
 		const conversation: Conversation = await this.findConversation(conversation_id);
 		if (!conversation)
-			return null;
-		if (conversation.group_chat == false)
-			return (conversation);
-		if (!conversation.conversation_participant_arr.includes(user_id))
-			return conversation;
+			return Status.NO_CHAT;
+		if ((conversation.group_chat == false ) || (!conversation.conversation_participant_arr.includes(user_id)))
+			return Status.NO_CHANGE;
 		const req_user_idx = conversation.conversation_participant_arr.indexOf(user_id, 0);
 		const user: User = await this.user.findUserById(user_id);
 		const conversation_id_arr_from_user = user.conversation_id_arr.indexOf(conversation_id);
 		const user_admin_idx = conversation.conversation_admin_arr.indexOf(user_id);
 		const user_owner_idx = conversation.conversation_owner_arr.indexOf(user_id);
 		conversation.conversation_participant_arr.splice(req_user_idx, 1);
+		if (conversation.conversation_participant_arr.length == 0) {
+			await this.delete_conversation(conversation_id);
+			return Status.NO_CHAT;
+		}
 		if (user_admin_idx >= 0) {
 			conversation.conversation_admin_arr.splice(user_admin_idx, 1);
 			if (conversation.conversation_admin_arr.length == 0) {
-				if (conversation.conversation_participant_arr.length > 0)
+				if (conversation.conversation_participant_arr.length > 0) {
+					new_admin = true;
 					conversation.conversation_admin_arr.push(conversation.conversation_participant_arr[0]);
+				}
 			}
 		}
 		if (user_owner_idx > -1) {
@@ -259,6 +273,7 @@ export class ConversationService {
 			{
 				console.log("updating owner array");
 				conversation.conversation_owner_arr.push(conversation.conversation_participant_arr[0]);
+				new_owner = true;
 			}
 		}
 		user.conversation_id_arr.splice(conversation_id_arr_from_user, 1);
@@ -282,12 +297,17 @@ export class ConversationService {
 				conversation_id_arr: user.conversation_id_arr,
 			}
 		})
-		if (conversation.conversation_participant_arr.length == 0) {
-			await this.delete_conversation(conversation_id);
-			return null;
+		
+		if (new_admin && new_owner) {
+			return Status.NEW_OWNER_AND_ADMIN;
+		} else if (new_owner) {
+			return Status.NEW_OWNER;
+		} else if (new_admin) {
+			return Status.NEW_ADMIN;
+		} else {
+			return Status.LEFT_CHAT;
 		}
 
-		return conversation;
 	}
 
 	async delete_conversation(chat_id: number) {

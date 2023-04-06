@@ -58,6 +58,7 @@ export class ConversationController {
 			})
 		}
 		const ret = await this.conversationsService.name_fix(newConversation, req.user.id);
+		this.convGateway.created_chat(newConversation.conversation_id, req.user.id);
 		return ret;
 	}
 
@@ -135,7 +136,10 @@ export class ConversationController {
 		@Param('chat_id') chat_id: number
 	) {
 		const existingConversation = await this.conversationsService.findConversation(chat_id);
-
+		if (!existingConversation)
+			return null;
+		if (!existingConversation.conversation_password)
+			return existingConversation;
 		if (existingConversation.conversation_password.length != 0) {
 			return this.conversationsService.updateConversation({
 				where: {
@@ -235,18 +239,13 @@ export class ConversationController {
 		@Req() req: any,
 		@Param('conversationId', new ParseIntPipe()) conversId: number,
 		@Param('adminId', new ParseIntPipe()) admId: number
-	): Promise<Conversation> {
-		return this.conversationsService.setAdministratorOfConversation(conversId, admId, req.user.id);
-	}
-
-
-	@UseGuards(Jwt_Auth_Guard)
-	@Put('leave/:conversation_id')
-	async leaveConversation(
-		@Req() req: any,
-		@Param('conversation_id') conversation_id: number
-	): Promise<Conversation> {
-		return this.conversationsService.leave_conversation(conversation_id, req)
+	) {
+		const conv = await this.conversationsService.setAdministratorOfConversation(conversId, admId, req.user.id);
+		if (conv) {
+			if (conv.conversation_admin_arr.includes(admId)) {
+				this.convGateway.new_admin_has_been_set(conv.conversation_id, admId);
+			}
+		}
 	}
 
 	@UseGuards(Jwt_Auth_Guard)
@@ -255,30 +254,29 @@ export class ConversationController {
 		@Req() req: any,
 		@Param('conversation_id', new ParseIntPipe()) conversation_id: number,
 		@Param('id_to_mute', new ParseIntPipe()) id_to_mute: number
-	): Promise<Conversation> {
+	){
 		const conversation: Conversation = await this.conversationsService.findConversation(Number(conversation_id));
 
 		const admin_user_idx = conversation.conversation_admin_arr.indexOf(req.user.id, 0);
 		const idx_from_mute_list = conversation.conversation_mute_list_arr.findIndex(element => element == Number(id_to_mute));
 		const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == Number(id_to_mute));
 
-		if (owner_user_idx >= 0)
+		if (owner_user_idx >= 0)					
 			throw new HttpException("Can't mute the conversation owner!!!", HttpStatus.FORBIDDEN);
-		else if (admin_user_idx < 0) {
-			////console.log("Current user is not considered to be an Administrator");
-			return conversation;
+		else if (admin_user_idx < 0) { //Current user is not considered to be an Administrator
+			return ;
 		}
 		else if (idx_from_mute_list >= 0) {
-			conversation.conversation_mute_list_arr.splice(idx_from_mute_list, 0);
-			const updatedConversationWithMuteUser = await this.conversationsService.updateConversation({
-				where: {
-					conversation_id: Number(conversation_id),
-				},
-				data: {
-					conversation_mute_list_arr: conversation.conversation_mute_list_arr
-				}
-			})
-			return updatedConversationWithMuteUser;
+			// conversation.conversation_mute_list_arr.splice(idx_from_mute_list, 0); //what dis?
+			// const updatedConversationWithMuteUser = await this.conversationsService.updateConversation({
+			// 	where: {
+			// 		conversation_id: Number(conversation_id),
+			// 	},
+			// 	data: {
+			// 		conversation_mute_list_arr: conversation.conversation_mute_list_arr
+			// 	}
+			// })
+			return ;
 		}
 		else {
 			const updatedConversationWithoutMuteUser = await this.conversationsService.updateConversation({
@@ -291,7 +289,9 @@ export class ConversationController {
 					}
 				}
 			})
-			return updatedConversationWithoutMuteUser;
+
+			this.convGateway.mute_user(Number(conversation_id), Number(id_to_mute));
+			return ;
 		}
 	}
 

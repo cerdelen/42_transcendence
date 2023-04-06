@@ -4,16 +4,9 @@ import { our_socket } from "../../utils/context/SocketContext";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 import Display_full_chat from "./display_full_chat";
 import { UserContext } from "../../contexts/UserContext";
-import empty_chat_picture from "../../images/sleeping_cat.jpeg";
 import JSCookies from "js-cookie";
-// import CatSvg from "../../svg/peeking-cat.svg"
 import CatSvg from "../../svg/peeking-cat.svg"
 const ipAddress = process.env.REACT_APP_Server_host_ip;
-
-interface message {
-  author_id: string;
-  text: string;
-}
 
 const Chat_input_filed_and_send_button = () => {
   const [input, setInput] = useState("");
@@ -23,14 +16,12 @@ const Chat_input_filed_and_send_button = () => {
   const sendMessage = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log("Send message");
-    
     our_socket.emit( "message", {
         author: Number(userId),
         text: input,
         conversation_id: displayed_chat.conversation_id,
         created_at: Date.now(),
       },
-      // () => {}
     );
     setInput("");
   };
@@ -54,15 +45,10 @@ const Chat_input_filed_and_send_button = () => {
         onInput={emitTyping}
         onChange={(e) => {
           console.log(e.target.value);
-          
           setInput(e.target.value);
         }}
       />
-      <button
-        // type="submit"
-      >
-        Send
-      </button>
+      <button id="chat-button">Send</button>
     </form>
   );
 };
@@ -72,41 +58,27 @@ const Chat_area = () => {
 	const { userId } = useContext(UserContext);
 	const [ reset_displayed_chat, set_reset_displayed_chat] = useState(displayed_chat.conversation_id);
 
-// console.log("I WANNA RESET EVERTHNG HERE" + reset_displayed_chat);
-
-
   our_socket.on("some_one_joined_group_chat", ({conv_id, joined_user_id} : {conv_id: number, joined_user_id: number}) =>
 		{	
 			if (joined_user_id == Number(userId))
 			{
         set_reset_displayed_chat(conv_id);
 			}
-      // else
-      // {
-      //   if (conv_id == displayed_chat.conversation_id)
-      //   {
-
-      //   }
-      // }
 		});
 
   useEffect(() => {
 		const set_new_displayed_chat = async () =>
 		{
 			try {
-        // console.log("tryin so hard");
-        
 				if (reset_displayed_chat !== -1){
 					const response = await fetch(`http://${ipAddress}:3003/conversation/getConversationById/${reset_displayed_chat}`, {
 						method: "Get",
 						headers: {
-							// "Content-Type": "application/json",
 							Authorization: `Bearer ${JSCookies.get("accessToken")}`,
 						},
 					});
 					const conv = await response.json();
           console.log("RESEING WHOLE CONV");
-          
 					setDisplayed_chat(conv);
 				}
 			}
@@ -117,8 +89,6 @@ const Chat_area = () => {
 		}
 		set_new_displayed_chat();
 	}, [reset_displayed_chat]);
-  
-  
 
   return (
     <div id="chat-area">

@@ -2,8 +2,6 @@ import { Injectable, Req, Res } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { userInfo } from 'os';
 import { ConfigService } from '@nestjs/config';
 
 
@@ -12,7 +10,6 @@ import { ConfigService } from '@nestjs/config';
 export class AuthService 
 {
 	constructor(
-			// private prisma: PrismaService,
 			private userService: UserService,
 			private jwtService: JwtService,
 			private configService: ConfigService
@@ -20,16 +17,12 @@ export class AuthService
 
 	async	login(@Req() _req: any, @Res() _res: any) : Promise<any> 
 	{
-		//console.log("fhiuewgjiorejofiewiojfwe" + _req.user.id);
 		var user = await this.userService.findUserById(_req.user.id);
 		const	serv_ip = this.configService.get('serv_ip');
-		//console.log(user.id);
 		if(user.two_FA_enabled)
 		{
-			//console.log("2fa enabled, redirecting to 2fa");
 			return _res.redirect(`http://${serv_ip}:3000/auth?2fa=` + String(_req.user.id));
 		}
-		//console.log("2fa NOT enabled signing token");
 		return (this.sign_42_jwt_token(user.id, _res));
 	}
 
@@ -37,16 +30,13 @@ export class AuthService
 	{
 		var user = await this.userService.findUserById(test_user_id);
 		const	serv_ip = this.configService.get('serv_ip');
-		// //console.log(user.id);
 		if(!user)
 		await this.create_test_user();
 		user = await this.userService.findUserById(test_user_id);
 		if(user.two_FA_enabled)
 		{
-			//console.log("2fa enabled, redirecting to 2fa");
 			return _res.redirect(`http://${serv_ip}:3000/auth?2fa=` + String(test_user_id));
 		}
-		//console.log("2fa NOT enabled signing token");
 		return (this.sign_42_jwt_token_test_user(test_user_id, _res));
 	}
 
@@ -54,64 +44,46 @@ export class AuthService
 	{
 		var user = await this.userService.findUserById(test_user_id);
 		const	serv_ip = this.configService.get('serv_ip');
-		console.log(user.id);
 		if(!user)
 		await this.create_test_user();
 		user = await this.userService.findUserById(test_user_id);
 		if(user.two_FA_enabled)
 		{
-			//console.log("2fa enabled, redirecting to 2fa");
 			return _res.redirect(`http://${serv_ip}:3000/auth?2fa=` + String(test_user_id));
 		}
-		console.log("2fa NOT enabled signing token");
 		return (this.sign_42_jwt_token_test_user(test_user_id, _res));
 	}
 
 	async	sign_42_jwt_token_test_user(user_id: number, res: any, is_two_FAed = false)
 	{
-		//console.log('sign_jwt_token');
 		const	user	= await this.userService.findUserById(user_id);
 		const	payload	= { name: user.name, sub: user.id, mail: user.mail, is_two_FAed: is_two_FAed };
 		const	token	= this.jwtService.sign(payload, {secret: this.configService.get('secret')});
 		res.cookie('accessToken', token);
-		//console.log('this is signed accessToken');
-		console.log(token);
 		return token;
 	}
 
 	async	sign_42_jwt_token(user_id: number, res: any, is_two_FAed = false)
 	{
 		const	serv_ip = this.configService.get('serv_ip');
-		//console.log('sign_jwt_token');
 		const	user	= await this.userService.findUserById(user_id);
 		const	payload	= { name: user.name, sub: user.id, mail: user.mail, is_two_FAed: is_two_FAed };
 		const	token	= this.jwtService.sign(payload, {secret: this.configService.get('secret')});
 		res.cookie('accessToken', token);
-		//console.log('this is signed accessToken');
-		//console.log(token);
 		res.redirect(`http://${serv_ip}:3000/`);
 	}
 
 	async	sign_jwt_token(user_id: number, res: any, is_two_FAed = false)
 	{
-		//console.log('sign_jwt_token');
 		const	user	= await this.userService.findUserById(user_id);
 		const	payload	= { name: user.name, sub: user.id, mail: user.mail, is_two_FAed: is_two_FAed };
 		const	token	= this.jwtService.sign(payload, {secret: this.configService.get('secret')});
-		// res.clearCookie('accessToken');
 		res.cookie('accessToken', token);
-		// res.set('Authorization', 'Bearer ' + token);
-
-	
-		//console.log('this is signed accessToken');
-		//console.log(token);
-		// res.redirect('http://localhost:3000/');
 		return(token);
 	}
 
 	async validate_intra_user(id: number, username : string, email : string, socketId: string): Promise<User>
 	{
-		//console.log(email);
 		const user = await this.userService.findUserById(id);
 		if (user)
 			return (user);

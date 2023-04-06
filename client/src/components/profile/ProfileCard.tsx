@@ -8,11 +8,13 @@ import LevelImageAndUsername from "./LevelImageAndUsername";
 import ToggleBox from "./ToggleBox";
 import { UserContext } from "../../contexts/UserContext";
 import { our_socket } from "../../utils/context/SocketContext";
+import { useMyContext } from "../../contexts/InfoCardContext";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 const ProfileCard = () => {
   const [base64String, setBase64String] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const {isDropdownOpen, setIsDropdownOpen} = useMyContext();
 
   // dynamically calculating where the dropdown should start
   const firstElementRef = useRef<HTMLDivElement>(null);

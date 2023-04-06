@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import defaultPicture from "../../images/default-picture.jpeg";
 import JSCookies from "js-cookie";
-import { UserContext } from "../../contexts/UserContext";
-import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
+import { useMyContext } from "../../contexts/InfoCardContext";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 function hasJpegExtension(filename: string): boolean {
@@ -11,39 +10,13 @@ function hasJpegExtension(filename: string): boolean {
 
 
 const ProfilePicture = () => {
-  const [useDefaultImage, setUseDefaultImage] = useState<boolean>(false);
-  const [showUploadButton, setShowUploadButton] = useState<boolean>(false);
-  const [showMenu, setShowMenu] = useState<boolean>(false);
+  const {showMenu, setShowMenu} = useMyContext();
   const [profilePicture, setProfilePicture] = useState(defaultPicture);
-  // const { userId } = useContext(UserContext);
 
   useEffect(() => {
       getUserPic();
   }, [showMenu]);
   
-  // const handleRadioChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const useDefault = event.target.value === "default";
-  //   if (useDefault) {
-  //     await fetch("http://${ipAddress}:3003/pictures/turn_on_picture", {
-  //       method: "Get",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-  //       },
-  //     })
-  //   } else {
-  //     await fetch("http://${ipAddress}:3003/pictures/turn_off_picture", {
-  //       method: "Get",
-  //       headers: {
-  //           "Content-Type": "application/json",
-  //         Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-  //       },
-  //     })
-  //   }
-  //   setUseDefaultImage(useDefault);
-  //   setShowUploadButton(!useDefault);
-  // };
-
   const getUserPic = async () => 
   {
     const response = await fetch(`http://${ipAddress}:3003/pictures/me`, {

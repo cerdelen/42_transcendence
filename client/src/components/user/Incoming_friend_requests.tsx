@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import JSCookies from "js-cookie";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 import EverythingIsFine from "../../svg/everything-is-fine.svg";
 import { json } from "node:stream/consumers";
+import { useMyContext } from "../../contexts/InfoCardContext";
+import { UserContext } from "../../contexts/UserContext";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 interface NameProps {
@@ -13,7 +15,6 @@ interface NameProps {
   set_incoming_friend_requests: React.Dispatch<React.SetStateAction<number[]>>;
   friendsList: string[];
   setFriendsList: React.Dispatch<React.SetStateAction<string[]>>;
-
 }
 
 const NameComponent = ({
@@ -46,7 +47,7 @@ const NameComponent = ({
       let new_friendlist: string[] = friendsList;
       new_friendlist.push(other_user_id);
       setFriendsList(new_friendlist);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const reject_friend_request = async () => {
@@ -67,7 +68,7 @@ const NameComponent = ({
       const idx = new_incoming_friend_request.indexOf(Number(other_user_id));
       new_incoming_friend_request.splice(idx, 1);
       set_incoming_friend_requests([...new_incoming_friend_request]);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   return (
@@ -93,18 +94,24 @@ type Props = {
   set_incoming_friend_requests: React.Dispatch<React.SetStateAction<number[]>>;
   friendsList: string[];
   setFriendsList: React.Dispatch<React.SetStateAction<string[]>>;
+  toggle_friends_or_requests: () => void;
+  show_friends: boolean;
 };
 
 const Incoming_friend_requests = ({
   incoming_friend_req,
   set_incoming_friend_requests,
   friendsList,
-  setFriendsList
+  setFriendsList,
+  show_friends,
+  toggle_friends_or_requests
 }: Props) => {
   const [friendsNames, setNames] = useState<string[]>([]);
   const [profilePictures, setProfilePictures] = useState<string[]>([]);
   const { picture_map, set_picture_map, pushPictureToMap } =
     useMyProfile_picture_Context();
+  const { userIdCard } = useMyContext();
+  const { userId } = useContext(UserContext);
   useEffect(() => {
     const fetchNames = async () => {
       try {
@@ -177,10 +184,16 @@ const Incoming_friend_requests = ({
             incoming_friend_req={incoming_friend_req}
             set_incoming_friend_requests={set_incoming_friend_requests}
             setFriendsList={setFriendsList}
-
           />
         ))
       )}
+      {userId == userIdCard ?
+        <button className="purple-button" onClick={toggle_friends_or_requests}>
+          {show_friends ? "Show Friend Requests" : "Show Your Friend"}
+        </button>
+        :
+        <></>
+      }
     </ul>
   );
 };

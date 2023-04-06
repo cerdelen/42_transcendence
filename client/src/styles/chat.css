@@ -79,7 +79,7 @@
   box-shadow: 10px 0 20px -10px rgba(0, 0, 0, 0.9),
     -10px 0 20px -10px rgba(0, 0, 0, 0.9);
   overflow-x: hidden;
-  max-height: 90vh;
+  max-height: 85vh;
 }
 
 #chat-area h2 {

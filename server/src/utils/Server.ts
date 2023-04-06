@@ -10,9 +10,3 @@ export class io_server {
 				});
 	}
 }
-// export const io_server = require("socket.io")(Server, {
-// 	cors: {
-// 	  origin: "https://example.com",
-// 	  methods: ["GET", "POST"]
-// 	}
-//   });

@@ -10,15 +10,15 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { Two_FA_Strategy } from 'src/two_fa/strategy/two_fa.strategy';
 import { UserService } from '../user/user.service';
 import { ConfigService } from '@nestjs/config';
+import { new_user_gateway_module } from 'src/user/userSocket/new_user.gateway.module';
 
 
 @Module({
-  imports: [PrismaModule, UserModule, JwtModule.registerAsync({
+  imports: [new_user_gateway_module, PrismaModule, UserModule, JwtModule.registerAsync({
     inject: [ConfigService],
     useFactory: async (configService: ConfigService) => ({
       secret: configService.get('secret')
     })
-    // signOptions: { expiresIn: '7d' }, 
   })],
   controllers: [AuthController],
   providers: [AuthService, Intra42Strategy, JwtStrategy, Two_FA_Strategy, UserService],

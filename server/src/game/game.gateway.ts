@@ -51,8 +51,8 @@ async function emitToTheUserSocket(user: any, server: Server, event_name:string,
     {
       final_socket = e;
       found = true;
-      if(event_name == 'gameCancelled')
-        console.log("Kurwa jebana mać");
+      // if(event_name == 'gameCancelled')
+        //console.log("Kurwa jebana mać");
     }
   });
   if(!found)
@@ -60,7 +60,7 @@ async function emitToTheUserSocket(user: any, server: Server, event_name:string,
     return ;
   }
   if(event_name == 'gameCancelled')
-    console.log("emitting cancelled ");
+    //console.log("emitting cancelled ");
   final_socket.emit(event_name, message)
 }
 @WebSocketGateway(
@@ -76,16 +76,16 @@ export class GameGateway {
   server: Server;
 
   onModuleInit() {
-    console.log("Instantiation");
+    //console.log("Instantiation");
   }
   //   this.server.on('connection', (socket) => {
-  //     //console.log(socket.id);
-  //     //console.log("connected");
+  //     ////console.log(socket.id);
+  //     ////console.log("connected");
   //     setInterval(() => {
   //       socket.emit("online_check");
   //       if (response === 0) {
   //         //socket.id switch user offline with userID
-  //         // //console.log("Is offline");
+  //         // ////console.log("Is offline");
   //       }
   //       response = 0;
   //     }, 10000)
@@ -99,26 +99,26 @@ export class GameGateway {
   async setupUserSocketId(@MessageBody() userId: string,
   @ConnectedSocket() socket)
   {
-    console.log("This is what user id data i got " , userId);
+    //console.log("This is what user id data i got " , userId);
     if(!Number.parseInt(userId))
     {
 
-      console.log("socket id setting up error ", Number.parseInt(userId));
+      //console.log("socket id setting up error ", Number.parseInt(userId));
       return ;
     }
     await this.userService.updateUser({where: {id: Number.parseInt(userId)}, data: {socketId: socket.id}} );
-    //console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
+    ////console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
   }
   @SubscribeMessage("online_inform")
   async handle_online(@MessageBody() userId: string) {
     if (Number.parseInt(userId)) {
       this.userService.set_user_online(Number.parseInt(userId) ,true);
-      console.log("userOnline", userId);
+      //console.log("userOnline", userId);
     }
   }
   @SubscribeMessage('userOffline')
   async makeOnline(@MessageBody() userId: string) {
-    console.log("UserOffline", userId);
+    //console.log("UserOffline", userId);
     if(!Number.parseInt(userId))
     {
       return ;
@@ -139,19 +139,19 @@ export class GameGateway {
       let delindex = invites.indexOf(new_invitation_obj);
       if(!delindex)
       {
-        //console.log("Index to delete not found in reject invite ");
+        ////console.log("Index to delete not found in reject invite ");
         return ;
       }
       invites.splice(delindex, 1);
       let new_user = await this.userService.findUserById(new_obj.userId);
-      //console.log("Game cancelled event sent");
+      ////console.log("Game cancelled event sent");
       emitToTheUserSocket(user, this.server, "gameCancelled", new_user.name)
       return ;
     }
     let new_obj = JSON.parse(obj);
-    //console.log("USer id of the inviter "  + new_obj.inviterName + "and of the invitee " + new_obj.userId);
+    ////console.log("USer id of the inviter "  + new_obj.inviterName + "and of the invitee " + new_obj.userId);
     let user = await this.userService.findUserById(Number.parseInt(new_obj.userId))
-    //console.log("after finding work");
+    ////console.log("after finding work");
     let gameCode_;
     gameCode_ = invitationRoomsNames[0].roomName;
     
@@ -184,24 +184,24 @@ export class GameGateway {
     let delindex = invites.indexOf(new_invitation_obj);
     if(!delindex)
     {
-      //console.log("Index to delete not found in reject invite ");
+      ////console.log("Index to delete not found in reject invite ");
       return ;
     }
     invites.splice(delindex, 1);
-    //console.log("Socket 0 id " + sockets[0].id + " client id " + client.id + " roomName ", gameCode_);
+    ////console.log("Socket 0 id " + sockets[0].id + " client id " + client.id + " roomName ", gameCode_);
     invitationRooms[client.id] = String(gameCode_);
     stateArr[gameCode_].participants[1] = client.id;
     client.join(gameCode_);
 
-    //console.log("User of nick ", user.name);
+    ////console.log("User of nick ", user.name);
     emitToTheUserSocket(user, this.server, 'invitationInit', "2");
     
-    // //console.log("this is client id " + user.id);
+    // ////console.log("this is client id " + user.id);
     await this.prisma.game.update({ where: { id: invitationRoomsNames[0].gameInstance.id }, data: { player_two: user.id } });
     let gameInstance = invitationRoomsNames[0].gameInstance;
     
     startGameInterval(this.userService, gameCode_, stateArr[gameCode_].state, this.server, gameInstance, this.prisma);
-    // //console.log("Ajajj");
+    // ////console.log("Ajajj");
     invitationRoomsNames.shift();
   }
   @SubscribeMessage('rejectInvite')
@@ -214,12 +214,12 @@ export class GameGateway {
     let delindex = invites.indexOf(new_invitation_obj);
     if(!delindex)
     {
-      //console.log("Index to delete not found in reject invite ");
+      ////console.log("Index to delete not found in reject invite ");
       return ;
     }
     invites.splice(delindex, 1);
     let new_user = await this.userService.findUserById(new_obj.userId);
-    //console.log("Game cancelled event sent");
+    ////console.log("Game cancelled event sent");
     
     emitToTheUserSocket(user, this.server, "gameCancelled", new_user.name)
   }
@@ -235,15 +235,15 @@ export class GameGateway {
     }
     // if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
     // {
-    //   console.log("game ongoing " );
+    //   //console.log("game ongoing " );
     //   client.emit("gameOngoing");
     //   return ;
     // }
-    console.log("Wha the shell 0");
+    //console.log("Wha the shell 0");
     let object = JSON.parse(obj);
     let userId = object.userId;
     let invitedUserId = object.userName;
-    console.log("Wha the shell -1");
+    //console.log("Wha the shell -1");
     let user = await this.userService.findUserByName(invitedUserId);
     console.log("User name before online check ", user.name, user.online);
     if(user.online == false)
@@ -256,7 +256,7 @@ export class GameGateway {
 
 
       let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: String(user.id)};
-      console.log("Wha the shell -2");
+      //console.log("Wha the shell -2");
       invites.forEach((entry) => {
         if(entry.creator_id == userId && entry.invitee_id == String(user.id) || entry.creator_id == String(user.id)  && entry.invitee_id  == userId)
         {
@@ -265,15 +265,15 @@ export class GameGateway {
       });
       // if(!unique)
       // {
-      //   console.log("Wha the shell -3");
-      //   console.log("Invitation already exist");
+      //   //console.log("Wha the shell -3");
+      //   //console.log("Invitation already exist");
       //   return ;
       // }
       invites.push(new_invitation_obj);
       
       if(!userId)
       {
-        console.log("Something broken 0");
+        //console.log("Something broken 0");
         return ;
       }
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
@@ -284,12 +284,12 @@ export class GameGateway {
       stateArr[game.id] = pair;
       stateArr[game.id].participants[0] = client.id;
       client.join(game.id.toString());
-      console.log("Something broken 1");
+      //console.log("Something broken 1");
       client.emit('invitationInit', 1);
       invitationRoomsNames.push({ roomName: game.id.toString(), gameInstance: game });
 
       let creator = await this.userService.findUserById(Number.parseInt(userId));
-      console.log("Something broken 2");
+      //console.log("Something broken 2");
       emitToTheUserSocket(user, this.server, "invitationPopUp", creator.name)
       return;
   }
@@ -302,7 +302,7 @@ export class GameGateway {
     }
     if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
     {
-      console.log("game ongoing " );
+      //console.log("game ongoing " );
       client.emit("gameOngoing");
       return ;
     }
@@ -367,7 +367,7 @@ export class GameGateway {
     let pure_keyObj : KeyInfo = JSON.parse(keyobj);
     if(keyobj.player_number === 0)
     {
-      console.log("Player number not provided error");
+      //console.log("Player number not provided error");
       return ;  
     }
 
@@ -394,7 +394,7 @@ export class GameGateway {
     let pure_keyObj : KeyInfo = JSON.parse(keyobj);
     if(pure_keyObj.player_number === 0)
     {
-      console.log("Player number not provided error");
+      //console.log("Player number not provided error");
       return ;  
     }
     if (pure_keyObj.player_number == 1 && pure_keyObj.socket_id == stateArr[roomName].participants[0]) {
@@ -452,7 +452,7 @@ async function startGameInterval(userService: any, roomName: string, state_: any
       emitGameState(roomName, state_, server);
     } else {
       emitGameOver(state_ ,userService, roomName, winner, server, game, prisma, other_game.player_two);
-      // console.log("breaks here ? ");
+      // //console.log("breaks here ? ");
       if(stateArr[roomName].participants)
       {
         console.log("Here");
@@ -461,7 +461,6 @@ async function startGameInterval(userService: any, roomName: string, state_: any
         console.log("Here!  ")
       }
 
-      // console.log("breaks here ? check");
       stateArr[roomName] = null;
       clearInterval(intervalId);
     }

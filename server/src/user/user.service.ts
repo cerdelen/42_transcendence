@@ -2,17 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { User, Prisma, Stats } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserWhereUniqueInput } from '../utils/types';
+import { New_user_gateway } from './userSocket/new_userr_gatewat';
+import { userGateway } from './userSocket/user.gateway';
 
 @Injectable()
 export class UserService {
 	
 	constructor(
-		private prisma: PrismaService
+		private prisma: PrismaService,
+		private readonly new_user_gatewaysss: New_user_gateway,
 		) {}
 
 
 	async	createUser(data: Prisma.UserCreateInput) : Promise<User>
 	{
+
 		const check = await this.prisma.user.findUnique({ where: { id: data.id }});
 		if (!check)
 		{
@@ -20,6 +24,8 @@ export class UserService {
 			await this.prisma.stats.create({
 				data: { stat_id: data.id },
 			});
+			//console.log("i am before the call of emit new user");
+			this.new_user_gatewaysss.emit_new_user(data.id.toString());
 			return (user);
 		}
 		return (check);
@@ -108,7 +114,7 @@ export class UserService {
 			}
 			if(user.incoming_friend_req.includes(friend) && user_two.outgoing_friend_req.includes(userId))		// in case the other one sent me alreadt friend invite
 			{
-				console.log("got into exeption where there is already f_r sent the other way around");
+				//console.log("got into exeption where there is already f_r sent the other way around");
 				
 				return (this.accept_friend_request(friend, userId));
 			}
@@ -136,14 +142,32 @@ export class UserService {
 
 		if(user_two && user)
 		{
-				console.log("got here too");
+				//console.log("got here too");
 				
-				const	incoming_request = user.incoming_friend_req.findIndex(x => x == friend);
-				const	outgoing_request = user_two.outgoing_friend_req.findIndex(x => x == userId);
-				if (incoming_request != -1)
-					user.incoming_friend_req.splice(incoming_request, 1);
-				if (outgoing_request != -1)
-					user_two.outgoing_friend_req.splice(outgoing_request, 1);
+				const	incoming_request_indx = user.incoming_friend_req.findIndex(x => x == friend);
+				const	outgoing_req_user_one_idx = user.outgoing_friend_req.findIndex(x => x == friend);
+				const	outgoing_request_idx = user_two.outgoing_friend_req.findIndex(x => x == userId);
+				const	incoming_req_user_two_idx = user_two.incoming_friend_req.findIndex(x => x == userId);
+				if (incoming_request_indx != -1)
+				{
+					//console.log("if one accept f_r");
+					user.incoming_friend_req.splice(incoming_request_indx, 1);
+				}
+				if (outgoing_req_user_one_idx != -1)
+				{
+					//console.log("if two accept f_r");
+					user.outgoing_friend_req.splice(outgoing_req_user_one_idx, 1);
+				}
+				if (outgoing_request_idx != -1)
+				{
+					//console.log("if trhee accept f_r");
+					user_two.outgoing_friend_req.splice(outgoing_request_idx, 1);
+				}
+				if (incoming_req_user_two_idx != -1)
+				{
+					//console.log("if four accept f_r");
+					user_two.incoming_friend_req.splice(incoming_req_user_two_idx, 1);
+				}
 				if (!user.friendlist.includes(friend))
 					user.friendlist.push(friend);
 				if (!user_two.friendlist.includes(userId))
@@ -152,14 +176,16 @@ export class UserService {
 					where: { id: userId}, 
 					data: {
 						friendlist: user.friendlist, 
-						incoming_friend_req: user.incoming_friend_req
-					}});
+						incoming_friend_req: user.incoming_friend_req,
+						outgoing_friend_req: user.outgoing_friend_req
+				}});
 				await	this.prisma.user.update({
 					where: { id: friend},
 					data: {
 						friendlist: user_two.friendlist,
-						outgoing_friend_req: user_two.outgoing_friend_req
-					}});
+						outgoing_friend_req: user_two.outgoing_friend_req,
+						incoming_friend_req: user_two.incoming_friend_req
+				}});
 		}
 	}
 
@@ -286,27 +312,27 @@ export class UserService {
 
 	async	add_game_to_history(game_id: number)
 	{
-		// //console.log(game.player_one + " " + game.player_two);
+		// ////console.log(game.player_one + " " + game.player_two);
 		
 		const	game		= await this.prisma.game.findUnique({ where: { id: game_id }});
 		const	user_one	= await this.prisma.user.findUnique({ where: { id: game.player_one } });
 		const	user_two	= await this.prisma.user.findUnique({ where: { id: game.player_two } });
-		//console.log('this is game' + JSON.stringify(game));
+		////console.log('this is game' + JSON.stringify(game));
 
 		let index_one;
 		let index_two;
 		if (!user_one || !user_two)
 		{
-			//console.log("user one or user 2 is undefined");
-			//console.log("user 1 " + user_one);
-			//console.log("user 2 " + user_two);
+			////console.log("user one or user 2 is undefined");
+			////console.log("user 1 " + user_one);
+			////console.log("user 2 " + user_two);
 			
 			return ;
 
 		}
-		//console.log("user one or user 2");
-		//console.log("user 1 " + user_one);
-		//console.log("user 2 " + user_two);
+		////console.log("user one or user 2");
+		////console.log("user 1 " + user_one);
+		////console.log("user 2 " + user_two);
 		if(!user_one.games == null)
 			index_one = user_one.games.findIndex(x => x == game.id);
 		else
@@ -315,10 +341,10 @@ export class UserService {
 			index_two = user_two.games.findIndex(x => x == game.id);
 		else
 			index_two = -1;
-		//console.log("this is user one" + JSON.stringify(user_one));
-		//console.log("this is user two" + JSON.stringify(user_two));
-		//console.log("this is index 1" + index_one);
-		//console.log("this is index 2" + index_two);
+		////console.log("this is user one" + JSON.stringify(user_one));
+		////console.log("this is user two" + JSON.stringify(user_two));
+		////console.log("this is index 1" + index_one);
+		////console.log("this is index 2" + index_two);
 		if(user_two && user_one && index_one == -1 && index_two == -1)
 		{
 			await	this.add_loss(game.loser);
@@ -353,7 +379,7 @@ export class UserService {
 				
 			}
 		})
-		//console.log("findExisitngUSer = " + existingUser);
+		////console.log("findExisitngUSer = " + existingUser);
 		
 		return existingUser;
 	}

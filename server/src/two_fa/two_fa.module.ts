@@ -6,10 +6,11 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from '../user/user.service';
+import { New_user_gateway } from 'src/user/userSocket/new_userr_gatewat';
 
 @Module({
   imports: [UserModule],
-  providers: [TwoFaService, JwtService, AuthService, PrismaService, UserService],
+  providers: [TwoFaService, JwtService, AuthService, PrismaService, UserService, New_user_gateway],
   controllers: [TwoFaController],
   exports: [TwoFaService]
 })

@@ -10,7 +10,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class TwoFaService {
 	constructor(
 		private readonly userService: UserService,
-		private readonly jwtService: JwtService,
 		private readonly prisma: PrismaService
 	) {}
 
@@ -23,7 +22,6 @@ export class TwoFaService {
 	async	generate_secret(user: User)
 	{
 		const p_user = await this.prisma.user.findUnique({where: { id: user.id}});
-		// //console.log((await p_user).two_FA_secret);
 		if (p_user.two_FA_secret)
 		{
 			const	otpauthUrl = authenticator.keyuri(
@@ -31,7 +29,6 @@ export class TwoFaService {
 				"Transcatdence",
 				p_user.two_FA_secret
 			);
-			//console.log("not creating new secret for 2-fa");
 			return (otpauthUrl);
 		}
 		else
@@ -47,7 +44,6 @@ export class TwoFaService {
 				"Transcatdence",
 				secret
 				);
-			//console.log("i DID create a new secret for 2-fa");
 			return (otpauthUrl);
 		}
 	}
@@ -76,17 +72,4 @@ export class TwoFaService {
 	{
 		this.userService.turn_on_2FA(user_id);
 	}
-
-	async	test(user_id: number)
-	{
-		//console.log("hello");
-		const p_user = this.prisma.user.findUnique({where: { id: user_id}});
-		//console.log((await p_user).two_FA_secret);
-		// if((await p_user).two_FA_secret)
-		// 	console.log("is there")
-		// else
-		// 	console.log("is NOTTTT there")
-	}
-
-	
 }

@@ -5,7 +5,7 @@ import { UserService } from 'src/user/user.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
-  providers: [PicturesService, UserService, PrismaService],
+  providers: [PicturesService, PrismaService],
   controllers: [PicturesController]
 })
 export class PicturesModule {}

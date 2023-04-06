@@ -16,29 +16,46 @@ import Incoming_friend_requests from "./Incoming_friend_requests";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
 function CustomizationFields({ setMapNumber }: { setMapNumber: any }) {
-
   return (
-      <>
-          <br />
-          <br />
-          <button className="purple-button_" onClick={(e) => {
-              e.preventDefault();
-              setMapNumber(0);
-          }}> Bulgaria </button>
-          <button className="purple-button_" onClick={(e) => {
-              e.preventDefault();
-              setMapNumber(1);
-          }}> Paris </button>
-          <button className="purple-button_" onClick={(e) => {
-              e.preventDefault();
-              setMapNumber(2);
-          }}> Cat Valley </button>
-      </>
-  )
+    <>
+      <br />
+      <br />
+      <button
+        className="purple-button_"
+        onClick={(e) => {
+          e.preventDefault();
+          setMapNumber(0);
+        }}
+      >
+        {" "}
+        Bulgaria{" "}
+      </button>
+      <button
+        className="purple-button_"
+        onClick={(e) => {
+          e.preventDefault();
+          setMapNumber(1);
+        }}
+      >
+        {" "}
+        Paris{" "}
+      </button>
+      <button
+        className="purple-button_"
+        onClick={(e) => {
+          e.preventDefault();
+          setMapNumber(2);
+        }}
+      >
+        {" "}
+        Cat Valley{" "}
+      </button>
+    </>
+  );
 }
 
 const UserPage = () => {
-  const {mapNumber, setMapNumber} = useContext(CounterContext);
+  const { mapNumber, setMapNumber } = useContext(CounterContext);
   const { userId, blocked_users } = useContext(UserContext);
   const { userIdCard, setShowUserInto } = useMyContext();
   const [isVisible, setIsVisible] = useState(true);
@@ -150,8 +167,7 @@ const UserPage = () => {
           }
         );
         // console.log(response);
-      alert("Friend request has been sent")
-
+        alert("Friend request has been sent");
       } catch (error) {
         alert("Could not modify friends list");
       }
@@ -218,7 +234,6 @@ const UserPage = () => {
               <button className="purple-button" onClick={update_is_blocked}>
                 {is_blocked ? "Unblock" : "Block"}
               </button>
-              
             </div>
           )}
         </div>
@@ -229,21 +244,23 @@ const UserPage = () => {
       </button>
       {userIdCard == userId ? (
         <>
-          <button
-            className="purple-button"
-            onClick={toggle_friends_or_requests}
-          >
-            {show_friends ? "Show Friend Requests" : "Show Your Friend"}
-          </button>
           <div id="lists">
             {show_friends ? (
-              <ListFriends friendsList={friendsList} setIsFriend={setIsFriend} />
+              <ListFriends
+                friendsList={friendsList}
+                setIsFriend={setIsFriend}
+                setFriendsList={setFriendsList}
+                toggle_friends_or_requests={toggle_friends_or_requests}
+                show_friends={show_friends}
+              />
             ) : (
               <Incoming_friend_requests
                 incoming_friend_req={incoming_frined_requests}
                 set_incoming_friend_requests={set_incoming_friend_requests}
                 friendsList={friendsList}
                 setFriendsList={setFriendsList}
+                toggle_friends_or_requests={toggle_friends_or_requests}
+                show_friends={show_friends}
               />
             )}
             <GameHistory gamesList={gamesList} />
@@ -252,7 +269,13 @@ const UserPage = () => {
       ) : (
         <>
           <div id="lists">
-            <ListFriends friendsList={friendsList} setIsFriend={setIsFriend}/>
+            <ListFriends
+              setFriendsList={setFriendsList}
+              friendsList={friendsList}
+              setIsFriend={setIsFriend}
+              toggle_friends_or_requests={toggle_friends_or_requests}
+              show_friends={show_friends}
+            />
             <GameHistory gamesList={gamesList} />
           </div>
         </>

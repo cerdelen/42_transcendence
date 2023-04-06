@@ -15,8 +15,8 @@ export class Intra42Strategy extends PassportStrategy(Strategy, '42'){
 			clientSecret: configService.get('client_secret'),
 			callbackURL: `http://${configService.get('serv_ip')}:3003/auth/login`,
 		});
-		//console.log("ENVVVV" + configService.get('client_secret'));
-		//console.log("ENVVVV§" + configService.get('secret'));
+		////console.log("ENVVVV" + configService.get('client_secret'));
+		////console.log("ENVVVV§" + configService.get('secret'));
 		
 		
 		
@@ -29,11 +29,11 @@ export class Intra42Strategy extends PassportStrategy(Strategy, '42'){
 		done: VerifyCallback,
 	) : Promise<User | undefined>
 	{
-		//console.log(accessToken);
-		// //console.log(refreshToken);
-		// //console.log(profile.username);
-		// //console.log(profile.id);
-		// //console.log(profile.emails[0]);
+		////console.log(accessToken);
+		// ////console.log(refreshToken);
+		// ////console.log(profile.username);
+		// ////console.log(profile.id);
+		// ////console.log(profile.emails[0]);
 		const user = await this.authService.validate_intra_user(profile.id, profile.username, profile.emails[0].value, "");
 		return (user);
 	}

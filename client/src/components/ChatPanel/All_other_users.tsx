@@ -5,95 +5,120 @@ import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_con
 import { Online_users_context } from "../../contexts/Online_users_context";
 const ipAddress = process.env.REACT_APP_Server_host_ip;
 
-const User_preview_card = ({other_user_id, online} : {other_user_id: number, online: boolean}) => {
-	const { setUserIdCard, setShowUserInto} = useMyContext();
+const User_preview_card = ({
+  other_user_id,
+  online,
+}: {
+  other_user_id: number;
+  online: boolean;
+}) => {
+  const { setUserIdCard, setShowUserInto } = useMyContext();
 
-	const handleOnClick = () => 
-	{
-		setUserIdCard(other_user_id.toString());
-		setShowUserInto(true);
-	}
-	
-	const [photo, setPhoto] = useState("");
-	const [user_name, set_user_name] = useState("");
-	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
-	const { online_users } = useContext(Online_users_context);
-	const [status, setStatus] = useState(false);
+  const handleOnClick = () => {
+    setUserIdCard(other_user_id.toString());
+    setShowUserInto(true);
+  };
 
-	useEffect(() => {
-			const get_user_info = async (other_user_id : number) => {
-				const response = await fetch(`http://${ipAddress}:3003/user/user_name`, {
-					method: "Post",
-					headers: {
-						'Content-Type': 'application/json',
-						'Accept': 'application/json',
-					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-					},
-					body: JSON.stringify({ user_id: other_user_id }),
-				});
-				const data = await response.text();
-				
-				set_user_name(data);
-				if(picture_map.has(Number(other_user_id)))
-					setPhoto(picture_map.get(Number(other_user_id)) ?? '')
-				else
-					setPhoto(await pushPictureToMap(Number(other_user_id), picture_map, set_picture_map));
-		}
-		get_user_info(other_user_id);
-		console.log("this is inside useeffect " + JSON.stringify(online_users));
-		
-		}, [online_users]);
+  const [photo, setPhoto] = useState("");
+  const [user_name, set_user_name] = useState("");
+  const { picture_map, set_picture_map, pushPictureToMap} =
+    useMyProfile_picture_Context();
+  const { online_users } = useContext(Online_users_context);
+  const [status, setStatus] = useState(false);
+  
+  
+  useEffect(() => {
+    const get_user_info = async (other_user_id: number) => {
+      const response = await fetch(`http://${ipAddress}:3003/user/user_name`, {
+        method: "Post",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+        },
+        body: JSON.stringify({ user_id: other_user_id }),
+      });
+      const data = await response.text();
+      // console.log("this is name map " + JSON.stringify(name_map));
+      // console.log("this is picture map " + JSON.stringify(picture_map));
+      set_user_name(data);
+      if (picture_map.has(Number(other_user_id)))
+        setPhoto(picture_map.get(Number(other_user_id)) ?? "");
+      else
+        setPhoto(
+          await pushPictureToMap(
+            Number(other_user_id),
+            picture_map,
+            set_picture_map
+          )
+        );
+    };
+    get_user_info(other_user_id);
+    // console.log("this is inside useeffect " + online_users);
+  }, [online_users]);
 
-		// console.log("this is online users in the cards " + JSON.stringify(online_users));
-		console.log("this is online boolean for id " + other_user_id + " " + online);
-		
+  // console.log("this is online users in the cards " + JSON.stringify(online_users));
+  //   console.log("this is online boolean for id " + other_user_id + " " + online);
 
-	return (
-		<li className='Chat_preview_cards online-status'  title={user_name} onClick={handleOnClick}>
-			<img src={photo} alt="" />
-			<span id='user-name' >{user_name}</span>
-			<span
-				id="status-dot-other-players"
-				style={{ backgroundColor: online ? "purple" : "gray" }} //hardcoded
-			></span>
-		</li>
-	)
-}
+  return (
+    <li
+      className="Chat_preview_cards online-status"
+      title={user_name}
+      onClick={handleOnClick}
+    >
+      <img src={photo} alt="" />
+      <span id="user-name">{user_name}</span>
+      <span
+        id="status-dot-other-players"
+        style={{ backgroundColor: online ? "purple" : "gray" }} //hardcoded
+      ></span>
+    </li>
+  );
+};
 
-const Get_all_other_users = () =>
-{
-	const [other_users_ids, set_other_users_id] = useState<number[]>([]);
-	const { online_users } = useContext(Online_users_context);
+const Get_all_other_users = () => {
+  const [other_users_ids, set_other_users_id] = useState<number[]>([]);
+  const { online_users } = useContext(Online_users_context);
 
-	useEffect(() => {
-		async function get_all_user_ids(){
-			const response = await fetch(`http://${ipAddress}:3003/user/get_all_other_user_ids`, {
-				method: "Get",
-				headers: {
-					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-				},
-			})
-			if (response.ok)
-			{
-				const data : number[] = await response.json();
-				set_other_users_id(data);
-			}
-		}
-		get_all_user_ids();
-	  }, [online_users]);
+  useEffect(() => {
+    async function get_all_user_ids() {
+      const response = await fetch(
+        `http://${ipAddress}:3003/user/get_all_other_user_ids`,
+        {
+          method: "Get",
+          headers: {
+            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const data: number[] = await response.json();
 
-	return (
-		<div className="left-pane-column" >
-			<h2>All Players</h2>
-			<ul className='list-cards'>
-				{
-					other_users_ids.map((other_user_id) => (
-						<User_preview_card key={other_user_id} other_user_id={other_user_id} online={online_users.includes(other_user_id)}/>
-					))
-				}	
-			</ul>
-		</div>
-	)
-}
+        console.log("DATA");
 
-export default Get_all_other_users
+        console.log(typeof data[0]);
+        console.log(data);
+
+        set_other_users_id(data);
+      }
+    }
+    get_all_user_ids();
+  }, []);
+
+  return (
+    <div className="left-pane-column">
+      <h2>All Players</h2>
+      <ul className="list-cards">
+        {other_users_ids.map((other_user_id) => (
+          <User_preview_card
+            key={other_user_id}
+            other_user_id={other_user_id}
+            online={online_users.includes(other_user_id)}
+          />
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default Get_all_other_users;

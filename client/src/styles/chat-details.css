@@ -23,6 +23,7 @@
 /* CHAT_PARTICIPANT_CARD */
 
 .participant-card {
+
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -68,9 +69,15 @@
 	padding-bottom: .6rem;
 }
 
-.admin-buttons,
+.chat-buttons,
 .password-buttons {
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
+}
+
+#admin-buttons {
+	display: flex;
+	flex-direction: column;
+	padding: 10px 0px 10px 10px ;
 }

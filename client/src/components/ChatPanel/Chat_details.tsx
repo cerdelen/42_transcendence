@@ -3,13 +3,10 @@ import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context
 import { useUserContext } from "../../contexts/UserContext";
 import { our_socket } from "../../utils/context/SocketContext";
 import JSCookies from "js-cookie";
-import { displayed_chat_class } from "../../utils/types";
 import Popup_chat_administration from "./Popup_chat_administration";
 import { FaCrown } from "react-icons/fa";
 import { RiAdminLine } from "react-icons/ri";
 import { RiVolumeMuteFill } from "react-icons/ri";
-import themeAchievement from "../../images/changed-theme-achievement.png";
-import path from "path";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 import ipAddress from '../../constants';
 
@@ -149,18 +146,7 @@ const Participant_in_chat_detail_card = ({
 
   const openChatAdministration = () => {
     if (Number(myUserId) != user_id && displayed_chat.group_chat == true) {
-      console.log('open administration');
-      console.log(participantCardRef.current);
-      console.log(chatAdministrationRef);
-      
-      
       set_display_popup(!display_popup);
-      if (participantCardRef.current && chatAdministrationRef.current) {
-        chatAdministrationRef.current.style.left= `
-        ${
-          participantCardRef.current.getBoundingClientRect().right
-        }px`;
-      } 
     }
   };
   const canOpenChatAdministration: boolean =
@@ -170,15 +156,7 @@ const Participant_in_chat_detail_card = ({
   
 
   const participantCardRef = useRef<HTMLDivElement>(null);
-  const chatAdministrationRef = useRef<HTMLDivElement>(null);
-  // function toggleDropDownMenu() {
-  //   setIsDropdownOpen(!isDropdownOpen);
-  //   if (firstElementRef.current && secondElementRef.current) {
-  //     secondElementRef.current.style.top = `${
-  //       firstElementRef.current.getBoundingClientRect().bottom
-  //     }px`;
-  //   }
-  // }
+
   return (
     <div className="participant-card" ref={participantCardRef} onClick={() => openChatAdministration()}>
       <img src={photo} alt="" />
@@ -189,11 +167,8 @@ const Participant_in_chat_detail_card = ({
         {is_muted && <RiVolumeMuteFill title="muted" />}
         {display_popup && canOpenChatAdministration && (
           <Popup_chat_administration
-            ref={chatAdministrationRef}
+            participantCardRef={participantCardRef}
             user_id={user_id}
-            setmuted={set_is_muted}
-            setadmin={set_is_admin}
-            setowner={set_is_owner}
             set_user_ids_in_chat_details={set_user_ids_in_chat_details}
             is_muted={is_muted}
             is_admin={is_admin}
@@ -204,18 +179,8 @@ const Participant_in_chat_detail_card = ({
   );
 };
 
-const Chat_details = ({
-  not_joined_chats_ids,
-  my_chats_ids,
-  setmy_chats_ids,
-  setNot_joined_chats_ids,
-}: {
-  not_joined_chats_ids: number[];
-  my_chats_ids: number[];
-  setmy_chats_ids: any;
-  setNot_joined_chats_ids: any;
-}) => {
-  const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
+const Chat_details = () => {
+  const { displayed_chat} = useMyDisplayedChatContext();
   const { myUserId } = useUserContext();
   const [user_ids_in_chat_details, set_user_ids_in_chat_details] = useState<
     number[]
@@ -268,34 +233,6 @@ const Chat_details = ({
               Authorization: `Bearer ${JSCookies.get("accessToken")}`,
             },
             body: JSON.stringify({ password: inputValue }),
-          }
-        );
-        alert("You successfully set a password")
-      } catch (error) {
-        alert("The password could not be set")
-      }
-
-    }
-  };
-
-  const handleResetPassword = async (
-    event: React.FormEvent<HTMLFormElement>,
-    inputValue: string
-  ) => {
-    if (inputValue.length > 0) {
-      console.log(displayed_chat.conversation_id + "chat id i append to url");
-      try {
-
-        await fetch(
-          `http://${ipAddress}:3003/conversation/change_password/${displayed_chat.conversation_id}`,
-          {
-            method: "Post",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-            },
-            // body: JSON.stringify({"Password": inputValue}),
-            body: JSON.stringify({ Password: inputValue }),
           }
         );
         alert("You successfully set a password")
@@ -366,7 +303,7 @@ const Chat_details = ({
           />
         ))}
       </ul>
-      <div className="admin-buttons">
+      <div className="chat-buttons">
         {displayed_chat.group_chat && (
           <button
             className="purple-button"
@@ -385,7 +322,6 @@ const Chat_details = ({
           displayed_chat.conversation_owner_arr?.includes(Number(myUserId)) && (
             <div className="password-buttons">
               <InputFieldOrButton buttonText="Set Password" fieldPlaceholder="Password" handleSubmit={handleSetPassword} />
-              {/* <InputFieldOrButton buttonText="Reset Password" fieldPlaceholder="Password" handleSubmit={handleResetPassword}/> */}
               <button className="purple-button" onClick={() => { handleRemovePassword(displayed_chat.conversation_id) }}> Remove Password</button>
             </div>
           )}

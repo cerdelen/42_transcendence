@@ -342,12 +342,7 @@ const Open_group_cards = () => {
 
       <div className="right-pane-column">
         <h2>CHAT DETAILS</h2>
-        <Chat_details
-          not_joined_chats_ids={not_joined_chats_ids}
-          my_chats_ids={my_chats_ids}
-          setmy_chats_ids={setmy_chats_ids}
-          setNot_joined_chats_ids={setNot_joined_chats_ids}
-        />
+        <Chat_details/>
       </div>
     </div>
   );

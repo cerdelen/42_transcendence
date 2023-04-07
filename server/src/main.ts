@@ -14,6 +14,8 @@ async function bootstrap() {
   });  
   try {
     await app.listen(3003);
+    console.log("backend ip", process.env.SERV_IP);
+    
   }
   catch(error) 
   {}

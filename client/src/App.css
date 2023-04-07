@@ -1,5 +1,4 @@
 @import "./styles/chat.css";
-@import "./styles/open-chat-card.css";
 @import "./styles/toggle-button.css";
 @import "./styles/qr-form.css";
 @import "./styles/second-factor-page.css";
@@ -106,7 +105,7 @@ header .basic:hover {
 #user-dropdown {
   position: absolute;
   z-index: 1;
-  min-width: 200px;
+  min-width: 252px;
   border-bottom-left-radius: 25px;
   border-bottom-right-radius: 25px;
   background: linear-gradient(to bottom right, rgb(134, 73, 127), rgb(129, 103, 146));

@@ -45,7 +45,6 @@ const NameComponent = ({ name, pic, setIsFriend, id, setFriendsList, friendsList
         new_friendlost.splice(idx, 1)
         setFriendsList(new_friendlost)
       }
-      alert("Friend successfully removed");
     } catch (error) {
       alert("Could not modify friends list");
     }

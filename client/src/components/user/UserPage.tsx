@@ -170,7 +170,7 @@ const UserPage = () => {
             body: JSON.stringify({ adding_you: userIdCard }),
           }
         );
-        alert("Friend request has been sent");
+        // alert("Friend request has been sent");
       } catch (error) {
         alert("Could not modify friends list");
       }
@@ -246,6 +246,7 @@ const UserPage = () => {
             console.log("setting new friendlist, adding this id " + friend_id_2);
             setMyFriendList([...myFriendList, friend_id_2])
           }
+          setIsFriend(true);
         } else if (friend_id_1 === Number(userIdCard) && friend_id_2 === Number(myUserId)) {
           if (!friendsListIdCard.includes(friend_id_2)) {
             setFriendsListIdCard([...friendsListIdCard, friend_id_2]);
@@ -268,6 +269,7 @@ const UserPage = () => {
               setMyIncomingFriendReq([...myIncomingFriendReq]);
             }
           }
+          setIsFriend(true);
         }
       })
     }
@@ -279,14 +281,15 @@ const UserPage = () => {
     const setup_sockets = () =>
     {
       our_socket.on('new_friend_request_received', ({ received_friend_req, sent_friend_req }: { received_friend_req: number, sent_friend_req: number }) => {
-        // console.log("inside friend request received " + received_friend_req, sent_friend_req, Number(myUserId), Number(userIdCard));
+        console.log("inside friend request received " + received_friend_req, sent_friend_req, Number(myUserId), Number(userIdCard));
         if (Number(myUserId) == received_friend_req && Number(userIdCard) == received_friend_req) {
           if (!incoming_frined_requests.includes(sent_friend_req)) {
             incoming_frined_requests.push(sent_friend_req);
             set_incoming_friend_requests([...incoming_frined_requests]);
           }
         }
-        if (Number(myUserId) == sent_friend_req && userIdCard == myUserId) {
+        if (Number(myUserId) == sent_friend_req && received_friend_req == Number(userIdCard)) {
+          console.log("got into if second");
           if (!myOutgoingFriendReq.includes(received_friend_req)) {
             myOutgoingFriendReq.push(received_friend_req);
             setMyOutgoingFriendReq([...myOutgoingFriendReq])

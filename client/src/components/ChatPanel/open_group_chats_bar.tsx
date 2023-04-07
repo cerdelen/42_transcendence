@@ -1,5 +1,5 @@
-import React, { useContext, useState, useEffect, Fragment } from "react";
-import { UserContext } from "../../contexts/UserContext";
+import React, { useState, useEffect, Fragment } from "react";
+import { useUserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
 import group_picture from "../../images/group_chat_picture.jpeg";
 import Chat_details from "./Chat_details";
@@ -9,7 +9,7 @@ import { our_socket } from "../../utils/context/SocketContext";
 import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
 import SingleFieldInputForm from "../InputForms/SingleFieldInputForm";
 import TwoFieldInputForm from "../InputForms/TwoFieldInputForm";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 const Chat_name_input = ({ setButton_state }: { setButton_state: any }) => {
   const { my_chats_ids, setmy_chats_ids } = useMyChatCardsContext();
@@ -222,7 +222,7 @@ const Get_all_open_group_chats = ({
   setmy_chats_ids: any;
   setNot_joined_chats_ids: any;
 }) => {
-  const { userId } = useContext(UserContext);
+  const { myUserId } = useUserContext();
   useEffect(() => {
     async function get_ids() {
       const response = await fetch(
@@ -243,7 +243,7 @@ const Get_all_open_group_chats = ({
   }, []);
 
   useEffect(() => {
-    if (userId !== '') {
+    if (myUserId !== '') {
 
       our_socket.on(
         "some_one_left_group_chat",
@@ -256,10 +256,10 @@ const Get_all_open_group_chats = ({
           left_user_id: number;
           conv_still_exists: boolean;
         }) => {
-          if (left_user_id == Number(userId) && conv_still_exists) {
+          if (left_user_id == Number(myUserId) && conv_still_exists) {
             if (!not_joined_chats_ids.includes(conv_id))
               setNot_joined_chats_ids([...not_joined_chats_ids, conv_id]);
-          } else if (left_user_id !== Number(userId) && !conv_still_exists) {
+          } else if (left_user_id !== Number(myUserId) && !conv_still_exists) {
             console.log("else if");
             const updatedChats = not_joined_chats_ids;
             const idx = updatedChats.indexOf(conv_id);
@@ -275,13 +275,13 @@ const Get_all_open_group_chats = ({
       );
     }
 
-  }, [userId, not_joined_chats_ids])
+  }, [myUserId, not_joined_chats_ids])
 
   useEffect(() => {
-    if (userId !== '') {
+    if (myUserId !== '') {
 
       our_socket.on("created_group_chat", ({ chat_id, creator_id }: { chat_id: number, creator_id: number }) => {
-        if (Number(userId) !== creator_id) {
+        if (Number(myUserId) !== creator_id) {
           console.log("Created group chat", chat_id, creator_id);
           if (!not_joined_chats_ids.includes(chat_id))
             setNot_joined_chats_ids([...not_joined_chats_ids, chat_id]);
@@ -289,7 +289,7 @@ const Get_all_open_group_chats = ({
       })
     }
 
-  }, [userId, not_joined_chats_ids])
+  }, [myUserId, not_joined_chats_ids])
 
   return (
     <ul className="list-cards right-shadow">

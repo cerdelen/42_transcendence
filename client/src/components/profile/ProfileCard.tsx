@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SecondFactorQR from "../second_factor_authentication/SecondFactorQR";
 import JSCookies from "js-cookie";
 import ProfilePicture from "./ProfilePicture";
@@ -6,10 +6,10 @@ import Achievements from "./Achievements";
 import StatusAndGamesWon from "./StatusAndGamesWon";
 import LevelImageAndUsername from "./LevelImageAndUsername";
 import ToggleBox from "./ToggleBox";
-import { UserContext } from "../../contexts/UserContext";
+import { useUserContext } from "../../contexts/UserContext";
 import { our_socket } from "../../utils/context/SocketContext";
 import { useMyContext } from "../../contexts/InfoCardContext";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 const ProfileCard = () => {
   const [base64String, setBase64String] = useState("");
@@ -33,13 +33,10 @@ const ProfileCard = () => {
     //remove the cookie
     JSCookies.remove("accessToken");
     our_socket.emit("logging out");
-    //change the state to logged out
-    // setLoggedIn(false);
     //redirect to the main screen
     window.location.replace(`http://${ipAddress}:3000`);
   }
-  const { userId } = useContext(UserContext);
-  // console.log(userId);
+  const { myUserId } = useUserContext();
   const [name, setName] = useState("");
   const [statusTFA, setStatusTFA] = useState(false);
   const [wins, set_wins] = useState(0);
@@ -53,7 +50,7 @@ const ProfileCard = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${JSCookies.get("accessToken")}`,
         },
-        body: JSON.stringify({ user_id: userId }),
+        body: JSON.stringify({ user_id: myUserId }),
       });
       const response_stats = await fetch(
         `http://${ipAddress}:3003/user/user_stats`,
@@ -63,7 +60,7 @@ const ProfileCard = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${JSCookies.get("accessToken")}`,
           },
-          body: JSON.stringify({ user_id: userId }),
+          body: JSON.stringify({ user_id: myUserId }),
         }
       );
       const data = await response.json();
@@ -78,8 +75,8 @@ const ProfileCard = () => {
       set_achievementes(achievs);
       set_wins(stats["wins"]);
     };
-    if (userId) getData();
-  }, [userId]);
+    if (myUserId) getData();
+  }, [myUserId]);
 
   return (
     <div id="profile-box" ref={firstElementRef}>

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { createContext } from "react";
 import JSCookies from "js-cookie";
 import { our_socket } from "../utils/context/SocketContext";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../constants';
 
 const pushPictureToMap = async (user_id: number, picture_map: Map<number, string>, set_picture_map:  React.Dispatch<React.SetStateAction<Map<number, string>>>) => {
   try {
@@ -39,7 +39,7 @@ const pushNameToMap = async (user_id: number, name_map: Map<number, string>, set
         body: JSON.stringify({ user_id: user_id }),
       });
       const name = await response.text();
-      console.log("this is a new name i wanna add to map " + name);
+      // console.log("this is a new name i wanna add to map " + name);
       
     name_map.set(user_id, name);
     set_name_map(new Map(name_map));

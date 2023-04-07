@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import JSCookies from "js-cookie";
 export{}
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 interface Props {
   setBase64String: React.Dispatch<React.SetStateAction<string>>;

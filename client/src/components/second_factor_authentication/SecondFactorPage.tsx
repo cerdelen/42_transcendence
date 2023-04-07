@@ -1,6 +1,6 @@
 import { useState } from "react";
 import JSCookies from "js-cookie";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 const SecondFactorPage = () => {
   //gets the user id from the url

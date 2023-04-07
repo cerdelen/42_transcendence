@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import defaultPicture from "../../images/default-picture.jpeg";
 import JSCookies from "js-cookie";
 import { useMyContext } from "../../contexts/InfoCardContext";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 function hasJpegExtension(filename: string): boolean {
   return filename.endsWith('.jpeg');

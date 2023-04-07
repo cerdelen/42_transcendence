@@ -3,21 +3,21 @@ import { useContext } from "react";
 import { our_socket } from "../../utils/context/SocketContext";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 import Display_full_chat from "./display_full_chat";
-import { UserContext } from "../../contexts/UserContext";
+import { useUserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
 import CatSvg from "../../svg/peeking-cat.svg"
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 const Chat_input_filed_and_send_button = () => {
   const [input, setInput] = useState("");
   const { displayed_chat } = useMyDisplayedChatContext();
-  const { userId } = useContext(UserContext);
+  const { myUserId } = useUserContext();
 
   const sendMessage = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log("Send message");
     our_socket.emit( "message", {
-        author: Number(userId),
+        author: Number(myUserId),
         text: input,
         conversation_id: displayed_chat.conversation_id,
         created_at: Date.now(),
@@ -28,9 +28,9 @@ const Chat_input_filed_and_send_button = () => {
   let timeout: any;
   const emitTyping = () => {
       console.log("i am emitting typing");
-    our_socket.emit("typing", { isTyping: true, userId: userId, chat_id: displayed_chat.conversation_id });
+    our_socket.emit("typing", { isTyping: true, userId: myUserId, chat_id: displayed_chat.conversation_id });
     timeout = setTimeout(() => {
-      our_socket.emit("typing", { isTyping: false, userId: userId, chat_id: displayed_chat.conversation_id });
+      our_socket.emit("typing", { isTyping: false, userId: myUserId, chat_id: displayed_chat.conversation_id });
     }, 2000);
   };
 
@@ -55,12 +55,12 @@ const Chat_input_filed_and_send_button = () => {
 
 const Chat_area = () => {
   const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
-	const { userId } = useContext(UserContext);
+  const { myUserId } = useUserContext();
 	const [ reset_displayed_chat, set_reset_displayed_chat] = useState(displayed_chat.conversation_id);
 
   our_socket.on("some_one_joined_group_chat", ({conv_id, joined_user_id} : {conv_id: number, joined_user_id: number}) =>
 		{	
-			if (joined_user_id == Number(userId))
+			if (joined_user_id == Number(myUserId))
 			{
         set_reset_displayed_chat(conv_id);
 			}

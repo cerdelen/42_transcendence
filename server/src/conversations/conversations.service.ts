@@ -273,6 +273,9 @@ export class ConversationService {
 			{
 				console.log("updating owner array");
 				conversation.conversation_owner_arr.push(conversation.conversation_participant_arr[0]);
+				const idx_new_owner_muted = conversation.conversation_mute_list_arr.indexOf(conversation.conversation_participant_arr[0])
+				if(idx_new_owner_muted != -1)
+					conversation.conversation_mute_list_arr.splice(idx_new_owner_muted, 1)
 				new_owner = true;
 			}
 		}
@@ -286,7 +289,8 @@ export class ConversationService {
 			data: {
 				conversation_participant_arr: conversation.conversation_participant_arr,
 				conversation_admin_arr: conversation.conversation_admin_arr,
-				conversation_owner_arr: conversation.conversation_owner_arr
+				conversation_owner_arr: conversation.conversation_owner_arr,
+				conversation_mute_list_arr: conversation.conversation_mute_list_arr
 			}
 		})
 		await this.user.updateUser({
@@ -365,6 +369,49 @@ export class ConversationService {
 			where: { id: id_to_kick },
 			data: { conversation_id_arr: user.conversation_id_arr }
 		});
+	}
+
+
+	async unmute_user_from_conversation(conversation_id: number, user_id: number, id_to_unmute: number, admin_required: boolean=true): Promise<boolean> {
+
+	
+		const conversation: Conversation = await this.findConversation(Number(conversation_id));
+
+		const admin_user_idx = conversation.conversation_admin_arr.indexOf(user_id);
+		const idx_from_mute_list = conversation.conversation_mute_list_arr.findIndex(element => element == Number(id_to_unmute));
+		// const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == Number(id_to_unmute));
+
+		// if (owner_user_idx >= 0)					
+		// 	throw new HttpException("Can't mute the conversation owner!!!", HttpStatus.FORBIDDEN);
+		if (admin_user_idx < 0 && admin_required == true) { //Current user is not considered to be an Administrator
+			return false;
+		}
+		else if (idx_from_mute_list == -1)
+		{
+			return false;
+		}
+		else {
+			conversation.conversation_mute_list_arr.splice(idx_from_mute_list, 1);
+			const updatedConversation = await this.updateConversation({
+				where: {
+					conversation_id: Number(conversation_id)
+				},
+				data: {
+					conversation_mute_list_arr: conversation.conversation_mute_list_arr,
+				}
+			})
+			// const updatedConversationWithoutMuteUser = await this.conversationsService.updateConversation({
+			// 	where: {
+			// 		conversation_id: Number(conversation_id),
+			// 	},
+			// 	data: {
+			// 		conversation_mute_list_arr: {
+			// 			push: Number(id_to_mute),
+			// 		}
+			// 	}
+			// })
+			return true ;
+		}
 	}
 }
 

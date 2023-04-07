@@ -1,17 +1,15 @@
 import {
-  Fragment,
-  useContext,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from "react";
-import { UserContext } from "../../contexts/UserContext";
+import { useUserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
 import { our_socket } from "../../utils/context/SocketContext";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 interface typing {
   name: string;
@@ -44,8 +42,8 @@ const Display_message_in_chat = ({
 }: {
   message: display_message_info;
 }) => {
-  const { userId } = useContext(UserContext);
-  const is_me: boolean = message.author_id == Number(userId);
+  const { myUserId } = useUserContext();
+  const is_me: boolean = message.author_id == Number(myUserId);
   const { name_map, set_name_map, pushNameToMap } =
     useMyProfile_picture_Context();
 
@@ -68,10 +66,10 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
   const chatWindow = useRef<HTMLDivElement>(null);
   const [name_map, set_name_map] = useState<Map<number, string>>(new Map());
   const { displayed_chat } = useMyDisplayedChatContext();
-  const { userId, blocked_users } = useContext(UserContext);
+  const { myUserId, myBlockedUsers } = useUserContext();
 
   our_socket.on("message", (message: message) => {
-    if (message.chat_id == displayed_chat.conversation_id && !blocked_users.includes(Number(message.author_id))) {
+    if (message.chat_id == displayed_chat.conversation_id && !myBlockedUsers.includes(Number(message.author_id))) {
       let newMessage: display_message_info[] = [];
       for (let i = 0; i < messages.length; i++) {
         newMessage.push(messages[i]);
@@ -83,7 +81,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
     }
   });
   our_socket.on("typing", (typing: typing) => {
-    if (typing.isTyping && typing.chat_id == displayed_chat.conversation_id && typing.name != userId && !blocked_users.includes(Number(typing.name))) {
+    if (typing.isTyping && typing.chat_id == displayed_chat.conversation_id && typing.name != myUserId && !myBlockedUsers.includes(Number(typing.name))) {
       const name = name_map.get(Number(typing.name));
       setTypingDisplay(`${name} is typing ...`);
     } else {
@@ -147,7 +145,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
     our_socket.on("some_one_joined_group_chat", ({ conv_id, joined_user_id }: { conv_id: number, joined_user_id: number }) => {
       console.log("someone joined");
 
-      if (joined_user_id != Number(userId) && displayed_chat.conversation_id == conv_id) {
+      if (joined_user_id != Number(myUserId) && displayed_chat.conversation_id == conv_id) {
         displayed_chat.conversation_participant_arr.push(joined_user_id);
       }
       prep_name_map(displayed_chat.conversation_participant_arr);

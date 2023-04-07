@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import JSCookies from "js-cookie";
 import "./Ladder.css";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 import defaultPicture from "../../images/default-picture.jpeg";
-import { UserContext } from "../../contexts/UserContext";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import { useUserContext } from "../../contexts/UserContext";
+import ipAddress from '../../constants';
 
 const Ladder_card = ({
   rank,
@@ -19,12 +19,12 @@ const Ladder_card = ({
   picture: string;
   playerId: number;
 }) => {
-  const { userId } = useContext(UserContext);
+  const { myUserId } = useUserContext();
   return (
     <li
       key={rank}
       className={`ladder-card ${
-        playerId.toString() === userId ? "special" : ""
+        playerId.toString() === myUserId ? "special" : ""
       }`}
     >
       <span>{rank}.</span>

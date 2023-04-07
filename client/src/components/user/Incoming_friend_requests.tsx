@@ -4,8 +4,8 @@ import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_con
 import EverythingIsFine from "../../svg/everything-is-fine.svg";
 import { json } from "node:stream/consumers";
 import { useMyContext } from "../../contexts/InfoCardContext";
-import { UserContext } from "../../contexts/UserContext";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import { UserContext, useUserContext } from "../../contexts/UserContext";
+import ipAddress from '../../constants';
 
 interface NameProps {
   name: string;
@@ -13,8 +13,8 @@ interface NameProps {
   other_user_id: string;
   incoming_friend_req: number[];
   set_incoming_friend_requests: React.Dispatch<React.SetStateAction<number[]>>;
-  friendsList: string[];
-  setFriendsList: React.Dispatch<React.SetStateAction<string[]>>;
+  friendsList: number[];
+  setFriendsList: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 const NameComponent = ({
@@ -44,17 +44,17 @@ const NameComponent = ({
       const idx = new_incoming_friend_request.indexOf(Number(other_user_id));
       new_incoming_friend_request.splice(idx, 1);
       set_incoming_friend_requests([...new_incoming_friend_request]);
-      let new_friendlist: string[] = friendsList;
-      new_friendlist.push(other_user_id);
-      setFriendsList(new_friendlist);
+      let new_friendlist: number[] = friendsList;
+      new_friendlist.push(Number(other_user_id));
+      setFriendsList([...new_friendlist]);
     } catch (error) { }
   };
 
-  const reject_friend_request = async () => {
+  const decline_friend_request = async () => {
     console.log("allo cliecked button");
     try {
       const response = await fetch(
-        `http://${ipAddress}:3003/user/reject_friend_request`,
+        `http://${ipAddress}:3003/user/remove_friend_request`,
         {
           method: "Post",
           headers: {
@@ -79,12 +79,12 @@ const NameComponent = ({
         style={{ width: "64px", height: "64px" }}
       />
       <button className="deep-purple-button" onClick={accept_friend_request}>
-        Accept
+      &#10003;
       </button>
-      <button className="deep-purple-button" onClick={reject_friend_request}>
-        Decline
+      <button className="deep-purple-button" onClick={decline_friend_request}>
+      &#10005;
       </button>
-      <span>{name}</span>
+      <span title={name}>{name}</span>
     </li>
   );
 };
@@ -92,8 +92,8 @@ const NameComponent = ({
 type Props = {
   incoming_friend_req: number[];
   set_incoming_friend_requests: React.Dispatch<React.SetStateAction<number[]>>;
-  friendsList: string[];
-  setFriendsList: React.Dispatch<React.SetStateAction<string[]>>;
+  friendsList: number[];
+  setFriendsList: React.Dispatch<React.SetStateAction<number[]>>;
   toggle_friends_or_requests: () => void;
   show_friends: boolean;
 };
@@ -111,7 +111,7 @@ const Incoming_friend_requests = ({
   const { picture_map, set_picture_map, pushPictureToMap } =
     useMyProfile_picture_Context();
   const { userIdCard } = useMyContext();
-  const { userId } = useContext(UserContext);
+  const { myUserId } = useUserContext();
   useEffect(() => {
     const fetchNames = async () => {
       try {
@@ -187,9 +187,9 @@ const Incoming_friend_requests = ({
           />
         ))
       )}
-      {userId == userIdCard ?
+      {myUserId == userIdCard ?
         <button className="purple-button" onClick={toggle_friends_or_requests}>
-          {show_friends ? "Show Friend Requests" : "Show Your Friend"}
+          {show_friends ? "Show Friend Requests" : "Show Your Friends"}
         </button>
         :
         <></>

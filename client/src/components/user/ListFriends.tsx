@@ -1,24 +1,24 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import JSCookies from "js-cookie";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 import EverythingIsFine from "../../svg/everything-is-fine.svg";
 import { useMyContext } from "../../contexts/InfoCardContext";
-import { UserContext } from "../../contexts/UserContext";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import { useUserContext } from "../../contexts/UserContext";
+import ipAddress from '../../constants';
 
 interface NameProps {
   name: string;
   pic: string;
   setIsFriend: React.Dispatch<React.SetStateAction<boolean>>;
-  id: string
-  friendsList: string[];
+  id: number
+  friendsList: number[];
 
-  setFriendsList: React.Dispatch<React.SetStateAction<string[]>>;
+  setFriendsList: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 const NameComponent = ({ name, pic, setIsFriend, id, setFriendsList, friendsList}: NameProps) => {
   const { userIdCard } = useMyContext();
-  const { userId } = useContext(UserContext);
+  const { myUserId } = useUserContext();
 
   const remove_friend = async () => {
     console.log("remove friend removing id " + userIdCard);
@@ -58,24 +58,24 @@ const NameComponent = ({ name, pic, setIsFriend, id, setFriendsList, friendsList
         alt="userPhoto"
         style={{ width: "64px", height: "64px" }}
       />
-      {userId == userIdCard ? (
+      {myUserId == userIdCard ? (
         <button className="deep-purple-button" onClick={remove_friend}>
           Remove
         </button>
       ) : (
         <></>
       )}
-      <span>{name}</span>
+      <span title={name}>{name}</span>
     </li>
   );
 };
 
 type Props = {
-  friendsList: string[];
+  friendsList: number[];
   setIsFriend: React.Dispatch<React.SetStateAction<boolean>>;
   toggle_friends_or_requests: () => void;
   show_friends: boolean;
-  setFriendsList: React.Dispatch<React.SetStateAction<string[]>>;
+  setFriendsList: React.Dispatch<React.SetStateAction<number[]>>;
 };
 
 const ListFriends = ({
@@ -85,14 +85,13 @@ const ListFriends = ({
   show_friends,
   setFriendsList,
 }: Props) => {
-  // const { friendlist } = useContext(UserContext);
   const [friendsNames, setNames] = useState<string[]>([]);
   const [profilePictures, setProfilePictures] = useState<string[]>([]);
   const { picture_map, set_picture_map, pushPictureToMap } =
     useMyProfile_picture_Context();
 
   const { userIdCard } = useMyContext();
-  const { userId } = useContext(UserContext);
+  const { myUserId } = useUserContext();
 
   useEffect(() => {
     const fetchNames = async () => {
@@ -159,9 +158,9 @@ const ListFriends = ({
           />
         ))
       )}
-      {userId == userIdCard ?
+      {myUserId == userIdCard ?
         <button className="purple-button" onClick={toggle_friends_or_requests}>
-          {show_friends ? "Show Friend Requests" : "Show Your Friend"}
+          {show_friends ? "Show Friend Requests" : "Show Your Friends"}
         </button>
         :
         <></>

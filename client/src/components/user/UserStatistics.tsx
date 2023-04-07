@@ -4,7 +4,7 @@ import threeWinsAchievement from "../../images/three-wins-achievement.png";
 import halfGamesAchievement from "../../images/won-half-of-your-games-achievement.png";
 import { UserContext } from "../../contexts/UserContext";
 import JSCookies from "js-cookie";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from "../../constants";
 
 interface Props {
   userId: string;

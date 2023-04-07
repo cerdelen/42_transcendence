@@ -4,7 +4,7 @@ import JSCookies from "js-cookie";
 import defaultPicture from "../../images/default-picture.jpeg";
 import pic from "../../images/cat-stern.jpeg";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 
 interface NameProps {
@@ -67,7 +67,7 @@ const GameCard = ({
 };
 
 type Props = {
-  gamesList: string[];
+  gamesList: number[];
 };
 
 const GameHistory = ({ gamesList }: Props) => {
@@ -79,7 +79,8 @@ const GameHistory = ({ gamesList }: Props) => {
 	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
   useEffect(() => {
     const fetchGames = async () => {
-
+      console.log("this is game ids which supposedly is not itterable " +JSON.stringify(gamesList));
+      
       try {
            const gamesListy = await fetch(`http://${ipAddress}:3003/game/many_games_data`, {
         method: "Post",
@@ -167,8 +168,9 @@ const GameHistory = ({ gamesList }: Props) => {
         );
         setPicturesPlayerTwo(newlist);
       };
-
-    fetchGames();
+    
+    if(gamesList != undefined)
+        fetchGames();
 
     // getUserPic();
   }, [gamesList]);

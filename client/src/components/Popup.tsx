@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Popup from "reactjs-popup"
-import { UserContext } from "../contexts/UserContext";
+import { useUserContext } from "../contexts/UserContext";
 import { CounterContext } from "../utils/context/CounterContext";
 import { our_socket } from "../utils/context/SocketContext";
 
@@ -36,14 +36,14 @@ type Props = {
 
 const PopUp = ({setInviterName ,inviterName ,isInvited, setIsInvited} : Props) => {
     const navigate = useNavigate();
-    const {userId} = useContext(UserContext);
+    const {myUserId} = useUserContext();
     const {mapNumber, setMapNumber} = useContext(CounterContext);
     const  acceptInvite = () => {
       console.log("Invite accepted");
       setIsInvited(false);
       setInviterName("");
       navigate("/game");
-      let obj = {inviterName: inviterName, userId: userId}
+      let obj = {inviterName: inviterName, userId: myUserId}
       our_socket.emit("playerAccepted", JSON.stringify(obj))
       console.log("player accepted the invitation ");
     }
@@ -55,7 +55,7 @@ const PopUp = ({setInviterName ,inviterName ,isInvited, setIsInvited} : Props) =
         return ;
       }
       console.log("Invite rejected");
-      let obj = {inviterName: inviterName, userId: userId}
+      let obj = {inviterName: inviterName, userId: myUserId}
       console.log("Inviter name == " , inviterName);
       our_socket.emit("rejectInvite", JSON.stringify(obj));
       setInviterName("");

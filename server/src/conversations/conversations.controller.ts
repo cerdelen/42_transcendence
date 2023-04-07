@@ -282,8 +282,62 @@ export class ConversationController {
 				}
 			})
 			this.convGateway.mute_user(Number(conversation_id), Number(id_to_mute));
+			await new Promise(resolve => setTimeout(resolve, 1000 * 60 * 5));
+			const ret : boolean = await this.conversationsService.unmute_user_from_conversation(conversation_id, req.user.id, id_to_mute, false);
+			if (ret)
+				this.convGateway.unmute_user(Number(conversation_id), Number(id_to_mute));
 			return ;
 		}
+	}
+
+	@UseGuards(Jwt_Auth_Guard)
+	@Put(':conversation_id/setUnMute/:id_to_mute')
+	async setUnMuteUser(
+		@Req() req: any,
+		@Param('conversation_id', new ParseIntPipe()) conversation_id: number,
+		@Param('id_to_mute', new ParseIntPipe()) id_to_unmute: number
+	){
+		// const conversation: Conversation = await this.conversationsService.findConversation(Number(conversation_id));
+
+		// const admin_user_idx = conversation.conversation_admin_arr.indexOf(req.user.id, 0);
+		// const idx_from_mute_list = conversation.conversation_mute_list_arr.findIndex(element => element == Number(id_to_unmute));
+		// const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == Number(id_to_unmute));
+
+		// // if (owner_user_idx >= 0)					
+		// // 	throw new HttpException("Can't mute the conversation owner!!!", HttpStatus.FORBIDDEN);
+		// if (admin_user_idx < 0) { //Current user is not considered to be an Administrator
+		// 	return ;
+		// }
+		// else if (idx_from_mute_list == -1)
+		// {
+		// 	return ;
+		// }
+		// else {
+		// 	conversation.conversation_mute_list_arr.splice(idx_from_mute_list, 1);
+		// 	const updatedConversation = await this.conversationsService.updateConversation({
+		// 		where: {
+		// 			conversation_id: Number(conversation_id)
+		// 		},
+		// 		data: {
+		// 			conversation_mute_list_arr: conversation.conversation_mute_list_arr,
+		// 		}
+		// 	})
+		// 	// const updatedConversationWithoutMuteUser = await this.conversationsService.updateConversation({
+		// 	// 	where: {
+		// 	// 		conversation_id: Number(conversation_id),
+		// 	// 	},
+		// 	// 	data: {
+		// 	// 		conversation_mute_list_arr: {
+		// 	// 			push: Number(id_to_mute),
+		// 	// 		}
+		// 	// 	}
+		// 	// })
+			const unmuted_from_chat = await this.conversationsService.unmute_user_from_conversation(conversation_id, req.user.id, id_to_unmute);
+			if (unmuted_from_chat)
+				this.convGateway.unmute_user(Number(conversation_id), Number(id_to_unmute));
+			
+			return ;
+		
 	}
 
 	@UseGuards(Jwt_Auth_Guard)

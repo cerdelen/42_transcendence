@@ -1,69 +1,129 @@
-import { createContext } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import JSCookies from "js-cookie";
+import { our_socket } from '../utils/context/SocketContext';
+import ipAddress from '../constants';
 
 type UserContextType = {
-	userId: string,
-	name: string,
-	mail: string,
-	two_FA_enabled: boolean,
-	two_FA_secret: string,
-	friendlist: number[],
-	stats: any,
-	games: number[],				// ids of games??
-	blocked_users: number[]
+	myUserId: string,
+	myName: string,
+	myMail: string,
+	mytwoFAenabled: boolean,
+	myFriendList: number[],
+	setMyFriendList: React.Dispatch<React.SetStateAction<Array<number>>>,
+	myStats: any,
+	myGames: number[],
+	myBlockedUsers: number[],
+	myIncomingFriendReq: number [],
+	myOutgoingFriendReq: number [],
+	setMyIncomingFriendReq: React.Dispatch<React.SetStateAction<Array<number>>>,
+	setMyOutgoingFriendReq: React.Dispatch<React.SetStateAction<Array<number>>>,
 };
 
 export const UserContext = createContext<UserContextType>({
-	userId: '',
-	name: '',
-	mail: '',
-	two_FA_enabled: false,
-	two_FA_secret: '',
-	friendlist: [],
-	stats: {},
-	games: [],				// ids of games??
-	blocked_users: []
+	myUserId: '',
+	myName: '',
+	myMail: '',
+	mytwoFAenabled: false,
+	myFriendList: [],
+	setMyFriendList: () => {},
+	myStats: {},
+	myGames: [],
+	myBlockedUsers: [],
+	myOutgoingFriendReq: [],
+	myIncomingFriendReq: [],
+	setMyIncomingFriendReq: () => {},
+	setMyOutgoingFriendReq: () => {},
 });
 
-// export const useMyProfile_picture_Context = () => useContext(Profile_picture_Context);
+export const useUserContext = () => useContext(UserContext);
 
-// type MyContextProviderProps = {
-//   children: React.ReactNode;
-// };
 
-// export function Profile_picture_Provider({ children }: MyContextProviderProps) {
-//   const [picture_map, set_picture_map] = useState<Map<number, string>>(new Map());
-  
-//   useEffect(() => {
-//     const get_all_pictures = async () => {
-//       const res = await fetch(`http://localhost:3003/user/get_all_user_ids`, {
-//         method: "Get",
-//         headers: {
-//           Authorization: `Bearer ${JSCookies.get("accessToken")}`,
-//         },
-//       })
-//       const all_users: {id: number}[] = await res.json();
-//       for (let i = 0; i < all_users.length; i++)
-//       {
-//         await pushPictureToMap(all_users[i].id, picture_map, set_picture_map);
-//       }
-//       console.log("this do be news " + JSON.stringify(picture_map));
-//     }
-//       get_all_pictures();
-//   }, [])
+type UserContextProviderProps = {
+  children: React.ReactNode;
+};
 
-//   console.log(picture_map);
-  
-//   const value = {
-//     picture_map,
-//     set_picture_map,
-//     pushPictureToMap,
-//   };
-
-//   return (
-//     <Profile_picture_Context.Provider value={value}>
-//       {children}
-//     </Profile_picture_Context.Provider>
-//   );
-// }
-
-// export default Profile_picture_Provider;
+export function UserContextProvider({children}: UserContextProviderProps) {
+	const [myUserId, setUserId] = useState("");
+	const [myName, setName] = useState("");
+	const [myMail, setMail] = useState("");
+	const [mytwoFAenabled, set2FA] = useState(false);
+	const [myFriendList, setMyFriendList] = useState<number[]>([]);
+	const [myStats, setStats] = useState({});
+	const [myGames, setGames] = useState<number[]>([]);
+	const [myBlockedUsers, set_my_blcoked_users] = useState<number[]>([]);
+	const [myIncomingFriendReq, setMyIncomingFriendReq] = useState<Array<number>>([]);
+	const [myOutgoingFriendReq, setMyOutgoingFriendReq] = useState<Array<number>>([]);
+useEffect(() => {
+	async function getUser() {
+		try {
+		  let response = await fetch(`http://${ipAddress}:3003/user/get_id`, {
+			method: "Post",
+			headers: {
+			  "Content-Type": "application/json",
+			  Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+			},
+		  });
+		  const id = await response.text();
+	
+		  
+		  await getData(id);
+		  setUserId(id);
+	
+		  our_socket.emit("makeOnline", id);
+		} catch (error) {
+		  console.error(error);
+		}
+	  }
+	  
+	async function getData(userid: string) {
+		try {
+		  let response = await fetch(`http://${ipAddress}:3003/user/user_data`, {
+			method: "Post",
+			headers: {
+			  "Content-Type": "application/json",
+			  Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+			},
+			body: JSON.stringify({ user_id: userid }),
+		  });
+		  const data = await response.json();
+		  set2FA(data["two_FA_enabled"]);
+		  setName(data["name"]);
+		  setMail(data["mail"]);
+		  setMyFriendList(data["friendlist"]);
+		  setStats(data["stats"]);
+		  setGames(data["games"]);
+		  set_my_blcoked_users(data["blocked_users"]);
+		  setMyIncomingFriendReq(data["incoming_friend_req"])
+		  setMyOutgoingFriendReq(data["outgoing_friend_req"])
+		} catch (error) {
+		  console.error(error);
+		}
+	  }
+	  const myCookie = JSCookies.get("accessToken");
+    	if (myCookie !== undefined) {
+      		getUser();
+    	}
+	}, [])
+	
+	console.log("myfriendlist " + myFriendList);
+const value={
+	myUserId,
+	myName,
+	myMail,
+	mytwoFAenabled,
+	myFriendList,
+	setMyFriendList,
+	myGames,
+	myStats,
+	myBlockedUsers,
+	myOutgoingFriendReq,
+	myIncomingFriendReq,
+	setMyIncomingFriendReq,
+	setMyOutgoingFriendReq,
+  }
+	return (
+		<UserContext.Provider value={value}>
+			{children}
+		</UserContext.Provider>
+	)
+}

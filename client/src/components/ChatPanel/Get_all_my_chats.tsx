@@ -5,14 +5,14 @@ import group_picture from "../../images/group_chat_picture.jpeg"
 import { our_socket } from "../../utils/context/SocketContext";
 import { displayed_chat_class } from "../../utils/types";
 import { useMyChatCardsContext } from "../../contexts/chatCardsContext";
-import { UserContext } from "../../contexts/UserContext";
+import { UserContext, useUserContext } from "../../contexts/UserContext";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 interface chat_props {
 	chat_id: number,
-	userId: string
+	myUserId: string
 }
 
 export class chat_card {
@@ -33,7 +33,7 @@ export class chat_card {
 }
 
 
-const Chat_preview_card = ({chat_id, userId} : chat_props) => {
+const Chat_preview_card = ({chat_id, myUserId} : chat_props) => {
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
 	const handleOnClick = async () => 
@@ -67,7 +67,7 @@ const Chat_preview_card = ({chat_id, userId} : chat_props) => {
 			set_group_chat(data["group_chat"]);
 			if(data["group_chat"] == false)					// its chat between two
 			{
-				if (Number(userId) == Number(participants[0]))
+				if (Number(myUserId) == Number(participants[0]))
 				{
 					await getUserData(participants[1]);
 				}
@@ -109,7 +109,7 @@ const Get_all_my_chats = () =>
 {
 	const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
 	const {my_chats_ids, setmy_chats_ids} =  useMyChatCardsContext();
-	const {userId} = useContext(UserContext);
+	const { myUserId } = useUserContext();
 	const [ reset_displayed_chat, set_reset_displayed_chat] = useState(displayed_chat.conversation_id);
 	const { setShowUserInto } = useMyContext();
 	useEffect(() => {
@@ -150,13 +150,13 @@ const Get_all_my_chats = () =>
 
 		our_socket.on("new_dialogue_created", ({userid_creator, other_user, chat_id} : {userid_creator: number, other_user: number, chat_id: number}) =>
 		{	
-			if (userid_creator == Number(userId))
+			if (userid_creator == Number(myUserId))
 			{
 				setmy_chats_ids([...my_chats_ids, chat_id]);
 				set_reset_displayed_chat(chat_id);
 				setShowUserInto(false);
 			}
-			else if (other_user == Number(userId))
+			else if (other_user == Number(myUserId))
 			{
 				setmy_chats_ids([...my_chats_ids, chat_id]);
 			}
@@ -164,7 +164,7 @@ const Get_all_my_chats = () =>
 
 		our_socket.on("some_one_left_group_chat", ({conv_id, left_user_id, conv_still_exists} : {conv_id: number, left_user_id: number, conv_still_exists: boolean}) =>
 		{
-			if (left_user_id == Number(userId))
+			if (left_user_id == Number(myUserId))
 			{
 				const default_chat : displayed_chat_class = { conversation_id: -1, conversation_participant_arr: []}
 				setDisplayed_chat(default_chat);
@@ -184,7 +184,7 @@ const Get_all_my_chats = () =>
 			<ul className='list-cards' >
 				{
 					my_chats_ids.map((chat_id) => (
-						<Chat_preview_card key={chat_id} chat_id={chat_id} userId={userId} />
+						<Chat_preview_card key={chat_id} chat_id={chat_id} myUserId={myUserId} />
 					))
 				}	
 			</ul>

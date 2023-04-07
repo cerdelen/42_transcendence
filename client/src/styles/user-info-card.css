@@ -4,7 +4,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    min-width: 766px;
+    min-width: 855px;
     min-height: 654px;
     /* aspect-ratio: 4 / 3; */
     width: 60%;
@@ -61,6 +61,7 @@
 
 .right-border {
     border-right: 1px solid purple;
+    min-width: 270px;
 }
 
 .friend-card {
@@ -82,9 +83,23 @@
 }
 
 .friend-card span{
-    margin-right: 2rem;
+    margin-right: 1rem;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    overflow-x: hidden;
+    max-width: 4rem;
+    max-height: 3.5rem;
+
 }
 
+#player-name {
+    margin-right: 1rem;
+    text-overflow: ellipsis;
+    /* word-wrap: break-word; */
+    max-width: 18rem;
+    max-height: 3.5rem; 
+    overflow: hidden;
+}
 #userInfo #exit-buttton {
     margin-top: 4px;
     margin-right: 3px;

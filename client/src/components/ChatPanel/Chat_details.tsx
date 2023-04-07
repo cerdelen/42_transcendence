@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
-import { UserContext } from "../../contexts/UserContext";
+import { useUserContext } from "../../contexts/UserContext";
 import { our_socket } from "../../utils/context/SocketContext";
 import JSCookies from "js-cookie";
 import { displayed_chat_class } from "../../utils/types";
@@ -11,7 +11,7 @@ import { RiVolumeMuteFill } from "react-icons/ri";
 import themeAchievement from "../../images/changed-theme-achievement.png";
 import path from "path";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 import InputFieldOrButton from "../InputForms/InputFIeldOrButton";
 
@@ -41,8 +41,8 @@ const Participant_in_chat_detail_card = ({
   const [is_muted, set_is_muted] = useState(false);
   const [display_popup, set_display_popup] = useState(false);
   const [user_name, set_user_name] = useState("");
-  const { userId } = useContext(UserContext);
-  const is_me = Number(userId) == user_id;
+  const { myUserId } = useUserContext();
+  const is_me = Number(myUserId) == user_id;
   const [photo, setPhoto] = useState("");
   const { picture_map, set_picture_map, pushPictureToMap } =
     useMyProfile_picture_Context();
@@ -104,6 +104,13 @@ const Participant_in_chat_detail_card = ({
   }, [user_id, displayed_chat])
 
   useEffect(() => {
+    our_socket.on('unmute_user', ({ chat_id, unmuted_user_id }: { chat_id: number, unmuted_user_id: number }) => {
+      if (unmuted_user_id === user_id && chat_id === displayed_chat.conversation_id)
+        set_is_muted(false);
+    })
+  }, [user_id, displayed_chat])
+
+  useEffect(() => {
     if (
       displayed_chat.conversation_owner_arr?.includes(user_id) &&
       is_owner == false
@@ -140,17 +147,40 @@ const Participant_in_chat_detail_card = ({
   }, [displayed_chat])
 
 
-  const open_admin_as = () => {
-    if (Number(userId) != user_id && displayed_chat.group_chat == true)
+  const openChatAdministration = () => {
+    if (Number(myUserId) != user_id && displayed_chat.group_chat == true) {
+      console.log('open administration');
+      console.log(participantCardRef.current);
+      console.log(chatAdministrationRef);
+      
+      
       set_display_popup(!display_popup);
+      if (participantCardRef.current && chatAdministrationRef.current) {
+        chatAdministrationRef.current.style.left= `
+        ${
+          participantCardRef.current.getBoundingClientRect().right
+        }px`;
+      } 
+    }
   };
   const canOpenChatAdministration: boolean =
-    ((displayed_chat.conversation_owner_arr?.includes(Number(userId)) ?? false) ||
-      ((displayed_chat.conversation_admin_arr?.includes(Number(userId)) ?? false) && !is_admin)
+    ((displayed_chat.conversation_owner_arr?.includes(Number(myUserId)) ?? false) ||
+      ((displayed_chat.conversation_admin_arr?.includes(Number(myUserId)) ?? false) && !is_admin)
     )
-    
+  
+
+  const participantCardRef = useRef<HTMLDivElement>(null);
+  const chatAdministrationRef = useRef<HTMLDivElement>(null);
+  // function toggleDropDownMenu() {
+  //   setIsDropdownOpen(!isDropdownOpen);
+  //   if (firstElementRef.current && secondElementRef.current) {
+  //     secondElementRef.current.style.top = `${
+  //       firstElementRef.current.getBoundingClientRect().bottom
+  //     }px`;
+  //   }
+  // }
   return (
-    <div className="participant-card" onClick={() => open_admin_as()}>
+    <div className="participant-card" ref={participantCardRef} onClick={() => openChatAdministration()}>
       <img src={photo} alt="" />
       {is_me ? <span> You </span> : <span> {user_name} </span>}
       <div className="icons">
@@ -159,11 +189,14 @@ const Participant_in_chat_detail_card = ({
         {is_muted && <RiVolumeMuteFill title="muted" />}
         {display_popup && canOpenChatAdministration && (
           <Popup_chat_administration
+            ref={chatAdministrationRef}
             user_id={user_id}
             setmuted={set_is_muted}
             setadmin={set_is_admin}
             setowner={set_is_owner}
             set_user_ids_in_chat_details={set_user_ids_in_chat_details}
+            is_muted={is_muted}
+            is_admin={is_admin}
           />
         )}
       </div>
@@ -183,7 +216,7 @@ const Chat_details = ({
   setNot_joined_chats_ids: any;
 }) => {
   const { displayed_chat, setDisplayed_chat } = useMyDisplayedChatContext();
-  const { userId } = useContext(UserContext);
+  const { myUserId } = useUserContext();
   const [user_ids_in_chat_details, set_user_ids_in_chat_details] = useState<
     number[]
   >([...displayed_chat.conversation_participant_arr]);
@@ -207,7 +240,7 @@ const Chat_details = ({
       joined_user_id: number;
     }) => {
       if (
-        joined_user_id != Number(userId) &&
+        joined_user_id != Number(myUserId) &&
         conv_id == displayed_chat.conversation_id
       ) {
         set_user_ids_in_chat_details([
@@ -304,7 +337,7 @@ const Chat_details = ({
       conv_still_exists: boolean;
     }) => {
       if (
-        left_user_id != Number(userId) &&
+        left_user_id != Number(myUserId) &&
         conv_id == displayed_chat.conversation_id &&
         conv_still_exists
       ) {
@@ -340,7 +373,7 @@ const Chat_details = ({
             onClick={() =>
               handleLeaveChat(
                 displayed_chat.conversation_id,
-                userId,
+                myUserId,
                 displayed_chat.group_chat
               )
             }
@@ -349,7 +382,7 @@ const Chat_details = ({
           </button>
         )}
         {displayed_chat.group_chat &&
-          displayed_chat.conversation_owner_arr?.includes(Number(userId)) && (
+          displayed_chat.conversation_owner_arr?.includes(Number(myUserId)) && (
             <div className="password-buttons">
               <InputFieldOrButton buttonText="Set Password" fieldPlaceholder="Password" handleSubmit={handleSetPassword} />
               {/* <InputFieldOrButton buttonText="Reset Password" fieldPlaceholder="Password" handleSubmit={handleResetPassword}/> */}

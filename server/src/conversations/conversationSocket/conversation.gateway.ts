@@ -14,7 +14,6 @@ export class conversationGateway implements OnGatewayConnection{
 
 	}
 
-
 	handleConnection(client: any, ...args: any[])
 	{
 		client.setMaxListeners(20);
@@ -39,7 +38,6 @@ export class conversationGateway implements OnGatewayConnection{
 				}
 				const status: number = await this.conversationService.leave_conversation(Number(data.chat_id), Number(data.userId));
 				const new_conv = await this.conversationService.findConversation(Number(data.chat_id));
-				// console.log("ANything else?", status, typeof(status));
 				
 				if (status == Status.NO_CHAT)
 					this.server.emit('some_one_left_group_chat', {conv_id: Number(data.chat_id), left_user_id: Number(data.userId), conv_still_exists: false})
@@ -50,11 +48,13 @@ export class conversationGateway implements OnGatewayConnection{
 					if (status == Status.NEW_OWNER_AND_ADMIN){
 						this.new_admin_has_been_set(new_conv.conversation_id, new_conv.conversation_admin_arr[0])
 						this.new_owner_has_been_set(new_conv.conversation_id, new_conv.conversation_owner_arr[0])
+						this.unmute_user(new_conv.conversation_id, new_conv.conversation_owner_arr[0]);
 						this.server.emit('some_one_left_group_chat', {conv_id: Number(data.chat_id), left_user_id: Number(data.userId), conv_still_exists: true})
 						return ;
 					}
 					if (status == Status.NEW_OWNER) {
 						this.new_owner_has_been_set(new_conv.conversation_id, new_conv.conversation_owner_arr[0])
+						this.unmute_user(new_conv.conversation_id, new_conv.conversation_owner_arr[0]);
 						this.server.emit('some_one_left_group_chat', {conv_id: Number(data.chat_id), left_user_id: Number(data.userId), conv_still_exists: true})
 						return ;
 					}
@@ -91,20 +91,20 @@ export class conversationGateway implements OnGatewayConnection{
 				this.server.emit("new_dialogue_created", {userid_creator: userid_creator, other_user: other_user, chat_id: ret.conversation_id});
 		}
 
-		@SubscribeMessage('set_unmute_user')
- 		async set_unmute_user(
-			@MessageBody() data: any)
-		{
-			const result : boolean = await this.conversationService.setunmute()
-			if (!result)
-			{
-				return ;
-			}
-			else
-			{
-				this.unmute_user(chat_id, umuted_user_id)
-			}
-		}
+		// @SubscribeMessage('set_unmute_user')
+ 		// async set_unmute_user(
+		// 	@MessageBody() data: any)
+		// {
+		// 	const result : boolean = await this.conversationService.setunmute()
+		// 	if (!result)
+		// 	{
+		// 		return ;
+		// 	}
+		// 	else
+		// 	{
+		// 		this.unmute_user(chat_id, umuted_user_id)
+		// 	}
+		// }
 
 		async	joined_chat(chat_id: number, user_id:number)
 		{
@@ -132,7 +132,9 @@ export class conversationGateway implements OnGatewayConnection{
 
 		async unmute_user(chat_id: number, unmuted_user_id: number) {
 			console.log("new unmute user");
-			this.server.emit('unmute_user', {chat_id: chat_id, muted_user_id: unmuted_user_id});	
+			this.server.emit('unmute_user', {chat_id: chat_id, unmuted_user_id: unmuted_user_id});	
 		}
 
+
+		
 }

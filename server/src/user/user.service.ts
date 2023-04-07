@@ -112,7 +112,6 @@ export class UserService {
 			if(user.incoming_friend_req.includes(friend) && user_two.outgoing_friend_req.includes(userId))		// in case the other one sent me alreadt friend invite
 			{
 				//console.log("got into exeption where there is already f_r sent the other way around");
-				
 				return (this.accept_friend_request(friend, userId));
 			}
 			if (!user.outgoing_friend_req.includes(friend))
@@ -129,6 +128,7 @@ export class UserService {
 				data: {
 					incoming_friend_req: user_two.incoming_friend_req
 				}});
+				this.new_user_gatewaysss.new_friend_request_received(friend, userId);
 		}
 	}
 
@@ -177,35 +177,47 @@ export class UserService {
 						outgoing_friend_req: user_two.outgoing_friend_req,
 						incoming_friend_req: user_two.incoming_friend_req
 				}});
+				console.log("in front of newfriend request gateway function");
+				this.new_user_gatewaysss.new_friend_accepted(userId, friend);
 		}
 	}
 
-	async	reject_friend_request(userId: number, friend: number)
+	async	remove_friend_request(userId: number, friend: number)
 	{
-		const	user = await this.prisma.user.findUnique({ where : { id: userId }});
+		const	user_one = await this.prisma.user.findUnique({ where : { id: userId }});
 		const	user_two = await this.prisma.user.findUnique({ where : { id: friend }});
 
-		if(user_two && user)
+		if(user_two && user_one)
 		{	
-			const	incoming_request = user.incoming_friend_req.findIndex(x => x == friend);
-			const	outgoing_request = user_two.outgoing_friend_req.findIndex(x => x == userId);
-			if (incoming_request != -1)
-				user.incoming_friend_req.splice(incoming_request, 1);
-			if (outgoing_request != -1)
-				user_two.outgoing_friend_req.splice(outgoing_request, 1);
+			const	incoming_request_user_one_idx = user_one.incoming_friend_req.findIndex(x => x == friend);
+			const	incoming_request_user_two_idx = user_two.incoming_friend_req.findIndex(x => x == userId);
+			const	outgoing_request_user_one_idx = user_one.outgoing_friend_req.findIndex(x => x == friend);
+			const	outgoing_request_user_two_idx = user_two.outgoing_friend_req.findIndex(x => x == userId);
+			if (incoming_request_user_one_idx != -1)
+				user_one.incoming_friend_req.splice(incoming_request_user_one_idx, 1);
+			if (incoming_request_user_two_idx != -1)
+				user_two.incoming_friend_req.splice(incoming_request_user_two_idx, 1);
+			if (outgoing_request_user_one_idx != -1)
+				user_one.outgoing_friend_req.splice(outgoing_request_user_one_idx, 1);
+			if (outgoing_request_user_two_idx != -1)
+				user_two.outgoing_friend_req.splice(outgoing_request_user_two_idx, 1);
+
 			await	this.prisma.user.update({
 				where: { id: userId}, 
 				data: {
-					incoming_friend_req: user.incoming_friend_req
+					incoming_friend_req: user_one.incoming_friend_req,
+					outgoing_friend_req: user_one.outgoing_friend_req
 				}});
 			await	this.prisma.user.update({
 				where: { id: friend},
 				data: {
+					incoming_friend_req: user_two.incoming_friend_req,
 					outgoing_friend_req: user_two.outgoing_friend_req
 				}});
+			this.new_user_gatewaysss.delete_friend_request(userId, friend);
 		}
 	}
-
+	
 	async	rmv_friend(userId: number, friend: number)
 	{
 		const	user = await this.prisma.user.findUnique({ where : { id: userId }});
@@ -219,6 +231,7 @@ export class UserService {
 			rmv_friend.friendlist.splice(index_2, 1);
 			await	this.prisma.user.update({where: { id: userId}, data: { friendlist: user.friendlist}});
 			await	this.prisma.user.update({where: { id: friend}, data: { friendlist: rmv_friend.friendlist}});
+			this.new_user_gatewaysss.remove_friend(userId, friend);
 		}
 	}
 
@@ -245,6 +258,8 @@ export class UserService {
 			}
 			if (stats.mmr >= 1600)
 			{
+				console.log("this is weird this shold add achievement");
+				
 				this.add_achievement(user_id, 1)
 			}
 			return (this.prisma.stats.update({

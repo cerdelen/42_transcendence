@@ -1,19 +1,19 @@
+import { useUserContext } from '../contexts/UserContext'
 import Canvas from './Canvas'
 
 
 
 
-const Game = ({userId} : { userId: string}) => {
-
-
-  return (
-	<main>
-		{/* <GameScreenManagment socket={socket} inLobby={inLobby} gameCode={gameCode}/> */}
-		{/* <div className='game-area'> */}
-		<Canvas userId={userId}/>
-		{/* </div> */}
-	</main>
-  )
+const Game = () => {
+	const { myUserId } = useUserContext();
+	return (
+		<main>
+			{/* <GameScreenManagment socket={socket} inLobby={inLobby} gameCode={gameCode}/> */}
+			{/* <div className='game-area'> */}
+			<Canvas userId={myUserId} />
+			{/* </div> */}
+		</main>
+	)
 }
 
 export default Game

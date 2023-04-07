@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import { UserContextProvider } from './contexts/UserContext';
 // import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -9,10 +10,10 @@ const root = ReactDOM.createRoot(
 
 );
 root.render(
-  
-  <>
+
+  <UserContextProvider>
     <App />
-  </>
+  </UserContextProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

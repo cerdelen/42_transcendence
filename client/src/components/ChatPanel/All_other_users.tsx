@@ -3,7 +3,7 @@ import JSCookies from "js-cookie";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
 import { Online_users_context } from "../../contexts/Online_users_context";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 const User_preview_card = ({
   other_user_id,

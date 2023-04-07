@@ -1,10 +1,9 @@
-import expertLevel from "../../images/expert-level.jpeg";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../contexts/UserContext";
+import { useEffect, useState } from "react";
+import { useUserContext } from "../../contexts/UserContext";
 import { useMyContext } from "../../contexts/InfoCardContext";
 import JSCookies from "js-cookie";
 import { useMyProfile_picture_Context } from "../../contexts/Profile_picture_context";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 interface Props {
   userName: string;
@@ -12,24 +11,24 @@ interface Props {
 }
 
 const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
-  const { userId } = useContext(UserContext);
+  const { myUserId } = useUserContext();
   const [showInput, setShowInput] = useState<boolean>(false);
-  const { showUserInfo, setShowUserInto, setUserIdCard } = useMyContext();
+  const { setShowUserInto, setUserIdCard } = useMyContext();
   const [photo, setPhoto] = useState("");
   const [newName, setNewName] = useState<string>("");
   const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
   useEffect(() => {
     const get_user_photo = async () => {
-      if (userId == "")
+      if (myUserId == "")
         return ;
-      if(picture_map.has(Number(userId)))
-        setPhoto(picture_map.get(Number(userId)) ?? '')
+      if(picture_map.has(Number(myUserId)))
+        setPhoto(picture_map.get(Number(myUserId)) ?? '')
       else
-        setPhoto(await pushPictureToMap(Number(userId), picture_map, set_picture_map));
+        setPhoto(await pushPictureToMap(Number(myUserId), picture_map, set_picture_map));
     };
     get_user_photo();
     setNewName(userName);
-  }, [userName, userId]);
+  }, [userName, myUserId]);
 
   const toggleInputField = async () => {
     setShowInput(!showInput);
@@ -40,13 +39,10 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
   };
 
   const handleNewNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log(event.target.value);
-
     setNewName(event.target.value);
   };
 
   const changeName = async () => {
-    // console.log("changeName called");
     try {
       const response = await fetch(`http://${ipAddress}:3003/user/change_name`, {
         method: "POST",
@@ -59,12 +55,9 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
       if (response.ok) {
         setShowInput(false);
         setNewName(newName);
-        // setUserName(newName);
-        // alert("Name was changed successfully");
       }
     } catch (error) {
       console.error(error);
-      // alert("Something went wrong");
     }
   };
 
@@ -73,8 +66,8 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
       <img
         onClick={() => {
           setIsDropdownOpen(false);
-          setShowUserInto(!showUserInfo);
-          setUserIdCard(userId);
+          setShowUserInto(true);
+          setUserIdCard(myUserId);
         }}
         src={photo}
         alt=""
@@ -93,7 +86,7 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
           <button>Change Name</button>
         </form>
       ) : (
-        <span title="Change name" onClick={toggleInputField}>
+        <span id="name-in-profile-card" title="Change name" onClick={toggleInputField}>
           {newName}
         </span>
       )}

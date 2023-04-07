@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import JSCookies from "js-cookie";
-import { UserContext } from "../../contexts/UserContext";
+import { useUserContext } from "../../contexts/UserContext";
 import { AiOutlineEdit } from "react-icons/ai";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
 import ListFriends from "./ListFriends";
@@ -10,10 +10,10 @@ import { useMyContext } from "../../contexts/InfoCardContext";
 import GameHistory from "./GamesHistory";
 import UserStats from "./UserStatistics";
 import { our_socket } from "../../utils/context/SocketContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useRouteError } from "react-router-dom";
 import { CounterContext } from "../../utils/context/CounterContext";
 import Incoming_friend_requests from "./Incoming_friend_requests";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
 
 function CustomizationFields({ setMapNumber }: { setMapNumber: any }) {
   return (
@@ -55,22 +55,26 @@ function CustomizationFields({ setMapNumber }: { setMapNumber: any }) {
 }
 
 const UserPage = () => {
-  const { mapNumber, setMapNumber } = useContext(CounterContext);
-  const { userId, blocked_users } = useContext(UserContext);
+  const { myUserId, myMail, mytwoFAenabled, myBlockedUsers, myGames,
+    myOutgoingFriendReq, myIncomingFriendReq,
+    myFriendList, setMyFriendList, myName,
+    setMyIncomingFriendReq, setMyOutgoingFriendReq }
+    = useUserContext();
+    const navigate = useNavigate();
   const { userIdCard, setShowUserInto } = useMyContext();
   const [isVisible, setIsVisible] = useState(true);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [TFA, setTFA] = useState(false);
-  const [friendsList, setFriendsList] = useState<string[]>([]);
+  const [friendsListIdCard, setFriendsListIdCard] = useState<number[]>([]);
   const [out_going_friend_requests, set_outgoing_friend_requests] = useState<
-    string[]
+    number[]
   >([]);
   const [incoming_frined_requests, set_incoming_friend_requests] = useState<
     number[]
   >([]);
-  const [gamesList, setGamesList] = useState([]);
-  const isMe = userId === userIdCard;
+  const [gamesList, setGamesList] = useState<number[]>([]);
+  const isMe = myUserId === userIdCard;
   const [isFriend, setIsFriend] = useState(false);
   const [is_blocked, set_is_blocked] = useState(false);
   const [show_friends, set_show_friends] = useState(true);
@@ -89,7 +93,7 @@ const UserPage = () => {
       console.log("%cINSIDE TRY", "color: blue");
 
       our_socket.emit("create_dialogue", {
-        userid_creator: userId,
+        userid_creator: myUserId,
         other_user: userIdCard,
       });
     } catch (error) {
@@ -166,11 +170,27 @@ const UserPage = () => {
             body: JSON.stringify({ adding_you: userIdCard }),
           }
         );
-        // console.log(response);
         alert("Friend request has been sent");
       } catch (error) {
         alert("Could not modify friends list");
       }
+    }
+  };
+  const remove_friend_request = async () => {
+    try {
+      const response = await fetch(
+        `http://${ipAddress}:3003/user/remove_friend_request`,
+        {
+          method: "Post",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+          },
+          body: JSON.stringify({ rejecting_you: userIdCard }),
+        }
+      );
+    } catch (error) {
+      alert("Could not reject friends request");
     }
   };
 
@@ -188,23 +208,157 @@ const UserPage = () => {
       setUserName(data["name"]);
       setUserEmail(data["mail"]);
       setTFA(data["two_FA_enabled"]);
-      setFriendsList(data["friendlist"]);
-      set_outgoing_friend_requests(data["outgoing_friend_req"]);
+      setFriendsListIdCard(data["friendlist"]);
+      // set_outgoing_friend_requests(data["outgoing_friend_req"]);
       set_incoming_friend_requests(data["incoming_friend_req"]);
       setGamesList(data["games"]);
-      setIsFriend(data["friendlist"].includes(Number(userId)));
-      set_is_blocked(blocked_users.includes(Number(userIdCard)));
+      setIsFriend(data["friendlist"].includes(Number(myUserId)));
+      set_is_blocked(myBlockedUsers.includes(Number(userIdCard)));
     };
-    if (userIdCard) getData();
-  }, [userIdCard, isFriend]);
+    if (userIdCard) { getData() }
+  }, [userIdCard]);
+
+  useEffect(() => {
+    const setup_sockets = () =>
+    {
+      console.log("setup sockets for new friend accept");
+      our_socket.on('new_friend_accepted', ({ friend_id_1, friend_id_2 }: { friend_id_1: number, friend_id_2: number }) => {
+        console.log("new_friend_accepted ");
+        if (friend_id_1 === Number(myUserId) && friend_id_2 === Number(userIdCard)) {
+          if (!friendsListIdCard.includes(friend_id_1)) {
+            setFriendsListIdCard([...friendsListIdCard, friend_id_1]);
+            if (myOutgoingFriendReq.includes(friend_id_2)) {
+              const idx = myOutgoingFriendReq.indexOf(friend_id_2)
+              if (idx != -1) {
+                myOutgoingFriendReq.splice(idx, 1)
+                setMyOutgoingFriendReq([...myOutgoingFriendReq]);
+              }
+            }
+            if (myIncomingFriendReq.includes(friend_id_2)) {
+              const idx = myIncomingFriendReq.indexOf(friend_id_2)
+              if (idx != -1) {
+                myIncomingFriendReq.splice(idx, 1)
+                setMyIncomingFriendReq([...myIncomingFriendReq]);
+              }
+            }
+          }
+          if (!myFriendList.includes(friend_id_2)) {
+            console.log("setting new friendlist, adding this id " + friend_id_2);
+            setMyFriendList([...myFriendList, friend_id_2])
+          }
+        } else if (friend_id_1 === Number(userIdCard) && friend_id_2 === Number(myUserId)) {
+          if (!friendsListIdCard.includes(friend_id_2)) {
+            setFriendsListIdCard([...friendsListIdCard, friend_id_2]);
+          }
+          if (!myFriendList.includes(friend_id_1)) {
+            console.log("setting new friendlist, adding this id " + friend_id_1);
+            setMyFriendList([...myFriendList, friend_id_1])
+          }
+          if (myOutgoingFriendReq.includes(friend_id_1)) {
+            const idx = myOutgoingFriendReq.indexOf(friend_id_1)
+            if (idx != -1) {
+              myOutgoingFriendReq.splice(idx, 1)
+              setMyOutgoingFriendReq([...myOutgoingFriendReq]);
+            }
+          }
+          if (myIncomingFriendReq.includes(friend_id_1)) {
+            const idx = myIncomingFriendReq.indexOf(friend_id_1)
+            if (idx != -1) {
+              myIncomingFriendReq.splice(idx, 1)
+              setMyIncomingFriendReq([...myIncomingFriendReq]);
+            }
+          }
+        }
+      })
+    }
+    if (myFriendList != undefined)
+      setup_sockets();
+  }, [myUserId, userIdCard, myFriendList]);
+
+  useEffect(() => {
+    const setup_sockets = () =>
+    {
+      our_socket.on('new_friend_request_received', ({ received_friend_req, sent_friend_req }: { received_friend_req: number, sent_friend_req: number }) => {
+        // console.log("inside friend request received " + received_friend_req, sent_friend_req, Number(myUserId), Number(userIdCard));
+        if (Number(myUserId) == received_friend_req && Number(userIdCard) == received_friend_req) {
+          if (!incoming_frined_requests.includes(sent_friend_req)) {
+            incoming_frined_requests.push(sent_friend_req);
+            set_incoming_friend_requests([...incoming_frined_requests]);
+          }
+        }
+        if (Number(myUserId) == sent_friend_req && userIdCard == myUserId) {
+          if (!myOutgoingFriendReq.includes(received_friend_req)) {
+            myOutgoingFriendReq.push(received_friend_req);
+            setMyOutgoingFriendReq([...myOutgoingFriendReq])
+          }
+        }
+      })
+    }
+    if (incoming_frined_requests != undefined)
+      setup_sockets();
+  }, [myUserId, incoming_frined_requests]);
+
+  useEffect(() => {
+    const setup_sockets = () =>
+    {
+
+      our_socket.on('delete_friend_request', ({ user_one, user_two }: { user_one: number, user_two: number }) => {
+        console.log("delete friend request socket");
+        
+        if (Number(myUserId) == user_one && Number(userIdCard) == user_one) {
+          const idx = incoming_frined_requests.indexOf(user_two);
+          if (idx != -1) {
+            incoming_frined_requests.splice(idx, 1);
+            set_incoming_friend_requests([...incoming_frined_requests]);
+          }
+        }
+        else if (Number(myUserId) == user_two && Number(userIdCard) == user_two) {
+          const idx = incoming_frined_requests.indexOf(user_one);
+          if (idx != -1) {
+            incoming_frined_requests.splice(idx, 1);
+            set_incoming_friend_requests([...incoming_frined_requests]);
+          }
+        }
+      })
+    }
+    if (incoming_frined_requests != undefined)
+      setup_sockets();
+  }, [myUserId, incoming_frined_requests]);
+
+  useEffect(() => {
+    const setup_sockets = () =>
+    {
+
+      our_socket.on('remove_friend', ({ user_one, user_two }: { user_one: number, user_two: number }) => {
+        // console.log("socket on remove friend");
+        if (Number(myUserId) == user_one || Number(myUserId) == user_two)
+        setIsFriend(false)
+        if (friendsListIdCard.includes(user_one)) {
+          const idx = friendsListIdCard.indexOf(user_one)
+          friendsListIdCard.splice(idx, 1);
+          setFriendsListIdCard([...friendsListIdCard])
+        }
+        if (friendsListIdCard.includes(user_two)) {
+          const idx = friendsListIdCard.indexOf(user_two)
+          friendsListIdCard.splice(idx, 1);
+          setFriendsListIdCard([...friendsListIdCard])
+        }
+      })
+    }
+    if (friendsListIdCard != undefined)
+      setup_sockets();
+
+  }, [myUserId, friendsListIdCard]);
+
 
   function startAndinvitePlayers(userId: string, userName: string) {
     console.log(userId + " Inviting player " + userName);
-
+    navigate('/game')
     setShowUserInto(false);
     let obj: any = { userId: userId, userName: userName };
     our_socket.emit("createInvitationRoom", JSON.stringify(obj));
   }
+
   return (
     <div id="userInfo">
       <div id="stats">
@@ -212,7 +366,7 @@ const UserPage = () => {
           <UserPhoto userId={userIdCard} />
         </div>
         <div id="generic-info">
-          <span>{`Player: ${userName}`}</span>
+          <span id="player-name">{`Player: ${userName}`}</span>
           <span>{`Email: ${userEmail}`}</span>
           {isMe ? <span>{`2FA enabled: ${TFA}`}</span> : <span></span>}
           {!isMe && (
@@ -220,17 +374,29 @@ const UserPage = () => {
               <button className="purple-button" onClick={startChat}>
                 Chat
               </button>
-              <Link to="/game">
+              {/* <Link to="/game"> */}
                 <button
                   className="purple-button"
-                  onClick={() => startAndinvitePlayers(userId, userName)}
+                  onClick={() => startAndinvitePlayers(myUserId, userName)}
                 >
                   Play
                 </button>
-              </Link>
-              <button className="purple-button" onClick={updateFriendsList}>
-                {isFriend ? "Unfriend" : "Friend"}
-              </button>
+              {/* </Link> */}
+              {
+                isFriend ?
+                  <button className="purple-button" onClick={updateFriendsList}>
+                    UNFRIEND
+                  </button>
+                  :
+                  myOutgoingFriendReq.includes(Number(userIdCard)) ?
+                    <button className="purple-button" onClick={remove_friend_request}>
+                      REMOVE FRIEND REQUEST
+                    </button>
+                    :
+                    <button className="purple-button" onClick={updateFriendsList}>
+                      SEND FRIEND REQUEST
+                    </button>
+              }
               <button className="purple-button" onClick={update_is_blocked}>
                 {is_blocked ? "Unblock" : "Block"}
               </button>
@@ -242,14 +408,14 @@ const UserPage = () => {
       <button id="exit-buttton" onClick={toggleVisibility}>
         X
       </button>
-      {userIdCard == userId ? (
+      {userIdCard == myUserId ? (
         <>
           <div id="lists">
             {show_friends ? (
               <ListFriends
-                friendsList={friendsList}
+                friendsList={friendsListIdCard}
                 setIsFriend={setIsFriend}
-                setFriendsList={setFriendsList}
+                setFriendsList={setFriendsListIdCard}
                 toggle_friends_or_requests={toggle_friends_or_requests}
                 show_friends={show_friends}
               />
@@ -257,8 +423,8 @@ const UserPage = () => {
               <Incoming_friend_requests
                 incoming_friend_req={incoming_frined_requests}
                 set_incoming_friend_requests={set_incoming_friend_requests}
-                friendsList={friendsList}
-                setFriendsList={setFriendsList}
+                friendsList={friendsListIdCard}
+                setFriendsList={setFriendsListIdCard}
                 toggle_friends_or_requests={toggle_friends_or_requests}
                 show_friends={show_friends}
               />
@@ -270,8 +436,8 @@ const UserPage = () => {
         <>
           <div id="lists">
             <ListFriends
-              setFriendsList={setFriendsList}
-              friendsList={friendsList}
+              setFriendsList={setFriendsListIdCard}
+              friendsList={friendsListIdCard}
               setIsFriend={setIsFriend}
               toggle_friends_or_requests={toggle_friends_or_requests}
               show_friends={show_friends}

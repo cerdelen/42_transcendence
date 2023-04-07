@@ -35,14 +35,14 @@ export class UserController
 		}
 	}
 
-	@Post('reject_friend_request')
+	@Post('remove_friend_request')
 	@UseGuards(Jwt_Auth_Guard)
-	async	reject_friend_request(@Req() req: any, @Body('rejecting_you') rejecting_you: string)
+	async	remove_friend_request(@Req() req: any, @Body('rejecting_you') rejecting_you: string)
 	{
 		//console.log("alo accept f_r");
 		if (!Number.isNaN(rejecting_you))
 		{
-			this.userService.reject_friend_request(req.user.id, Number(rejecting_you));
+			this.userService.remove_friend_request(req.user.id, Number(rejecting_you));
 		}
 	}
 

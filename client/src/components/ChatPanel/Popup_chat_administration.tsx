@@ -1,7 +1,8 @@
 import { useEffect } from "react"
 import JSCookies from "js-cookie";
 import { useMyDisplayedChatContext } from "../../contexts/Displayed_Chat_Context";
-const ipAddress = process.env.REACT_APP_Server_host_ip;
+import ipAddress from '../../constants';
+import React from "react";
 
 type administraion_props =
 {
@@ -10,9 +11,11 @@ type administraion_props =
 	setadmin: React.Dispatch<React.SetStateAction<boolean>>;
 	setowner: React.Dispatch<React.SetStateAction<boolean>>;
 	set_user_ids_in_chat_details: React.Dispatch<React.SetStateAction<number[]>>;
+	is_muted: boolean
+	is_admin: boolean
 }
 
-const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_user_ids_in_chat_details} : administraion_props) =>
+const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_user_ids_in_chat_details, is_muted, is_admin}: administraion_props, ref: any) =>
 {
 	const { displayed_chat } = useMyDisplayedChatContext();
 	const handle_kick = async (user_id: number, is_banned_click: boolean) =>
@@ -109,6 +112,21 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 		{
 		}
 	}
+	const handle_unmute = async (user_id: number) =>
+	{
+		try
+		{
+			const respone = await fetch(`http://${ipAddress}:3003/conversation/${displayed_chat.conversation_id}/setUnMute/${user_id}`,{
+			method: "PUT",
+				headers: {
+					Authorization: `Bearer ${JSCookies.get("accessToken")}`,
+				},
+			});
+		}
+		catch(error)
+		{
+		}
+	}
 	const handle_make_admin = async (user_id: number) =>
 	{
 		try
@@ -126,13 +144,25 @@ const Popup_chat_administration = ({user_id, setmuted, setadmin, setowner, set_u
 	}
 
 	return (
-		<div id="admin-buttons">
+		<div id="admin-buttons" ref={ref}>
 			<button className="purple-button" onClick={() => handle_kick(user_id, false)}>KICK</button>
-			<button className="purple-button" onClick={() => handle_mute(user_id)}>MUTE</button>
+			{
+				is_muted ?
+				<button className="purple-button" onClick={() => handle_unmute(user_id)}>UNMUTE</button>
+				:
+				<button className="purple-button" onClick={() => handle_mute(user_id)}>MUTE</button>
+			}
 			<button className="purple-button" onClick={() => handle_kick(user_id, true)}>BAN</button>
-			<button className="purple-button" onClick={() => handle_make_admin(user_id)}>MAKE ADMIN</button>
+			{
+				is_admin ?
+				<></>
+				:
+				<button className="purple-button" onClick={() => handle_make_admin(user_id)}>MAKE ADMIN</button>
+			}
 		</div>
 	)
 }
 
-export default Popup_chat_administration
+export default React.forwardRef(Popup_chat_administration);
+
+// export default Popup_chat_administration;

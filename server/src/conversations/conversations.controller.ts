@@ -266,16 +266,8 @@ export class ConversationController {
 		else if (admin_user_idx < 0) { //Current user is not considered to be an Administrator
 			return ;
 		}
-		else if (idx_from_mute_list >= 0) {
-			// conversation.conversation_mute_list_arr.splice(idx_from_mute_list, 0); //what dis?
-			// const updatedConversationWithMuteUser = await this.conversationsService.updateConversation({
-			// 	where: {
-			// 		conversation_id: Number(conversation_id),
-			// 	},
-			// 	data: {
-			// 		conversation_mute_list_arr: conversation.conversation_mute_list_arr
-			// 	}
-			// })
+		else if (idx_from_mute_list >= 0)
+		{
 			return ;
 		}
 		else {
@@ -289,7 +281,6 @@ export class ConversationController {
 					}
 				}
 			})
-
 			this.convGateway.mute_user(Number(conversation_id), Number(id_to_mute));
 			return ;
 		}

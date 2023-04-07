@@ -116,8 +116,8 @@ export class conversationGateway implements OnGatewayConnection{
 		}
 
 		async unmute_user(chat_id: number, unmuted_user_id: number) {
-			console.log("new mute user");
-			this.server.emit('mute_user', {chat_id: chat_id, muted_user_id: unmuted_user_id});	
+			console.log("new unmute user");
+			this.server.emit('unmute_user', {chat_id: chat_id, muted_user_id: unmuted_user_id});	
 		}
 
-} 
+}

@@ -91,6 +91,21 @@ export class conversationGateway implements OnGatewayConnection{
 				this.server.emit("new_dialogue_created", {userid_creator: userid_creator, other_user: other_user, chat_id: ret.conversation_id});
 		}
 
+		@SubscribeMessage('set_unmute_user')
+ 		async set_unmute_user(
+			@MessageBody() data: any)
+		{
+			const result : boolean = await this.conversationService.setunmute()
+			if (!result)
+			{
+				return ;
+			}
+			else
+			{
+				this.unmute_user(chat_id, umuted_user_id)
+			}
+		}
+
 		async	joined_chat(chat_id: number, user_id:number)
 		{
 			this.server.emit('some_one_joined_group_chat', {conv_id: chat_id, joined_user_id: user_id});

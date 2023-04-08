@@ -253,6 +253,7 @@ const Canvas = ({ userId }: { userId: string }) => {
     useEffect(() => 
     {
         document.addEventListener('keydown', (e) => {
+            e.preventDefault();
             if (!gameActive)
                 return;
             let obj: KeyInfo =
@@ -265,6 +266,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             our_socket.emit('keydown', JSON.stringify(obj));
         })
         document.addEventListener('keyup', (e) => {
+            e.preventDefault();
             if (!gameActive)
                 return;
             let obj: KeyInfo =

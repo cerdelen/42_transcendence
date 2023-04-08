@@ -35,7 +35,7 @@ const Chat_input_filed_and_send_button = () => {
   };
 
   return (
-    <form onSubmit={(e) => {
+    <form autoComplete="off" onSubmit={(e) => {
       if (input) sendMessage(e);
     }}>
       <input

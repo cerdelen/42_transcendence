@@ -75,6 +75,7 @@ const Group_chat_preview_card = ({
 }) => {
   const [conversation_name, setConversation_name] = useState("");
   const [hasPassword, setHasPassword] = useState(false);
+  const [showX, setShowX] = useState(true);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, inputValue: string) => {
     event.preventDefault();
@@ -162,7 +163,8 @@ const Group_chat_preview_card = ({
     }
   };
 
-  const handleOnClick = async () => {
+  const handleJoin = async () => {
+    setShowX(true);
     const passwordIsSet = await checkIfPasswordProtected();
     console.log(`Password is set: ${passwordIsSet}`);
 
@@ -190,12 +192,15 @@ const Group_chat_preview_card = ({
   }, []);
   return (
     <li className="Chat_preview_cards">
-      {hasPassword ? (
+      {(hasPassword && showX) ? (<Fragment>
         <SingleFieldInputForm
           handleSubmit={handleSubmit}
           fieldPlaceholder="Password needed"
+          buttonStyle="deep-purple-button"
           buttonText="Submit"
         />
+        <button className="deep-purple-button" onClick={() => { setShowX(false) }}>  &#10005;</button>
+      </Fragment>
       ) : (
         <Fragment>
           <img src={group_picture} alt="" />
@@ -203,7 +208,7 @@ const Group_chat_preview_card = ({
             <span id="user-name" title={"chat_name"}>
               {conversation_name}
             </span>
-            <button className="deep-purple-button" onClick={handleOnClick}>JOIN</button>
+            <button className="deep-purple-button" onClick={handleJoin}>JOIN</button>
           </div>
         </Fragment>
       )}
@@ -342,7 +347,7 @@ const Open_group_cards = () => {
 
       <div className="right-pane-column">
         <h2>CHAT DETAILS</h2>
-        <Chat_details/>
+        <Chat_details />
       </div>
     </div>
   );

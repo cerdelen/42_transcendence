@@ -253,11 +253,11 @@ export class ConversationService {
 		const conversation_id_arr_from_user = user.conversation_id_arr.indexOf(conversation_id);
 		const user_admin_idx = conversation.conversation_admin_arr.indexOf(user_id);
 		const user_owner_idx = conversation.conversation_owner_arr.indexOf(user_id);
-		conversation.conversation_participant_arr.splice(req_user_idx, 1);
-		if (conversation.conversation_participant_arr.length == 0) {
+		if (conversation.conversation_participant_arr.length == 1) {
 			await this.delete_conversation(conversation_id);
 			return Status.NO_CHAT;
 		}
+		conversation.conversation_participant_arr.splice(req_user_idx, 1);
 		if (user_admin_idx >= 0) {
 			conversation.conversation_admin_arr.splice(user_admin_idx, 1);
 			if (conversation.conversation_admin_arr.length == 0) {
@@ -316,17 +316,20 @@ export class ConversationService {
 
 	async delete_conversation(chat_id: number) {
 		const conversation: Conversation = await this.prisma.conversation.findUnique({ where: { conversation_id: chat_id } });
+		console.log("this.delete_conversation");		
 		if (!conversation)
 			return;
-		return this.prisma.conversation.delete({ where: { conversation_id: chat_id } });
+		for(let i = 0; i < conversation.conversation_participant_arr.length; i++)
+		{
+			console.log("this.delete_conversation in for loop",conversation.conversation_participant_arr[i], chat_id);		
+			await this.user.remove_conv_from_user(conversation.conversation_participant_arr[i], chat_id);
+
+		}
+		return this.prisma.conversation.delete({ where: { conversation_id: chat_id }});
 	}
 
 	async updateConversationIdInUser(user_id: number, conversationId: number): Promise<User> {
-
-
 		const conversation = await this.findConversation(conversationId);
-
-
 		const updatedUser = this.user.updateUser({
 			where: {
 				id: user_id

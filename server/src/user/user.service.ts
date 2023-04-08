@@ -536,4 +536,26 @@ export class UserService {
 			}
 		})
 	}
+
+	async remove_conv_from_user(user_id: number, chat_id: number)
+	{
+		const user = await this.prisma.user.findUnique({where: {id: user_id}});
+		if (!user) 
+			return ;
+		const idx = user.conversation_id_arr.indexOf(chat_id);
+		if (idx != -1)
+		{
+			console.log("remove conv from user in if with idx ", idx);
+			console.log("array before ", user.conversation_id_arr);
+			
+			user.conversation_id_arr.splice(idx, 1);
+			console.log("array after ", user.conversation_id_arr);
+			await this.prisma.user.update({
+				where: {id: user_id},
+				data: {
+					conversation_id_arr: user.conversation_id_arr,
+				}
+			})
+		}
+	}
 }

@@ -1,0 +1,1 @@
+export const WINNING_COND_CONSTANT : number = 4

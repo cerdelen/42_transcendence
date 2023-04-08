@@ -1,3 +1,4 @@
+import { WINNING_COND_CONSTANT }from "../constants/game_constants"
 
 interface Player{
     speed: number,
@@ -147,7 +148,7 @@ function ball_update(ball: Ball,player_1 : Player, player_2 : Player,state: pong
 }
 export function gameLoop(state: pong_properties) : number
 {
-    const win_condition = 4;
+    const win_condition = WINNING_COND_CONSTANT;
     if(!state)
     {
         return 0;

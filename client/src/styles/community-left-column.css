@@ -52,13 +52,14 @@
 }
 
 .name-and-button {
+	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
 	gap: 19px;
 	justify-content: center;
 	align-items: center;
 	/* border: 1px solid white; */
-	padding-left: 35px;
+	/* padding-left: 35px; */
 }
 
 .online-status #user-name{

@@ -99,7 +99,7 @@ const Chat_area = () => {
         </div>
       ) : (
         <>
-          <h2>Chat {displayed_chat.conversation_name}</h2>
+          <h2 id="chat-name-in-chat-area" title={displayed_chat.conversation_name}>{displayed_chat.conversation_name}</h2> 
           <Display_full_chat chat_id={displayed_chat.conversation_id} />
             <Chat_input_filed_and_send_button />
         </>

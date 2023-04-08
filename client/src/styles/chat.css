@@ -80,12 +80,8 @@
     -10px 0 20px -10px rgba(0, 0, 0, 0.9);
   overflow-x: hidden;
   max-height: 85vh;
+  /* justify-content: center; */
 }
-
-#chat-area h2 {
-  margin-left: 1rem;
-}
-
 
 #chat-area button {
   position: absolute;
@@ -113,4 +109,11 @@
   gap: 200px;
   justify-content: center;
   align-items: center;
+}
+
+#chat-name-in-chat-area {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  overflow: hidden;  
+  margin: 20px;
 }

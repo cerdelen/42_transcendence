@@ -4,12 +4,14 @@ type Props = {
   handleSubmit: (event: React.FormEvent<HTMLFormElement>, inputValue: string) => Promise<void>;
   buttonText: string;
   fieldPlaceholder: string;
+  buttonStyle?: string
 };
 
 const SingleFieldInputForm = ({
   handleSubmit,
   buttonText,
   fieldPlaceholder = '',
+  buttonStyle = "purple-button"
 
 }: Props) => {
   const [inputValue, setInputValue] = useState("");
@@ -26,7 +28,7 @@ const SingleFieldInputForm = ({
       }}
     >
       <input type="text" value={inputValue} placeholder={fieldPlaceholder} onChange={handleInputChange} />
-      <button className="purple-button">{buttonText}</button>
+      <button className={buttonStyle}>{buttonText}</button>
     </form>
   );
 };

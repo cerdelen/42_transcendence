@@ -94,8 +94,9 @@ const Chat_preview_card = ({chat_id, myUserId} : chat_props) => {
 			console.log("was NOT already included");
 			setPhoto(await pushPictureToMap(Number(other_user_id), picture_map, set_picture_map));
 		}
-		get_conversation(chat_id);
-		}, []);
+		if (picture_map != undefined)
+			get_conversation(chat_id);
+		}, [picture_map]);
 		
 	return (
 		<li className='Chat_preview_cards' title={conversation_name} onClick={handleOnClick}>

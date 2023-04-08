@@ -495,6 +495,8 @@ async function emitGameOver(state_: any, userService: any, roomName: string, win
 
 async function startGameInterval(userService: any, roomName: string, state_: any, server: Server, game: any, prisma: PrismaService) {
   let other_game = await prisma.game.findUnique({ where: { id: game.id } });
+  console.log("start game ", other_game);
+  
   const intervalId = setInterval(() => {
     const winner: number = gameLoop(state_);
     if (!winner) {

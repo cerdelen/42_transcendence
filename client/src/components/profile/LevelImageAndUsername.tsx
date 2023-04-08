@@ -53,8 +53,16 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
         },
       });
       if (response.ok) {
-        setShowInput(false);
-        setNewName(newName);
+        const status = await response.json();
+        if (status)
+        {
+          setShowInput(false);
+          setNewName(newName);
+        }
+        else
+        {
+          alert("Name is already taken!")
+        }
       }
     } catch (error) {
       console.error(error);

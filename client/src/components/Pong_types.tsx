@@ -31,6 +31,8 @@ interface Ball{
 
 interface pong_properties
 {
+    player_1_id: number,
+    player_2_id: number,
     keysPressed: boolean[]
     player_1_score : number,
     player_2_score : number,

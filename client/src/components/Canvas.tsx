@@ -5,6 +5,7 @@ import {our_socket} from '../utils/context/SocketContext';
 import { CounterContext } from "../utils/context/CounterContext";
 import { useMyContext } from '../contexts/InfoCardContext'
 import { useUserContext } from "../contexts/UserContext";
+import { useMyGameContext } from "../contexts/GameContext";
 // import { gameContext } from '../contexts/gameContext'
 interface GameInfo_t
 {
@@ -13,7 +14,7 @@ interface GameInfo_t
 }
 
 const Canvas = ({ userId }: { userId: string }) => {
-    const { images, initial_state } = useMyContext();
+    const { images, initial_state } = useMyGameContext();
     function Custmization_fields({ setMapNumber }: { setMapNumber: any }) {
 
         return (
@@ -148,12 +149,12 @@ const Canvas = ({ userId }: { userId: string }) => {
             let num: number = data;
             if (num == Number.parseInt(userId)) {
                 console.log("Winner");
-                alert("You won 15 mmr! Congratulations!")
                 reset();
                 console.log("You win executed " + userId);
                 cancelAnimationFrame(animationFrameNum);
+                alert("You won 15 mmr! Congratulations!")
             } else {
-                alert("You lost 15 mmr! NOOB! How can you loose in Pong?!?!?!")
+                alert("You lost 15 mmr! NOOB! How can you lose in Pong?!?!?!")
                 console.log("You lose executed\n" + userId);
                 reset();
                 cancelAnimationFrame(animationFrameNum);

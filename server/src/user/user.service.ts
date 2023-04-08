@@ -372,6 +372,7 @@ export class UserService {
 			await this.updateUser({
 				where: {id: user_id},
 				data: { two_FA_enabled: false },
+				
 			});
 		}
 	}
@@ -410,6 +411,7 @@ export class UserService {
 	{
 		const	user = await this.prisma.user.findUnique({where: { name: _name }});
 		if (!user)
+
 		{
 			await	this.prisma.user.update({
 				where: { id: user_id }, 

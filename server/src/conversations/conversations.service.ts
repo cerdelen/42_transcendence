@@ -379,7 +379,8 @@ export class ConversationService {
 
 	
 		const conversation: Conversation = await this.findConversation(Number(conversation_id));
-
+		if(!conversation)
+			return ;
 		const admin_user_idx = conversation.conversation_admin_arr.indexOf(user_id);
 		const idx_from_mute_list = conversation.conversation_mute_list_arr.findIndex(element => element == Number(id_to_unmute));
 		// const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == Number(id_to_unmute));

@@ -1,16 +1,19 @@
 
+import { useContext } from "react";
 import { Socket } from "socket.io-client";
-
 
 function draw_rectangle(context: any, player: any, width: number, height: number) {
     context.fillStyle = "#fff";
     context.fillRect(player.x, player.y, width, height);
 }
 
-function drawGame(ctx: any, gameInfo: any, image: any) {
 
+//Print Names
+function drawGame(ctx: any, gameInfo: any, image: any) {
     // ctx.fillStyle = "#000";
     // ctx.fillRect(0,0, 700, 400);    
+    // console.log("player 1 " + name_map.get(gameInfo));
+    
 
     ctx.clearRect(0, 0, 700, 400);;
     // const image = new Image();

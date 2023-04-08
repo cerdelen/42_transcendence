@@ -6,7 +6,8 @@
 }
 
 .left-pane-column, .right-pane-column {
-	width: 100%;
+	/* width: 100%; */
+	min-width: 100%;
 	display: flex;
 	flex-direction: column;
 	height: 50%;
@@ -37,6 +38,7 @@
 	margin: .6rem;
 	min-width: 250px;
 	max-width: 450px;
+	cursor: pointer;
 }
 
 .online-status {

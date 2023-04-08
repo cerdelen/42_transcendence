@@ -158,7 +158,7 @@ const Participant_in_chat_detail_card = ({
   const participantCardRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="participant-card" ref={participantCardRef} onClick={() => openChatAdministration()}>
+    <div className={`participant-card ${is_me && 'current-player'}  ${canOpenChatAdministration && 'has-admin-rights'  }`} ref={participantCardRef} onClick={() => openChatAdministration()}>
       <img src={photo} alt="" />
       {is_me ? <span> You </span> : <span> {user_name} </span>}
       <div className="icons">

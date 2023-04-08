@@ -1,4 +1,4 @@
-import React, { useRef, useContext ,useEffect, useState, useId } from "react";
+import React, { useRef, useContext ,useEffect, useState, useId, Fragment } from "react";
 import drawPong from './Pong'
 import { pong_properties, KeyInfo, Player } from './Pong_types'
 import {our_socket} from '../utils/context/SocketContext';
@@ -6,6 +6,10 @@ import { CounterContext } from "../utils/context/CounterContext";
 import { useMyContext } from '../contexts/InfoCardContext'
 import { useUserContext } from "../contexts/UserContext";
 import { useMyGameContext } from "../contexts/GameContext";
+
+import Bulgaria from "../images/bulgaria.jpeg";
+import Paris from "../images/paris.jpeg";
+import Cat_valley from "../images/Cat_valley.jpeg";
 // import { gameContext } from '../contexts/gameContext'
 interface GameInfo_t
 {
@@ -13,8 +17,23 @@ interface GameInfo_t
   gameCode: string
 }
 
+type gameBackgroundPreviewType = {
+    idx: number
+}
+
+const gameBackgroundPreview = ({idx}: gameBackgroundPreviewType) => {
+
+    return (
+        <div className="game-page-images-container">
+            <img className={`game-page-background ${idx === 1 && "active"}`} src={Bulgaria} alt="" />
+            <img className={`game-page-background ${idx === 2 && "active"}`} src={Paris} alt="" />
+            <img className={`game-page-background ${idx === 3 && "active"}`} src={Cat_valley} alt="" />
+        </div>
+    )
+}
 const Canvas = ({ userId }: { userId: string }) => {
     const { images, initial_state } = useMyGameContext();
+    const [imageIdx, setImageIdx] = useState<number>(1);
     function Custmization_fields({ setMapNumber }: { setMapNumber: any }) {
 
         return (
@@ -25,16 +44,19 @@ const Canvas = ({ userId }: { userId: string }) => {
                     e.preventDefault();
                     console.log("Map number is " + mapNumber);
                     setMapNumber(0);
+                    setImageIdx(1);
                 }}> Bulgaria </button>
                 <button className="game_buttons" onClick={(e) => {
                     e.preventDefault();
                     setMapNumber(1);
+                    setImageIdx(2);
                     console.log("Map number is " + mapNumber);
                 }}> Paris </button>
                 <button className="game_buttons" onClick={(e) => {
                     e.preventDefault();
                     console.log("Map number is " + mapNumber);
                     setMapNumber(2);
+                    setImageIdx(3);
                 }}> Cat Valley </button>
             </>
         )
@@ -92,6 +114,9 @@ const Canvas = ({ userId }: { userId: string }) => {
                             <div className="muzzle"></div>
                         </div>
                     </div>
+       
+                    {gameBackgroundPreview({ idx: imageIdx })
+}
 
                 </>
             )

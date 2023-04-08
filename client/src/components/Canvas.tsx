@@ -5,6 +5,12 @@ import {our_socket} from '../utils/context/SocketContext';
 import { CounterContext } from "../utils/context/CounterContext";
 import { useMyContext } from '../contexts/InfoCardContext'
 // import { gameContext } from '../contexts/gameContext'
+interface GameInfo_t
+{
+  player_id: string,
+  gameCode: string
+}
+
 const Canvas = ({ userId }: { userId: string }) => {
     const { images, initial_state } = useMyContext();
     function Custmization_fields({ setMapNumber }: { setMapNumber: any }) {
@@ -122,6 +128,7 @@ const Canvas = ({ userId }: { userId: string }) => {
         })       
     }, [gameActive])
 
+    
     useEffect(() => 
     {
         our_socket.on("handleTooManyPlayers", () => {
@@ -216,6 +223,10 @@ const Canvas = ({ userId }: { userId: string }) => {
             ctx.canvas.hidden = true;
         }
         our_socket.on('gameCode', handleGameCode);
+        // our_socket.on('unknownGame', () => 
+        // {
+        //     alert("client socket id not known refresh the page");
+        // })
     }, [])
 
     useEffect(() => {
@@ -248,7 +259,8 @@ const Canvas = ({ userId }: { userId: string }) => {
             {
                 key: e.keyCode,
                 player_number: playerNumber,
-                socket_id: our_socket.id
+                socket_id: our_socket.id,
+                gameActive: gameActive
             };
             our_socket.emit('keydown', JSON.stringify(obj));
         })
@@ -259,7 +271,8 @@ const Canvas = ({ userId }: { userId: string }) => {
             {
                 key: e.keyCode,
                 player_number: playerNumber,
-                socket_id: our_socket.id
+                socket_id: our_socket.id,
+                gameActive: gameActive
             };
             our_socket.emit('keyup', JSON.stringify(obj));
         })

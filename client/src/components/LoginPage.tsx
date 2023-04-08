@@ -20,7 +20,7 @@ const LoginPage = () => {
         await fetch(`http://${ipAddress}:3003/auth/create_test_user`, {
         method: "Get",
       })
-      JSCookies.set("accessToken", 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdGluZ3VzZXIiLCJzdWIiOjMyMiwibWFpbCI6InRlc3Rpbmd1c2VyQGVtYWlsLmNvbSIsImlzX3R3b19GQWVkIjpmYWxzZSwiaWF0IjoxNjgwNTYyNjc4fQ.zbUqauL-_3TkLR2iyPHBRPWq45YF2BjBopvzBK-fom8');
+      JSCookies.set("accessToken", 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdGluZ3VzZXIiLCJzdWIiOjMyMiwibWFpbCI6InRlc3Rpbmd1c2VyQGVtYWlsLmNvbSIsImlzX3R3b19GQWVkIjpmYWxzZSwiaWF0IjoxNjgwOTYwMzQ0fQ.yoEfTP4Yh0OHAk_7cf4G2CAlRZs9TWNjJ64Mh1V7_Ew');
 
       window.location.assign(`http://${ipAddress}:3000/`);
     }

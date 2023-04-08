@@ -125,21 +125,25 @@ export class GameGateway implements OnGatewayConnection{
   {
     let game_id;
     game_id = clientRooms[client.id]
+    if(!game_id || !stateArr[game_id])
+    {
+      return ;
+    }
     stateArr[game_id].participants[0] = String(client.id);
     roomNames.pop();
     clientRooms[client.id] = null;
     console.log("Removed");
   }
-  @SubscribeMessage('player_disconnected')
-  async disconnectFromGame(@MessageBody() userId, @ConnectedSocket() client)
-  {
-    client.emit("gameOver", 2);
+  // @SubscribeMessage('player_disconnected')
+  // async disconnectFromGame(@MessageBody() userId, @ConnectedSocket() client)
+  // {
+  //   client.emit("gameOver", 2);
 
-    let gameCode = invitationRooms[client.id]
-    // this.server.sockets.
-    client.leave(gameCode);
-    console.log("disconnect ran");
-  }
+  //   let gameCode = invitationRooms[client.id]
+  //   // this.server.sockets.
+  //   client.leave(gameCode);
+  //   console.log("disconnect ran");
+  // }
     
   
 //tldr Rooms
@@ -461,7 +465,7 @@ function emitGameState(roomName: string, state_: any, server: Server) {
 
 async function emitGameOver(state_: any, userService: any, roomName: string, winner: number, server: Server, game: any, prisma: PrismaService, player_two: number) {
 
-  if (winner == 1) {
+  if (winner == 2) {
     server.sockets.in(roomName).emit('gameOver', Number.parseInt(game.player_one));
     game.winner = game.player_one;
     game.loser = player_two;

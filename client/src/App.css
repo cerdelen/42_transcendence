@@ -31,8 +31,8 @@ canvas {
   margin: 0px auto;
   background: black;
   z-index: -1;
-  inline-size: 100%;
-  height: 80%;
+  inline-size: 75vw;
+  height: 70vh;
 }
 
 /* HEADER */

@@ -30,7 +30,7 @@ function drawGame(ctx: any, gameInfo: any, image: any) {
     var ballSize: number = 10;
 
     //draw scores
-    ctx.strokeStyle = "#A020F0";
+    ctx.fillStyle = "#940FAC";    
     ctx.font = "35px Arial";
     ctx.fillText(gameInfo.player_1_score, 280, 50);
     ctx.fillText(gameInfo.player_2_score, 390, 50);

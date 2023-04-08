@@ -148,10 +148,12 @@ const Canvas = ({ userId }: { userId: string }) => {
             let num: number = data;
             if (num == Number.parseInt(userId)) {
                 console.log("Winner");
+                alert("You won 15 mmr! Congratulations!")
                 reset();
                 console.log("You win executed " + userId);
                 cancelAnimationFrame(animationFrameNum);
             } else {
+                alert("You lost 15 mmr! NOOB! How can you loose in Pong?!?!?!")
                 console.log("You lose executed\n" + userId);
                 reset();
                 cancelAnimationFrame(animationFrameNum);
@@ -253,7 +255,7 @@ const Canvas = ({ userId }: { userId: string }) => {
     useEffect(() => 
     {
         document.addEventListener('keydown', (e) => {
-            e.preventDefault();
+            // e.preventDefault();
             if (!gameActive)
                 return;
             let obj: KeyInfo =
@@ -266,7 +268,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             our_socket.emit('keydown', JSON.stringify(obj));
         })
         document.addEventListener('keyup', (e) => {
-            e.preventDefault();
+            // e.preventDefault();
             if (!gameActive)
                 return;
             let obj: KeyInfo =

@@ -20,11 +20,12 @@ const SecondFactorQR = ({qrString}: Props) => {
     event.preventDefault();
     if (code.length === 6) {
       const myCookieValue = JSCookies.get('accessToken');
+      console.log("my Cookie", myCookieValue);
+      
       fetch(`http://${ipAddress}:3003/2-fa/turn-on`, {
         method: 'POST',
         body: JSON.stringify({ "two_FA_code": code }),
         headers: {
-                    // Accept: "application/json",
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${myCookieValue}`,
         },
@@ -32,6 +33,9 @@ const SecondFactorQR = ({qrString}: Props) => {
         .then(response => {
           if (response.ok)
           {
+            response.text().then(token => {
+              JSCookies.set("accessToken", token);
+            })
             setSuccess(true);
             alert("2 Factor authentication has been Enabled.");
           }

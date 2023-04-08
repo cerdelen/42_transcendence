@@ -19,9 +19,10 @@ const Header = () => {
       our_socket.emit("remove_from_quene", myUserId);
     }else if(gameStarted && gameActive)
     {
-      setGameActive(false);
-      setGameStarted(false);
-      our_socket.emit("player_disconnected", myUserId);
+      console.log("Disconnect ran");
+      // setGameActive(false);
+      // setGameStarted(false);
+      // our_socket.emit("player_disconnected", myUserId);
     }
   }
 

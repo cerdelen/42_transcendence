@@ -120,6 +120,28 @@ export class GameGateway implements OnGatewayConnection{
     this.userService.set_user_online(Number.parseInt(userId) ,false);
     
   }
+  @SubscribeMessage('remove_from_quene')
+  async removeFromQuene(@MessageBody() userId, @ConnectedSocket() client)
+  {
+    let game_id;
+    game_id = clientRooms[client.id]
+    stateArr[game_id].participants[0] = String(client.id);
+    roomNames.pop();
+    clientRooms[client.id] = null;
+    console.log("Removed");
+  }
+  @SubscribeMessage('player_disconnected')
+  async disconnectFromGame(@MessageBody() userId, @ConnectedSocket() client)
+  {
+    client.emit("gameOver", 2);
+
+    let gameCode = invitationRooms[client.id]
+    // this.server.sockets.
+    client.leave(gameCode);
+    console.log("disconnect ran");
+  }
+    
+  
 //tldr Rooms
   @SubscribeMessage('playerAccepted')
   async playerAccepted(@MessageBody() obj, @ConnectedSocket() client)
@@ -432,7 +454,6 @@ export class GameGateway implements OnGatewayConnection{
     }
   }
 }
-
 
 function emitGameState(roomName: string, state_: any, server: Server) {
   server.sockets.in(roomName).emit('gameState', JSON.stringify(state_));

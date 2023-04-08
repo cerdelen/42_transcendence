@@ -8,6 +8,10 @@ type UserContextType = {
 	myName: string,
 	myMail: string,
 	mytwoFAenabled: boolean,
+	gameActive: boolean,
+	gameStarted: boolean,
+	setGameStarted: React.Dispatch<React.SetStateAction<boolean>>, 
+	setGameActive:  React.Dispatch<React.SetStateAction<boolean>>,
 	myFriendList: number[],
 	setMyFriendList: React.Dispatch<React.SetStateAction<Array<number>>>,
 	myStats: any,
@@ -24,6 +28,10 @@ export const UserContext = createContext<UserContextType>({
 	myName: '',
 	myMail: '',
 	mytwoFAenabled: false,
+	gameStarted: false,
+	setGameStarted: () => {},
+	gameActive: false,
+	setGameActive:  () => {},
 	myFriendList: [],
 	setMyFriendList: () => {},
 	myStats: {},
@@ -47,11 +55,13 @@ export function UserContextProvider({children}: UserContextProviderProps) {
 	const [myName, setName] = useState("");
 	const [myMail, setMail] = useState("");
 	const [mytwoFAenabled, set2FA] = useState(false);
+	const [gameStarted, setGameStarted] = useState(false);
 	const [myFriendList, setMyFriendList] = useState<number[]>([]);
 	const [myStats, setStats] = useState({});
 	const [myGames, setGames] = useState<number[]>([]);
 	const [myBlockedUsers, set_my_blcoked_users] = useState<number[]>([]);
 	const [myIncomingFriendReq, setMyIncomingFriendReq] = useState<Array<number>>([]);
+	const [gameActive, setGameActive] = useState(false);
 	const [myOutgoingFriendReq, setMyOutgoingFriendReq] = useState<Array<number>>([]);
 useEffect(() => {
 	async function getUser() {
@@ -90,6 +100,7 @@ useEffect(() => {
 		  setName(data["name"]);
 		  setMail(data["mail"]);
 		  setMyFriendList(data["friendlist"]);
+		  
 		  setStats(data["stats"]);
 		  setGames(data["games"]);
 		  set_my_blcoked_users(data["blocked_users"]);
@@ -111,6 +122,10 @@ const value={
 	myName,
 	myMail,
 	mytwoFAenabled,
+	gameStarted,
+	setGameStarted,
+	gameActive, 
+	setGameActive,
 	myFriendList,
 	setMyFriendList,
 	myGames,

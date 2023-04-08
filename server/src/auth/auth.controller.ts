@@ -71,7 +71,7 @@ export class AuthController
 	async get_token_test_user(@Res() res: any)
 	{
 		console.log("hello from inside login_test_user")
-		console.log(await this.authService.get_token_test_user(322, res));
+		console.log("Print stuff", await this.authService.get_token_test_user(322, res));
 		return  this.authService.get_token_test_user(322, res);
 		// return ("successfully tested db");
 	}

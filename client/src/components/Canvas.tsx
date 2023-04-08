@@ -4,6 +4,7 @@ import { pong_properties, KeyInfo, Player } from './Pong_types'
 import {our_socket} from '../utils/context/SocketContext';
 import { CounterContext } from "../utils/context/CounterContext";
 import { useMyContext } from '../contexts/InfoCardContext'
+import { useUserContext } from "../contexts/UserContext";
 // import { gameContext } from '../contexts/gameContext'
 interface GameInfo_t
 {
@@ -61,8 +62,7 @@ const Canvas = ({ userId }: { userId: string }) => {
     }
     const [gameInfo, setGameInfo] = useState<pong_properties>(initial_state);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [gameActive, setGameActive] = useState(false);
-    const [gameStarted, setGameStarted] = useState(false);
+    const {gameActive, setGameActive, gameStarted, setGameStarted} = useUserContext();
     const [gameCode, setGameCode] = useState("");
     const {mapNumber, setMapNumber} = useContext(CounterContext);
     const [codeInput, setCodeInput] = useState("");
@@ -176,7 +176,7 @@ const Canvas = ({ userId }: { userId: string }) => {
     useEffect(() => 
     {
         our_socket.on('invitationInit', (UserIndex_: number) => {
-            our_socket.off("gameCancelled");
+            our_socket.off("invitationInit");
             setGameActive(true);
             setGameStarted(false);
             console.log("Id of the user ", UserIndex_);

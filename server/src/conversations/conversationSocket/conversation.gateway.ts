@@ -91,21 +91,6 @@ export class conversationGateway implements OnGatewayConnection{
 				this.server.emit("new_dialogue_created", {userid_creator: userid_creator, other_user: other_user, chat_id: ret.conversation_id});
 		}
 
-		// @SubscribeMessage('set_unmute_user')
- 		// async set_unmute_user(
-		// 	@MessageBody() data: any)
-		// {
-		// 	const result : boolean = await this.conversationService.setunmute()
-		// 	if (!result)
-		// 	{
-		// 		return ;
-		// 	}
-		// 	else
-		// 	{
-		// 		this.unmute_user(chat_id, umuted_user_id)
-		// 	}
-		// }
-
 		async	joined_chat(chat_id: number, user_id:number)
 		{
 			this.server.emit('some_one_joined_group_chat', {conv_id: chat_id, joined_user_id: user_id});
@@ -135,6 +120,9 @@ export class conversationGateway implements OnGatewayConnection{
 			this.server.emit('unmute_user', {chat_id: chat_id, unmuted_user_id: unmuted_user_id});	
 		}
 
-
-		
+		async	left_chat(chat_id: number, removed_id: number)
+		{
+			console.log("this.left_chat chat id   removed id" , chat_id, removed_id);
+			this.server.emit('some_one_left_group_chat', {conv_id: chat_id, left_user_id: removed_id, conv_still_exists: true})
+		}
 }

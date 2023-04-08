@@ -344,7 +344,6 @@ export class ConversationService {
 	}
 
 	async remove_user_from_conversation(chat_id: number, userId: number, id_to_kick: number) {
-
 		const conversation = await this.prisma.conversation.findUnique({
 			where: {
 				conversation_id: chat_id,
@@ -357,23 +356,42 @@ export class ConversationService {
 			throw new HttpException("Can't kick the conversation owner!!!", HttpStatus.FORBIDDEN);
 		}
 		else if (admin_user_idx < 0) {
+			console.log("return if");
+			
 			return conversation;
 		}
 		const req_user_idx = conversation.conversation_participant_arr.indexOf(id_to_kick);
-		conversation.conversation_participant_arr.splice(req_user_idx, 1);
-		await this.prisma.conversation.update({
+		const kick_admin_idx = conversation.conversation_admin_arr.indexOf(id_to_kick);
+		if (req_user_idx != -1)
+		{
+			console.log("remove from part arr");
+			
+			conversation.conversation_participant_arr.splice(req_user_idx, 1);
+		}
+		if (kick_admin_idx != -1)
+		{
+			console.log("remove from admin arr");
+			
+			conversation.conversation_admin_arr.splice(kick_admin_idx, 1);
+		}
+		const conv__ = await this.prisma.conversation.update({
 			where: { conversation_id: chat_id },
 			data: { conversation_participant_arr: conversation.conversation_participant_arr }
 		});
 		const user = await this.prisma.user.findUnique({ where: { id: id_to_kick } });
 		const conv_id_from_user = user.conversation_id_arr.indexOf(chat_id);
-		user.conversation_id_arr.splice(conv_id_from_user, 1);
+		if(conv_id_from_user != -1)
+		{
+			console.log("remove conv from user ");
+			
+			user.conversation_id_arr.splice(conv_id_from_user, 1);
+		}
 		await this.prisma.user.update({
 			where: { id: id_to_kick },
 			data: { conversation_id_arr: user.conversation_id_arr }
 		});
+		return conv__
 	}
-
 
 	async unmute_user_from_conversation(conversation_id: number, user_id: number, id_to_unmute: number, admin_required: boolean=true): Promise<boolean> {
 

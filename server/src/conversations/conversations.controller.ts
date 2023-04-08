@@ -410,7 +410,15 @@ export class ConversationController {
 		@Param('conversation_id', new ParseIntPipe()) conversation_id: number,
 		@Param('id_to_kick', new ParseIntPipe()) id_to_kick: number,
 	) {
-		return this.conversationsService.remove_user_from_conversation(conversation_id, req.user.id, id_to_kick);
+		const conv_bef = await this.conversationsService.findConversation(conversation_id);
+		if(!conv_bef.conversation_participant_arr.includes(id_to_kick))
+		return conv_bef;
+		console.log("before ", conv_bef.conversation_participant_arr);
+		const conv = await this.conversationsService.remove_user_from_conversation(conversation_id, req.user.id, id_to_kick);
+		console.log("after ", conv.conversation_participant_arr);
+		if(!conv.conversation_participant_arr.includes(id_to_kick))
+			this.convGateway.left_chat(conversation_id, id_to_kick);
+		return conv;
 	}
 
 	@Get('is_password_protected/:conv_id')

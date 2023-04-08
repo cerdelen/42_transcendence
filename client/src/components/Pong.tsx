@@ -31,6 +31,7 @@ function drawGame(ctx: any, gameInfo: any, image: any) {
 
     //draw scores
     ctx.strokeStyle = "#A020F0";
+    ctx.font = "35px Arial";
     ctx.fillText(gameInfo.player_1_score, 280, 50);
     ctx.fillText(gameInfo.player_2_score, 390, 50);
     draw_rectangle(ctx, gameInfo.Player1, paddleWidth, paddleHeight);

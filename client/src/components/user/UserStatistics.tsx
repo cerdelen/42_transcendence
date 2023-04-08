@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
-import themeAchievement from "../../images/changed-theme-achievement.png";
-import threeWinsAchievement from "../../images/three-wins-achievement.png";
-import halfGamesAchievement from "../../images/won-half-of-your-games-achievement.png";
-import { UserContext } from "../../contexts/UserContext";
+import { useEffect, useState } from "react";
+import themeAchievement from "../../images/cat-yellow.jpg";
+import threeWinsAchievement from "../../images/cat-white.jpg";
+import halfGamesAchievement from "../../images/cat-lying.jpg";
+
 import JSCookies from "js-cookie";
 import ipAddress from "../../constants";
 

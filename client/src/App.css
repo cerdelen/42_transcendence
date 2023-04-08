@@ -210,7 +210,7 @@ header .basic:hover {
   width: 64px;
   height: 64px;
   object-fit: cover;
-  border: 1mm ridge white;
+  border: 1mm ridge purple;
 }
 
 .purple-button {

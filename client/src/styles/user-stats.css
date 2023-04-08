@@ -3,12 +3,13 @@
     height: 64px;
     object-fit: cover;
     border-radius: 50px;
+    border: 1mm ridge purple;
 }
 
 .no-achievement {
     width: 64px;
     height: 64px;
-    border: 1mm ridge purple;
+    border: 1mm ridge white;
     border-radius: 50px;
     display: inline-block;
     background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.83), rgb(56, 14, 104));

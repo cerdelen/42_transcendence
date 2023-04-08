@@ -358,6 +358,7 @@ const UserPage = () => {
     console.log(userId + " Inviting player " + userName);
     navigate('/game')
     setShowUserInto(false);
+
     let obj: any = { userId: userId, userName: userName };
     our_socket.emit("createInvitationRoom", JSON.stringify(obj));
   }

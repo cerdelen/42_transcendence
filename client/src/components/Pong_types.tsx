@@ -15,6 +15,7 @@ interface KeyInfo
     key: number,
     player_number: number;
     socket_id: string;
+    gameActive: boolean;
 }
 
 interface Ball{

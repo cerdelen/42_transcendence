@@ -20,7 +20,7 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	/* align-items: center; */
 	padding: 0;
 	overflow: auto;
 	border-radius: 5px;
@@ -29,7 +29,7 @@
 	background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(96, 62, 135));
 }
 
-.Chat_preview_cards {
+.chatPreviewCards {
 	background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(96, 62, 135));
 	border-radius: 25px;
 	display: flex;
@@ -41,11 +41,15 @@
 	cursor: pointer;
 }
 
+.no-cursor-change {
+	cursor: default;
+}
+
 .online-status {
 	justify-content: space-between;
 }
 
-.Chat_preview_cards img {
+.chatPreviewCards img {
 	border-top-left-radius: 25px;
 	border-bottom-left-radius: 25px;
 	width: 100px;

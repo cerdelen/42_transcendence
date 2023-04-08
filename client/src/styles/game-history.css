@@ -34,7 +34,17 @@
   justify-content: space-around;
   border: 1mm ridge white;
   border-radius: 25px;
+  min-width: 240px;
+}
 
+#game-card-right-opponent span,
+#game-card-left-opponent span{
+  margin-right: .5rem;
+  text-overflow: ellipsis;
+  /* word-wrap: break-word; */
+  overflow: hidden;
+  max-width: 5rem;
+  max-height: 3.5rem;
 }
 
 .item2 {

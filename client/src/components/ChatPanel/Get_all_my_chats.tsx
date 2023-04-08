@@ -99,7 +99,7 @@ const Chat_preview_card = ({chat_id, myUserId} : chat_props) => {
 		}, [picture_map]);
 		
 	return (
-		<li className='Chat_preview_cards' title={conversation_name} onClick={handleOnClick}>
+		<li className='chatPreviewCards' title={conversation_name} onClick={handleOnClick}>
 			<img src={photo} alt="" />
 			<span id='user-name' >{conversation_name}</span>
 		</li>

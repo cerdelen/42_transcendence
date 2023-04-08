@@ -54,7 +54,7 @@ const User_preview_card = ({
 
   return (
     <li
-      className="Chat_preview_cards online-status"
+      className="chatPreviewCards online-status"
       title={user_name}
       onClick={handleOnClick}
     >

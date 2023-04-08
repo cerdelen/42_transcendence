@@ -149,11 +149,17 @@ header .basic:hover {
 }
 
 #level-username span {
-  text-overflow: ellipsis;
+  /* text-overflow: ellipsis;
   word-wrap: break-word;
   overflow-x: hidden;
   max-width: 6rem;
-  max-height: 3.5rem;
+  max-height: 3.5rem; */
+  margin-right: 1rem;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  overflow: hidden;
+  max-width: 6rem;
+  max-height: 3.4rem;
 }
 
 #status-games-won {

@@ -47,7 +47,7 @@ const GameCard = ({
           src={photoOne}
           alt="user1"
         />
-        <span> {playerOne}</span>
+        <span title={playerOne}> {playerOne}</span>
         <span> {scoreOne}</span>
       </div>
       <span className="item2">vs</span>
@@ -56,7 +56,7 @@ const GameCard = ({
         className={leftOpponentWon ? "loser-right" : "winner-right"}
       >
         <span> {scoreTwo}</span>
-        <span> {playerTwo}</span>
+        <span title={playerTwo}> {playerTwo}</span>
         <img
           src={photoTwo}
           alt="user1"

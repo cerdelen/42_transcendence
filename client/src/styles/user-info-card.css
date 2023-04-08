@@ -86,7 +86,7 @@
     margin-right: 1rem;
     text-overflow: ellipsis;
     word-wrap: break-word;
-    overflow-x: hidden;
+    overflow: hidden;
     max-width: 4rem;
     max-height: 3.5rem;
 

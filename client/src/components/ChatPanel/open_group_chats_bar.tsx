@@ -59,6 +59,14 @@ const Chat_name_input = ({ setButton_state }: { setButton_state: any }) => {
 // const handleCreateGroupChat = async (setButton_state: any) => {
 //   setButton_state(false);
 // };
+type groupChatPreviewCardType = {
+  chat_id: number;
+  not_joined_chats_ids: number[];
+  my_chats_ids: number[];
+  setmy_chats_ids: any;
+  setNot_joined_chats_ids: any;
+  additionaClassNames?: string;
+}
 
 const Group_chat_preview_card = ({
   chat_id,
@@ -66,13 +74,8 @@ const Group_chat_preview_card = ({
   my_chats_ids,
   setmy_chats_ids,
   setNot_joined_chats_ids,
-}: {
-  chat_id: number;
-  not_joined_chats_ids: number[];
-  my_chats_ids: number[];
-  setmy_chats_ids: any;
-  setNot_joined_chats_ids: any;
-}) => {
+  additionaClassNames
+}: groupChatPreviewCardType) => {
   const [conversation_name, setConversation_name] = useState("");
   const [hasPassword, setHasPassword] = useState(false);
   const [showX, setShowX] = useState(true);
@@ -191,7 +194,7 @@ const Group_chat_preview_card = ({
     get_conversation(chat_id);
   }, []);
   return (
-    <li className="Chat_preview_cards">
+    <li className={`chatPreviewCards ${additionaClassNames}`}>
       {(hasPassword && showX) ? (<Fragment>
         <SingleFieldInputForm
           handleSubmit={handleSubmit}
@@ -306,6 +309,7 @@ const Get_all_open_group_chats = ({
           my_chats_ids={my_chats_ids}
           setmy_chats_ids={setmy_chats_ids}
           setNot_joined_chats_ids={setNot_joined_chats_ids}
+          additionaClassNames="no-cursor-change"
         />
       ))}
     </ul>

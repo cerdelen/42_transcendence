@@ -87,6 +87,7 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
             value={newName}
             onChange={handleNewNameChange}
             minLength={3}
+            maxLength={33}
             placeholder="Enter new name"
             pattern="^\S*$"
             title="Name should be at least 3 characters long and should not contain any spaces"

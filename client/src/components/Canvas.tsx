@@ -169,8 +169,8 @@ const Canvas = ({ userId }: { userId: string }) => {
     useEffect(() => 
     {
         our_socket.on('gameOver', (data: number) => {
+            our_socket.off('gameOver');
             if (!gameActive) {
-                our_socket.off('gameOver');
                 return;
             }
             let num: number = data;
@@ -227,7 +227,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             alert("Game has been cancelled by " + rejectedUserName);
             setPlayerNumber(0);
             setGameActive(false);
-            
+            our_socket.off("gameCancelled");
         })
     }, [gameActive])
     

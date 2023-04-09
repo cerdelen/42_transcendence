@@ -179,9 +179,9 @@ const Canvas = ({ userId }: { userId: string }) => {
                 reset();
                 console.log("You win executed " + userId);
                 cancelAnimationFrame(animationFrameNum);
-                alert("You won 15 mmr! Congratulations!")
+                // alert("You won 15 mmr! Congratulations!")
             } else {
-                alert("You lost 15 mmr! NOOB! How can you lose in Pong?!?!?!")
+                // alert("You lost 15 mmr! NOOB! How can you lose in Pong?!?!?!")
                 console.log("You lose executed\n" + userId);
                 reset();
                 cancelAnimationFrame(animationFrameNum);

@@ -4,42 +4,47 @@ import { Server, Socket as socket_io } from 'socket.io';
 import { getInitialState, gameLoop} from './make_game_state'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
-import { io_server } from 'src/utils/Server';
+// import {roomNames,
+// invitationRooms,
+// invitationRoomsNames,
+// KeyInfo,
+// invitesType,
+// invites,
+// state_type,
+// stateArr,
+// clientRooms,} from "./GameTypes"
+// let gameCode: string = "";
+
+import { Logger } from '@nestjs/common';
+
+const logger = new Logger('App');
+logger.debug('\x1b[41m\x1b[37m%s\x1b[0m', 'Hello, World!');
 import pong_properties from './make_game_state'
-
-
-let roomNames: { roomName: string, gameInstance: any }[] = [];
-
-let invitationRooms = {};
-let invitationRoomsNames : { roomName: string, gameInstance: any}[] = [];
-interface KeyInfo
+export let roomNames: { roomName: string, gameInstance: any }[] = [];
+export let invitationRooms = {};
+export let invitationRoomsNames : { roomName: string, gameInstance: any}[] = [];
+export interface KeyInfo
 {
     key: number,
     player_number: number;
     socket_id: string;
     gameActive: boolean;
 }
-interface invitesType
+export interface invitesType
 {
   creator_id: string;
   invitee_id: string;
 };
-let invites : invitesType[] = [];
-
-interface state_type
+export let invites : invitesType[] = [];
+export interface state_type
 {
   participants : string[],
   state : pong_properties,
 }
-const stateArr : state_type[] = [];
-
-const inviteState = {};
-const clientRooms = {};
+export const stateArr : state_type[] = [];
+export const inviteState = {};
+export const clientRooms = {};
 let gameCode: string = "";
-
-
-let response: number = 0;
-
 
 async function emitToTheUserSocket(user: any, server: Server, event_name:string, message: string)
 {
@@ -61,7 +66,9 @@ async function emitToTheUserSocket(user: any, server: Server, event_name:string,
     return ;
   }
   if(event_name == 'gameCancelled')
+  {
     console.log("emitting cancelled ");
+  }
   final_socket.emit(event_name, message)
 }
 @WebSocketGateway(
@@ -86,8 +93,7 @@ export class GameGateway implements OnGatewayConnection{
 			this.server.sockets.setMaxListeners(20);
   }
 
-  constructor(private readonly gameService: GameService, private prisma: PrismaService, private userService: UserService) {
-  }
+  constructor(private readonly gameService: GameService, private prisma: PrismaService, private userService: UserService) {}
 
   @SubscribeMessage("setupUserSocketId")
   async setupUserSocketId(@MessageBody() userId: string,
@@ -123,6 +129,7 @@ export class GameGateway implements OnGatewayConnection{
   @SubscribeMessage('remove_from_quene')
   async removeFromQuene(@MessageBody() userId, @ConnectedSocket() client)
   {
+    logger.debug('remove_from_quene');
     let game_id;
     game_id = clientRooms[client.id]
     if(!game_id || !stateArr[game_id])
@@ -144,18 +151,25 @@ export class GameGateway implements OnGatewayConnection{
   //   client.leave(gameCode);
   //   console.log("disconnect ran");
   // }
-    
-  
+
 //tldr Rooms
   @SubscribeMessage('playerAccepted')
   async playerAccepted(@MessageBody() obj, @ConnectedSocket() client)
   {
-    if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
-    {
-      let new_obj = JSON.parse(obj);
+    logger.debug('playerAccepted');
+    console.log(JSON.stringify(obj));
+    let parsed_obj = JSON.parse(obj);
+    let invitor = await this.userService.findUserByName(parsed_obj.inviterName);
+    // let new_invitation_obj : invitesType = {creator_id: String(.id), invitee_id: new_obj.userId};
 
-      let user = await this.userService.findUserByName(new_obj.inviterName);
-      let new_invitation_obj : invitesType = {creator_id: String(user.id), invitee_id: new_obj.userId};
+
+    // if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
+    if(!(clientRooms[invitor.socketId] == undefined) || !(clientRooms[invitor.socketId] == null))
+    {
+      console.log("the undefined or null if " + JSON.stringify(clientRooms));
+      // let new_obj = JSON.parse(obj);
+      // let user = await this.userService.findUserByName(new_obj.inviterName);
+      let new_invitation_obj : invitesType = {creator_id: String(invitor.id), invitee_id: parsed_obj.userId};
       let delindex = invites.indexOf(new_invitation_obj);
       if(!delindex)
       {
@@ -163,75 +177,84 @@ export class GameGateway implements OnGatewayConnection{
         return ;
       }
       invites.splice(delindex, 1);
-      let new_user = await this.userService.findUserById(Number.parseInt(new_obj.userId));
+      console.log("find 1");
+      let new_user = await this.userService.findUserById(Number.parseInt(parsed_obj.userId));
       ////console.log("Game cancelled event sent");
-      emitToTheUserSocket(user, this.server, "gameCancelled", new_user.name)
+      emitToTheUserSocket(invitor, this.server, "gameCancelled", new_user.name)
       return ;
     }
-    let new_obj = JSON.parse(obj);
-    ////console.log("USer id of the inviter "  + new_obj.inviterName + "and of the invitee " + new_obj.userId);
-    let user = await this.userService.findUserById(Number.parseInt(new_obj.userId))
-    // console.log("after finding work");
+
+//delete the "game the other invited player was in the queue in"
+// findRoomnames by player_one (backend id)
+
+    for (let index = 0; index < roomNames.length; index++) {
+      const element = roomNames[index];
+      if (element.gameInstance.player_one == parsed_obj.userId)
+      {
+        roomNames.splice(index, 1);
+        break ;
+      }
+    }
+
+    //find state arr obj by participants (socket id of invited player)
+
+    // for (let index = 0; index < stateArr.length; index++) {
+    //   const element = stateArr[index];
+    //   if (element.participants.includes(client.id))
+    //   {
+    //     stateArr.splice(index, 1);
+    //     break;
+    //   }
+    // }
+
+
+    // find clientrooms (socket id of invited player)
+    // for (let index = 0; index < clientRooms.length; index++) {
+    //   const element = array[index];
+      
+    // }
+    if (clientRooms.hasOwnProperty(client.id)) {
+      delete clientRooms[client.id];
+    }
+
+    console.log("find 2");
+    let user = await this.userService.findUserById(Number.parseInt(parsed_obj.userId))
     let gameCode_;
     gameCode_ = invitationRoomsNames[0].roomName;
-    
     const room = this.server.sockets.adapter.rooms[gameCode_];
-
-    let allUsers;
-
-    if (room) {
-      allUsers = room.sockets;
-    }
     let numOfClients = 0;
-
     const sockets = await this.server.in(gameCode_).fetchSockets();
     numOfClients = sockets.length;
-
-    // if (numOfClients === 0) {
-    //   client.emit('unknownGame');
-    //   return;
-    // } else if (numOfClients > 1) {
-    //   client.emit('tooManyPlayers')
-    //   return;
-    // }
-    
-    // if (sockets[0].id === client.id || invitationRoomsNames[0].gameInstance.player_one == user.id) {
-    //   client.emit('sameUser');
-    //   return;
-    // };
-    let user_1 = await this.userService.findUserByName(new_obj.inviterName);
-    let new_invitation_obj : invitesType = {creator_id: String(user_1.id), invitee_id: new_obj.userId};
+    let user_1 = await this.userService.findUserByName(parsed_obj.inviterName);
+    let new_invitation_obj : invitesType = {creator_id: String(user_1.id), invitee_id: parsed_obj.userId};
     let delindex = invites.indexOf(new_invitation_obj);
     if(!delindex)
     {
-      ////console.log("Index to delete not found in reject invite ");
       return ;
     }
     invites.splice(delindex, 1);
-    ////console.log("Socket 0 id " + sockets[0].id + " client id " + client.id + " roomName ", gameCode_);
     invitationRooms[client.id] = String(gameCode_);
     stateArr[gameCode_].participants[1] = client.id;
     client.join(gameCode_);
-
-    ////console.log("User of nick ", user.name);
     emitToTheUserSocket(user, this.server, 'invitationInit', "2");
-
-    // ////console.log("this is client id " + user.id);
     await this.prisma.game.update({ where: { id: invitationRoomsNames[0].gameInstance.id }, data: { player_two: user.id } });
     let gameInstance = invitationRoomsNames[0].gameInstance;
-    // console.log("invite Quene");
-    // invitationRoomsNames.forEach((e) => 
-    // {
-    //   console.log(e);
-    // })
     stateArr[gameCode_].state.player_2_nick = user.name;
     startGameInterval(this.userService, gameCode_, stateArr[gameCode_].state, this.server, gameInstance, this.prisma);
-    // ////console.log("Ajajj");
     invitationRoomsNames.shift();
   }
+
+
+
+
+
+
+
+
   @SubscribeMessage('rejectInvite')
   async rejectInvitation(@MessageBody() obj, @ConnectedSocket() socket)
   {
+    logger.debug('rejectInvitation');
     let new_obj = JSON.parse(obj);
 
     let user = await this.userService.findUserByName(new_obj.inviterName);
@@ -239,25 +262,30 @@ export class GameGateway implements OnGatewayConnection{
     let delindex = invites.indexOf(new_invitation_obj);
     if(!delindex)
     {
-      ////console.log("Index to delete not found in reject invite ");
       return ;
     }
-    this.server.sockets.in(invitationRooms[invites[delindex].creator_id]).disconnectSockets(true);
+    // this.server.sockets.in(invitationRooms[invites[delindex].creator_id]).disconnectSockets(true);
     invites.splice(delindex, 1);
+    console.log("find 3");
     let new_user = await this.userService.findUserById(Number.parseInt(new_obj.userId));
-    ////console.log("Game cancelled event sent");
-    
     emitToTheUserSocket(user, this.server, "gameCancelled", new_user.name)
   }
   
   @SubscribeMessage('createInvitationRoom')
-  async handleInvitation(@MessageBody() obj , @ConnectedSocket() client)
+  async handleInvitation(@MessageBody() obj, @ConnectedSocket() client)
   {
+    logger.debug('handleInvitation');
     let object = JSON.parse(obj);
-    let userId = object.userId;
-    let invitedUserId = object.userName;
+    let userId = object.userId;       //invitor
+    if(!userId)
+    {
+      console.log("Something broken 0");
+      return ;
+    }
+    let invitedUserId = object.userName;  //Invited
+    
     //console.log("Wha the shell -1");
-    let user = await this.userService.findUserByName(invitedUserId);
+    let user = await this.userService.findUserByName(invitedUserId);        //user == invited
     console.log("user ", userId , " invited " , invitedUserId, " is ", user.socketId);
     if(user.online == false)
     {
@@ -266,28 +294,22 @@ export class GameGateway implements OnGatewayConnection{
       return ;
     }
     let unique : boolean = true;
-
-
-      let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: String(user.id)};
-      invites.forEach((entry) => {
-        if(entry.creator_id == userId && entry.invitee_id == String(user.id) || entry.creator_id == String(user.id)  && entry.invitee_id  == userId)
-        {
-          unique = false;
-        }
-      });
-      invites.push(new_invitation_obj);
-      
-      if(!userId)
+    let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: String(user.id)};
+    invites.forEach((entry) => {
+      if(entry.creator_id == userId && entry.invitee_id == String(user.id) || entry.creator_id == String(user.id)  && entry.invitee_id  == userId)
       {
-        console.log("Something broken 0");
-        return ;
+        unique = false;
       }
+    });
+    if (unique)
+      invites.push(new_invitation_obj);
+    
+    
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
       invitationRooms[client.id] = game.id.toString();
       console.log("Inviting 1");
       client.emit('gameCode', game.id.toString());
       let pair : state_type = {participants: [], state: getInitialState()};
-
       stateArr[game.id] = pair;
       stateArr[game.id].participants[0] = client.id;
       client.join(game.id.toString());
@@ -296,18 +318,29 @@ export class GameGateway implements OnGatewayConnection{
       invitationRoomsNames.push({ roomName: game.id.toString(), gameInstance: game });
 
       let creator_id = await this.userService.find_user_by_sock_id(client.id);
+      if (creator_id == undefined)
+      {
+        console.log("Creator id broken");
+        return ;
+      }
+      console.log("find 4");
       let creator = await this.userService.findUserById(creator_id);
-      //console.log("Something broken 2");
+      if(creator == undefined)
+      {
+        console.log("Creator not created");
+        return ;
+      }
       console.log("Inviting 3");
       console.log("user socket id", user.socketId);
-      emitToTheUserSocket(user, this.server, "invitationPopUp",creator.name )
+      emitToTheUserSocket(user, this.server, "invitationPopUp",creator.name)
       stateArr[game.id].state.player_1_nick = creator.name;
       return;
   }
   
   @SubscribeMessage('joinGame')
   async joinGame(@MessageBody() userId: string,
-    @ConnectedSocket() client) {
+  @ConnectedSocket() client) {
+    logger.debug('joinGame');
     if (!userId) {
       console.log("User id callback return");
       return;
@@ -321,8 +354,15 @@ export class GameGateway implements OnGatewayConnection{
 
     if (roomNames.length < 1) {
       console.log("new game Room created");
-
+      console.log("client id ", client.id);
       let user_id = await this.userService.find_user_by_sock_id(client.id);
+      console.log("find 5 " , user_id);
+      if (Number.isNaN(Number(user_id)))
+      {
+        logger.debug('there is a big error here for somereason not a number');
+        return;
+      }
+        
       let user = await this.userService.findUserById(user_id);
       console.log("czemu kurwa", user.name);
       handleNewGame(client, this.server, user  ,Number.parseInt(userId),this.prisma);
@@ -332,15 +372,8 @@ export class GameGateway implements OnGatewayConnection{
     gameCode = roomNames[0].roomName;
 
     const room = this.server.sockets.adapter.rooms[gameCode];
-
-    let allUsers;
-
-    if (room) {
-      console.log("new game Room exists");
-      allUsers = room.sockets;
-    }
-
     let numOfClients = 0;
+
 
     const sockets = await this.server.in(gameCode).fetchSockets();
     numOfClients = sockets.length;
@@ -380,6 +413,7 @@ export class GameGateway implements OnGatewayConnection{
     stateArr[gameCode].participants[1] = String(client.id);
     await this.prisma.game.update({ where: { id: roomNames[0].gameInstance.id }, data: { player_two: Number.parseInt(userId) } });
     let gameInstance = roomNames[0].gameInstance;
+    console.log("find 6");
 
     let user = await this.userService.findUserById(Number.parseInt(userId));
     stateArr[gameCode].state.player_2_nick = user.name;
@@ -449,7 +483,8 @@ export class GameGateway implements OnGatewayConnection{
 }
 
 function emitGameState(roomName: string, state_: any, server: Server) {
-  server.sockets.in(roomName).emit('gameState', JSON.stringify(state_));
+    logger.debug('emitgamestate');
+    server.sockets.in(roomName).emit('gameState', JSON.stringify(state_));
 }
 
 async function emitGameOver(state_: any, userService: any, roomName: string, winner: number, server: Server, game: any, prisma: PrismaService, player_two: number) {
@@ -486,7 +521,8 @@ async function emitGameOver(state_: any, userService: any, roomName: string, win
 }
 
 async function startGameInterval(userService: any, roomName: string, state_: any, server: Server, game: any, prisma: PrismaService) {
-  let other_game = await prisma.game.findUnique({ where: { id: game.id } });
+    logger.debug('stargameInterval');
+    let other_game = await prisma.game.findUnique({ where: { id: game.id } });
   // console.log("start game ", other_game);
   
   const intervalId = setInterval(() => {
@@ -520,7 +556,8 @@ function makeid(length: number) {
   return result;
 }
 async function handleNewGame(client: any, server: Server, user: any, clientId: number, prisma: PrismaService) {
-  if(!clientId)
+    logger.debug('handleNewGame');
+    if(!clientId)
   {
     console.log("client id breaking stuff");
     return ;
@@ -530,7 +567,6 @@ async function handleNewGame(client: any, server: Server, user: any, clientId: n
 
   clientRooms[client.id] = game.id.toString();
   client.emit('gameCode', game.id.toString());
-  console.log("Inviting");
   let pair : state_type = {participants: [], state: getInitialState()};  
   stateArr[game.id] = pair;
   stateArr[game.id].participants[0] = String(client.id);
@@ -538,4 +574,15 @@ async function handleNewGame(client: any, server: Server, user: any, clientId: n
   stateArr[game.id].state.player_1_nick = user.name;
   client.emit('init', 1);
   roomNames.push({ roomName: game.id.toString(), gameInstance: game });
+
+
+
+
+
+  console.log("roomNames", roomNames)
+  console.log("invitationroosm", invitationRooms)
+  console.log("invitationroosmnames", invitationRoomsNames)
+  console.log("statearr", stateArr)
+  console.log("invitastate", inviteState)
+  console.log("clientrooms", clientRooms)
 }

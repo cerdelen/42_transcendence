@@ -29,7 +29,6 @@ function App() {
   useEffect(() => {
     if (myUserId !== '') {
       console.log("this is user id " + myUserId);
-
       our_socket.emit("online_inform", myUserId);
       console.log("User online")
     }
@@ -54,6 +53,7 @@ function App() {
       alert("Invited user is offline try again later");
     })
   })
+
   useEffect(() => {
     our_socket.on("invitationPopUp", (invitingUserName) => {
       console.log("You've been invited mate");

@@ -38,7 +38,7 @@ function drawGame(ctx: any, gameInfo: any, image: any) {
     ctx.font = "35px Arial";
     ctx.fillText(gameInfo.player_1_score, 280, 50);
     ctx.fillText(gameInfo.player_2_score, 390, 50);
-    ctx.fillStyle = "#700202";    
+    ctx.fillStyle = "#940FAC";    
     ctx.font = "20px Arial";
     ctx.fillText(gameInfo.player_1_nick, 50, 50);
     ctx.fillText(gameInfo.player_2_nick, 500, 50);

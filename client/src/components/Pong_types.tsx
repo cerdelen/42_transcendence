@@ -33,6 +33,8 @@ interface pong_properties
 {
     player_1_id: number,
     player_2_id: number,
+    player_1_nick: string,
+    player_2_nick: string,
     keysPressed: boolean[]
     player_1_score : number,
     player_2_score : number,

@@ -25,6 +25,8 @@ interface pong_properties
 {
     keysPressed_p1: boolean[],
     keysPressed_p2: boolean[],
+    player_1_nick: string,
+    player_2_nick: string,
     player_1_score : number,
     player_2_score : number,
 
@@ -40,6 +42,8 @@ let wallOffset:number = 20;
 export function getInitialState()
 {
     let initial_state : pong_properties = {
+        player_1_nick: "",
+        player_2_nick: "",
         keysPressed_p1: [],
         keysPressed_p2: [],
         player_1_score: 0,

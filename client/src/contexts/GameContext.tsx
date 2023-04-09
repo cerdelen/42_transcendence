@@ -7,13 +7,15 @@ import Cat_valley from "../images/Cat_valley.jpeg";
 import { pong_properties } from "../components/Pong_types";
 
 type MyGameContextType = {
-  images: any[];
+  images: HTMLImageElement[];
   initial_state: pong_properties;
 };
 
 const MyGameContext = createContext<MyGameContextType>({
   images: [],
   initial_state: {
+    player_1_nick: "",
+    player_2_nick: "",
     player_1_id: 0,
     player_2_id: 0,
     keysPressed: [],
@@ -58,14 +60,10 @@ type MyGameContextProviderProps = {
 
 export function MyGameContextProvider({ children }: MyGameContextProviderProps) {
 
-  let images: any[] = [];
-  let pic = new Image();
-  pic.src = Bulgaria;
-  let pic1 = new Image();
-  pic1.src = Paris;
-  let pic2 = new Image();
-  pic2.src = Cat_valley;
+
   let initial_state = {
+    player_1_nick: "",
+    player_2_nick: "",
     player_1_id: 0,
     player_2_id: 0,
     keysPressed: [],
@@ -100,6 +98,13 @@ export function MyGameContextProvider({ children }: MyGameContextProviderProps) 
       yVel: 0,
     },
   };
+  let images: any[] = [];
+  let pic = new Image();
+  pic.src = Bulgaria;
+  let pic1 = new Image();
+  pic1.src = Paris;
+  let pic2 = new Image();
+  pic2.src = Cat_valley;
   let pic_: any[] = [...images];
   pic_.push(pic);
   pic_.push(pic1);

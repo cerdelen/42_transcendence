@@ -1,6 +1,7 @@
 
 import { useContext } from "react";
 import { Socket } from "socket.io-client";
+import { useMyGameContext } from "../contexts/GameContext";
 
 function draw_rectangle(context: any, player: any, width: number, height: number) {
     context.fillStyle = "#fff";
@@ -37,12 +38,17 @@ function drawGame(ctx: any, gameInfo: any, image: any) {
     ctx.font = "35px Arial";
     ctx.fillText(gameInfo.player_1_score, 280, 50);
     ctx.fillText(gameInfo.player_2_score, 390, 50);
+    ctx.fillStyle = "#700202";    
+    ctx.font = "20px Arial";
+    ctx.fillText(gameInfo.player_1_nick, 50, 50);
+    ctx.fillText(gameInfo.player_2_nick, 500, 50);
     draw_rectangle(ctx, gameInfo.Player1, paddleWidth, paddleHeight);
     draw_rectangle(ctx, gameInfo.Player2, paddleWidth, paddleHeight);
     draw_rectangle(ctx, gameInfo.Ball, ballSize, ballSize);
 }
 
 function drawPong(socket: Socket, ctx: any, gameInfo: any, image: any) {
+    
     drawGame(ctx, gameInfo, image);
 }
 

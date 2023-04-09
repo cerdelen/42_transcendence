@@ -1,5 +1,8 @@
 import React, { useContext, useState } from "react";
 import { createContext } from "react";
+import Bulgaria from "../images/bulgaria.jpeg";
+import Paris from "../images/paris.jpeg";
+import Cat_valley from "../images/Cat_valley.jpeg";
 
 type MyContextType = {
   showMenu: boolean;
@@ -10,6 +13,7 @@ type MyContextType = {
   setShowUserInto: React.Dispatch<React.SetStateAction<boolean>>;
   userIdCard: string;
   setUserIdCard: React.Dispatch<React.SetStateAction<string>>;
+  images: any[];
 };
 
 const InfoCardContext = createContext<MyContextType>({
@@ -21,6 +25,7 @@ const InfoCardContext = createContext<MyContextType>({
   setIsDropdownOpen: () => {},
   userIdCard: "",
   setUserIdCard: () => {},
+  images: []
 });
 
 export const useMyContext = () => useContext(InfoCardContext);
@@ -34,7 +39,18 @@ export function InfoCardProvider({ children }: MyContextProviderProps) {
   const [userIdCard, setUserIdCard] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-
+  let images: any[] = [];
+  let pic = new Image();
+  pic.src = Bulgaria;
+  let pic1 = new Image();
+  pic1.src = Paris;
+  let pic2 = new Image();
+  pic2.src = Cat_valley;
+  let pic_: any[] = [...images];
+  pic_.push(pic);
+  pic_.push(pic1);
+  pic_.push(pic2);
+  images = [...pic_];
   const value = {
     showUserInfo,
     setShowUserInto,
@@ -44,6 +60,7 @@ export function InfoCardProvider({ children }: MyContextProviderProps) {
     setIsDropdownOpen,
     showMenu,
     setShowMenu,
+    images,
   };
 
   return (

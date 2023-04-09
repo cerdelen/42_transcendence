@@ -4,6 +4,7 @@ import { pong_properties, KeyInfo, Player } from './Pong_types'
 import {our_socket} from '../utils/context/SocketContext';
 import { CounterContext } from "../utils/context/CounterContext";
 import { useMyContext } from '../contexts/InfoCardContext'
+
 import { useUserContext } from "../contexts/UserContext";
 import { useMyGameContext } from "../contexts/GameContext";
 
@@ -32,7 +33,8 @@ const gameBackgroundPreview = ({idx}: gameBackgroundPreviewType) => {
     )
 }
 const Canvas = ({ userId }: { userId: string }) => {
-    const { images, initial_state } = useMyGameContext();
+    const { initial_state } = useMyGameContext();
+    const {images} = useMyContext();
     const [imageIdx, setImageIdx] = useState<number>(1);
     function Custmization_fields({ setMapNumber }: { setMapNumber: any }) {
 
@@ -269,8 +271,12 @@ const Canvas = ({ userId }: { userId: string }) => {
                 setGameStarted(true);
             }
             setGameInfo(JSON.parse(gameState));
+
             if (canvasRef.current) {
+                // console.log("rendering");
                 ctx = canvasRef.current.getContext('2d');
+
+                
                 setAnimationFrameNum(requestAnimationFrame(() => drawPong(our_socket, ctx, gameInfo, images[mapNumber])));
             }
             our_socket.off('gameState');

@@ -171,7 +171,6 @@ const Canvas = ({ userId }: { userId: string }) => {
         our_socket.on('gameOver', (data: number) => {
             our_socket.off('gameOver');
             if (!gameActive) {
-                our_socket.off('gameOver');
                 return;
             }
             let num: number = data;
@@ -188,7 +187,7 @@ const Canvas = ({ userId }: { userId: string }) => {
                 cancelAnimationFrame(animationFrameNum);
             }
             setGameActive(false);
-            
+            our_socket.off('gameOver');
         })
     }, [gameActive])
     function handleGameCode(data: string) {
@@ -228,7 +227,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             alert("Game has been cancelled by " + rejectedUserName);
             setPlayerNumber(0);
             setGameActive(false);
-            
+            our_socket.off("gameCancelled");
         })
     }, [gameActive])
     

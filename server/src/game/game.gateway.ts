@@ -242,6 +242,7 @@ export class GameGateway implements OnGatewayConnection{
       ////console.log("Index to delete not found in reject invite ");
       return ;
     }
+    this.server.sockets.in(invitationRooms[invites[delindex].creator_id]).disconnectSockets(true);
     invites.splice(delindex, 1);
     let new_user = await this.userService.findUserById(Number.parseInt(new_obj.userId));
     ////console.log("Game cancelled event sent");

@@ -52,7 +52,18 @@ function App() {
     our_socket.on("invitedUserIsOffline", () => {
       alert("Invited user is offline try again later");
     })
-  })
+  }, []);
+
+  // let reset : boolean = false;
+  useEffect(() => {
+    // reset =true;
+    our_socket.on("user_ingame_or_queue", () => {
+      // our_socket.off("user_ingame_or_queue");
+      alert("Invited user is either ingame or in the queue!");
+      // reset = false;
+    })
+  }, []);
+  
 
   useEffect(() => {
     our_socket.on("invitationPopUp", (invitingUserName) => {

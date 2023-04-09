@@ -138,6 +138,7 @@ export class GameGateway implements OnGatewayConnection{
     }
     stateArr[game_id].participants[0] = String(client.id);
     roomNames.pop();
+    delete stateArr[game_id];
     clientRooms[client.id] = null;
     console.log("Removed");
   }
@@ -187,14 +188,14 @@ export class GameGateway implements OnGatewayConnection{
 //delete the "game the other invited player was in the queue in"
 // findRoomnames by player_one (backend id)
 
-    for (let index = 0; index < roomNames.length; index++) {
-      const element = roomNames[index];
-      if (element.gameInstance.player_one == parsed_obj.userId)
-      {
-        roomNames.splice(index, 1);
-        break ;
-      }
-    }
+    // for (let index = 0; index < roomNames.length; index++) {
+    //   const element = roomNames[index];
+    //   if (element.gameInstance.player_one == parsed_obj.userId)
+    //   {
+    //     roomNames.splice(index, 1);
+    //     break ;
+    //   }
+    // }
 
     //find state arr obj by participants (socket id of invited player)
 
@@ -293,6 +294,56 @@ export class GameGateway implements OnGatewayConnection{
       client.emit("invitedUserIsOffline");
       return ;
     }
+    
+    console.log("log1");
+    
+    for (let index = 0; index < roomNames.length; index++) {
+      const element = roomNames[index];
+      if (element.gameInstance.player_one == invitedUserId || element.gameInstance.player_two == invitedUserId)
+      {
+        console.log("User is already in the Queue or in an ongoing game");
+        client.emit("user_ingame_or_queue");
+        return ;
+      }
+
+    }
+    console.log("log2");
+    
+    //find state arr obj by participants (socket id of invited player)
+    console.log("this is state arr" + JSON.stringify(stateArr));
+    
+    for (let index = 0; index < stateArr.length; index++) {
+      const element = stateArr[index];
+      console.log("log 4 " + JSON.stringify(element));
+      
+      if (element != undefined && element != null)
+      {
+        console.log("log5");
+        if(element.participants != undefined)
+        {
+          console.log("log6");
+          if (element.participants.includes(user.socketId))
+          {
+            console.log("log7");
+            console.log("User is already in the Queue or in an ongoing game");
+            client.emit("user_ingame_or_queue");
+            return ;
+          }
+        }
+      }
+    }
+    console.log("log3");
+
+
+    // // find clientrooms (socket id of invited player)
+    // for (let index = 0; index < clientRooms.length; index++) {
+    //   const element = array[index];
+      
+    // }
+
+
+
+
     let unique : boolean = true;
     let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: String(user.id)};
     invites.forEach((entry) => {

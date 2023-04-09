@@ -166,6 +166,8 @@ const Canvas = ({ userId }: { userId: string }) => {
             alert("This game has too many players");
         })
     }, [gameActive])
+
+    let wonGame: boolean = false;
     useEffect(() => 
     {
         our_socket.on('gameOver', (data: number) => {
@@ -173,15 +175,17 @@ const Canvas = ({ userId }: { userId: string }) => {
             if (!gameActive) {
                 return;
             }
+            console.log("why this happenin");
             let num: number = data;
             if (num == Number.parseInt(userId)) {
                 console.log("Winner");
                 reset();
                 console.log("You win executed " + userId);
                 cancelAnimationFrame(animationFrameNum);
-                // alert("You won 15 mmr! Congratulations!")
+                wonGame = true;
             } else {
-                // alert("You lost 15 mmr! NOOB! How can you lose in Pong?!?!?!")
+                wonGame = false;
+                   
                 console.log("You lose executed\n" + userId);
                 reset();
                 cancelAnimationFrame(animationFrameNum);
@@ -223,8 +227,9 @@ const Canvas = ({ userId }: { userId: string }) => {
         our_socket.on("gameCancelled", (rejectedUserName) => 
         {
             our_socket.off("gameCancelled");
-            console.log("Game cancelled invoked");   
-            alert("Game has been cancelled by " + rejectedUserName);
+            console.log("Game cancelled invoked");  
+            if (!gameActive)
+                alert("Game has been cancelled by " + rejectedUserName);
             setPlayerNumber(0);
             setGameActive(false);
             our_socket.off("gameCancelled");

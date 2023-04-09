@@ -169,6 +169,7 @@ const Canvas = ({ userId }: { userId: string }) => {
     useEffect(() => 
     {
         our_socket.on('gameOver', (data: number) => {
+            our_socket.off('gameOver');
             if (!gameActive) {
                 our_socket.off('gameOver');
                 return;
@@ -187,7 +188,7 @@ const Canvas = ({ userId }: { userId: string }) => {
                 cancelAnimationFrame(animationFrameNum);
             }
             setGameActive(false);
-            our_socket.off('gameOver');
+            
         })
     }, [gameActive])
     function handleGameCode(data: string) {

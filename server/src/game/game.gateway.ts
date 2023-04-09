@@ -252,20 +252,6 @@ export class GameGateway implements OnGatewayConnection{
   @SubscribeMessage('createInvitationRoom')
   async handleInvitation(@MessageBody() obj , @ConnectedSocket() client)
   {
-    
-    
-    // if(!clientRooms)
-    // {
-      // console.log("Kurwa")
-      // return ;
-    // }
-    // if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
-    // {
-    //   //console.log("game ongoing " );
-    //   client.emit("gameOngoing");
-    //   return ;
-    // }
-    //console.log("Wha the shell 0");
     let object = JSON.parse(obj);
     let userId = object.userId;
     let invitedUserId = object.userName;
@@ -282,19 +268,12 @@ export class GameGateway implements OnGatewayConnection{
 
 
       let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: String(user.id)};
-      //console.log("Wha the shell -2");
       invites.forEach((entry) => {
         if(entry.creator_id == userId && entry.invitee_id == String(user.id) || entry.creator_id == String(user.id)  && entry.invitee_id  == userId)
         {
           unique = false;
         }
       });
-      // if(!unique)
-      // {
-      //   //console.log("Wha the shell -3");
-      //   //console.log("Invitation already exist");
-      //   return ;
-      // }
       invites.push(new_invitation_obj);
       
       if(!userId)
@@ -311,7 +290,6 @@ export class GameGateway implements OnGatewayConnection{
       stateArr[game.id] = pair;
       stateArr[game.id].participants[0] = client.id;
       client.join(game.id.toString());
-      //console.log("Something broken 1");
       console.log("Inviting 2");
       client.emit('invitationInit', 1);
       invitationRoomsNames.push({ roomName: game.id.toString(), gameInstance: game });
@@ -401,6 +379,7 @@ export class GameGateway implements OnGatewayConnection{
     stateArr[gameCode].participants[1] = String(client.id);
     await this.prisma.game.update({ where: { id: roomNames[0].gameInstance.id }, data: { player_two: Number.parseInt(userId) } });
     let gameInstance = roomNames[0].gameInstance;
+
     let user = await this.userService.findUserById(Number.parseInt(userId));
     stateArr[gameCode].state.player_2_nick = user.name;
     startGameInterval(this.userService, gameCode, stateArr[gameCode].state, this.server, gameInstance, this.prisma);
@@ -475,14 +454,17 @@ function emitGameState(roomName: string, state_: any, server: Server) {
 async function emitGameOver(state_: any, userService: any, roomName: string, winner: number, server: Server, game: any, prisma: PrismaService, player_two: number) {
 
   if (winner == 2) {
+    console.log("Room name", roomName);
     server.sockets.in(roomName).emit('gameOver', Number.parseInt(game.player_one));
     game.winner = game.player_one;
     game.loser = player_two;
+    server.sockets.socketsLeave(roomName);
   } else {
+    console.log("Room name", roomName);
     game.winner = player_two;
     game.loser = game.player_one;
     server.sockets.in(roomName).emit('gameOver', (Number.parseInt(game.player_two)));
-    
+    server.sockets.socketsLeave(roomName);
   }
   if (!game.score_one) {
     game.score_one = state_.player_1_score;

@@ -18,6 +18,8 @@ import { UserService } from 'src/user/user.service';
 import { Logger } from '@nestjs/common';
 
 const logger = new Logger('App');
+
+
 logger.debug('\x1b[41m\x1b[37m%s\x1b[0m', 'Hello, World!');
 import pong_properties from './make_game_state'
 export let roomNames: { roomName: string, gameInstance: any }[] = [];
@@ -160,6 +162,18 @@ export class GameGateway implements OnGatewayConnection{
     logger.debug('playerAccepted');
     console.log(JSON.stringify(obj));
     let parsed_obj = JSON.parse(obj);
+    if(clientRooms[client.id])
+    {
+      let game_id;
+      game_id = clientRooms[client.id]
+      if(!game_id || !stateArr[game_id])
+      {
+        return ;
+      }
+      stateArr[game_id].participants[0] = String(client.id);
+      roomNames.pop();
+      clientRooms[client.id] = null;
+    }
     let invitor = await this.userService.findUserByName(parsed_obj.inviterName);
     // let new_invitation_obj : invitesType = {creator_id: String(.id), invitee_id: new_obj.userId};
 
@@ -300,6 +314,7 @@ export class GameGateway implements OnGatewayConnection{
       client.emit("invitedUserIsOffline");
       return ;
     }
+
     let unique : boolean = true;
     let new_invitation_obj : invitesType = {creator_id: userId, invitee_id: String(user.id)};
     invites.forEach((entry) => {
@@ -319,6 +334,7 @@ export class GameGateway implements OnGatewayConnection{
       let pair : state_type = {participants: [], state: getInitialState()};
       stateArr[game.id] = pair;
       stateArr[game.id].participants[0] = client.id;
+      
       client.join(game.id.toString());
       console.log("Inviting 2");
       client.emit('invitationInit', 1);
@@ -339,6 +355,7 @@ export class GameGateway implements OnGatewayConnection{
       }
       console.log("Inviting 3");
       console.log("user socket id", user.socketId);
+  
       emitToTheUserSocket(user, this.server, "invitationPopUp",creator.name)
       stateArr[game.id].state.player_1_nick = creator.name;
       return;
@@ -371,7 +388,6 @@ export class GameGateway implements OnGatewayConnection{
       }
         
       let user = await this.userService.findUserById(user_id);
-      console.log("czemu kurwa", user.name);
       handleNewGame(client, this.server, user  ,Number.parseInt(userId),this.prisma);
       return;
     }

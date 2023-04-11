@@ -7,7 +7,7 @@ import { CounterProvider } from "./utils/context/CounterContext"
 import SecondFactorPage from "./components/second_factor_authentication/SecondFactorPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Game from "./components/Game";
-import { useUserContext } from "./contexts/UserContext";
+import { UserContextProvider, useUserContext } from "./contexts/UserContext";
 import InfoCardProvider from "./contexts/InfoCardContext";
 import Displayed_Chat_Provider from "./contexts/Displayed_Chat_Context";
 import Online_users_Provider from "./contexts/Online_users_context";
@@ -23,7 +23,7 @@ function App() {
 
   const [isInvited, setIsInvited] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
-  const { myUserId } = useUserContext();
+  const { gameActive ,myUserId } = useUserContext();
   const [inviterName, setinviterName] = useState("");
 
   useEffect(() => {
@@ -56,9 +56,17 @@ function App() {
 
   useEffect(() => {
     our_socket.on("invitationPopUp", (invitingUserName) => {
+
       console.log("You've been invited mate");
-      setinviterName(invitingUserName);
-      setIsInvited(true);
+      console.log("Ran and game is ", gameActive)
+      if(gameActive)
+      {
+        let obj = {inviterName: invitingUserName, userId: myUserId}
+        our_socket.emit("rejectInvite", JSON.stringify(obj));
+      }else{
+        setinviterName(invitingUserName);
+        setIsInvited(true);
+      }
     })
   }, [])
   return (
@@ -66,6 +74,7 @@ function App() {
     <InfoCardProvider>
       <Displayed_Chat_Provider>
         <CounterProvider>
+          <UserContextProvider>
           <Online_users_Provider>
             <Profile_picture_Provider>
               <BrowserRouter>
@@ -81,6 +90,7 @@ function App() {
               </BrowserRouter>
             </Profile_picture_Provider>
           </Online_users_Provider>
+          </UserContextProvider>
         </CounterProvider>
       </Displayed_Chat_Provider>
     </InfoCardProvider>

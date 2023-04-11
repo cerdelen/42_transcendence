@@ -116,6 +116,7 @@ export class GameGateway implements OnGatewayConnection{
       //console.log("userOnline", userId);
     }
   }
+  
   @SubscribeMessage('userOffline')
   async makeOnline(@MessageBody() userId: string) {
     //console.log("UserOffline", userId);
@@ -248,7 +249,13 @@ export class GameGateway implements OnGatewayConnection{
 
 
 
+  @SubscribeMessage("user_in_quene")
+  async user_in_quene_reject(@MessageBody() invitingUserName, @ConnectedSocket() socket)
+  {
+    let user = await this.userService.findUserByName(invitingUserName);
 
+
+  }
 
 
   @SubscribeMessage('rejectInvite')
@@ -436,11 +443,12 @@ export class GameGateway implements OnGatewayConnection{
     {
       return ;
     }
-    if(keyobj.player_number === 0)
+    if(keyobj.player_number === 0 || !stateArr[roomName])
     {
       //console.log("Player number not provided error");
       return ;  
     }
+    
     if (pure_keyObj.player_number == 1 &&  pure_keyObj.socket_id == stateArr[roomName].participants[0]) {
       if (stateArr[roomName].state)
         stateArr[roomName].state.keysPressed_p1[pure_keyObj.key] = true;
@@ -465,7 +473,7 @@ export class GameGateway implements OnGatewayConnection{
     {
       return ;
     }
-    if(pure_keyObj.player_number === 0)
+    if(pure_keyObj.player_number === 0 || !stateArr[roomName])
     {
       //console.log("Player number not provided error");
       return ;  

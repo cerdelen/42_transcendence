@@ -75,6 +75,7 @@ const Canvas = ({ userId }: { userId: string }) => {
                     our_socket.emit("joinGame", userId);
                 }
                 setGameActive(true);
+                console.log("Game active", gameActive);
             }} > Join Game </button>)
         } else {
 

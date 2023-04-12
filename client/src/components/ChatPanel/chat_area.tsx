@@ -15,6 +15,7 @@ const Chat_input_filed_and_send_button = () => {
 
   const sendMessage = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!input) return;
     console.log("Send message");
     our_socket.emit( "message", {
         author: Number(myUserId),
@@ -35,9 +36,7 @@ const Chat_input_filed_and_send_button = () => {
   };
 
   return (
-    <form autoComplete="off" onSubmit={(e) => {
-      if (input) sendMessage(e);
-    }}>
+    <form autoComplete="off" onSubmit={sendMessage}>
       <input
         id="chat-input"
         type="text"

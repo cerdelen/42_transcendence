@@ -135,6 +135,15 @@ export class GameGateway implements OnGatewayConnection{
     logger.debug('remove_from_quene');
     let game_id;
     game_id = clientRooms[client.id]
+    // if(invitationRooms[client.id])
+    // {
+    //   invitationRooms[client.id] = null;
+    //   stateArr[game_id].participants[0] = String(client.id);
+    //   roomNames.pop();
+    //   clientRooms[client.id] = null;
+    //   console.log("Removed");
+    //   return ;
+    // }
     if(!game_id || !stateArr[game_id])
     {
       return ;
@@ -401,7 +410,7 @@ export class GameGateway implements OnGatewayConnection{
     const sockets = await this.server.in(gameCode).fetchSockets();
     numOfClients = sockets.length;
 
-    if (numOfClients === 0) {
+    if (numOfClients === 0) { 
       console.log("co jest ", client.id);
       console.log("unknownGame");
       client.emit('unknownGame');

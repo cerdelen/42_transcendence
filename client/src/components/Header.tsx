@@ -7,12 +7,16 @@ import { useUserContext } from "../contexts/UserContext";
 
 const Header = () => {
   const { setShowUserInto, setIsDropdownOpen, setShowMenu } = useMyContext();
-  const { myUserId, gameActive,setGameActive, gameStarted, setGameStarted} = useUserContext();
+  const { gameInvited , myUserId, gameActive,setGameActive, gameStarted, setGameStarted} = useUserContext();
 
   const closePopUps = () => {
     setShowUserInto(false);
     setIsDropdownOpen(false);
     setShowMenu(false);
+    if(gameInvited)
+    {
+      return ;
+    }
     if(gameActive && !gameStarted)
     {
       setGameActive(false);

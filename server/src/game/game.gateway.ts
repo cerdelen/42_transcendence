@@ -4,17 +4,6 @@ import { Server, Socket as socket_io } from 'socket.io';
 import { getInitialState, gameLoop} from './make_game_state'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
-// import {roomNames,
-// invitationRooms,
-// invitationRoomsNames,
-// KeyInfo,
-// invitesType,
-// invites,
-// state_type,
-// stateArr,
-// clientRooms,} from "./GameTypes"
-// let gameCode: string = "";
-
 import { Logger } from '@nestjs/common';
 
 const logger = new Logger('App');
@@ -59,8 +48,6 @@ async function emitToTheUserSocket(user: any, server: Server, event_name:string,
     {
       final_socket = e;
       found = true;
-      // if(event_name == 'gameCancelled')
-        //console.log("Kurwa jebana mać");
     }
   });
   if(!found)
@@ -115,13 +102,11 @@ export class GameGateway implements OnGatewayConnection{
   async handle_online(@MessageBody() userId: string) {
     if (Number.parseInt(userId)) {
       this.userService.set_user_online(Number.parseInt(userId) ,true);
-      //console.log("userOnline", userId);
     }
   }
   
   @SubscribeMessage('userOffline')
   async makeOnline(@MessageBody() userId: string) {
-    //console.log("UserOffline", userId);
     if(!Number.parseInt(userId))
     {
       return ;
@@ -135,15 +120,6 @@ export class GameGateway implements OnGatewayConnection{
     logger.debug('remove_from_quene');
     let game_id;
     game_id = clientRooms[client.id]
-    // if(invitationRooms[client.id])
-    // {
-    //   invitationRooms[client.id] = null;
-    //   stateArr[game_id].participants[0] = String(client.id);
-    //   roomNames.pop();
-    //   clientRooms[client.id] = null;
-    //   console.log("Removed");
-    //   return ;
-    // }
     if(!game_id || !stateArr[game_id])
     {
       return ;
@@ -153,16 +129,6 @@ export class GameGateway implements OnGatewayConnection{
     clientRooms[client.id] = null;
     console.log("Removed");
   }
-  // @SubscribeMessage('player_disconnected')
-  // async disconnectFromGame(@MessageBody() userId, @ConnectedSocket() client)
-  // {
-  //   client.emit("gameOver", 2);
-
-  //   let gameCode = invitationRooms[client.id]
-  //   // this.server.sockets.
-  //   client.leave(gameCode);
-  //   console.log("disconnect ran");
-  // }
 
 //tldr Rooms
   @SubscribeMessage('playerAccepted')
@@ -184,20 +150,14 @@ export class GameGateway implements OnGatewayConnection{
       clientRooms[client.id] = null;
     }
     let invitor = await this.userService.findUserByName(parsed_obj.inviterName);
-    // let new_invitation_obj : invitesType = {creator_id: String(.id), invitee_id: new_obj.userId};
 
-
-    // if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
     if(!(clientRooms[invitor.socketId] == undefined) || !(clientRooms[invitor.socketId] == null))
     {
       console.log("the undefined or null if " + JSON.stringify(clientRooms));
-      // let new_obj = JSON.parse(obj);
-      // let user = await this.userService.findUserByName(new_obj.inviterName);
       let new_invitation_obj : invitesType = {creator_id: String(invitor.id), invitee_id: parsed_obj.userId};
       let delindex = invites.indexOf(new_invitation_obj);
       if(!delindex)
       {
-        ////console.log("Index to delete not found in reject invite ");
         return ;
       }
       invites.splice(delindex, 1);
@@ -219,24 +179,6 @@ export class GameGateway implements OnGatewayConnection{
         break ;
       }
     }
-
-    //find state arr obj by participants (socket id of invited player)
-
-    // for (let index = 0; index < stateArr.length; index++) {
-    //   const element = stateArr[index];
-    //   if (element.participants.includes(client.id))
-    //   {
-    //     stateArr.splice(index, 1);
-    //     break;
-    //   }
-    // }
-
-
-    // find clientrooms (socket id of invited player)
-    // for (let index = 0; index < clientRooms.length; index++) {
-    //   const element = array[index];
-      
-    // }
     if (clientRooms.hasOwnProperty(client.id)) {
       delete clientRooms[client.id];
     }
@@ -294,7 +236,6 @@ export class GameGateway implements OnGatewayConnection{
     {
       return ;
     }
-    // this.server.sockets.in(invitationRooms[invites[delindex].creator_id]).disconnectSockets(true);
     invites.splice(delindex, 1);
     console.log("find 3");
     let new_user = await this.userService.findUserById(Number.parseInt(new_obj.userId));
@@ -338,33 +279,25 @@ export class GameGateway implements OnGatewayConnection{
     
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
       invitationRooms[client.id] = game.id.toString();
-      console.log("Inviting 1");
       client.emit('gameCode', game.id.toString());
       let pair : state_type = {participants: [], state: getInitialState()};
       stateArr[game.id] = pair;
       stateArr[game.id].participants[0] = client.id;
       
       client.join(game.id.toString());
-      console.log("Inviting 2");
       client.emit('invitationInit', 1);
       invitationRoomsNames.push({ roomName: game.id.toString(), gameInstance: game });
 
       let creator_id = await this.userService.find_user_by_sock_id(client.id);
       if (creator_id == undefined)
       {
-        console.log("Creator id broken");
         return ;
       }
-      console.log("find 4");
       let creator = await this.userService.findUserById(creator_id);
       if(creator == undefined)
       {
-        console.log("Creator not created");
         return ;
       }
-      console.log("Inviting 3");
-      console.log("user socket id", user.socketId);
-  
       emitToTheUserSocket(user, this.server, "invitationPopUp",creator.name)
       stateArr[game.id].state.player_1_nick = creator.name;
       return;
@@ -420,8 +353,7 @@ export class GameGateway implements OnGatewayConnection{
       client.emit('tooManyPlayers')
       return;
     }
-
-
+    
     if (sockets[0].id === client.id || roomNames[0].gameInstance.player_one == userId) {
       console.log("Same user");
       client.emit('sameUser');
@@ -437,11 +369,6 @@ export class GameGateway implements OnGatewayConnection{
       console.log("user id parsing error");
       return ;
     }
-    // console.log("join Quene");
-    // roomNames.forEach((e) => 
-    // {
-    //   console.log(e);
-    // })
     stateArr[gameCode].participants[1] = String(client.id);
     await this.prisma.game.update({ where: { id: roomNames[0].gameInstance.id }, data: { player_two: Number.parseInt(userId) } });
     let gameInstance = roomNames[0].gameInstance;
@@ -500,7 +427,6 @@ export class GameGateway implements OnGatewayConnection{
     }
     if(pure_keyObj.player_number === 0 || !stateArr[roomName])
     {
-      //console.log("Player number not provided error");
       return ;  
     }
     if (pure_keyObj.player_number == 1 && pure_keyObj.socket_id == stateArr[roomName].participants[0]) {

@@ -12,8 +12,8 @@ const logger = new Logger('App');
 logger.debug('\x1b[41m\x1b[37m%s\x1b[0m', 'Hello, World!');
 import pong_properties from './make_game_state'
 export let roomNames: { roomName: string, gameInstance: any }[] = [];
-export let invitationRooms = {};
-export let invitationRoomsNames : { roomName: string, gameInstance: any}[] = [];
+export let invitationQuene = {};
+export let invitationQueneNames : { roomName: string, gameInstance: any}[] = [];
 export interface KeyInfo
 {
     key: number,
@@ -34,9 +34,7 @@ export interface state_type
 }
 export const stateArr : state_type[] = [];
 export const inviteState = {};
-export const clientRooms = {};
-let gameCode: string = "";
-
+export const quene = {};
 async function emitToTheUserSocket(user: any, server: Server, event_name:string, message: string)
 {
   const sockets = await server.fetchSockets();
@@ -119,14 +117,14 @@ export class GameGateway implements OnGatewayConnection{
   {
     logger.debug('remove_from_quene');
     let game_id;
-    game_id = clientRooms[client.id]
+    game_id = quene[client.id]
     if(!game_id || !stateArr[game_id])
     {
       return ;
     }
     stateArr[game_id].participants[0] = String(client.id);
     roomNames.pop();
-    clientRooms[client.id] = null;
+    quene[client.id] = null;
     console.log("Removed");
   }
 
@@ -137,23 +135,23 @@ export class GameGateway implements OnGatewayConnection{
     logger.debug('playerAccepted');
     console.log(JSON.stringify(obj));
     let parsed_obj = JSON.parse(obj);
-    if(clientRooms[client.id])
+    if(quene[client.id])
     {
       let game_id;
-      game_id = clientRooms[client.id]
+      game_id = quene[client.id]
       if(!game_id || !stateArr[game_id])
       {
         return ;
       }
       stateArr[game_id].participants[0] = String(client.id);
       roomNames.pop();
-      clientRooms[client.id] = null;
+      quene[client.id] = null;
     }
     let invitor = await this.userService.findUserByName(parsed_obj.inviterName);
 
-    if(!(clientRooms[invitor.socketId] == undefined) || !(clientRooms[invitor.socketId] == null))
+    if(!(quene[invitor.socketId] == undefined) || !(quene[invitor.socketId] == null))
     {
-      console.log("the undefined or null if " + JSON.stringify(clientRooms));
+      console.log("the undefined or null if " + JSON.stringify(quene));
       let new_invitation_obj : invitesType = {creator_id: String(invitor.id), invitee_id: parsed_obj.userId};
       let delindex = invites.indexOf(new_invitation_obj);
       if(!delindex)
@@ -179,14 +177,14 @@ export class GameGateway implements OnGatewayConnection{
         break ;
       }
     }
-    if (clientRooms.hasOwnProperty(client.id)) {
-      delete clientRooms[client.id];
+    if (quene.hasOwnProperty(client.id)) {
+      delete quene[client.id];
     }
 
     console.log("find 2");
     let user = await this.userService.findUserById(Number.parseInt(parsed_obj.userId))
     let gameCode_;
-    gameCode_ = invitationRoomsNames[0].roomName;
+    gameCode_ = invitationQueneNames[0].roomName;
     const room = this.server.sockets.adapter.rooms[gameCode_];
     let numOfClients = 0;
     const sockets = await this.server.in(gameCode_).fetchSockets();
@@ -199,15 +197,19 @@ export class GameGateway implements OnGatewayConnection{
       return ;
     }
     invites.splice(delindex, 1);
-    invitationRooms[client.id] = String(gameCode_);
+    invitationQuene[client.id] = String(gameCode_);
     stateArr[gameCode_].participants[1] = client.id;
     client.join(gameCode_);
     emitToTheUserSocket(user, this.server, 'invitationInit', "2");
-    await this.prisma.game.update({ where: { id: invitationRoomsNames[0].gameInstance.id }, data: { player_two: user.id } });
-    let gameInstance = invitationRoomsNames[0].gameInstance;
+    await this.prisma.game.update({ where: { id: invitationQueneNames[0].gameInstance.id }, data: { player_two: user.id } });
+    let gameInstance = invitationQueneNames[0].gameInstance;
     stateArr[gameCode_].state.player_2_nick = user.name;
+    console.log("Ło panie ", invitationQueneNames);
+    console.log("State arr yes idex ", stateArr[gameCode_]);
+    console.log("State arr yes ", stateArr);
     startGameInterval(this.userService, gameCode_, stateArr[gameCode_].state, this.server, gameInstance, this.prisma);
-    invitationRoomsNames.shift();
+    
+    invitationQueneNames.shift();
   }
 
 
@@ -278,7 +280,7 @@ export class GameGateway implements OnGatewayConnection{
     
     
       const game = await this.prisma.game.create({ data: { player_one: Number.parseInt(userId) } });
-      invitationRooms[client.id] = game.id.toString();
+      invitationQuene[client.id] = game.id.toString();
       client.emit('gameCode', game.id.toString());
       let pair : state_type = {participants: [], state: getInitialState()};
       stateArr[game.id] = pair;
@@ -286,7 +288,7 @@ export class GameGateway implements OnGatewayConnection{
       
       client.join(game.id.toString());
       client.emit('invitationInit', 1);
-      invitationRoomsNames.push({ roomName: game.id.toString(), gameInstance: game });
+      invitationQueneNames.push({ roomName: game.id.toString(), gameInstance: game });
 
       let creator_id = await this.userService.find_user_by_sock_id(client.id);
       if (creator_id == undefined)
@@ -311,7 +313,7 @@ export class GameGateway implements OnGatewayConnection{
       console.log("User id callback return");
       return;
     }
-    if(!(clientRooms[client.id] == undefined) || !(clientRooms[client.id] == null))
+    if(!(quene[client.id] == undefined) || !(quene[client.id] == null))
     {
       console.log("game ongoing " );
       client.emit("gameOngoing");
@@ -327,6 +329,7 @@ export class GameGateway implements OnGatewayConnection{
       {
         logger.debug('there is a big error here for somereason not a number');
         return;
+        
       }
         
       let user = await this.userService.findUserById(user_id);
@@ -334,7 +337,7 @@ export class GameGateway implements OnGatewayConnection{
       return;
     }
 
-    gameCode = roomNames[0].roomName;
+    let gameCode = roomNames[0].roomName;
 
     const room = this.server.sockets.adapter.rooms[gameCode];
     let numOfClients = 0;
@@ -360,7 +363,7 @@ export class GameGateway implements OnGatewayConnection{
       return;
     };
 
-    clientRooms[client.id] = gameCode;
+    quene[client.id] = gameCode;
 
     client.join(gameCode);
     client.emit('init', 2);
@@ -375,6 +378,8 @@ export class GameGateway implements OnGatewayConnection{
     console.log("find 6");
 
     let user = await this.userService.findUserById(Number.parseInt(userId));
+    let arr : number [] = [];
+
     stateArr[gameCode].state.player_2_nick = user.name;
     startGameInterval(this.userService, gameCode, stateArr[gameCode].state, this.server, gameInstance, this.prisma);
     roomNames.shift();
@@ -383,10 +388,10 @@ export class GameGateway implements OnGatewayConnection{
   @SubscribeMessage('keydown')
   handleKeyDown(@MessageBody() keyobj,
     @ConnectedSocket() client) {
-    let roomName = clientRooms[client.id];
+    let roomName = quene[client.id];
     
     if (!roomName) {
-      roomName = invitationRooms[client.id];
+      roomName = invitationQuene[client.id];
       if(!roomName)
         return ;
     }
@@ -413,9 +418,9 @@ export class GameGateway implements OnGatewayConnection{
   @SubscribeMessage('keyup')
   handleKeyUp(@MessageBody() keyobj,
     @ConnectedSocket() client) {
-    let roomName = clientRooms[client.id];
+    let roomName = quene[client.id];
     if (!roomName) {
-      roomName = invitationRooms[client.id];
+      roomName = invitationQuene[client.id];
       if(!roomName)
         return ;
     }
@@ -495,8 +500,8 @@ async function startGameInterval(userService: any, roomName: string, state_: any
       if(stateArr[roomName].participants)
       {
         console.log("Here");
-        clientRooms[stateArr[roomName].participants[0]] = null;
-        clientRooms[stateArr[roomName].participants[1]] = null;
+        quene[stateArr[roomName].participants[0]] = null;
+        quene[stateArr[roomName].participants[1]] = null;
         console.log("Here!  ")
       }
 
@@ -524,7 +529,7 @@ async function handleNewGame(client: any, server: Server, user: any, clientId: n
 
   const game = await prisma.game.create({ data: { player_one: clientId } });
 
-  clientRooms[client.id] = game.id.toString();
+  quene[client.id] = game.id.toString();
   client.emit('gameCode', game.id.toString());
   let pair : state_type = {participants: [], state: getInitialState()};  
   stateArr[game.id] = pair;
@@ -534,14 +539,4 @@ async function handleNewGame(client: any, server: Server, user: any, clientId: n
   client.emit('init', 1);
   roomNames.push({ roomName: game.id.toString(), gameInstance: game });
 
-
-
-
-
-  console.log("roomNames", roomNames)
-  console.log("invitationroosm", invitationRooms)
-  console.log("invitationroosmnames", invitationRoomsNames)
-  console.log("statearr", stateArr)
-  console.log("invitastate", inviteState)
-  console.log("clientrooms", clientRooms)
 }

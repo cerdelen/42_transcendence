@@ -323,6 +323,10 @@ export class GameGateway implements OnGatewayConnection{
       console.log("client id ", client.id);
       let user_id = await this.userService.find_user_by_sock_id(client.id);
       console.log("find 5 " , user_id);
+      if(user_id == undefined)
+      {
+        client.emit("unknownsocket");
+      }
       if (Number.isNaN(Number(user_id)))
       {
         logger.debug('there is a big error here for somereason not a number');

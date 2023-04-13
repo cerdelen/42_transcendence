@@ -23,7 +23,7 @@ function App() {
 
   const [isInvited, setIsInvited] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
-  const { gameActive ,myUserId } = useUserContext();
+  const { gameActive, setGameActive ,myUserId } = useUserContext();
   const [inviterName, setinviterName] = useState("");
 
   useEffect(() => {
@@ -53,7 +53,14 @@ function App() {
       alert("Invited user is offline try again later");
     })
   })
-
+  useEffect(() => 
+  {
+    our_socket.on("unknownsocket", () => 
+    {
+      alert("Socket unknown log out and log in");
+      setGameActive(false);
+    });
+  })
   useEffect(() => {
     our_socket.on("invitationPopUp", (invitingUserName) => {
 

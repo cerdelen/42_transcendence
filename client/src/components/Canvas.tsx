@@ -63,6 +63,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             </>
         )
     }
+    const {gameActive, setGameActive, gameStarted, setGameStarted, gameInvited ,setGameInvited} = useUserContext();
 
     function ButtonShow({ userId, GameActive, setGameActive, setCodeInput }:
         { userId: string, GameActive: boolean, setGameActive: any, setCodeInput: any }) {
@@ -88,7 +89,6 @@ const Canvas = ({ userId }: { userId: string }) => {
     }
     const [gameInfo, setGameInfo] = useState<pong_properties>(initial_state);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const {gameActive, setGameActive, gameStarted, setGameStarted, gameInvited ,setGameInvited} = useUserContext();
     const [gameCode, setGameCode] = useState("");
     const {mapNumber, setMapNumber} = useContext(CounterContext);
     const [codeInput, setCodeInput] = useState("");

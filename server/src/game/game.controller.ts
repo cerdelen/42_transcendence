@@ -17,7 +17,7 @@ export class GameController
 	{
 		console.log("many game data controller");
 		let obj = await this.gameService.get_many_games(game_ids)
-		// console.log(obj);
+		console.log("After many games data controller", obj);
 		return (obj);
 	}
 

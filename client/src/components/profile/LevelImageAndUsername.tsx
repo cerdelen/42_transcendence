@@ -13,7 +13,7 @@ interface Props {
 const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
   const { myUserId } = useUserContext();
   const [showInput, setShowInput] = useState<boolean>(false);
-  const { setShowUserInto, setUserIdCard } = useMyContext();
+  const { setShowUserInto, setUserIdCard, isDropdownOpen } = useMyContext();
   const [photo, setPhoto] = useState("");
   const [newName, setNewName] = useState<string>("");
   const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
@@ -30,11 +30,16 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
     setNewName(userName);
   }, [userName, myUserId]);
 
+  useEffect(() => {
+    setShowInput(false);
+  }, [isDropdownOpen])
+  
   const toggleInputField = async () => {
     setShowInput(!showInput);
   };
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!newName) {} ;
     changeName();
   };
 
@@ -83,6 +88,7 @@ const LevelImageAndUsername = ({ userName, setIsDropdownOpen }: Props) => {
       {showInput ? (
         <form onSubmit={handleSubmit}>
           <input
+            required
             type="text"
             value={newName}
             onChange={handleNewNameChange}

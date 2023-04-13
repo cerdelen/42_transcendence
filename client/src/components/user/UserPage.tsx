@@ -55,7 +55,7 @@ function CustomizationFields({ setMapNumber }: { setMapNumber: any }) {
 }
 
 const UserPage = () => {
-  const { myUserId, myMail, mytwoFAenabled, myBlockedUsers, myGames,
+  const { myUserId, myMail, mytwoFAenabled, gameInvited, setGameInvited ,myBlockedUsers, myGames,
     myOutgoingFriendReq, myIncomingFriendReq,
     myFriendList, setMyFriendList, myName,
     setMyIncomingFriendReq, setMyOutgoingFriendReq }
@@ -358,7 +358,7 @@ const UserPage = () => {
     console.log(userId + " Inviting player " + userName);
     navigate('/game')
     setShowUserInto(false);
-
+    setGameInvited(true);
     let obj: any = { userId: userId, userName: userName };
     our_socket.emit("createInvitationRoom", JSON.stringify(obj));
   }

@@ -290,9 +290,12 @@ const Chat_details = () => {
   return (
     <div className="Chat_details">
       {displayed_chat.conversation_name && (
-        <div className="Chat_name_for_chat_details">
-          {displayed_chat.conversation_name}
-        </div>
+      <div className="Chat_name_for_chat_details">
+      <span>
+
+        {displayed_chat.conversation_name}
+      </span>
+    </div>
       )}
       <ul className="User_list_in_chat_detals">
         {user_ids_in_chat_details.map((user_id) => (

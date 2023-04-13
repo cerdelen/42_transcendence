@@ -10,6 +10,8 @@ type UserContextType = {
 	mytwoFAenabled: boolean,
 	gameActive: boolean,
 	gameStarted: boolean,
+	gameInvited:  boolean,
+	setGameInvited: React.Dispatch<React.SetStateAction<boolean>>,
 	setGameStarted: React.Dispatch<React.SetStateAction<boolean>>, 
 	setGameActive:  React.Dispatch<React.SetStateAction<boolean>>,
 	myFriendList: number[],
@@ -30,8 +32,10 @@ export const UserContext = createContext<UserContextType>({
 	mytwoFAenabled: false,
 	gameStarted: false,
 	setGameStarted: () => {},
-	gameActive: false,
+	gameActive: false,	
 	setGameActive:  () => {},
+	gameInvited:  false,
+	setGameInvited: () => {},
 	myFriendList: [],
 	setMyFriendList: () => {},
 	myStats: {},
@@ -56,6 +60,7 @@ export function UserContextProvider({children}: UserContextProviderProps) {
 	const [myMail, setMail] = useState("");
 	const [mytwoFAenabled, set2FA] = useState(false);
 	const [gameStarted, setGameStarted] = useState(false);
+	const [gameInvited, setGameInvited] = useState(false);
 	const [myFriendList, setMyFriendList] = useState<number[]>([]);
 	const [myStats, setStats] = useState({});
 	const [myGames, setGames] = useState<number[]>([]);
@@ -126,6 +131,8 @@ const value={
 	setGameStarted,
 	gameActive, 
 	setGameActive,
+	gameInvited,
+	setGameInvited,
 	myFriendList,
 	setMyFriendList,
 	myGames,

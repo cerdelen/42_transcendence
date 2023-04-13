@@ -63,6 +63,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             </>
         )
     }
+    const {gameActive, setGameActive, gameStarted, setGameStarted, gameInvited ,setGameInvited} = useUserContext();
 
     function ButtonShow({ userId, GameActive, setGameActive, setCodeInput }:
         { userId: string, GameActive: boolean, setGameActive: any, setCodeInput: any }) {
@@ -88,7 +89,6 @@ const Canvas = ({ userId }: { userId: string }) => {
     }
     const [gameInfo, setGameInfo] = useState<pong_properties>(initial_state);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const {gameActive, setGameActive, gameStarted, setGameStarted} = useUserContext();
     const [gameCode, setGameCode] = useState("");
     const {mapNumber, setMapNumber} = useContext(CounterContext);
     const [codeInput, setCodeInput] = useState("");
@@ -96,7 +96,14 @@ const Canvas = ({ userId }: { userId: string }) => {
     const [animationFrameNum, setAnimationFrameNum] = useState(0);
 
     let ctx: any;
-    function WaitingScreenCatto({ gameActive , gameStarted}: { gameActive: boolean, gameStarted: boolean }) {
+    function WaitingScreenCatto({ gameInvited ,gameActive , gameStarted}: {gameInvited: any, gameActive: boolean, gameStarted: boolean }) {
+        if(gameInvited)
+        {
+            return (<>
+            <h1>Waiting for other player</h1>
+            </>
+            )
+        }
         if (!gameActive)
             return (
                 <>
@@ -207,7 +214,9 @@ const Canvas = ({ userId }: { userId: string }) => {
     useEffect(() => 
     {
         our_socket.on('invitationInit', (UserIndex_: number) => {
+            
             our_socket.off("invitationInit");
+            setGameInvited(true);
             setGameActive(true);
             setGameStarted(false);
             console.log("Id of the user ", UserIndex_);
@@ -215,6 +224,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             setPlayerNumber(num);
             // our_socket.off("invitationInit");
             console.log("Invitation init");
+            our_socket.off("invitationInit");
         });
    
     }, [gameActive])
@@ -223,6 +233,7 @@ const Canvas = ({ userId }: { userId: string }) => {
     {
         our_socket.on("gameCancelled", (rejectedUserName) => 
         {
+            setGameInvited(false);
             our_socket.off("gameCancelled");
             console.log("Game cancelled invoked");   
             alert("Game has been cancelled by " + rejectedUserName);
@@ -272,7 +283,7 @@ const Canvas = ({ userId }: { userId: string }) => {
                 setGameStarted(true);
             }
             setGameInfo(JSON.parse(gameState));
-
+            setGameInvited(false);
             if (canvasRef.current) {
                 // console.log("rendering");
                 ctx = canvasRef.current.getContext('2d');
@@ -325,7 +336,7 @@ const Canvas = ({ userId }: { userId: string }) => {
                     <br />
 
 
-                    <WaitingScreenCatto gameActive={gameActive} gameStarted={gameStarted}/>
+                    <WaitingScreenCatto gameInvited={gameInvited} gameActive={gameActive} gameStarted={gameStarted}/>
                     
                 </center>
                 

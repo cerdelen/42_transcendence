@@ -36,6 +36,7 @@ const Canvas = ({ userId }: { userId: string }) => {
     const { initial_state } = useMyGameContext();
     const {images} = useMyContext();
     const [imageIdx, setImageIdx] = useState<number>(1);
+    const [gameId, setGameId] = useState<number>(0);
     function Custmization_fields({ setMapNumber }: { setMapNumber: any }) {
 
         return (
@@ -215,7 +216,6 @@ const Canvas = ({ userId }: { userId: string }) => {
     {
         our_socket.on('invitationInit', (UserIndex_: number) => {
             
-            our_socket.off("invitationInit");
             setGameInvited(true);
             setGameActive(true);
             setGameStarted(false);
@@ -227,21 +227,20 @@ const Canvas = ({ userId }: { userId: string }) => {
             our_socket.off("invitationInit");
         });
    
-    }, [gameActive])
+    }, [])
 
     useEffect(() => 
     {
         our_socket.on("gameCancelled", (rejectedUserName) => 
         {
             setGameInvited(false);
-            our_socket.off("gameCancelled");
             console.log("Game cancelled invoked");   
             alert("Game has been cancelled by " + rejectedUserName);
             setPlayerNumber(0);
             setGameActive(false);
             our_socket.off("gameCancelled");
         })
-    }, [gameActive])
+    }, [])
     
     useEffect(() => {
         our_socket.on('init', (UserIndex_: number) => {
@@ -257,7 +256,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             our_socket.off("init");
 
         });
-    }, [gameActive])
+    }, [])
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -274,15 +273,18 @@ const Canvas = ({ userId }: { userId: string }) => {
     useEffect(() => {
         our_socket.on('gameState', (gameState: string) => {
             if (!gameActive) {
+                
                 our_socket.off('gameState');
                 return;
             }
             let animFrame: number;
             if(!gameStarted)
             {
+                setGameId(JSON.parse(gameState).id);
                 setGameStarted(true);
             }
             setGameInfo(JSON.parse(gameState));
+            console.log("Game state id " , gameInfo.id);
             setGameInvited(false);
             if (canvasRef.current) {
                 // console.log("rendering");
@@ -300,31 +302,36 @@ const Canvas = ({ userId }: { userId: string }) => {
     {
         document.addEventListener('keydown', (e) => {
             // e.preventDefault();
-            if (!gameActive)
-                return;
+            console.log("Emmititng stuff");
+            // if (!gameActive)
+            //     return;
             let obj: KeyInfo =
             {
                 key: e.keyCode,
                 player_number: playerNumber,
                 socket_id: our_socket.id,
-                gameActive: gameActive
+                gameActive: gameActive,
+                game_id: gameId,
             };
+            
             our_socket.emit('keydown', JSON.stringify(obj));
         })
         document.addEventListener('keyup', (e) => {
             // e.preventDefault();
-            if (!gameActive)
-                return;
+            // if (!gameActive)
+            //     return;
             let obj: KeyInfo =
             {
                 key: e.keyCode,
                 player_number: playerNumber,
                 socket_id: our_socket.id,
-                gameActive: gameActive
+                gameActive: gameActive,
+                game_id: gameId,
             };
+            console.log("What the fuck ", obj.game_id);
             our_socket.emit('keyup', JSON.stringify(obj));
         })
-    }, [playerNumber])
+    }, [playerNumber, gameId])
 
 
     return (

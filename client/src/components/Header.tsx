@@ -13,6 +13,7 @@ const Header = () => {
     setShowUserInto(false);
     setIsDropdownOpen(false);
     setShowMenu(false);
+    console.log("game invited is " ,gameInvited);
     if(gameInvited)
     {
       return ;

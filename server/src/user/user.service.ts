@@ -249,27 +249,29 @@ export class UserService {
 
 	async	add_win(user_id: number)
 	{
-		var stats = await this.prisma.stats.findUnique({where: {stat_id: user_id}});
-		if(stats)
-		{
-			if (stats.wins == 2)
-			{
-				this.add_achievement(user_id, 0)
-			}
-			if (stats.mmr >= 1600)
-			{
-				console.log("this is weird this shold add achievement");
+		if(user_id){}
+		// var stats = await this.prisma.stats.findUnique({where: {stat_id: user_id}});
+		// if(stats)
+		// {
+		// 	if (stats.wins == 2)
+		// 	{
+		// 		await this.add_achievement(user_id, 0)
+		// 	}
+		// 	if (stats.mmr >= 1600)
+		// 	{
+		// 		console.log("this is weird this shold add achievement");
 				
-				this.add_achievement(user_id, 1)
-			}
-			return (this.prisma.stats.update({
-				where: { stat_id: user_id},
-				data: {
-					wins: stats.wins + 1,
-					mmr: stats.mmr + 15
-				}
-			}));
-		}
+		// 		await this.add_achievement(user_id, 1)
+		// 	}
+		// 	return (this.prisma.stats.update({
+		// 		where: { stat_id: user_id},
+		// 		data: {
+		// 			wins: stats.wins + 1,
+		
+		// 			mmr: stats.mmr + 15
+		// 		}
+		// 	}));
+		// }
 	}
 
 	async	add_loss(user_id: number)
@@ -279,6 +281,7 @@ export class UserService {
 		{
 			return (this.prisma.stats.update({
 				where: { stat_id: user_id},
+
 				data: {
 					loses: stats.loses + 1,
 					mmr: stats.mmr - 15

@@ -244,15 +244,16 @@ const Canvas = ({ userId }: { userId: string }) => {
     
     useEffect(() => {
         our_socket.on('init', (UserIndex_: number) => {
-            if(!gameActive)
-            {
-                our_socket.off("init");
-                return ;
-            }
+            // if(!gameActive)
+            // {
+            //     our_socket.off("init");
+            //     return ;
+            // }
             setGameStarted(false);
             console.log("Id of the user ", UserIndex_);
             let num: number = UserIndex_;
             setPlayerNumber(num);
+        
             our_socket.off("init");
 
         });

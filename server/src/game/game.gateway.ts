@@ -36,22 +36,13 @@ let gameArray : game_array_properties [] = [];
 
 function getIndex(id: number)
 {
-  if(id == 0)
+  for(let i = 0; i < gameArray.length; i++)
   {
-    console.log("Zero case");
-    return -1;
-  }
-
-  let final_res = 0;
-  gameArray.forEach((e) => 
-  {
-    if(e.gameId == id)
+    if(gameArray[i].gameId == id)
     {
-      return final_res;
+      return i;
     }
-    final_res++;
-  })
-
+  }
   return -1;
 }
 interface IQuene<T>
@@ -69,12 +60,12 @@ interface IuserInQuene
   socket: Socket,
 }
 
-class Quene<T> implements IQuene<T>
+class Quene<T> implements IQuene<IuserInQuene>
 {
-  private storage: T[] = [];
+  private storage: IuserInQuene[] = [];
   constructor(private capacity: number = Infinity){}
 
-  enquene(item: T): void {
+  enquene(item: IuserInQuene): void {
     if(this.size() === this.capacity)
     {
       throw Error("Max cap reached");
@@ -82,7 +73,7 @@ class Quene<T> implements IQuene<T>
     this.storage.push(item);
   }
 
-  dequene(): T | undefined{
+  dequene(): IuserInQuene | undefined{
       return this.storage.shift();
   }
 
@@ -90,13 +81,19 @@ class Quene<T> implements IQuene<T>
     return this.storage.length;
   }
 
-  check_if_is_in_quene(user : T) : boolean
+  check_if_is_in_quene(user_id : number) : boolean
   {
-    if(this.storage.includes(user))
-      return true;
-    else
-      return false;
+    for(let i = 0; i < this.storage.length; i++)
+    {
+      if(user_id == this.storage[i].id)
+      {
+        return true;
+      }
+    }
+
+    return false;
   }
+
 }
 
 let main_quene : Quene<IuserInQuene> = new Quene<IuserInQuene>();
@@ -204,7 +201,7 @@ export class GameGateway implements OnGatewayConnection{
   @SubscribeMessage('createInvitationRoom')
   async handleInvitation(@MessageBody() obj, @ConnectedSocket() client)
   {
-
+    
   }
   
   @SubscribeMessage('joinGame')
@@ -225,8 +222,10 @@ export class GameGateway implements OnGatewayConnection{
       console.log("database call failed");
       return ;
     }
+
     let user_in_quene_object : IuserInQuene = {id : user_that_joins.id , socket_id: client.id, username: user_that_joins.name, socket: client};
-    if(main_quene.check_if_is_in_quene(user_in_quene_object))
+
+    if(main_quene.check_if_is_in_quene(user_in_quene_object.id))
     {
       console.log("User is already in quene ");
       return ;
@@ -238,6 +237,7 @@ export class GameGateway implements OnGatewayConnection{
       main_quene.enquene(user_in_quene_object);
       return ;
     }
+
 
     //If there is already one user in the quene
     //add user to the quene and start the game
@@ -254,11 +254,17 @@ export class GameGateway implements OnGatewayConnection{
 
     
     const game_database_instance = await this.prisma.game.create({ data: { player_one: player_1.id, player_two: player_2.id } });
+    if(!game_database_instance)
+    {
+      console.log("Game database instance problem");
+      return; 
+    }
     game_var.id = game_database_instance.id;
-    player_1.socket.join(String(game_database_instance.id));
-    player_2.socket.join(String(game_database_instance.id));
     player_1.socket.emit("init", 1);
     player_2.socket.emit("init", 2);
+
+    player_1.socket.join(String(game_database_instance.id));
+    player_2.socket.join(String(game_database_instance.id));
     let gameObj = {game_instance: game_var, socket_id_1: player_1.socket_id, 
       socket_id_2: player_2.socket_id, gameId: game_database_instance.id}
 
@@ -268,19 +274,19 @@ export class GameGateway implements OnGatewayConnection{
       const winner : number = gameLoop(game_var);
       if(!winner)
       {
-
         emitGameState(String(game_database_instance.id), game_var, this.server);
       }else{
         if(winner == 2)
-
         {
+          console.log("Emit game_over, p1");
           this.server.sockets.in(String(game_database_instance.id)).emit(
             'gameOver', game_database_instance.player_one);
           game_database_instance.winner = game_database_instance.player_one;
           game_database_instance.loser = game_database_instance.player_two;
         }else{
-          // this.server.sockets.in(String(game_database_instance.id)).emit(
-          //   'gameOver', game_database_instance.player_one);
+          console.log("Emit game_over, p2");
+          this.server.sockets.in(String(game_database_instance.id)).emit(
+            'gameOver', game_database_instance.player_two);
           game_database_instance.winner = game_database_instance.player_two;
           game_database_instance.loser = game_database_instance.player_one;
         }
@@ -290,6 +296,7 @@ export class GameGateway implements OnGatewayConnection{
         game_database_instance.finished = true;
         await this.prisma.game.update({
           where: { id: game_database_instance.id },
+
           data: { 
           winner: game_database_instance.winner,
           loser: game_database_instance.loser,
@@ -301,10 +308,7 @@ export class GameGateway implements OnGatewayConnection{
         gameArray.splice(gameArray.indexOf(gameObj), 1);
         this.userService.add_game_to_history(game_database_instance.id);
         clearInterval(interval_id);
-
       }
-
-      
     }, 1000 / 50);
   }
 
@@ -314,25 +318,19 @@ export class GameGateway implements OnGatewayConnection{
     @ConnectedSocket() client) {
     let obj : KeyInfo = JSON.parse(keyobj);
 
-    console.log("Id game" , obj.game_id);
     let index = getIndex(obj.game_id);
     if(index == -1)
     {
-      console.log("If zero");
       return ;
     }
-    console.log("Co jest ", obj.socket_id , " vs ", gameArray[index].socket_id_1, " tej ", obj.player_number);
+    console.log("Co jest ", obj.socket_id , " vs player number ", obj.player_number , "socket id" ,  gameArray[index].socket_id_1, " tej ", obj.player_number);
     if (obj.player_number == 1 && obj.socket_id == gameArray[index].socket_id_1) {
-        console.log("If one");
         gameArray[index].game_instance.keysPressed_p1[obj.key] = true;
 
 
     } else if (obj.player_number == 2 && obj.socket_id == gameArray[index].socket_id_2) {
-      console.log("If two");
-
         gameArray[index].game_instance.keysPressed_p2[obj.key] = true;
     }
-
 
   }
   @SubscribeMessage('keyup')

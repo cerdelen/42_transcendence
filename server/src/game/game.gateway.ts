@@ -178,8 +178,94 @@ export class GameGateway implements OnGatewayConnection{
   @SubscribeMessage('playerAccepted')
   async playerAccepted(@MessageBody() obj, @ConnectedSocket() client)
   {
+    interface obj_type
+    {
+      inviterName: string,
+      userId: number,
+    }
 
+    let converted_obj : obj_type = JSON.parse(obj);
+    let player_1 = await this.userService.findUserByName(converted_obj.inviterName);
+    let player_2 = await this.userService.findUserById(converted_obj.userId);
+    if(!player_1 || !player_2)
+    {
+      console.log("Error accesing users data");
+      return ;
+    }
+    const player_1_socket = this.server.sockets.sockets.get(player_1.socketId);
+    const player_2_socket = this.server.sockets.sockets.get(player_2.socketId);
+    if(!player_1_socket || !player_2_socket)
+    {
+      console.log("Getting sockets problem");
+      return ;
+    }
+    //create game Instance add it into game Array and start it
+    let game_var = getInitialState();
+    game_var.player_1_nick = player_1.name;
+    game_var.player_2_nick = player_2.name;
+
+    //create room and create database entry for the game
+
+    
+    const game_database_instance = await this.prisma.game.create({ data: { player_one: player_1.id, player_two: player_2.id } });
+    if(!game_database_instance)
+    {
+      console.log("Game database instance problem");
+      return; 
+    }
+    game_var.id = game_database_instance.id;
+    player_1_socket.emit("invitationInit", 1);
+    player_2_socket.emit("invitationInit", 2);
+
+    player_1_socket.join(String(game_database_instance.id));
+    player_2_socket.join(String(game_database_instance.id));
+    let gameObj = {game_instance: game_var, socket_id_1: player_1.socketId, 
+      socket_id_2: player_2.socketId, gameId: game_database_instance.id}
+
+    gameArray.push(gameObj);
+    const interval_id = setInterval(() => 
+    {
+      const winner : number = gameLoop(game_var);
+      if(!winner)
+      {
+        emitGameState(String(game_database_instance.id), game_var, this.server);
+      }else{
+        if(winner == 2)
+        {
+          console.log("Emit game_over, p1");
+          this.server.sockets.in(String(game_database_instance.id)).emit(
+            'gameOver', game_database_instance.player_one);
+          game_database_instance.winner = game_database_instance.player_one;
+          game_database_instance.loser = game_database_instance.player_two;
+        }else{
+          console.log("Emit game_over, p2");
+          this.server.sockets.in(String(game_database_instance.id)).emit(
+            'gameOver', game_database_instance.player_two);
+          game_database_instance.winner = game_database_instance.player_two;
+          game_database_instance.loser = game_database_instance.player_one;
+        }
+        this.server.sockets.socketsLeave(String(game_database_instance.id));
+        game_database_instance.score_one = game_var.player_1_score;
+        game_database_instance.score_two = game_var.player_2_score;
+        game_database_instance.finished = true;
+        gameArray.splice(gameArray.indexOf(gameObj), 1);
+        clearInterval(interval_id);
+      }
+    }, 1000 / 50);
+    await this.prisma.game.update({
+      where: { id: game_database_instance.id },
+
+      data: { 
+      winner: game_database_instance.winner,
+      loser: game_database_instance.loser,
+      score_one: game_database_instance.score_one,
+      score_two: game_database_instance.score_two,
+      finished: true,
+      }
+    });
+    this.userService.add_game_to_history(game_database_instance.id);
   }
+
 
 
 
@@ -195,14 +281,83 @@ export class GameGateway implements OnGatewayConnection{
   @SubscribeMessage('rejectInvite')
   async rejectInvitation(@MessageBody() obj, @ConnectedSocket() socket)
   {
+    interface obj_type
+    {
+      inviterName: string,
+      userId: number,
+    }
 
+    let converted_obj : obj_type = JSON.parse(obj);
+
+    let invitingUser = await this.userService.findUserByName(converted_obj.inviterName);
+
+    console.log("invite rejected");
+    const invitedUserSocket = this.server.sockets.sockets.get(invitingUser.socketId);
+    if(!invitedUserSocket)
+    {
+      console.log("Inviting user error");
+      return ;
+    }
+    let invitedUser = await this.userService.findUserById(converted_obj.userId);
+    if(!invitedUser)
+    {
+      console.log("invited user creation  error");
+      return ;
+    }
+    invitedUserSocket.emit("gameCancelled", invitedUser.name);
   }
   
   @SubscribeMessage('createInvitationRoom')
   async handleInvitation(@MessageBody() obj, @ConnectedSocket() client)
   {
-    
+    console.log("creating invitation room");
+    interface obj_type{
+      userId: number,
+      userName: string,
+    } 
+    let converted_obj : obj_type = JSON.parse(obj);
+    console.log(converted_obj.userId , " + ", converted_obj.userName);
+    //check if invited user is already in the game
+    let invitedUser = await this.userService.findUserByName(converted_obj.userName);
+    if(!invitedUser)
+    {
+      console.log("Database user error");
+      return ;
+    }
+    if(main_quene.check_if_is_in_quene(invitedUser.id))
+    {
+      console.log("User is already in the quene cannot invite");
+      client.emit("gameCancelled", invitedUser.name);
+      return ;
+    };
+    //check if user is in the game
+    for(let i = 0; i < gameArray.length; i++)
+    {
+      if(gameArray[i].socket_id_1 == invitedUser.socketId || gameArray[i].socket_id_2 == invitedUser.socketId)
+      {
+        console.log("User is already in the game cannot invite");
+        client.emit("gameCancelled", invitedUser.name);
+        return ;
+      }
+    }
+    //If user is free send an invite to the user
+    let invitingUser = await this.userService.findUserById(converted_obj.userId);
+    if(!invitedUser)
+    {
+      console.log("getting invitng user failed");
+      return ;
+    }
+    const invitedUserSocket = this.server.sockets.sockets.get(invitedUser.socketId);
+    if(!invitedUserSocket)
+    {
+
+      console.log("Cannot find invited user socket");
+      client.emit("gameCancelled", invitedUser.name);
+      return ;
+    }
+    invitedUserSocket.emit("invitationPopUp", invitingUser.name);
   }
+
   
   @SubscribeMessage('joinGame')
   async joinGame(@MessageBody() userId: string,
@@ -269,7 +424,8 @@ export class GameGateway implements OnGatewayConnection{
       socket_id_2: player_2.socket_id, gameId: game_database_instance.id}
 
     gameArray.push(gameObj);
-    const interval_id = setInterval(async () => 
+    console.log("Starting interval");
+    const interval_id = setInterval(() => 
     {
       const winner : number = gameLoop(game_var);
       if(!winner)
@@ -294,22 +450,22 @@ export class GameGateway implements OnGatewayConnection{
         game_database_instance.score_one = game_var.player_1_score;
         game_database_instance.score_two = game_var.player_2_score;
         game_database_instance.finished = true;
-        await this.prisma.game.update({
-          where: { id: game_database_instance.id },
-
-          data: { 
-          winner: game_database_instance.winner,
-          loser: game_database_instance.loser,
-          score_one: game_database_instance.score_one,
-          score_two: game_database_instance.score_two,
-          finished: true,
-          }
-        });
         gameArray.splice(gameArray.indexOf(gameObj), 1);
-        this.userService.add_game_to_history(game_database_instance.id);
         clearInterval(interval_id);
       }
     }, 1000 / 50);
+    await this.prisma.game.update({
+      where: { id: game_database_instance.id },
+
+      data: { 
+      winner: game_database_instance.winner,
+      loser: game_database_instance.loser,
+      score_one: game_database_instance.score_one,
+      score_two: game_database_instance.score_two,
+      finished: true,
+      }
+    });
+    this.userService.add_game_to_history(game_database_instance.id);
   }
 
  
@@ -323,7 +479,6 @@ export class GameGateway implements OnGatewayConnection{
     {
       return ;
     }
-    console.log("Co jest ", obj.socket_id , " vs player number ", obj.player_number , "socket id" ,  gameArray[index].socket_id_1, " tej ", obj.player_number);
     if (obj.player_number == 1 && obj.socket_id == gameArray[index].socket_id_1) {
         gameArray[index].game_instance.keysPressed_p1[obj.key] = true;
 

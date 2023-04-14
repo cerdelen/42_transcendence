@@ -17,10 +17,11 @@ export class GameController
 	{
 		console.log("many game data controller");
 		let obj = await this.gameService.get_many_games(game_ids)
-		console.log("After many games data controller", obj);
+		// console.log("After many games data controller", obj);
 		return (obj);
 	}
 
+	
 	@UseGuards(Jwt_Auth_Guard)
 	@Get('game_data/:game_id')
 	async	get_game_data(@Param('game_id') game_id)

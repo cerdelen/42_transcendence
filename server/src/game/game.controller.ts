@@ -21,7 +21,7 @@ export class GameController
 		return (obj);
 	}
 
-	
+
 	@UseGuards(Jwt_Auth_Guard)
 	@Get('game_data/:game_id')
 	async	get_game_data(@Param('game_id') game_id)

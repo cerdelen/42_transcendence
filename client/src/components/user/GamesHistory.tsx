@@ -90,7 +90,7 @@ const GameHistory = ({ gamesList }: Props) => {
         },
         body: JSON.stringify({ game_ids: gamesList}),
       });
-      
+      console.log("Many games data controller succeded");
       const allGames = await gamesListy.json();
         setGames(allGames);
         fetchNamesOponentOne(allGames);

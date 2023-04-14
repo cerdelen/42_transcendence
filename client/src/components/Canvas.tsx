@@ -224,7 +224,6 @@ const Canvas = ({ userId }: { userId: string }) => {
             setPlayerNumber(num);
             // our_socket.off("invitationInit");
             console.log("Invitation init");
-            our_socket.off("invitationInit");
         });
    
     }, [])

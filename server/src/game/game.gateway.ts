@@ -72,7 +72,26 @@ class Quene<T> implements IQuene<IuserInQuene>
     }
     this.storage.push(item);
   }
-
+  remove_from_the_quene(userId : number)
+  {
+    console.log("deleted from quene");
+    let index_to_remove = -1;
+    for(let i = 0; i < this.storage.length; i++)
+    {
+      if(this.storage[i].id = userId)
+      {
+        index_to_remove = userId;
+      }
+    }
+    if(index_to_remove == -1)
+    {
+      return ;
+    }
+    if(index_to_remove == 0)
+    {
+      this.storage.splice(index_to_remove, 1);
+    }
+  }
   dequene(): IuserInQuene | undefined{
       return this.storage.shift();
   }
@@ -105,6 +124,7 @@ async function emitToTheUserSocket(user: any, server: Server, event_name:string,
   let found : boolean = false;
   sockets.forEach( (e)  => 
   {
+    
     if(e.id === user.socketId)
     {
       final_socket = e;
@@ -171,7 +191,7 @@ export class GameGateway implements OnGatewayConnection{
   @SubscribeMessage('remove_from_quene')
   async removeFromQuene(@MessageBody() userId, @ConnectedSocket() client)
   {
-
+    this.userService.findUserById
   }
 
 //tldr Rooms

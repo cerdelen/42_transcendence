@@ -16,6 +16,7 @@ const Header = () => {
     console.log("game invited is " ,gameInvited);
     if(gameInvited)
     {
+      setGameActive(true);
       return ;
     }
     if(gameActive && !gameStarted)

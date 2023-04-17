@@ -156,29 +156,56 @@ const Canvas = ({ userId }: { userId: string }) => {
                 ctx.canvas.style.display = "none";
             }
 
-        }
-        our_socket.on('sameUser', () => {
-            our_socket.off('sameUser');    
-            reset();
-            setGameActive(false);
-            alert("Same user wanted to connect to one game");
-        })       
+        }  
     }, [gameActive])
 
     
+    function handleGameCode(data: string) {
+        setGameCode(data);
+    }
+
+    function reset() {
+        setCodeInput("");
+        setGameCode("");
+        setGameStarted(false);
+        if (canvasRef.current) {
+            ctx = canvasRef.current.getContext('2d');
+            ctx.clearRect(0, 0, 700, 400);;
+        }
+    }
+
     useEffect(() => 
     {
+
         our_socket.on("handleTooManyPlayers", () => {
             our_socket.off("handleTooManyPlayers");
             reset();
             setGameActive(false);
             alert("This game has too many players");
         })
-    }, [gameActive])
-    useEffect(() => 
-    {
+
+        our_socket.on("gameCancelled", (rejectedUserName) => 
+        {
+            setGameInvited(false);
+            console.log("Game cancelled invoked");   
+            alert("Game has been cancelled by " + rejectedUserName);
+            setPlayerNumber(0);
+            setGameActive(false);
+        
+        })
+        our_socket.on('invitationInit', (UserIndex_: number) => {
+            
+            setGameInvited(true);
+            setGameActive(true);
+            setGameStarted(false);
+            console.log("Id of the user ", UserIndex_);
+            let num: number = UserIndex_;
+            setPlayerNumber(num);
+            // our_socket.off("invitationInit");
+            console.log("Invitation init");
+        });
+        
         our_socket.on('gameOver', (data: number) => {
-            our_socket.off('gameOver');
             if (!gameActive) {
                 return;
             }
@@ -196,52 +223,14 @@ const Canvas = ({ userId }: { userId: string }) => {
                 cancelAnimationFrame(animationFrameNum);
             }
             setGameActive(false);
-            our_socket.off('gameOver');
         })
-    }, [gameActive])
-    function handleGameCode(data: string) {
-        setGameCode(data);
-    }
 
-    function reset() {
-        setCodeInput("");
-        setGameCode("");
-        setGameStarted(false);
-        if (canvasRef.current) {
-            ctx = canvasRef.current.getContext('2d');
-            ctx.clearRect(0, 0, 700, 400);;
-        }
-    }
-    useEffect(() => 
-    {
-        our_socket.on('invitationInit', (UserIndex_: number) => {
-            
-            setGameInvited(true);
-            setGameActive(true);
-            setGameStarted(false);
-            console.log("Id of the user ", UserIndex_);
-            let num: number = UserIndex_;
-            setPlayerNumber(num);
-            // our_socket.off("invitationInit");
-            console.log("Invitation init");
-        });
-   
-    }, [])
-
-    useEffect(() => 
-    {
-        our_socket.on("gameCancelled", (rejectedUserName) => 
-        {
-            setGameInvited(false);
-            console.log("Game cancelled invoked");   
-            alert("Game has been cancelled by " + rejectedUserName);
-            setPlayerNumber(0);
+        our_socket.on('sameUser', () => {
+            reset();
             setGameActive(false);
-            our_socket.off("gameCancelled");
-        })
-    }, [])
-    
-    useEffect(() => {
+            alert("Same user wanted to connect to one game");
+        })     
+
         our_socket.on('init', (UserIndex_: number) => {
             // if(!gameActive)
             // {
@@ -252,29 +241,11 @@ const Canvas = ({ userId }: { userId: string }) => {
             console.log("Id of the user ", UserIndex_);
             let num: number = UserIndex_;
             setPlayerNumber(num);
-        
-            our_socket.off("init");
 
         });
-    }, [])
 
-    useEffect(() => {
-        if (canvasRef.current) {
-            ctx = canvasRef.current.getContext('2d');
-            ctx.canvas.hidden = true;
-        }
-        our_socket.on('gameCode', handleGameCode);
-        // our_socket.on('unknownGame', () => 
-        // {
-        //     alert("client socket id not known refresh the page");
-        // })
-    }, [])
-
-    useEffect(() => {
         our_socket.on('gameState', (gameState: string) => {
             if (!gameActive) {
-                
-                our_socket.off('gameState');
                 return;
             }
             let animFrame: number;
@@ -293,10 +264,39 @@ const Canvas = ({ userId }: { userId: string }) => {
                 
                 setAnimationFrameNum(requestAnimationFrame(() => drawPong(our_socket, ctx, gameInfo, images[mapNumber])));
             }
-            our_socket.off('gameState');
+            
         })
-        // cancelAnimationFrame(animationFrameNum);
-    }, [gameInfo, gameActive, gameStarted])
+
+        our_socket.on('gameCode', handleGameCode);
+        return () => {
+            // before the component is destroyed
+            // unbind all event handlers used in this component
+            our_socket.off("gameCancelled");
+            our_socket.off("invitationInit");
+            our_socket.off("gameOver");
+            our_socket.off("sameUser");
+            our_socket.off("handleTooManyPlayers");
+            our_socket.off("init");
+            our_socket.off("gameCode");
+            our_socket.off('gameState');
+        };
+
+
+        
+    }, [gameInfo, gameStarted,gameActive])
+
+    useEffect(() => {
+        if (canvasRef.current) {
+            ctx = canvasRef.current.getContext('2d');
+            ctx.canvas.hidden = true;
+        }
+        
+        // our_socket.on('unknownGame', () => 
+        // {
+        //     alert("client socket id not known refresh the page");
+        // })
+    }, [])
+
 
     useEffect(() => 
     {

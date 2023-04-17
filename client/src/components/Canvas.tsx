@@ -211,14 +211,14 @@ const Canvas = ({ userId }: { userId: string }) => {
             }
             let num: number = data;
             if (num == Number.parseInt(userId)) {
-                console.log("Winner");
                 reset();
-                console.log("You win executed " + userId);
+                console.log("Winner");
                 cancelAnimationFrame(animationFrameNum);
-                // alert("You won 15 mmr! Congratulations!")
+                console.log("You win executed " + userId);
+                alert("You won 15 mmr! Congratulations!")
             } else {
-                // alert("You lost 15 mmr! NOOB! How can you lose in Pong?!?!?!")
                 console.log("You lose executed\n" + userId);
+                alert("You lost 15 mmr! NOOB! How can you lose in Pong?!?!?!")
                 reset();
                 cancelAnimationFrame(animationFrameNum);
             }

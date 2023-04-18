@@ -15,9 +15,9 @@ export class GameController
 	@Post('many_games_data')
 	async	get_may_games_data(@Body('game_ids') game_ids: number[])
 	{
-		console.log("many game data controller");
+		// console.log("many game data controller");
 		let obj = await this.gameService.get_many_games(game_ids)
-		// console.log("After many games data controller", obj);
+		// // console.log("After many games data controller", obj);
 		return (obj);
 	}
 

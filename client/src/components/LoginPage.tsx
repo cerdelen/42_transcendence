@@ -4,7 +4,7 @@ import ipAddress from '../constants';
 
 
 const LoginPage = () => {
-  console.log(ipAddress);
+  // console.log(ipAddress);
   
   const handleLoginClick = async() => {
     try {

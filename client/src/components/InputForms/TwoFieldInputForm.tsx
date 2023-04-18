@@ -27,7 +27,7 @@ const TwoFieldInputForm = ({
   const handlePasswordChange = (e: any) => {
     setPassword(e.target.value);
   };
-  console.log(password);
+  // console.log(password);
 
   return (
     <form

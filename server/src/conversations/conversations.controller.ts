@@ -352,15 +352,15 @@ export class ConversationController {
 		const idx_from_black_list = conversation.conversation_black_list_arr.findIndex(element => element == id_to_ban);
 		const owner_user_idx = conversation.conversation_owner_arr.findIndex(element => element == id_to_ban);
 		if (owner_user_idx >= 0) {
-			console.log("in if");
+			// console.log("in if");
 			throw new HttpException("Can't mute the conversation owner!!!", HttpStatus.FORBIDDEN);
 		}
 		else if (admin_user_idx < 0) {
-			console.log("else if 1");
+			// console.log("else if 1");
 			return conversation;
 		}
 		else if (idx_from_black_list >= 0) {
-			console.log("else if 2");
+			// console.log("else if 2");
 			conversation.conversation_black_list_arr.splice(idx_from_black_list, 1);
 			return this.conversationsService.updateConversation({
 				where: {
@@ -372,7 +372,7 @@ export class ConversationController {
 			})
 		}
 		else {
-			console.log("last else");
+			// console.log("last else");
 
 			const idx_in_participant_arr = conversation.conversation_participant_arr.indexOf(id_to_ban);
 			conversation.conversation_participant_arr.splice(idx_in_participant_arr, 1);
@@ -413,9 +413,9 @@ export class ConversationController {
 		const conv_bef = await this.conversationsService.findConversation(conversation_id);
 		if(!conv_bef.conversation_participant_arr.includes(id_to_kick))
 		return conv_bef;
-		console.log("before ", conv_bef.conversation_participant_arr);
+		// console.log("before ", conv_bef.conversation_participant_arr);
 		const conv = await this.conversationsService.remove_user_from_conversation(conversation_id, req.user.id, id_to_kick);
-		console.log("after ", conv.conversation_participant_arr);
+		// console.log("after ", conv.conversation_participant_arr);
 		if(!conv.conversation_participant_arr.includes(id_to_kick))
 			this.convGateway.left_chat(conversation_id, id_to_kick);
 		return conv;

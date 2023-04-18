@@ -87,10 +87,10 @@ const UserPage = () => {
   };
 
   const startChat = async () => {
-    console.log("%cSTART CHAT", "color: green");
+    // console.log("%cSTART CHAT", "color: green");
 
     try {
-      console.log("%cINSIDE TRY", "color: blue");
+      // console.log("%cINSIDE TRY", "color: blue");
 
       our_socket.emit("create_dialogue", {
         userid_creator: myUserId,
@@ -152,7 +152,7 @@ const UserPage = () => {
             body: JSON.stringify({ removing_you: userIdCard }),
           }
         );
-        console.log(response);
+        // console.log(response);
         setIsFriend(false);
       } catch (error) {
         alert("Could not modify friends list");
@@ -221,9 +221,9 @@ const UserPage = () => {
   useEffect(() => {
     const setup_sockets = () =>
     {
-      console.log("setup sockets for new friend accept");
+      // console.log("setup sockets for new friend accept");
       our_socket.on('new_friend_accepted', ({ friend_id_1, friend_id_2 }: { friend_id_1: number, friend_id_2: number }) => {
-        console.log("new_friend_accepted ");
+        // console.log("new_friend_accepted ");
         if (friend_id_1 === Number(myUserId) && friend_id_2 === Number(userIdCard)) {
           if (!friendsListIdCard.includes(friend_id_1)) {
             setFriendsListIdCard([...friendsListIdCard, friend_id_1]);
@@ -243,7 +243,7 @@ const UserPage = () => {
             }
           }
           if (!myFriendList.includes(friend_id_2)) {
-            console.log("setting new friendlist, adding this id " + friend_id_2);
+            // console.log("setting new friendlist, adding this id " + friend_id_2);
             setMyFriendList([...myFriendList, friend_id_2])
           }
           setIsFriend(true);
@@ -252,7 +252,7 @@ const UserPage = () => {
             setFriendsListIdCard([...friendsListIdCard, friend_id_2]);
           }
           if (!myFriendList.includes(friend_id_1)) {
-            console.log("setting new friendlist, adding this id " + friend_id_1);
+            // console.log("setting new friendlist, adding this id " + friend_id_1);
             setMyFriendList([...myFriendList, friend_id_1])
           }
           if (myOutgoingFriendReq.includes(friend_id_1)) {
@@ -281,7 +281,7 @@ const UserPage = () => {
     const setup_sockets = () =>
     {
       our_socket.on('new_friend_request_received', ({ received_friend_req, sent_friend_req }: { received_friend_req: number, sent_friend_req: number }) => {
-        console.log("inside friend request received " + received_friend_req, sent_friend_req, Number(myUserId), Number(userIdCard));
+        // console.log("inside friend request received " + received_friend_req, sent_friend_req, Number(myUserId), Number(userIdCard));
         if (Number(myUserId) == received_friend_req && Number(userIdCard) == received_friend_req) {
           if (!incoming_frined_requests.includes(sent_friend_req)) {
             incoming_frined_requests.push(sent_friend_req);
@@ -289,7 +289,7 @@ const UserPage = () => {
           }
         }
         if (Number(myUserId) == sent_friend_req && received_friend_req == Number(userIdCard)) {
-          console.log("got into if second");
+          // console.log("got into if second");
           if (!myOutgoingFriendReq.includes(received_friend_req)) {
             myOutgoingFriendReq.push(received_friend_req);
             setMyOutgoingFriendReq([...myOutgoingFriendReq])
@@ -306,7 +306,7 @@ const UserPage = () => {
     {
 
       our_socket.on('delete_friend_request', ({ user_one, user_two }: { user_one: number, user_two: number }) => {
-        console.log("delete friend request socket");
+        // console.log("delete friend request socket");
         
         if (Number(myUserId) == user_one && Number(userIdCard) == user_one) {
           const idx = incoming_frined_requests.indexOf(user_two);
@@ -333,7 +333,7 @@ const UserPage = () => {
     {
 
       our_socket.on('remove_friend', ({ user_one, user_two }: { user_one: number, user_two: number }) => {
-        // console.log("socket on remove friend");
+        // // console.log("socket on remove friend");
         if (Number(myUserId) == user_one || Number(myUserId) == user_two)
         setIsFriend(false)
         if (friendsListIdCard.includes(user_one)) {
@@ -362,7 +362,7 @@ const UserPage = () => {
       alert("You have game ongoing cannot invite other players");
       return ;
     }
-    console.log(userId + " Inviting player " + userName);
+    // console.log(userId + " Inviting player " + userName);
     navigate('/game')
     setShowUserInto(false);
     setGameInvited(true);

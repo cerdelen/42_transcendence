@@ -39,24 +39,24 @@ const PopUp = ({setInviterName ,inviterName ,isInvited, setIsInvited} : Props) =
     const {myUserId} = useUserContext();
     const {mapNumber, setMapNumber} = useContext(CounterContext);
     const  acceptInvite = () => {
-      console.log("Invite accepted");
+      // console.log("Invite accepted");
       setIsInvited(false);
       setInviterName("");
       navigate("/game");
       let obj = {inviterName: inviterName, userId: myUserId}
       our_socket.emit("playerAccepted", JSON.stringify(obj))
-      console.log("player accepted the invitation ");
+      // console.log("player accepted the invitation ");
     }
     
     const rejectInvite = () => {
       if(isInvited === false)
       {
-        console.log("Is invited ");
+        // console.log("Is invited ");
         return ;
       }
-      console.log("Invite rejected");
+      // console.log("Invite rejected");
       let obj = {inviterName: inviterName, userId: myUserId}
-      console.log("Inviter name == " , inviterName);
+      // console.log("Inviter name == " , inviterName);
       our_socket.emit("rejectInvite", JSON.stringify(obj));
       setInviterName("");
       setIsInvited(false);

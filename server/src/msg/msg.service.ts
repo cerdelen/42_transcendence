@@ -54,7 +54,7 @@ export class MsgService {
 			} catch(error) {
 				if (error instanceof Prisma.PrismaClientKnownRequestError &&
 					error.code === "P2025") {
-						////console.log("Couldn't find an item to deleteMany");
+						////// console.log("Couldn't find an item to deleteMany");
 					}
 			}
 		}
@@ -65,12 +65,12 @@ export class MsgService {
 				const toDelete = await this.prisma.message.delete({
 					where: {},
 				})
-				////console.log("deletedUser = " + toDelete);
+				////// console.log("deletedUser = " + toDelete);
 				return toDelete;		
 			} catch(error) {
 				if (error instanceof Prisma.PrismaClientKnownRequestError &&
 					error.code === "P2025") {
-						////console.log("Couldn't find an item to delete");
+						////// console.log("Couldn't find an item to delete");
 				}
 				}
 		}
@@ -78,18 +78,18 @@ export class MsgService {
 					// 	throw new NotFoundException(`Couldn't find an item to delete`)
 
 		async createMsg(createMsgDto: CreateMsgDto) {
-			// ////console.log("DATA.USER_ID = " + createMsgDto.);
-			////console.log("createMsg function");
+			// ////// console.log("DATA.USER_ID = " + createMsgDto.);
+			////// console.log("createMsg function");
 			
-			////console.log("DATA.TEXT = " + createMsgDto.text);
+			////// console.log("DATA.TEXT = " + createMsgDto.text);
 			// const conversat = await this.prisma.conversation.findUnique({
 			// 	where: {
 			// 		conversation_id: Number(createMsgDto.user_id)
 			// 	},
 			// })
-			// ////console.log("CONVERSATION_ID = " + conversat.conversation_id);
-			// ////console.log(createMsgDto.user_id);
-			// ////console.log(conversat.conversation_id);
+			// ////// console.log("CONVERSATION_ID = " + conversat.conversation_id);
+			// ////// console.log(createMsgDto.user_id);
+			// ////// console.log(conversat.conversation_id);
 			
 			// if (!conversat)
 			// 	throw new HttpException('Conversat not found', HttpStatus.BAD_REQUEST);
@@ -97,16 +97,16 @@ export class MsgService {
 			const convers = await this.conversation.findConversation(createMsgDto.conversation_id);
 			if(!convers)
 				return ;
-			////console.log(convers.conversation_id);
+			////// console.log(convers.conversation_id);
 			if (!convers)
 				throw new HttpException("Conversation was not found", HttpStatus.FORBIDDEN);
-				////console.log("CONVERSATION = " + convers.conversation_id);
+				////// console.log("CONVERSATION = " + convers.conversation_id);
 			const user = await this.user.findUserById(createMsgDto.author);
-			// ////console.log("USER.NAME = " + user.name);
+			// ////// console.log("USER.NAME = " + user.name);
 			
 			if (!user)
 				throw new HttpException("User was not found", HttpStatus.FORBIDDEN);
-			// ////console.log("USER = " + user.id);
+			// ////// console.log("USER = " + user.id);
 			
 			const newMsg = await this.prisma.message.create({
 				data: { 
@@ -186,7 +186,7 @@ export class MsgService {
 			const existingUser = await this.user.findUserById(user_id);
 			if (!existingUser)
 				throw new HttpException("user was not found", HttpStatus.BAD_REQUEST);
-			// ////console.log("existinguser.name = " + existingUser.name);
+			// ////// console.log("existinguser.name = " + existingUser.name);
 			const messages = await this.prisma.message.findMany({
 				where: {
 					author: +user_id,

@@ -86,10 +86,10 @@ const Get_all_other_users = () => {
       if (response.ok) {
         const data: number[] = await response.json();
 
-        console.log("DATA");
+        // console.log("DATA");
 
-        console.log(typeof data[0]);
-        console.log(data);
+        // console.log(typeof data[0]);
+        // console.log(data);
 
         set_other_users_id(data);
       }

@@ -17,7 +17,7 @@ const handleLeaveChat = (
   userId: string,
   group_chat: boolean | undefined
 ) => {
-  console.log("%ccalling this handleLeaveChat", "color: pink");
+  // console.log("%ccalling this handleLeaveChat", "color: pink");
 
   if (group_chat == false) return;
   if (chat_id != -1) {
@@ -221,7 +221,7 @@ const Chat_details = () => {
     inputValue: string
   ) => {
     if (inputValue.length > 0) {
-      console.log(displayed_chat.conversation_id + "chat id i append to url");
+      // console.log(displayed_chat.conversation_id + "chat id i append to url");
       try {
 
         await fetch(

@@ -13,7 +13,7 @@ const Header = () => {
     setShowUserInto(false);
     setIsDropdownOpen(false);
     setShowMenu(false);
-    console.log("game invited is " ,gameInvited);
+    // console.log("game invited is " ,gameInvited);
     if(gameInvited)
     {
       setGameActive(true);
@@ -25,7 +25,7 @@ const Header = () => {
       our_socket.emit("remove_from_quene", myUserId);
     }else if(gameStarted && gameActive)
     {
-      console.log("Disconnect ran");
+      // console.log("Disconnect ran");
       // setGameActive(false);
       // setGameStarted(false);
       // our_socket.emit("player_disconnected", myUserId);

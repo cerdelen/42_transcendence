@@ -39,7 +39,7 @@ const pushNameToMap = async (user_id: number, name_map: Map<number, string>, set
         body: JSON.stringify({ user_id: user_id }),
       });
       const name = await response.text();
-      // console.log("this is a new name i wanna add to map " + name);
+      // // console.log("this is a new name i wanna add to map " + name);
       
     name_map.set(user_id, name);
     set_name_map(new Map(name_map));
@@ -124,8 +124,8 @@ export function Profile_picture_Provider({ children }: MyContextProviderProps) {
   }, []);
   
 
-  // console.log("this is name map "+ JSON.stringify(name_map));
-  // console.log("this is picutre map "+ JSON.stringify(picture_map));
+  // // console.log("this is name map "+ JSON.stringify(name_map));
+  // // console.log("this is picutre map "+ JSON.stringify(picture_map));
   
 
   const value = {

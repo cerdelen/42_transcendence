@@ -121,7 +121,7 @@ useEffect(() => {
     	}
 	}, [])
 	
-	console.log("myfriendlist " + myFriendList);
+	// console.log("myfriendlist " + myFriendList);
 const value={
 	myUserId,
 	myName,

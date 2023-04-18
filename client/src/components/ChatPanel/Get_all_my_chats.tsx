@@ -87,11 +87,11 @@ const Chat_preview_card = ({chat_id, myUserId} : chat_props) => {
 			
 			if(picture_map.has(Number(other_user_id)))
 			{
-				console.log("already included");
+				// console.log("already included");
 				setPhoto(picture_map.get(Number(other_user_id)) ?? '');
 				return ;
 			}
-			console.log("was NOT already included");
+			// console.log("was NOT already included");
 			setPhoto(await pushPictureToMap(Number(other_user_id), picture_map, set_picture_map));
 		}
 		if (picture_map != undefined)
@@ -143,7 +143,7 @@ const Get_all_my_chats = () =>
 					setDisplayed_chat(conv);
 				}
 			} catch (error) {
-				console.log(error);	
+				// console.log(error);	
 			}
 		}
 		set_new_displayed_chat();

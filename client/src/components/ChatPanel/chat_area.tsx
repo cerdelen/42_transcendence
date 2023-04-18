@@ -16,7 +16,7 @@ const Chat_input_filed_and_send_button = () => {
   const sendMessage = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!input) return;
-    console.log("Send message");
+    // console.log("Send message");
     our_socket.emit( "message", {
         author: Number(myUserId),
         text: input,
@@ -28,7 +28,7 @@ const Chat_input_filed_and_send_button = () => {
   };
   let timeout: any;
   const emitTyping = () => {
-      console.log("i am emitting typing");
+      // console.log("i am emitting typing");
     our_socket.emit("typing", { isTyping: true, userId: myUserId, chat_id: displayed_chat.conversation_id });
     timeout = setTimeout(() => {
       our_socket.emit("typing", { isTyping: false, userId: myUserId, chat_id: displayed_chat.conversation_id });
@@ -43,7 +43,7 @@ const Chat_input_filed_and_send_button = () => {
         value={input}
         onInput={emitTyping}
         onChange={(e) => {
-          console.log(e.target.value);
+          // console.log(e.target.value);
           setInput(e.target.value);
         }}
       />
@@ -77,13 +77,13 @@ const Chat_area = () => {
 						},
 					});
 					const conv = await response.json();
-          console.log("RESEING WHOLE CONV");
+          // console.log("RESEING WHOLE CONV");
 					setDisplayed_chat(conv);
 				}
 			}
       catch (error)
       {
-				console.log(error);	
+				// console.log(error);	
 			}
 		}
 		set_new_displayed_chat();

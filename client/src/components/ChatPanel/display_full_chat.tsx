@@ -108,7 +108,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
 
         temp_map.set(participants[index], userName);
       }
-      console.log("setting name map");
+      // console.log("setting name map");
 
       set_name_map(temp_map);
     };
@@ -143,7 +143,7 @@ function Display_full_chat({ chat_id }: { chat_id: number }) {
     };
     get_messages(chat_id);
     our_socket.on("some_one_joined_group_chat", ({ conv_id, joined_user_id }: { conv_id: number, joined_user_id: number }) => {
-      console.log("someone joined");
+      // console.log("someone joined");
 
       if (joined_user_id != Number(myUserId) && displayed_chat.conversation_id == conv_id) {
         displayed_chat.conversation_participant_arr.push(joined_user_id);

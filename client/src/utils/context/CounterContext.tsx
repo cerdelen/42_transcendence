@@ -14,7 +14,7 @@ interface Props {
 }
 export const CounterProvider: React.FC<Props> = ({children}) => {
   const [mapNumber, setMapNumber] = useState<number>(0);
-console.log("Siemanko ");
+// console.log("Siemanko ");
   return (
     <CounterContext.Provider value={{ mapNumber, setMapNumber }}>
       {children}

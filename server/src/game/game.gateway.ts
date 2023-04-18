@@ -37,13 +37,13 @@ function  run_game(gameObj: any, game_database_instance: any, game_var: any, ser
       }else{
         if(winner == 2)
         {
-          console.log("Emit game_over, p1");
+          // console.log("Emit game_over, p1");
           server.sockets.in(String(game_database_instance.id)).emit(
             'gameOver', game_database_instance.player_one);
           winning_player_num = game_database_instance.player_one;
           losing_player_num = game_database_instance.player_two;
         }else{
-          console.log("Emit game_over, p2");
+          // console.log("Emit game_over, p2");
           server.sockets.in(String(game_database_instance.id)).emit(
             'gameOver', game_database_instance.player_two);
           winning_player_num = game_database_instance.player_two;
@@ -122,7 +122,7 @@ class Quene<T> implements IQuene<IuserInQuene>
   }
   remove_from_the_quene(userId : number)
   {
-    console.log("deleted from quene");
+    // console.log("deleted from quene");
     let index_to_remove = -1;
     for(let i = 0; i < this.storage.length; i++)
     {
@@ -185,7 +185,7 @@ async function emitToTheUserSocket(user: any, server: Server, event_name:string,
   }
   if(event_name == 'gameCancelled')
   {
-    console.log("emitting cancelled ");
+    // console.log("emitting cancelled ");
   }
   final_socket.emit(event_name, message)
 }
@@ -207,7 +207,7 @@ export class GameGateway implements OnGatewayConnection{
 	}
 
   onModuleInit() {
-			console.log("created this game gateway");
+			// console.log("created this game gateway");
 			this.server.sockets.setMaxListeners(20);
   }
 
@@ -217,15 +217,15 @@ export class GameGateway implements OnGatewayConnection{
   async setupUserSocketId(@MessageBody() userId: string,
   @ConnectedSocket() socket)
   {
-    console.log("This is what user id data i got " , userId);
+    // console.log("This is what user id data i got " , userId);
     if(!Number.parseInt(userId))
     {
 
-      console.log("socket id setting up error ", Number.parseInt(userId));
+      // console.log("socket id setting up error ", Number.parseInt(userId));
       return ;
     }
     await this.userService.updateUser({where: {id: Number.parseInt(userId)}, data: {socketId: socket.id}} );
-    console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
+    // console.log("Socket id of the user " + await this.userService.get_user_socket_id(Number.parseInt(userId)));
   }
   @SubscribeMessage("online_inform")
   async handle_online(@MessageBody() userId: string) {
@@ -257,17 +257,17 @@ export class GameGateway implements OnGatewayConnection{
     let player_2 = await this.userService.findUserById(converted_obj.userId);
     if(!player_1 || !player_2)
     {
-      console.log("Error accesing users data");
+      // console.log("Error accesing users data");
       return ;
     }
     invitesArray.splice(invitesArray.indexOf(player_1.id), 1);
     invitesArray.splice(invitesArray.indexOf(player_2.id), 1);
-    console.log("Invites array after slicing",  invitesArray);
+    // console.log("Invites array after slicing",  invitesArray);
     const player_1_socket = this.server.sockets.sockets.get(player_1.socketId);
     const player_2_socket = this.server.sockets.sockets.get(player_2.socketId);
     if(!player_1_socket || !player_2_socket)
     {
-      console.log("Getting sockets problem");
+      // console.log("Getting sockets problem");
       return ;
     }
     //create game Instance add it into game Array and start it
@@ -281,7 +281,7 @@ export class GameGateway implements OnGatewayConnection{
     const game_database_instance = await this.prisma.game.create({ data: { player_one: player_1.id, player_two: player_2.id } });
     if(!game_database_instance)
     {
-      console.log("Game database instance problem");
+      // console.log("Game database instance problem");
       return; 
     }
     
@@ -323,17 +323,17 @@ export class GameGateway implements OnGatewayConnection{
 
     let invitingUser = await this.userService.findUserByName(converted_obj.inviterName);
 
-    console.log("invite rejected");
+    // console.log("invite rejected");
     const invitedUserSocket = this.server.sockets.sockets.get(invitingUser.socketId);
     if(!invitedUserSocket)
     {
-      console.log("Inviting user error");
+      // console.log("Inviting user error");
       return ;
     }
     let invitedUser = await this.userService.findUserById(converted_obj.userId);
     if(!invitedUser)
     {
-      console.log("invited user creation  error");
+      // console.log("invited user creation  error");
       return ;
     }
     let invited_user_id = invitedUser.id;
@@ -346,23 +346,23 @@ export class GameGateway implements OnGatewayConnection{
   @SubscribeMessage('createInvitationRoom')
   async handleInvitation(@MessageBody() obj, @ConnectedSocket() client)
   {
-    console.log("creating invitation room");
+    // console.log("creating invitation room");
     interface obj_type{
       userId: number,
       userName: string,
     } 
     let converted_obj : obj_type = JSON.parse(obj);
-    console.log(converted_obj.userId , " + ", converted_obj.userName);
+    // console.log(converted_obj.userId , " + ", converted_obj.userName);
     //check if invited user is already in the game
     let invitedUser = await this.userService.findUserByName(converted_obj.userName);
     if(!invitedUser)
     {
-      console.log("Database user error");
+      // console.log("Database user error");
       return ;
     }
     if(main_quene.check_if_is_in_quene(invitedUser.id))
     {
-      console.log("User is already in the quene cannot invite");
+      // console.log("User is already in the quene cannot invite");
       client.emit("gameCancelled", invitedUser.name);
       return ;
     };
@@ -371,7 +371,7 @@ export class GameGateway implements OnGatewayConnection{
     {
       if(gameArray[i].socket_id_1 == invitedUser.socketId || gameArray[i].socket_id_2 == invitedUser.socketId)
       {
-        console.log("User is already in the game cannot invite");
+        // console.log("User is already in the game cannot invite");
         client.emit("gameCancelled", invitedUser.name);
         return ;
       }
@@ -380,26 +380,26 @@ export class GameGateway implements OnGatewayConnection{
     let invitingUser = await this.userService.findUserById(converted_obj.userId);
     if(!invitedUser)
     {
-      console.log("getting invitng user failed");
+      // console.log("getting invitng user failed");
       return ;
     }
     const invitedUserSocket = this.server.sockets.sockets.get(invitedUser.socketId);
     if(!invitedUserSocket)
     {
 
-      console.log("Cannot find invited user socket");
+      // console.log("Cannot find invited user socket");
       client.emit("gameCancelled", invitedUser.name);
       return ;
     }
     let invited_user_id = invitedUser.id;
     if(invitesArray.indexOf(invited_user_id) !== -1)
     {
-      console.log("user is already invited by someone else");
+      // console.log("user is already invited by someone else");
       client.emit("gameCancelled", invitedUser.name);
       return ;
     }
-    console.log("first" , invited_user_id);
-    console.log("second" , invitingUser.id);
+    // console.log("first" , invited_user_id);
+    // console.log("second" , invitingUser.id);
     invitesArray.push(invited_user_id);
     invitesArray.push(invitingUser.id);
     invitedUserSocket.emit("invitationPopUp", invitingUser.name);
@@ -409,10 +409,10 @@ export class GameGateway implements OnGatewayConnection{
   async joinGame(@MessageBody() userId: string,
   @ConnectedSocket() client) 
   {
-    console.log(Number.parseInt(userId));
+    // console.log(Number.parseInt(userId));
     if(!Number.parseInt(userId))
     {
-      console.log("Wrong user id provided");
+      // console.log("Wrong user id provided");
       return ;
     }
 
@@ -420,7 +420,7 @@ export class GameGateway implements OnGatewayConnection{
     let user_that_joins = await this.userService.findUserById(Number.parseInt(userId));
     if(!user_that_joins)
     {
-      console.log("database call failed");
+      // console.log("database call failed");
       return ;
     }
 
@@ -428,7 +428,7 @@ export class GameGateway implements OnGatewayConnection{
 
     if(main_quene.check_if_is_in_quene(user_in_quene_object.id))
     {
-      console.log("User is already in quene ");
+      // console.log("User is already in quene ");
       return ;
     }
 
@@ -454,7 +454,7 @@ export class GameGateway implements OnGatewayConnection{
     const game_database_instance = await this.prisma.game.create({ data: { player_one: player_1.id, player_two: player_2.id } });
     if(!game_database_instance)
     {
-      console.log("Game database instance problem");
+      // console.log("Game database instance problem");
       return; 
     }
 

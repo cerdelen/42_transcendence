@@ -271,7 +271,7 @@ export class ConversationService {
 			conversation.conversation_owner_arr.splice(user_owner_idx, 1);
 			if (conversation.conversation_participant_arr.length > 0)
 			{
-				console.log("updating owner array");
+				// console.log("updating owner array");
 				conversation.conversation_owner_arr.push(conversation.conversation_participant_arr[0]);
 				const idx_new_owner_muted = conversation.conversation_mute_list_arr.indexOf(conversation.conversation_participant_arr[0])
 				if(idx_new_owner_muted != -1)
@@ -280,7 +280,7 @@ export class ConversationService {
 			}
 		}
 		user.conversation_id_arr.splice(conversation_id_arr_from_user, 1);
-		console.log("this is here");
+		// console.log("this is here");
 		
 		await this.updateConversation({
 			where: {
@@ -316,12 +316,12 @@ export class ConversationService {
 
 	async delete_conversation(chat_id: number) {
 		const conversation: Conversation = await this.prisma.conversation.findUnique({ where: { conversation_id: chat_id } });
-		console.log("this.delete_conversation");		
+		// console.log("this.delete_conversation");		
 		if (!conversation)
 			return;
 		for(let i = 0; i < conversation.conversation_participant_arr.length; i++)
 		{
-			console.log("this.delete_conversation in for loop",conversation.conversation_participant_arr[i], chat_id);		
+			// console.log("this.delete_conversation in for loop",conversation.conversation_participant_arr[i], chat_id);		
 			await this.user.remove_conv_from_user(conversation.conversation_participant_arr[i], chat_id);
 
 		}
@@ -356,7 +356,7 @@ export class ConversationService {
 			throw new HttpException("Can't kick the conversation owner!!!", HttpStatus.FORBIDDEN);
 		}
 		else if (admin_user_idx < 0) {
-			console.log("return if");
+			// console.log("return if");
 			
 			return conversation;
 		}
@@ -364,13 +364,13 @@ export class ConversationService {
 		const kick_admin_idx = conversation.conversation_admin_arr.indexOf(id_to_kick);
 		if (req_user_idx != -1)
 		{
-			console.log("remove from part arr");
+			// console.log("remove from part arr");
 			
 			conversation.conversation_participant_arr.splice(req_user_idx, 1);
 		}
 		if (kick_admin_idx != -1)
 		{
-			console.log("remove from admin arr");
+			// console.log("remove from admin arr");
 			
 			conversation.conversation_admin_arr.splice(kick_admin_idx, 1);
 		}
@@ -382,7 +382,7 @@ export class ConversationService {
 		const conv_id_from_user = user.conversation_id_arr.indexOf(chat_id);
 		if(conv_id_from_user != -1)
 		{
-			console.log("remove conv from user ");
+			// console.log("remove conv from user ");
 			
 			user.conversation_id_arr.splice(conv_id_from_user, 1);
 		}

@@ -28,9 +28,9 @@ function App() {
 
   useEffect(() => {
     if (myUserId !== '') {
-      console.log("this is user id " + myUserId);
+      // console.log("this is user id " + myUserId);
       our_socket.emit("online_inform", myUserId);
-      console.log("User online")
+      // console.log("User online")
     }
   }, [myUserId]);
 
@@ -43,7 +43,7 @@ function App() {
 
   useEffect(() => {
     if (myUserId) {
-      console.log("User id setted up ", myUserId)
+      // console.log("User id setted up ", myUserId)
       our_socket.emit("setupUserSocketId", myUserId);
     }
   }, [myUserId])
@@ -64,8 +64,8 @@ function App() {
   useEffect(() => {
     our_socket.on("invitationPopUp", (invitingUserName) => {
 
-      console.log("You've been invited mate");
-      console.log("Ran and game is ", gameActive)
+      // console.log("You've been invited mate");
+      // console.log("Ran and game is ", gameActive)
       if(gameActive)
       {
         let obj = {inviterName: invitingUserName, userId: myUserId}

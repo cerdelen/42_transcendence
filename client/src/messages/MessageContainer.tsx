@@ -17,7 +17,7 @@ export const MessageContainer: FC<Props> = ({messages}) => {
 				
 				// <MessageItemHeaderStyle>
 				
-					// console.log(m.text),
+					// // console.log(m.text),
 				<span className="name">
 					{m.author.name}
 				</span>

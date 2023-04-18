@@ -79,7 +79,7 @@ const GameHistory = ({ gamesList }: Props) => {
 	const { picture_map, set_picture_map, pushPictureToMap } = useMyProfile_picture_Context();
   useEffect(() => {
     const fetchGames = async () => {
-      console.log("this is game ids which supposedly is not itterable " +JSON.stringify(gamesList));
+      // console.log("this is game ids which supposedly is not itterable " +JSON.stringify(gamesList));
       
       try {
            const gamesListy = await fetch(`http://${ipAddress}:3003/game/many_games_data`, {
@@ -90,7 +90,7 @@ const GameHistory = ({ gamesList }: Props) => {
         },
         body: JSON.stringify({ game_ids: gamesList}),
       });
-      console.log("Many games data controller succeded");
+      // console.log("Many games data controller succeded");
       const allGames = await gamesListy.json();
         setGames(allGames);
         fetchNamesOponentOne(allGames);

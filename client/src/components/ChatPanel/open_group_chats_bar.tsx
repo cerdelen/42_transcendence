@@ -23,7 +23,7 @@ const Chat_name_input = ({ setButton_state }: { setButton_state: any }) => {
     event.preventDefault();
 
     if (inputValue.length > 0) {
-      console.log(`%cThis is the password: ${password}`, "color: blue");
+      // console.log(`%cThis is the password: ${password}`, "color: blue");
 
       const response = await fetch(
         `http://${ipAddress}:3003/conversation/create_group_chat/create`,
@@ -82,7 +82,7 @@ const Group_chat_preview_card = ({
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, inputValue: string) => {
     event.preventDefault();
-    console.log(`%cHANDLE SUBMIT`, 'color: blue');
+    // console.log(`%cHANDLE SUBMIT`, 'color: blue');
 
     const response = await fetch(
       `http://${ipAddress}:3003/conversation/join_group_chat/join`,
@@ -96,7 +96,7 @@ const Group_chat_preview_card = ({
       }
     );
     const data = await response.json();
-    console.log(`Allowed to join: ${data}`);
+    // console.log(`Allowed to join: ${data}`);
 
     if (data == true) {
       setmy_chats_ids([...my_chats_ids, chat_id]);
@@ -113,7 +113,7 @@ const Group_chat_preview_card = ({
   };
 
   const joinChat = async () => {
-    console.log(`JOIN CHAT`);
+    // console.log(`JOIN CHAT`);
 
     const response = await fetch(
       `http://${ipAddress}:3003/conversation/join_group_chat/join`,
@@ -127,7 +127,7 @@ const Group_chat_preview_card = ({
       }
     );
     const data = await response.json();
-    console.log(`Status: ${data}`);
+    // console.log(`Status: ${data}`);
 
     if (data == true) {
       setmy_chats_ids([...my_chats_ids, chat_id]);
@@ -154,8 +154,8 @@ const Group_chat_preview_card = ({
         }
       );
       const passwordStatus = await response.json();
-      console.log("Status");
-      console.log(passwordStatus);
+      // console.log("Status");
+      // console.log(passwordStatus);
 
       setHasPassword(passwordStatus);
       return passwordStatus;
@@ -169,7 +169,7 @@ const Group_chat_preview_card = ({
   const handleJoin = async () => {
     setShowX(true);
     const passwordIsSet = await checkIfPasswordProtected();
-    console.log(`Password is set: ${passwordIsSet}`);
+    // console.log(`Password is set: ${passwordIsSet}`);
 
     if (passwordIsSet) return;
     await joinChat();
@@ -268,14 +268,14 @@ const Get_all_open_group_chats = ({
             if (!not_joined_chats_ids.includes(conv_id))
               setNot_joined_chats_ids([...not_joined_chats_ids, conv_id]);
           } else if (left_user_id !== Number(myUserId) && !conv_still_exists) {
-            console.log("else if");
+            // console.log("else if");
             const updatedChats = not_joined_chats_ids;
             const idx = updatedChats.indexOf(conv_id);
             if (idx != -1) {
-              console.log("else if -1");
-              console.log(updatedChats);
+              // console.log("else if -1");
+              // console.log(updatedChats);
               updatedChats.splice(idx, 1);
-              console.log(updatedChats);
+              // console.log(updatedChats);
               setNot_joined_chats_ids([...updatedChats]);
             }
           }
@@ -290,7 +290,7 @@ const Get_all_open_group_chats = ({
 
       our_socket.on("created_group_chat", ({ chat_id, creator_id }: { chat_id: number, creator_id: number }) => {
         if (Number(myUserId) !== creator_id) {
-          console.log("Created group chat", chat_id, creator_id);
+          // console.log("Created group chat", chat_id, creator_id);
           if (!not_joined_chats_ids.includes(chat_id))
             setNot_joined_chats_ids([...not_joined_chats_ids, chat_id]);
         }
@@ -317,7 +317,7 @@ const Get_all_open_group_chats = ({
 };
 
 const Open_group_cards = () => {
-  // console.log("rendering Open_group_cards");
+  // // console.log("rendering Open_group_cards");
   const {
     my_chats_ids,
     setmy_chats_ids,

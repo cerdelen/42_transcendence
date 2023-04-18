@@ -21,7 +21,7 @@ export class conversationGateway implements OnGatewayConnection{
 		@WebSocketServer()
 		server;
 		onModuleInit() {
-			console.log("created this conversation gatway");
+			// console.log("created this conversation gatway");
 			this.server.sockets.setMaxListeners(20);
 		}
 
@@ -65,7 +65,7 @@ export class conversationGateway implements OnGatewayConnection{
 					}
 					if(status == Status.LEFT_CHAT)
 					{
-						console.log("left chat case");
+						// console.log("left chat case");
 						this.server.emit('some_one_left_group_chat', {conv_id: Number(data.chat_id), left_user_id: Number(data.userId), conv_still_exists: true})
 					}
 				}
@@ -101,28 +101,28 @@ export class conversationGateway implements OnGatewayConnection{
 		}
 
 		async new_admin_has_been_set(chat_id: number, admin_id: number) {
-			console.log("new admin");
+			// console.log("new admin");
 			this.server.emit('new_admin_has_been_set', {chat_id: chat_id, admin_id: admin_id});	
 		}
 
 		async new_owner_has_been_set(chat_id: number, owner_id: number) {
-			console.log("new owner");
+			// console.log("new owner");
 			this.server.emit('new_owner_has_been_set', {chat_id: chat_id, owner_id: owner_id});	
 		}
 
 		async mute_user(chat_id: number, muted_user_id: number) {
-			console.log("new mute user");
+			// console.log("new mute user");
 			this.server.emit('mute_user', {chat_id: chat_id, muted_user_id: muted_user_id});	
 		}
 
 		async unmute_user(chat_id: number, unmuted_user_id: number) {
-			console.log("new unmute user");
+			// console.log("new unmute user");
 			this.server.emit('unmute_user', {chat_id: chat_id, unmuted_user_id: unmuted_user_id});	
 		}
 
 		async	left_chat(chat_id: number, removed_id: number)
 		{
-			console.log("this.left_chat chat id   removed id" , chat_id, removed_id);
+			// console.log("this.left_chat chat id   removed id" , chat_id, removed_id);
 			this.server.emit('some_one_left_group_chat', {conv_id: chat_id, left_user_id: removed_id, conv_still_exists: true})
 		}
 }

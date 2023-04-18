@@ -25,19 +25,19 @@ export class MessagingGateway implements OnGatewayConnection {
 		@WebSocketServer()
 		server;
 		onModuleInit() {
-			console.log("created this message gateway");
+			// console.log("created this message gateway");
 			this.server.sockets.setMaxListeners(20);
 		}
 		@SubscribeMessage('message')
 		async handleCreateMessage(
 			@MessageBody() data: any) {
-				//console.log("here is msg subscriber");
-				////console.log(JSON.stringify(data));
+				//// console.log("here is msg subscriber");
+				////// console.log(JSON.stringify(data));
 
 				const conv = await this.prisma.conversation.findUnique({where: {conversation_id: data.conversation_id}});
 				if (conv)
 				{
-					////console.log(conv.conversation_mute_list_arr.includes(data.author));
+					////// console.log(conv.conversation_mute_list_arr.includes(data.author));
 					if(conv.conversation_mute_list_arr.includes(Number(data.author)))
 					{						
 						return ;
@@ -45,7 +45,7 @@ export class MessagingGateway implements OnGatewayConnection {
 				}
 				
 				this.msg.createMsg(data);
-				////console.log(`From backend message subscriber: message = ${data.text}, author = ${data.author}`);
+				////// console.log(`From backend message subscriber: message = ${data.text}, author = ${data.author}`);
 				
 				this.server.emit("message", {text: data.text, author_id: data.author, chat_id: data.conversation_id});
 		}
@@ -58,7 +58,7 @@ export class MessagingGateway implements OnGatewayConnection {
 				{
 					if(conv.conversation_mute_list_arr.includes(Number(data.userId)))
 					{
-						////console.log("returning because muted");
+						////// console.log("returning because muted");
 						return ;
 					}
 				}
@@ -67,7 +67,7 @@ export class MessagingGateway implements OnGatewayConnection {
 
 		@OnEvent('create.message')
 		handleMessageCreateEvent(payload: any) {
-			////console.log("hello");
-			////console.log(payload);
+			////// console.log("hello");
+			////// console.log(payload);
 		}
 }

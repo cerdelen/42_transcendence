@@ -23,7 +23,7 @@ const Popup_chat_administration = (
 ) => {
   const { displayed_chat } = useMyDisplayedChatContext();
   const handle_kick = async (user_id: number, is_banned_click: boolean) => {
-    console.log(" called handle_kick or ban ");
+    // console.log(" called handle_kick or ban ");
 
     if (is_banned_click) {
       try {

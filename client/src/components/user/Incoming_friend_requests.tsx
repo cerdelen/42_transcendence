@@ -27,7 +27,7 @@ const NameComponent = ({
   setFriendsList,
 }: NameProps) => {
   const accept_friend_request = async () => {
-    console.log("allo cliecked button");
+    // console.log("allo cliecked button");
     try {
       const response = await fetch(
         `http://${ipAddress}:3003/user/accept_friend_request`,
@@ -51,7 +51,7 @@ const NameComponent = ({
   };
 
   const decline_friend_request = async () => {
-    console.log("allo cliecked button");
+    // console.log("allo cliecked button");
     try {
       const response = await fetch(
         `http://${ipAddress}:3003/user/remove_friend_request`,
@@ -132,8 +132,8 @@ const Incoming_friend_requests = ({
             return name;
           })
         );
-        console.log("newlist " + JSON.stringify(newlist));
-        console.log("newlist " + JSON.stringify(newlist));
+        // console.log("newlist " + JSON.stringify(newlist));
+        // console.log("newlist " + JSON.stringify(newlist));
 
         setNames(newlist);
       } catch (error) {
@@ -156,16 +156,16 @@ const Incoming_friend_requests = ({
         console.error(`fetch getUserPic in ListFriends failed: ${error}`);
       }
     };
-    console.log("called this and refetching names and users pic ");
+    // console.log("called this and refetching names and users pic ");
 
     fetchNames();
     getUserPic();
   }, [incoming_friend_req]);
 
-  console.log("for all of these im trying " + JSON.stringify(friendsNames));
-  console.log(
-    "for all of these are all the ids " + JSON.stringify(incoming_friend_req)
-  );
+  // console.log("for all of these im trying " + JSON.stringify(friendsNames));
+  // console.log
+    // "for all of these are all the ids " + JSON.stringify(incoming_friend_req)
+  // );
 
   return (
     <ul className="user-info-lists right-border">

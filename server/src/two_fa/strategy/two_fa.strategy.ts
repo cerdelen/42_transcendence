@@ -24,13 +24,13 @@ export class Two_FA_Strategy extends PassportStrategy(Strategy, 'Two-FA')
 			// ignoreExpiration: false,									// after testing enable again (disabled because testuser token hardcoded)
 			secretOrKey: configService.get('secret')
 		});
-		////console.log("2faENV" + configService.get('secret'));
+		////// console.log("2faENV" + configService.get('secret'));
 		
 	}
 
 	async	validate(payload: JwtPayload)
 	{
-		////console.log("2-fa guard validate");
+		////// console.log("2-fa guard validate");
 		const user	= await this.userService.findUserById(payload.sub);
 		if (!user.two_FA_enabled)				// if 2-fa is disabled just return true
 		{
@@ -42,7 +42,7 @@ export class Two_FA_Strategy extends PassportStrategy(Strategy, 'Two-FA')
 		}
 		else
 		{
-			////console.log("2-fa guard validate invalid token");
+			////// console.log("2-fa guard validate invalid token");
 			throw new HttpException('Invalid Token', HttpStatus.UNAUTHORIZED);
 		}
 	}

@@ -111,7 +111,7 @@ export class UserService {
 			}
 			if(user.incoming_friend_req.includes(friend) && user_two.outgoing_friend_req.includes(userId))		// in case the other one sent me alreadt friend invite
 			{
-				//console.log("got into exeption where there is already f_r sent the other way around");
+				//// console.log("got into exeption where there is already f_r sent the other way around");
 				return (this.accept_friend_request(friend, userId));
 			}
 			if (!user.outgoing_friend_req.includes(friend))
@@ -177,7 +177,7 @@ export class UserService {
 						outgoing_friend_req: user_two.outgoing_friend_req,
 						incoming_friend_req: user_two.incoming_friend_req
 				}});
-				console.log("in front of newfriend request gateway function");
+				// console.log("in front of newfriend request gateway function");
 				this.new_user_gatewaysss.new_friend_accepted(userId, friend);
 		}
 	}
@@ -259,7 +259,7 @@ export class UserService {
 			}
 			if (stats.mmr >= 1600)
 			{
-				console.log("this is weird this shold add achievement");
+				// console.log("this is weird this shold add achievement");
 				
 				await this.add_achievement(user_id, 1)
 			}
@@ -321,23 +321,23 @@ export class UserService {
 
 	async	add_game_to_history(game_id: number)
 	{
-		// ////console.log(game.player_one + " " + game.player_two);
+		// ////// console.log(game.player_one + " " + game.player_two);
 		
 		const	game		= await this.prisma.game.findUnique({ where: { id: game_id }});
 		const	user_one	= await this.prisma.user.findUnique({ where: { id: game.player_one } });
 		const	user_two	= await this.prisma.user.findUnique({ where: { id: game.player_two } });
-		console.log('this is game' + JSON.stringify(game));
+		// console.log('this is game' + JSON.stringify(game));
 
 		let index_one;
 		let index_two;
 		if (!user_one || !user_two)
 		{
-			console.log("user one or user 2 is undefined");
+			// console.log("user one or user 2 is undefined");
 			return ;
 		}
-		////console.log("user one or user 2");
-		////console.log("user 1 " + user_one);
-		////console.log("user 2 " + user_two);
+		////// console.log("user one or user 2");
+		////// console.log("user 1 " + user_one);
+		////// console.log("user 2 " + user_two);
 		if(!user_one.games == null)
 			index_one = user_one.games.findIndex(x => x == game.id);
 		else
@@ -346,11 +346,11 @@ export class UserService {
 			index_two = user_two.games.findIndex(x => x == game.id);
 		else
 			index_two = -1;
-		////console.log("this is user one" + JSON.stringify(user_one));
-		////console.log("this is user two" + JSON.stringify(user_two));
-		////console.log("this is index 1" + index_one);
-		////console.log("this is index 2" + index_two);
-		console.log("Addign win and lose ran ", game.winner, " and ", game.loser);
+		////// console.log("this is user one" + JSON.stringify(user_one));
+		////// console.log("this is user two" + JSON.stringify(user_two));
+		////// console.log("this is index 1" + index_one);
+		////// console.log("this is index 2" + index_two);
+		// console.log("Addign win and lose ran ", game.winner, " and ", game.loser);
 		if(user_two && user_one && index_one == -1 && index_two == -1)
 		{
 			await	this.add_loss(game.loser);
@@ -387,7 +387,7 @@ export class UserService {
 				
 			}
 		})
-		////console.log("findExisitngUSer = " + existingUser);
+		////// console.log("findExisitngUSer = " + existingUser);
 		
 		return existingUser;
 	}
@@ -548,11 +548,11 @@ export class UserService {
 		const idx = user.conversation_id_arr.indexOf(chat_id);
 		if (idx != -1)
 		{
-			console.log("remove conv from user in if with idx ", idx);
-			console.log("array before ", user.conversation_id_arr);
+			// console.log("remove conv from user in if with idx ", idx);
+			// console.log("array before ", user.conversation_id_arr);
 			
 			user.conversation_id_arr.splice(idx, 1);
-			console.log("array after ", user.conversation_id_arr);
+			// console.log("array after ", user.conversation_id_arr);
 			await this.prisma.user.update({
 				where: {id: user_id},
 				data: {

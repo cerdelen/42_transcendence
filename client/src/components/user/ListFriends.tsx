@@ -21,8 +21,8 @@ const NameComponent = ({ name, pic, setIsFriend, id, setFriendsList, friendsList
   const { myUserId } = useUserContext();
 
   const remove_friend = async () => {
-    console.log("remove friend removing id " + userIdCard);
-    console.log("this is the new id parameter i pass " + id);
+    // console.log("remove friend removing id " + userIdCard);
+    // console.log("this is the new id parameter i pass " + id);
 
     try {
       const response = await fetch(
@@ -36,7 +36,7 @@ const NameComponent = ({ name, pic, setIsFriend, id, setFriendsList, friendsList
           body: JSON.stringify({ removing_you: id }),
         }
       );
-      console.log(response);
+      // console.log(response);
       setIsFriend(false);
       const new_friendlost = [...friendsList];
       const idx = new_friendlost.indexOf(id);

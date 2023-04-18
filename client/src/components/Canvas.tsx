@@ -45,7 +45,7 @@ const Canvas = ({ userId }: { userId: string }) => {
                 <br />
                 <button className="game_buttons" onClick={(e) => {
                     e.preventDefault();
-                    console.log("Map number is " + mapNumber);
+                    // console.log("Map number is " + mapNumber);
                     setMapNumber(0);
                     setImageIdx(1);
                 }}> Bulgaria </button>
@@ -53,11 +53,11 @@ const Canvas = ({ userId }: { userId: string }) => {
                     e.preventDefault();
                     setMapNumber(1);
                     setImageIdx(2);
-                    console.log("Map number is " + mapNumber);
+                    // console.log("Map number is " + mapNumber);
                 }}> Paris </button>
                 <button className="game_buttons" onClick={(e) => {
                     e.preventDefault();
-                    console.log("Map number is " + mapNumber);
+                    // console.log("Map number is " + mapNumber);
                     setMapNumber(2);
                     setImageIdx(3);
                 }}> Cat Valley </button>
@@ -73,11 +73,11 @@ const Canvas = ({ userId }: { userId: string }) => {
                 if (!userId) {
                     our_socket.emit("joinGame", "1");
                 } else {
-                    console.log('this is joingame userid' + userId);
+                    // console.log('this is joingame userid' + userId);
                     our_socket.emit("joinGame", userId);
                 }
                 setGameActive(true);
-                console.log("Game active", gameActive);
+                // console.log("Game active", gameActive);
             }} > Join Game </button>)
         } else {
 
@@ -147,7 +147,7 @@ const Canvas = ({ userId }: { userId: string }) => {
                 ctx = canvasRef.current.getContext('2d');
                 // ctx.canvas.hidden = false;
                 ctx.canvas.style.display = "block";
-                console.log("Make game visible ");
+                // console.log("Make game visible ");
             }
         } else {
             if (canvasRef.current) {
@@ -187,7 +187,7 @@ const Canvas = ({ userId }: { userId: string }) => {
         our_socket.on("gameCancelled", (rejectedUserName) => 
         {
             setGameInvited(false);
-            console.log("Game cancelled invoked");   
+            // console.log("Game cancelled invoked");   
             alert("Game has been cancelled by " + rejectedUserName);
             setPlayerNumber(0);
             setGameActive(false);
@@ -198,11 +198,11 @@ const Canvas = ({ userId }: { userId: string }) => {
             setGameInvited(true);
             setGameActive(true);
             setGameStarted(false);
-            console.log("Id of the user ", UserIndex_);
+            // console.log("Id of the user ", UserIndex_);
             let num: number = UserIndex_;
             setPlayerNumber(num);
             // our_socket.off("invitationInit");
-            console.log("Invitation init");
+            // console.log("Invitation init");
         });
         
         our_socket.on('gameOver', (data: number) => {
@@ -212,12 +212,12 @@ const Canvas = ({ userId }: { userId: string }) => {
             let num: number = data;
             if (num == Number.parseInt(userId)) {
                 reset();
-                console.log("Winner");
+                // console.log("Winner");
                 cancelAnimationFrame(animationFrameNum);
-                console.log("You win executed " + userId);
+                // console.log("You win executed " + userId);
                 alert("You won 15 mmr! Congratulations!")
             } else {
-                console.log("You lose executed\n" + userId);
+                // console.log("You lose executed\n" + userId);
                 alert("You lost 15 mmr! NOOB! How can you lose in Pong?!?!?!")
                 reset();
                 cancelAnimationFrame(animationFrameNum);
@@ -238,7 +238,7 @@ const Canvas = ({ userId }: { userId: string }) => {
             //     return ;
             // }
             setGameStarted(false);
-            console.log("Id of the user ", UserIndex_);
+            // console.log("Id of the user ", UserIndex_);
             let num: number = UserIndex_;
             setPlayerNumber(num);
 
@@ -255,10 +255,10 @@ const Canvas = ({ userId }: { userId: string }) => {
                 setGameStarted(true);
             }
             setGameInfo(JSON.parse(gameState));
-            console.log("Game state id " , gameInfo.id);
+            // console.log("Game state id " , gameInfo.id);
             setGameInvited(false);
             if (canvasRef.current) {
-                // console.log("rendering");
+                // // console.log("rendering");
                 ctx = canvasRef.current.getContext('2d');
 
                 
@@ -302,7 +302,7 @@ const Canvas = ({ userId }: { userId: string }) => {
     {
         document.addEventListener('keydown', (e) => {
             // e.preventDefault();
-            console.log("Emmititng stuff");
+            // console.log("Emmititng stuff");
             // if (!gameActive)
             //     return;
             let obj: KeyInfo =
@@ -328,7 +328,7 @@ const Canvas = ({ userId }: { userId: string }) => {
                 gameActive: gameActive,
                 game_id: gameId,
             };
-            console.log("What the fuck ", obj.game_id);
+            // console.log("What the fuck ", obj.game_id);
             our_socket.emit('keyup', JSON.stringify(obj));
         })
     }, [playerNumber, gameId])

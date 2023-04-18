@@ -13,7 +13,7 @@ function draw_rectangle(context: any, player: any, width: number, height: number
 function drawGame(ctx: any, gameInfo: any, image: any) {
     // ctx.fillStyle = "#000";
     // ctx.fillRect(0,0, 700, 400);    
-    // console.log("player 1 " + name_map.get(gameInfo));
+    // // console.log("player 1 " + name_map.get(gameInfo));
     
 
     ctx.clearRect(0, 0, 700, 400);;

@@ -20,7 +20,7 @@ const SecondFactorQR = ({qrString}: Props) => {
     event.preventDefault();
     if (code.length === 6) {
       const myCookieValue = JSCookies.get('accessToken');
-      console.log("my Cookie", myCookieValue);
+      // console.log("my Cookie", myCookieValue);
       
       fetch(`http://${ipAddress}:3003/2-fa/turn-on`, {
         method: 'POST',

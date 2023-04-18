@@ -357,8 +357,9 @@ const UserPage = () => {
   function startAndinvitePlayers(userId: string, userName: string) {
     if(gameActive)
     {
-      alert("You have game ongoing cannot invite other players");
       navigate('/game')
+      setShowUserInto(false);
+      alert("You have game ongoing cannot invite other players");
       return ;
     }
     console.log(userId + " Inviting player " + userName);

@@ -80,9 +80,8 @@ interface game_array_properties
 }
 
 
-
 let gameArray : game_array_properties [] = [];
-
+let invitesArray : number[] = [];
 function getIndex(id: number)
 {
   for(let i = 0; i < gameArray.length; i++)
@@ -252,7 +251,7 @@ export class GameGateway implements OnGatewayConnection{
       inviterName: string,
       userId: number,
     }
-
+  
     let converted_obj : obj_type = JSON.parse(obj);
     let player_1 = await this.userService.findUserByName(converted_obj.inviterName);
     let player_2 = await this.userService.findUserById(converted_obj.userId);
@@ -261,6 +260,9 @@ export class GameGateway implements OnGatewayConnection{
       console.log("Error accesing users data");
       return ;
     }
+    invitesArray.splice(invitesArray.indexOf(player_1.id), 1);
+    invitesArray.splice(invitesArray.indexOf(player_2.id), 1);
+    console.log("Invites array after slicing",  invitesArray);
     const player_1_socket = this.server.sockets.sockets.get(player_1.socketId);
     const player_2_socket = this.server.sockets.sockets.get(player_2.socketId);
     if(!player_1_socket || !player_2_socket)
@@ -282,6 +284,7 @@ export class GameGateway implements OnGatewayConnection{
       console.log("Game database instance problem");
       return; 
     }
+    
     game_var.id = game_database_instance.id;
     player_1_socket.emit("invitationInit", 1);
     player_2_socket.emit("invitationInit", 2);
@@ -333,6 +336,10 @@ export class GameGateway implements OnGatewayConnection{
       console.log("invited user creation  error");
       return ;
     }
+    let invited_user_id = invitedUser.id;
+    invitesArray.splice(invitesArray.indexOf(invited_user_id), 1);
+    invitesArray.splice(invitesArray.indexOf(invitingUser.id), 1);
+    
     invitedUserSocket.emit("gameCancelled", invitedUser.name);
   }
   
@@ -384,9 +391,19 @@ export class GameGateway implements OnGatewayConnection{
       client.emit("gameCancelled", invitedUser.name);
       return ;
     }
+    let invited_user_id = invitedUser.id;
+    if(invitesArray.indexOf(invited_user_id) !== -1)
+    {
+      console.log("user is already invited by someone else");
+      client.emit("gameCancelled", invitedUser.name);
+      return ;
+    }
+    console.log("first" , invited_user_id);
+    console.log("second" , invitingUser.id);
+    invitesArray.push(invited_user_id);
+    invitesArray.push(invitingUser.id);
     invitedUserSocket.emit("invitationPopUp", invitingUser.name);
   }
-
   
   @SubscribeMessage('joinGame')
   async joinGame(@MessageBody() userId: string,

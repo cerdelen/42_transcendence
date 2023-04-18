@@ -7,6 +7,55 @@ import { UserService } from 'src/user/user.service';
 import { Logger } from '@nestjs/common';
 
 
+async function emit_game_over(game_var : any, winning_player_num: number,
+  losing_player_num: number, prisma: any, userService : any)
+{
+  await prisma.game.update({
+    where: { id: game_var.id },
+
+    data: { 
+    winner: winning_player_num,
+    loser: losing_player_num,
+    score_one: game_var.player_1_score,
+    score_two: game_var.player_2_score,
+    finished: true,
+    }
+  });
+  await userService.add_game_to_history(game_var.id);
+}
+
+function  run_game(gameObj: any, game_database_instance: any, game_var: any, server: any, prisma: any, userService: any)
+{
+  const interval_id = setInterval(() => 
+    {
+      const winner : number = gameLoop(game_var);
+      let winning_player_num : number;
+      let losing_player_num : number;
+      if(!winner)
+      {
+        emitGameState(String(game_database_instance.id), game_var, server);
+      }else{
+        if(winner == 2)
+        {
+          console.log("Emit game_over, p1");
+          server.sockets.in(String(game_database_instance.id)).emit(
+            'gameOver', game_database_instance.player_one);
+          winning_player_num = game_database_instance.player_one;
+          losing_player_num = game_database_instance.player_two;
+        }else{
+          console.log("Emit game_over, p2");
+          server.sockets.in(String(game_database_instance.id)).emit(
+            'gameOver', game_database_instance.player_two);
+          winning_player_num = game_database_instance.player_two;
+          losing_player_num = game_database_instance.player_one;
+        }
+        server.sockets.socketsLeave(String(game_database_instance.id));
+        gameArray.splice(gameArray.indexOf(gameObj), 1);
+        emit_game_over(game_var, winning_player_num, losing_player_num, prisma, userService);
+        clearInterval(interval_id);
+      }
+    }, 1000 / 50);
+}
 
 const logger = new Logger('App');
 
@@ -243,47 +292,7 @@ export class GameGateway implements OnGatewayConnection{
       socket_id_2: player_2.socketId, gameId: game_database_instance.id}
 
     gameArray.push(gameObj);
-    const interval_id = setInterval(() => 
-    {
-      const winner : number = gameLoop(game_var);
-      if(!winner)
-      {
-        emitGameState(String(game_database_instance.id), game_var, this.server);
-      }else{
-        if(winner == 2)
-        {
-          console.log("Emit game_over, p1");
-          this.server.sockets.in(String(game_database_instance.id)).emit(
-            'gameOver', game_database_instance.player_one);
-          game_database_instance.winner = game_database_instance.player_one;
-          game_database_instance.loser = game_database_instance.player_two;
-        }else{
-          console.log("Emit game_over, p2");
-          this.server.sockets.in(String(game_database_instance.id)).emit(
-            'gameOver', game_database_instance.player_two);
-          game_database_instance.winner = game_database_instance.player_two;
-          game_database_instance.loser = game_database_instance.player_one;
-        }
-        this.server.sockets.socketsLeave(String(game_database_instance.id));
-        game_database_instance.score_one = game_var.player_1_score;
-        game_database_instance.score_two = game_var.player_2_score;
-        game_database_instance.finished = true;
-        gameArray.splice(gameArray.indexOf(gameObj), 1);
-        clearInterval(interval_id);
-      }
-    }, 1000 / 50);
-    await this.prisma.game.update({
-      where: { id: game_database_instance.id },
-
-      data: { 
-      winner: game_database_instance.winner,
-      loser: game_database_instance.loser,
-      score_one: game_database_instance.score_one,
-      score_two: game_database_instance.score_two,
-      finished: true,
-      }
-    });
-    this.userService.add_game_to_history(game_database_instance.id);
+    run_game(gameObj, game_database_instance, game_var, this.server, this.prisma, this.userService)
   }
 
 
@@ -413,7 +422,6 @@ export class GameGateway implements OnGatewayConnection{
       return ;
     }
 
-
     //If there is already one user in the quene
     //add user to the quene and start the game
     main_quene.enquene(user_in_quene_object);
@@ -426,66 +434,24 @@ export class GameGateway implements OnGatewayConnection{
     game_var.player_2_nick = player_2.username;
 
     //create room and create database entry for the game
-
-    
     const game_database_instance = await this.prisma.game.create({ data: { player_one: player_1.id, player_two: player_2.id } });
     if(!game_database_instance)
     {
       console.log("Game database instance problem");
       return; 
     }
+
     game_var.id = game_database_instance.id;
     player_1.socket.emit("init", 1);
     player_2.socket.emit("init", 2);
-
     player_1.socket.join(String(game_database_instance.id));
     player_2.socket.join(String(game_database_instance.id));
-    let gameObj = {game_instance: game_var, socket_id_1: player_1.socket_id, 
+    let gameObj = {game_instance: game_var,
+      socket_id_1: player_1.socket_id, 
       socket_id_2: player_2.socket_id, gameId: game_database_instance.id}
 
     gameArray.push(gameObj);
-    console.log("Starting interval");
-    const interval_id = setInterval(() => 
-    {
-      const winner : number = gameLoop(game_var);
-      if(!winner)
-      {
-        emitGameState(String(game_database_instance.id), game_var, this.server);
-      }else{
-        if(winner == 2)
-        {
-          console.log("Emit game_over, p1");
-          this.server.sockets.in(String(game_database_instance.id)).emit(
-            'gameOver', game_database_instance.player_one);
-          game_database_instance.winner = game_database_instance.player_one;
-          game_database_instance.loser = game_database_instance.player_two;
-        }else{
-          console.log("Emit game_over, p2");
-          this.server.sockets.in(String(game_database_instance.id)).emit(
-            'gameOver', game_database_instance.player_two);
-          game_database_instance.winner = game_database_instance.player_two;
-          game_database_instance.loser = game_database_instance.player_one;
-        }
-        this.server.sockets.socketsLeave(String(game_database_instance.id));
-        game_database_instance.score_one = game_var.player_1_score;
-        game_database_instance.score_two = game_var.player_2_score;
-        game_database_instance.finished = true;
-        gameArray.splice(gameArray.indexOf(gameObj), 1);
-        clearInterval(interval_id);
-      }
-    }, 1000 / 50);
-    await this.prisma.game.update({
-      where: { id: game_database_instance.id },
-
-      data: { 
-      winner: game_database_instance.winner,
-      loser: game_database_instance.loser,
-      score_one: game_database_instance.score_one,
-      score_two: game_database_instance.score_two,
-      finished: true,
-      }
-    });
-    this.userService.add_game_to_history(game_database_instance.id);
+    run_game(gameObj, game_database_instance, game_var, this.server, this.prisma, this.userService)
   }
 
  
@@ -525,79 +491,5 @@ export class GameGateway implements OnGatewayConnection{
 }
 
 function emitGameState(roomName: string, state_: any, server: Server) {
-    // logger.debug('emitgamestate');
     server.sockets.in(roomName).emit('gameState', JSON.stringify(state_));
 }
-// async function startGameInterval(userService: any, roomName: string, state_: any, server: Server, game: any, prisma: PrismaService) {
-  //     logger.debug('stargameInterval');
-  //     let other_game = await prisma.game.findUnique({ where: { id: game.id } });
-  //   // console.log("start game ", other_game);
-  
-  //   const intervalId = setInterval(() => {
-    //     const winner: number = gameLoop(state_);
-    //     if (!winner) {
-      //       emitGameState(roomName, state_, server);
-      //     } else {
-        //       emitGameOver(state_ ,userService, roomName, winner, server, game, prisma, other_game.player_two);
-        //       // //console.log("breaks here ? ");
-        //       if(stateArr[roomName])
-        //       if(stateArr[roomName].participants)
-        //       {
-          //         console.log("Here");
-          //         clientRooms[stateArr[roomName].participants[0]] = null;
-          //         clientRooms[stateArr[roomName].participants[1]] = null;
-          //         console.log("Here!  ")
-          //       }
-          
-          //       stateArr[roomName] = null;
-          //       clearInterval(intervalId);
-          //     }
-          //   }, 1000 / 50);
-          // }
-          
-          // async function handleNewGame(client: any, server: Server, user: any, clientId: number, prisma: PrismaService) {
-          //   logger.debug('handleNewGame');
-          //   const game = await prisma.game.create({ data: { player_one: clientId } });
-          // }
-          
-          function makeid(length: number) {
-            let result: string = '';
-            let characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let charactersLength: number = characters.length;
-            for (let i = 0; i < length; i++) {
-              result += characters.charAt(Math.floor(Math.random() * charactersLength));
-            }
-            return result;
-          }
-            // async function emitGameOver(state_: any, userService: any, roomName: string, winner: number, server: Server, game: any, prisma: PrismaService, player_two: number) {
-            
-            //   if (winner == 2) {
-            //     console.log("Room name", roomName);
-            //     server.sockets.in(roomName).emit('gameOver', Number.parseInt(game.player_one));
-            //     game.winner = game.player_one;
-            //     game.loser = player_two;
-            //     server.sockets.socketsLeave(roomName);
-            //   } else {
-            //     console.log("Room name", roomName);
-            //     game.winner = player_two;
-            //     game.loser = game.player_one;
-            //     server.sockets.in(roomName).emit('gameOver', (Number.parseInt(game.player_two)));
-            //     server.sockets.socketsLeave(roomName);
-            //   }
-            //   if (!game.score_one) {
-            //     game.score_one = state_.player_1_score;
-            //     game.score_two = state_.player_2_score;
-            //     game.finished = true;
-            //     await prisma.game.update({
-            //       where: { id: game.id },
-            //       data: {
-            //         winner: game.winner,
-            //         loser: game.loser,
-            //         score_one: game.score_one,
-            //         score_two: game.score_two,
-            //         finished: true,
-            //       }
-            //     });
-            //     userService.add_game_to_history(game.id);
-            //   }
-            // }

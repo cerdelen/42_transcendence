@@ -250,28 +250,28 @@ export class UserService {
 	async	add_win(user_id: number)
 	{
 		if(user_id){}
-		// var stats = await this.prisma.stats.findUnique({where: {stat_id: user_id}});
-		// if(stats)
-		// {
-		// 	if (stats.wins == 2)
-		// 	{
-		// 		await this.add_achievement(user_id, 0)
-		// 	}
-		// 	if (stats.mmr >= 1600)
-		// 	{
-		// 		console.log("this is weird this shold add achievement");
+		var stats = await this.prisma.stats.findUnique({where: {stat_id: user_id}});
+		if(stats)
+		{
+			if (stats.wins == 2)
+			{
+				await this.add_achievement(user_id, 0)
+			}
+			if (stats.mmr >= 1600)
+			{
+				console.log("this is weird this shold add achievement");
 				
-		// 		await this.add_achievement(user_id, 1)
-		// 	}
-		// 	return (this.prisma.stats.update({
-		// 		where: { stat_id: user_id},
-		// 		data: {
-		// 			wins: stats.wins + 1,
+				await this.add_achievement(user_id, 1)
+			}
+			return (this.prisma.stats.update({
+				where: { stat_id: user_id},
+				data: {
+					wins: stats.wins + 1,
 		
-		// 			mmr: stats.mmr + 15
-		// 		}
-		// 	}));
-		// }
+					mmr: stats.mmr + 15
+				}
+			}));
+		}
 	}
 
 	async	add_loss(user_id: number)
@@ -326,18 +326,14 @@ export class UserService {
 		const	game		= await this.prisma.game.findUnique({ where: { id: game_id }});
 		const	user_one	= await this.prisma.user.findUnique({ where: { id: game.player_one } });
 		const	user_two	= await this.prisma.user.findUnique({ where: { id: game.player_two } });
-		////console.log('this is game' + JSON.stringify(game));
+		console.log('this is game' + JSON.stringify(game));
 
 		let index_one;
 		let index_two;
 		if (!user_one || !user_two)
 		{
-			////console.log("user one or user 2 is undefined");
-			////console.log("user 1 " + user_one);
-			////console.log("user 2 " + user_two);
-			
+			console.log("user one or user 2 is undefined");
 			return ;
-
 		}
 		////console.log("user one or user 2");
 		////console.log("user 1 " + user_one);
@@ -354,10 +350,12 @@ export class UserService {
 		////console.log("this is user two" + JSON.stringify(user_two));
 		////console.log("this is index 1" + index_one);
 		////console.log("this is index 2" + index_two);
+		console.log("Addign win and lose ran ", game.winner, " and ", game.loser);
 		if(user_two && user_one && index_one == -1 && index_two == -1)
 		{
 			await	this.add_loss(game.loser);
 			await	this.add_win(game.winner);
+			
 			if(game.score_one == 0 || game.score_two == 0 && !(game.score_one == 0 && game.score_two == 0))
 				this.add_achievement(game.winner, 2);
 			await	user_one.games.push(game.id);

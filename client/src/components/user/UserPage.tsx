@@ -56,7 +56,7 @@ function CustomizationFields({ setMapNumber }: { setMapNumber: any }) {
 
 const UserPage = () => {
   const { myUserId, myMail, mytwoFAenabled, gameInvited, setGameInvited ,myBlockedUsers, myGames,
-    myOutgoingFriendReq, myIncomingFriendReq,
+    myOutgoingFriendReq, myIncomingFriendReq, gameActive,
     myFriendList, setMyFriendList, myName,
     setMyIncomingFriendReq, setMyOutgoingFriendReq }
     = useUserContext();
@@ -355,6 +355,13 @@ const UserPage = () => {
 
 
   function startAndinvitePlayers(userId: string, userName: string) {
+    if(gameActive)
+    {
+      navigate('/game')
+      setShowUserInto(false);
+      alert("You have game ongoing cannot invite other players");
+      return ;
+    }
     console.log(userId + " Inviting player " + userName);
     navigate('/game')
     setShowUserInto(false);

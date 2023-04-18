@@ -36,6 +36,7 @@ const Canvas = ({ userId }: { userId: string }) => {
     const { initial_state } = useMyGameContext();
     const {images} = useMyContext();
     const [imageIdx, setImageIdx] = useState<number>(1);
+    const [gameId, setGameId] = useState<number>(0);
     function Custmization_fields({ setMapNumber }: { setMapNumber: any }) {
 
         return (
@@ -155,49 +156,10 @@ const Canvas = ({ userId }: { userId: string }) => {
                 ctx.canvas.style.display = "none";
             }
 
-        }
-        our_socket.on('sameUser', () => {
-            our_socket.off('sameUser');    
-            reset();
-            setGameActive(false);
-            alert("Same user wanted to connect to one game");
-        })       
+        }  
     }, [gameActive])
 
     
-    useEffect(() => 
-    {
-        our_socket.on("handleTooManyPlayers", () => {
-            our_socket.off("handleTooManyPlayers");
-            reset();
-            setGameActive(false);
-            alert("This game has too many players");
-        })
-    }, [gameActive])
-    useEffect(() => 
-    {
-        our_socket.on('gameOver', (data: number) => {
-            our_socket.off('gameOver');
-            if (!gameActive) {
-                return;
-            }
-            let num: number = data;
-            if (num == Number.parseInt(userId)) {
-                console.log("Winner");
-                reset();
-                console.log("You win executed " + userId);
-                cancelAnimationFrame(animationFrameNum);
-                // alert("You won 15 mmr! Congratulations!")
-            } else {
-                // alert("You lost 15 mmr! NOOB! How can you lose in Pong?!?!?!")
-                console.log("You lose executed\n" + userId);
-                reset();
-                cancelAnimationFrame(animationFrameNum);
-            }
-            setGameActive(false);
-            our_socket.off('gameOver');
-        })
-    }, [gameActive])
     function handleGameCode(data: string) {
         setGameCode(data);
     }
@@ -211,11 +173,28 @@ const Canvas = ({ userId }: { userId: string }) => {
             ctx.clearRect(0, 0, 700, 400);;
         }
     }
+
     useEffect(() => 
     {
+
+        our_socket.on("handleTooManyPlayers", () => {
+            our_socket.off("handleTooManyPlayers");
+            reset();
+            setGameActive(false);
+            alert("This game has too many players");
+        })
+
+        our_socket.on("gameCancelled", (rejectedUserName) => 
+        {
+            setGameInvited(false);
+            console.log("Game cancelled invoked");   
+            alert("Game has been cancelled by " + rejectedUserName);
+            setPlayerNumber(0);
+            setGameActive(false);
+        
+        })
         our_socket.on('invitationInit', (UserIndex_: number) => {
             
-            our_socket.off("invitationInit");
             setGameInvited(true);
             setGameActive(true);
             setGameStarted(false);
@@ -224,65 +203,59 @@ const Canvas = ({ userId }: { userId: string }) => {
             setPlayerNumber(num);
             // our_socket.off("invitationInit");
             console.log("Invitation init");
-            our_socket.off("invitationInit");
         });
-   
-    }, [gameActive])
-
-    useEffect(() => 
-    {
-        our_socket.on("gameCancelled", (rejectedUserName) => 
-        {
-            setGameInvited(false);
-            our_socket.off("gameCancelled");
-            console.log("Game cancelled invoked");   
-            alert("Game has been cancelled by " + rejectedUserName);
-            setPlayerNumber(0);
-            setGameActive(false);
-            our_socket.off("gameCancelled");
-        })
-    }, [gameActive])
-    
-    useEffect(() => {
-        our_socket.on('init', (UserIndex_: number) => {
-            if(!gameActive)
-            {
-                our_socket.off("init");
-                return ;
+        
+        our_socket.on('gameOver', (data: number) => {
+            if (!gameActive) {
+                return;
             }
+            let num: number = data;
+            if (num == Number.parseInt(userId)) {
+                reset();
+                console.log("Winner");
+                cancelAnimationFrame(animationFrameNum);
+                console.log("You win executed " + userId);
+                alert("You won 15 mmr! Congratulations!")
+            } else {
+                console.log("You lose executed\n" + userId);
+                alert("You lost 15 mmr! NOOB! How can you lose in Pong?!?!?!")
+                reset();
+                cancelAnimationFrame(animationFrameNum);
+            }
+            setGameActive(false);
+        })
+
+        our_socket.on('sameUser', () => {
+            reset();
+            setGameActive(false);
+            alert("Same user wanted to connect to one game");
+        })     
+
+        our_socket.on('init', (UserIndex_: number) => {
+            // if(!gameActive)
+            // {
+            //     our_socket.off("init");
+            //     return ;
+            // }
             setGameStarted(false);
             console.log("Id of the user ", UserIndex_);
             let num: number = UserIndex_;
             setPlayerNumber(num);
-            our_socket.off("init");
 
         });
-    }, [gameActive])
 
-    useEffect(() => {
-        if (canvasRef.current) {
-            ctx = canvasRef.current.getContext('2d');
-            ctx.canvas.hidden = true;
-        }
-        our_socket.on('gameCode', handleGameCode);
-        // our_socket.on('unknownGame', () => 
-        // {
-        //     alert("client socket id not known refresh the page");
-        // })
-    }, [])
-
-    useEffect(() => {
         our_socket.on('gameState', (gameState: string) => {
             if (!gameActive) {
-                our_socket.off('gameState');
                 return;
             }
             let animFrame: number;
             if(!gameStarted)
             {
+                setGameId(JSON.parse(gameState).id);
                 setGameStarted(true);
             }
             setGameInfo(JSON.parse(gameState));
+            console.log("Game state id " , gameInfo.id);
             setGameInvited(false);
             if (canvasRef.current) {
                 // console.log("rendering");
@@ -291,40 +264,74 @@ const Canvas = ({ userId }: { userId: string }) => {
                 
                 setAnimationFrameNum(requestAnimationFrame(() => drawPong(our_socket, ctx, gameInfo, images[mapNumber])));
             }
-            our_socket.off('gameState');
+            
         })
-        // cancelAnimationFrame(animationFrameNum);
-    }, [gameInfo, gameActive, gameStarted])
+
+        our_socket.on('gameCode', handleGameCode);
+        return () => {
+            // before the component is destroyed
+            // unbind all event handlers used in this component
+            our_socket.off("gameCancelled");
+            our_socket.off("invitationInit");
+            our_socket.off("gameOver");
+            our_socket.off("sameUser");
+            our_socket.off("handleTooManyPlayers");
+            our_socket.off("init");
+            our_socket.off("gameCode");
+            our_socket.off('gameState');
+        };
+
+
+        
+    }, [gameInfo, gameStarted,gameActive])
+
+    useEffect(() => {
+        if (canvasRef.current) {
+            ctx = canvasRef.current.getContext('2d');
+            ctx.canvas.hidden = true;
+        }
+        
+        // our_socket.on('unknownGame', () => 
+        // {
+        //     alert("client socket id not known refresh the page");
+        // })
+    }, [])
+
 
     useEffect(() => 
     {
         document.addEventListener('keydown', (e) => {
             // e.preventDefault();
-            if (!gameActive)
-                return;
+            console.log("Emmititng stuff");
+            // if (!gameActive)
+            //     return;
             let obj: KeyInfo =
             {
                 key: e.keyCode,
                 player_number: playerNumber,
                 socket_id: our_socket.id,
-                gameActive: gameActive
+                gameActive: gameActive,
+                game_id: gameId,
             };
+            
             our_socket.emit('keydown', JSON.stringify(obj));
         })
         document.addEventListener('keyup', (e) => {
             // e.preventDefault();
-            if (!gameActive)
-                return;
+            // if (!gameActive)
+            //     return;
             let obj: KeyInfo =
             {
                 key: e.keyCode,
                 player_number: playerNumber,
                 socket_id: our_socket.id,
-                gameActive: gameActive
+                gameActive: gameActive,
+                game_id: gameId,
             };
+            console.log("What the fuck ", obj.game_id);
             our_socket.emit('keyup', JSON.stringify(obj));
         })
-    }, [playerNumber])
+    }, [playerNumber, gameId])
 
 
     return (

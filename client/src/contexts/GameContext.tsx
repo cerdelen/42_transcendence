@@ -14,6 +14,7 @@ type MyGameContextType = {
 const MyGameContext = createContext<MyGameContextType>({
   images: [],
   initial_state: {
+    id: 0,
     player_1_nick: "",
     player_2_nick: "",
     player_1_id: 0,
@@ -62,6 +63,7 @@ export function MyGameContextProvider({ children }: MyGameContextProviderProps) 
 
 
   let initial_state = {
+    id: 0,
     player_1_nick: "",
     player_2_nick: "",
     player_1_id: 0,

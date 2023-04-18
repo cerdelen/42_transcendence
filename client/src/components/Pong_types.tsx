@@ -16,6 +16,7 @@ interface KeyInfo
     player_number: number;
     socket_id: string;
     gameActive: boolean;
+    game_id: number;
 }
 
 interface Ball{
@@ -31,6 +32,7 @@ interface Ball{
 
 interface pong_properties
 {
+    id: number;
     player_1_id: number,
     player_2_id: number,
     player_1_nick: string,

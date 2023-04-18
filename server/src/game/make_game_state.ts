@@ -23,6 +23,7 @@ interface Ball{
 
 interface pong_properties
 {
+    id: number;
     keysPressed_p1: boolean[],
     keysPressed_p2: boolean[],
     player_1_nick: string,
@@ -42,6 +43,7 @@ let wallOffset:number = 20;
 export function getInitialState()
 {
     let initial_state : pong_properties = {
+        id: 0,
         player_1_nick: "",
         player_2_nick: "",
         keysPressed_p1: [],
@@ -157,6 +159,7 @@ export function gameLoop(state: pong_properties) : number
     {
         return 0;
     }
+
     paddle_update(state.Player1, state.keysPressed_p1);
     paddle_update(state.Player2, state.keysPressed_p2);
     ball_update(state.Ball,state.Player1, state.Player2 ,state);

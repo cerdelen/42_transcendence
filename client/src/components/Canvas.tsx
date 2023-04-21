@@ -8,7 +8,7 @@ import { useMyContext } from '../contexts/InfoCardContext'
 import { useUserContext } from "../contexts/UserContext";
 import { useMyGameContext } from "../contexts/GameContext";
 
-import Bulgaria from "../images/bulgaria.jpeg";
+import Bulgaria from "../images/bulgaria-nice.jpeg";
 import Paris from "../images/paris.jpeg";
 import Cat_valley from "../images/Cat_valley.jpeg";
 // import { gameContext } from '../contexts/gameContext'

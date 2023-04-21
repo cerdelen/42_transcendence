@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { createContext } from "react";
-import Bulgaria from "../images/bulgaria.jpeg";
+import Bulgaria from "../images/bulgaria-nice.jpeg";
 import Paris from "../images/paris.jpeg";
 import Cat_valley from "../images/Cat_valley.jpeg";
 

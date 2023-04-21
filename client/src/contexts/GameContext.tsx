@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { createContext } from "react";
 import Tochka from "../images/tochka.jpg";
-import Bulgaria from "../images/bulgaria.jpeg";
+import Bulgaria from "../images/bulgaria-nice.jpeg";
 import Paris from "../images/paris.jpeg";
 import Cat_valley from "../images/Cat_valley.jpeg";
 import { pong_properties } from "../components/Pong_types";

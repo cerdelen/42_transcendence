@@ -14,7 +14,6 @@ export class AuthController
 	@Get('test42')
 	weirdo()
 	{
-		////// console.log("hello from inside test42");
 		return ("hello");
 	}
 
@@ -22,7 +21,6 @@ export class AuthController
 	@Get('testjwt')
 	weirdos()
 	{
-		////// console.log("hello from inside testjwt");
 		return ("hello");
 	}
 
@@ -30,7 +28,6 @@ export class AuthController
 	@Get('login')
 	async	intra_login(@Req() req: any, @Res() res: any): Promise<any>
 	{
-		////// console.log("hello from inside auth/login");
 		await this.authService.login(req, res);
 	}
 
@@ -39,7 +36,6 @@ export class AuthController
 	@UseGuards(Two_FA_Guard)
 	random()
 	{
-		////// console.log("hello from inside test all")
 		return ("hello");
 	}
 
@@ -54,7 +50,6 @@ export class AuthController
 	@Get('create_test_user')
 	async create_test_user()
 	{
-		////// console.log("hello from inside create_test_user")
 		await this.authService.create_test_user();
 		return ("successfully tested db");
 	}
@@ -62,18 +57,13 @@ export class AuthController
 	@Get('login_test_user')
 	async login_test_user(@Res() res: any)
 	{
-		////// console.log("hello from inside login_test_user")
 		return this.authService.login_test_user(322, res);
-		// return ("successfully tested db");
 	}
 
 	@Get('token_test_user')
 	async get_token_test_user(@Res() res: any)
 	{
-		// console.log("hello from inside login_test_user")
-		// console.log("Print stuff", await this.authService.get_token_test_user(322, res));
 		return  this.authService.get_token_test_user(322, res);
-		// return ("successfully tested db");
 	}
 
 

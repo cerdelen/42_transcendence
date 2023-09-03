@@ -1,176 +1,61 @@
-42_transcendence
-Frontend == client React 80 or 3000 from the outside
+Certainly, here's an updated GitHub README for your project:
 
-Backend == server Nest 3003 Postgres 5432
+# FullStack Website with Database
 
-Prisma studio (database visualize) == 5555
+Welcome to our FullStack website project! This web application is designed to provide a rich set of features including user authentication, chat functionality, friend requests, user blocking, an integrated Pong game, and a leaderboard. Read on to learn more about the project and how to get started.
 
-If it's the first time it's run "cd client && npm i && cd ../server && npm i"
+## Table of Contents
+- [Introduction](#introduction)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
 
-to Run docker-compose --file docker-compose-dev.yml up
+## Introduction
 
-to start prisma studio:
+This project is a full-stack web application that demonstrates various functionalities.
 
-        1. after docker-compose up (takes around 30 sec) run "docker ps"
+## Features
 
-        2. find process id of "server"
+### User Authentication with 2FA (Two-Factor Authentication)
 
-        3. run "docker exec -it [server process id] bash"
+- Securely authenticate using 42AOauth provided by the 42 intra education platform.
+- Enhance security with Two-Factor Authentication (2FA) using Google Authenticator.
 
-        4. (if you made changes to database run "npx prisma db push --accept-data-loss")
+### Chat Functionalities
 
-        5. run "npx prisma studio"
+- Engage in private one-on-one chats with other users.
+- Create or join group chats with multiple users.
+- Group chats feature administrators who can ban or mute users as needed.
 
-        6. go to browser and open "localhost:5555" (first time you open it it will sefault, repeat from step 5)
+### Social Interaction
 
+- Send and receive friend requests.
+- Block other users if needed.
 
-1. In case of Dummy user giving unautherized error use Postman to make a "Get" Request to "localhost:3003/auth/token_test_user"
-2. either you have the token as a response or in the terminal
-3. in file "client/src/components/loginpage.tsx" in funciton 	fakeLogin  change the hardcoded 'accessToken' in the JSCookies.set() funciton to the token found in step 2
+### Integrated Pong Game
 
+- Play an integrated Pong game with other users.
+- Compete for a top spot on the leaderboard.
 
+### Lifetime Achievement
 
+- Achieve permanent achievements e.g. "Win x amount of games in a row".
 
+## Tech Stack
 
+We utilized the following technologies to build this project:
 
+- **Backend Database**: PostgreSQL
+- **Backend Framework**: Nest.js with Prisma as the database framework
+- **Frontend Framework**: React
+- **Containerization**: Docker for easy deployment
 
+## Getting Started
 
-import { Injectable } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { FindUserParams } from '../utils/types';
-import { IUserService } from './user';
+To get started with this project, follow these steps:
 
-@Injectable()
-export class UserService implements IUserService {
-	constructor(
-		private prisma: PrismaService
-		) {}
+**Important Note**: Due to the reliance on the 42OAuth system for the basic Authentication system, an API key is required, and it gets reset frequently. Therefore, deploying this application on your own machine is not possible without a valid API key.
 
+If you do have an Api-key all you have to do is set it up in the "server/.env" file providing "api-id" and "api-secret".
 
-	async	createUser(data: Prisma.UserCreateInput) : Promise<User>
-	{
-		return this.prisma.user.create({data,});
-	}
-
-	async	deleteUser(where: Prisma.UserCreateInput)
-	{
-		return this.prisma.user.delete({where});
-	}
-
-	async	findUserById(findUserParams: FindUserParams): Promise<User | undefined>
-	{
-		const user = await this.prisma.user.findUnique({
-			where: {
-				id: findUserParams.id,
-			},
-			include: { ChatParticipant: true} 
-		},)
-		return user;
-	} 
-
-	async	updateUser(params:{
-		where: Prisma.UserWhereUniqueInput,
-		data: Prisma.UserUpdateInput,
-	}) : Promise<User>
-	{
-		const { where, data } = params;
-		return this.prisma.user.update({
-			data,
-			where,
-		});
-	}
-
-	async	turn_on_2FA(user_id: number)
-	{
-		var	user = await this.findUserById({id: user_id});
-		if(!user.two_FA_enabled)
-		{
-			await this.updateUser({
-				where: {id: user_id},
-				data: { two_FA_enabled: true },
-			});
-		}
-	}
-
-	async	turn_off_2FA(user_id: number)
-	{
-		var	user = await this.findUserById({id: user_id});
-		if(user.two_FA_enabled)
-		{
-			await this.updateUser({
-				where: {id: user_id},
-				data: { two_FA_enabled: false },
-			});
-		}
-	}
-}
-
-
-
-
-
-
-
-import { Module } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
-import { Services } from 'src/utils/consts';
-import { PrismaModule } from '../prisma/prisma.module';
-// import { Ser } from '@nestjs/core';
-
-@Module({
-  imports: [PrismaModule],
-  providers: [
-    {
-      provide: Services.USERS,
-      useClass: UserService
-    }
-  ],
-  exports: [
-    {
-      provide: Services.USERS,
-      useClass: UserService
-    }
-  ],
-  controllers: [UserController]
-})
-export class UserModule {}
-
-
-
-
-
-
-
-
-
-
-import { Body, Controller, Post, Req, UseGuards, Inject } from '@nestjs/common';
-import { Jwt_Auth_Guard } from 'src/auth/guards/jwt_auth.guard';
-import { UserService } from './user.service';
-import { Routes, Services } from '../utils/consts';
-import { IUserService } from './user';
-
-@Controller(Routes.USERS)
-export class UserController
-{
-	constructor(
-		@Inject(Services.USERS) private readonly userService: IUserService,
-	) {}
-
-	@Post('change_name')
-	@UseGuards(Jwt_Auth_Guard)
-	async	change_name(@Req() req: any, @Body('new_name') _name : string) : Promise<any>
-	{
-		return (await	this.userService.updateUser({
-			where: { id: req.user.id }, 
-			data: { name: _name },
-		}));
-	}
-}
-
-
-
-
+---

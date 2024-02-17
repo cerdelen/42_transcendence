@@ -1,5 +1,3 @@
-Certainly, here's an updated GitHub README for your project:
-
 # FullStack Website with Database
 
 Welcome to our FullStack website project! This web application is designed to provide a rich set of features including user authentication, chat functionality, friend requests, user blocking, an integrated Pong game, and a leaderboard. Read on to learn more about the project and how to get started.
